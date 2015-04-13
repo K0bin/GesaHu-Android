@@ -1,0 +1,11 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="dividerMarginLeft">72dp</dimen>
+    <dimen name="dividerHeight">1dp</dimen>
+    <dimen name="listMargin">8dp</dimen>
+    <dimen name="tilePadding">16dp</dimen>
+    <dimen name="tilePaddingBottom">20dp</dimen>
+    <dimen name="tileHeight">88dp</dimen>
+    <dimen name="tileAvatarSize">40dp</dimen>
+    <dimen name="actionbarHeight">56dp</dimen>
+</resources>

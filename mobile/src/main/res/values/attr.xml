@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ReplacementView">
+        <attr name="lesson" format="string" />
+        <attr name="subjectName" format="string" />
+        <attr name="regularTeacher" format="string" />
+        <attr name="replacementTeacher" format="string" />
+        <attr name="room" format="string" />
+    </declare-styleable>
+
+    <attr name="circle" format="reference"/>
+    <attr name="appBackground" format="reference|color"/>
+    <attr name="textPrimary" format="reference|color"/>
+    <attr name="textSecundary" format="reference|color"/>
+    <attr name="textHint" format="reference|color"/>
+    <attr name="highlightColor" format="reference|color" />
+    <attr name="toolbarPopupTheme" format="reference" />
+
+</resources>
