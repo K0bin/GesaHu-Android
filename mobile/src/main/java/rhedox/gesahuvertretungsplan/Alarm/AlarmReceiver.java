@@ -44,7 +44,7 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
         this.context = context;
     }
 
-    public void create(Context context, int hour, int minute) {
+    public static void create(Context context, int hour, int minute) {
         GregorianCalendar calendar = (GregorianCalendar)GregorianCalendar.getInstance();
         int nowHour = calendar.get(Calendar.HOUR_OF_DAY);
         int nowMinute = calendar.get(Calendar.MINUTE);
@@ -66,11 +66,9 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
         }
 
         Log.d("Alarm", "Alarm set!");
-
-        this.context = context;
     }
 
-    public void cancel(Context context) {
+    public static void cancel(Context context) {
         PendingIntent intent = PendingIntent.getBroadcast(context, 0 , new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager manager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
         if(manager!=null) {
@@ -79,7 +77,7 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
     }
 
     @Override
-    public void onDownloaded(List<Replacement> replacements) {
+    public void onDownloaded(Context context, List<Replacement> replacements) {
 
         Log.d("Plan", "Notifications now! Size: " + Integer.toString(replacements.size()));
 

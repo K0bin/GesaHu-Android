@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,7 +30,6 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
     private ReplacementsAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private boolean loading = false;
-
 
     //Preferences
     private boolean darkTheme;
@@ -169,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
     }
 
     @Override
-    public void onDownloaded(List<Replacement> replacements) {
+    public void onDownloaded(Context context,  List<Replacement> replacements) {
         getSupportActionBar().setTitle(SchoolWeek.getDateString(day, month, year));
 
         adapter.addAll(replacements);

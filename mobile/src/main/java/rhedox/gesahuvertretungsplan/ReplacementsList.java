@@ -1,12 +1,7 @@
 package rhedox.gesahuvertretungsplan;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -14,7 +9,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ReplacementsList {
@@ -28,7 +22,7 @@ public class ReplacementsList {
 
     public void load(Context context, int day, int month, int year, String schoolyear, String schoolclass, OnDownloadedListener listener) {
         replacements.clear();
-        ReplacementplanLoader loader = new ReplacementplanLoader();
+        ReplacementslistLoader loader = new ReplacementslistLoader(context);
         loader.execute(new ReplacementsListLoaderArgs(day, month, year, schoolyear, schoolclass, context, listener));
     }
 
@@ -36,8 +30,13 @@ public class ReplacementsList {
         return replacements;
     }
 
-    class ReplacementplanLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Replacement>> {
-        ReplacementsListLoaderArgs loaderArgs;
+    class ReplacementslistLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Replacement>> {
+        private ReplacementsListLoaderArgs loaderArgs;
+        private Context context;
+
+        public ReplacementslistLoader(Context context) {
+            this.context = context;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -200,7 +199,7 @@ public class ReplacementsList {
         protected void onPostExecute(List<Replacement> Replacements) {
             super.onPostExecute(Replacements);
             Log.d("Plan","PostExecute");
-            loaderArgs.getCallback().onDownloaded(Replacements);
+            loaderArgs.getCallback().onDownloaded(context, Replacements);
 
             /*if(loaderArgs.populate) {
                 ((MainActivity)loaderArgs.context).populateList(Replacements);
