@@ -18,12 +18,17 @@ import rhedox.gesahuvertretungsplan.Replacement;
 /**
  * Created by Robin on 28.10.2014.
  */
-public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementViewHolder> {
+public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementsAdapter.ReplacementViewHolder> {
     private List<Replacement> replacements;
+
+    private Drawable highlightBackground;
+    private Drawable background;
 
     public ReplacementsAdapter(Context context) {
         this.replacements = new ArrayList<Replacement>(0);
-        ReplacementViewHolder.load(context);
+
+        highlightBackground = context.getResources().getDrawable(R.drawable.circle_highlight);
+        background = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circle}).getDrawable(0);
     }
 
     @Override
@@ -42,7 +47,7 @@ public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementViewHol
         FrameLayout view;
         view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_replacement, viewGroup, false);
 
-        return new ReplacementViewHolder(view);
+        return new ReplacementViewHolder(view, highlightBackground, background);
     }
 
     @Override
@@ -71,6 +76,61 @@ public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementViewHol
             int count = getItemCount();
             clear();
             notifyItemRangeRemoved(0, count);
+        }
+    }
+
+
+    public class ReplacementViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        private TextView lesson;
+        private TextView subjectName;
+        private TextView regularTeacher;
+        private TextView replacementTeacher;
+        private TextView room;
+        private TextView hint;
+
+        private Drawable highlightBackground;
+        private Drawable background;
+
+        public ReplacementViewHolder(ViewGroup view, Drawable highlightBackground, Drawable background) {
+            super(view);
+            lesson = (TextView) view.findViewById(R.id.lesson);
+            subjectName = (TextView) view.findViewById(R.id.subjectName);
+            regularTeacher = (TextView) view.findViewById(R.id.regularTeacher);
+            replacementTeacher = (TextView) view.findViewById(R.id.replacementTeacher);
+            room = (TextView) view.findViewById(R.id.room);
+            hint = (TextView) view.findViewById(R.id.hint);
+
+            this.highlightBackground = highlightBackground;
+            this.background = background;
+        }
+
+        public void setLesson(String text) {
+            lesson.setText(text);
+        }
+        public void setSubjectName(String text) {
+            subjectName.setText(text);
+        }
+        public void setRegularTeacher(String text) {
+            regularTeacher.setText(text);
+        }
+        public void setReplacementTeacher(String text) {
+            replacementTeacher.setText(text);
+        }
+        public void setRoom(String text) {
+            room.setText(text);
+        }
+        public void setHint(String text) {
+            hint.setText(text);
+        }
+        public void setImportant(boolean important) {
+            if(important) {
+                lesson.setBackground(highlightBackground);
+                subjectName.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                lesson.setBackground(background);
+                subjectName.setTypeface(Typeface.DEFAULT);
+            }
         }
     }
 }

@@ -4,56 +4,38 @@ public class Replacement {
     private String lesson, subject, regularTeacher, replacementTeacher, room, hint;
     private boolean important;
 
-    public Replacement(String lesson, String subject) {
+    public Replacement(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint) {
         this.lesson = lesson;
         this.subject = subject;
-        regularTeacher = "";
-        replacementTeacher = "";
-        room = "";
-        hint = "";
+        this.regularTeacher = replacementTeacher;
+        this.replacementTeacher = replacementTeacher;
+        this.room = room;
+        this.hint = hint;
         important = false;
     }
 
     public String getLesson() {
         return lesson;
     }
-    public void setLesson(String _lesson) {
-        lesson = _lesson;
-    }
 
     public String getSubject() {
         return subject;
-    }
-    public void setSubject(String _subject) {
-        subject = _subject;
     }
 
     public String getRegularTeacher() {
         return regularTeacher;
     }
-    public void setRegularTeacher(String _regularTeacher) {
-        regularTeacher = _regularTeacher;
-    }
 
     public String getReplacementTeacher() {
         return replacementTeacher;
-    }
-    public void setReplacementTeacher(String _replacementTeacher) {
-        replacementTeacher = _replacementTeacher;
     }
 
     public String getRoom() {
         return room;
     }
-    public void setRoom(String _room) {
-        room = _room;
-    }
 
     public String getHint() {
         return hint;
-    }
-    public void setHint(String _note) {
-        hint = _note;
     }
 
     public boolean getImportant() {

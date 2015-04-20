@@ -66,9 +66,14 @@ public class ReplacementsList {
 
                 //Parsing
                 int cellIndex = 0;
-                Replacement v = new Replacement("", "");
-                String lesson = "";
                 int lineIndex = 0;
+
+                String lesson = "";
+                String subject ="";
+                String regularTeacher ="";
+                String replacementTeacher ="";
+                String room ="";
+                String hint ="";
 
                 boolean done = false;
 
@@ -91,9 +96,10 @@ public class ReplacementsList {
                                     if (lineIndex != 0) {
                                         if (!text.equals("") && !text.equals(" ")) {
                                             //Subjectname isn't empty => add previous lesson
-                                            v.trim();
-                                            v.check(loaderArgs.getSchoolyear(), loaderArgs.getSchoolclass());
-                                            replacements.add(v);
+                                            Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint);
+                                            replacement.trim();
+                                            replacement.check(loaderArgs.getSchoolyear(), loaderArgs.getSchoolclass());
+                                            replacements.add(replacement);
 
                                             //Resolve subject shortnames
                                             String[] parts = text.split(" ");
@@ -101,7 +107,11 @@ public class ReplacementsList {
                                                 text = shorts.resolveSubject(parts[0]) + " " + parts[1];
                                             }
 
-                                            v = new Replacement(lesson, text);
+                                            subject=text;
+                                            regularTeacher="";
+                                            replacementTeacher="";
+                                            room="";
+                                            hint="";
                                         }
                                     } else {
                                         String[] parts = text.split(" ");
@@ -109,8 +119,8 @@ public class ReplacementsList {
                                             text = shorts.resolveSubject(parts[0]) + " " + parts[1];
                                         }
 
-                                        v.setSubject(v.getSubject()+text);
-                                        v.setLesson(lesson);
+                                        subject += text;
+
                                     }
                                     break;
                                 case 2:
@@ -120,10 +130,10 @@ public class ReplacementsList {
                                         String[] teachers = text.split(",");
                                         for (int i = 0; i < teachers.length; i++) {
                                             if (!teachers[i].equals("") && !teachers[i].equals(" ") && !text.equals("") && !text.equals(" ")) {
-                                                if(!v.getRegularTeacher().equals("") && !v.getRegularTeacher().equals(" ")) {
-                                                    v.setRegularTeacher(v.getRegularTeacher()+"; ");
+                                                if(!regularTeacher.equals("") && !regularTeacher.equals(" ")) {
+                                                    regularTeacher += "; ";
                                                 }
-                                                v.setRegularTeacher(v.getRegularTeacher()+shorts.resolveTeacher(teachers[i].trim()));
+                                                regularTeacher += shorts.resolveTeacher(teachers[i].trim());
                                             }
                                         }
                                     }
@@ -135,22 +145,22 @@ public class ReplacementsList {
                                         String[] teachers = text.split(",");
                                         for (int i = 0; i < teachers.length; i++) {
                                             if (!teachers[i].equals("") && !teachers[i].equals(" ") && !text.equals("") && !text.equals(" ")) {
-                                                if(!v.getReplacementTeacher().equals("") && !v.getReplacementTeacher().equals(" ")) {
-                                                    v.setReplacementTeacher(v.getReplacementTeacher()+"; ");
+                                                if(!replacementTeacher.equals("") && !replacementTeacher.equals(" ")) {
+                                                    replacementTeacher+="; ";
                                                 }
-                                                v.setReplacementTeacher(v.getReplacementTeacher()+shorts.resolveTeacher(teachers[i].trim()));
+                                                replacementTeacher+=shorts.resolveTeacher(teachers[i].trim());
                                             }
                                         }
                                     }
                                     break;
                                 case 4:
                                     if (!text.equals("") && !text.equals(" ")) {
-                                        v.setRoom(v.getRoom() + text + " ");
+                                        room += text + " ";
                                     }
                                     break;
                                 case 5:
                                     if (!text.equals("") && !text.equals(" ")) {
-                                        v.setHint(v.getHint() + text + " ");
+                                        hint += text + " ";
                                     }
                                     break;
                             }
@@ -166,16 +176,16 @@ public class ReplacementsList {
                     }
                 }
 
-                if (!v.getSubject().equals("") && !v.getSubject().equals(" ")) {
-                    v.trim();
-                    v.check(loaderArgs.getSchoolyear(), loaderArgs.getSchoolclass());
-                    replacements.add(v);
+                if (!subject.equals("") && !subject.equals(" ")) {
+                    Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint);
+                    replacement.trim();
+                    replacement.check(loaderArgs.getSchoolyear(), loaderArgs.getSchoolclass());
+                    replacements.add(replacement);
                 }
 
                 if(replacements.size() == 0) {
-                    v = new Replacement("1-10", "Keine Vertretungsstunden");
-                    v.setRegularTeacher("Alles nach Plan");
-                    replacements.add(v);
+                    Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "");
+                    replacements.add(replacement);
                 }
 
                 stream.close();
@@ -184,10 +194,8 @@ public class ReplacementsList {
             } catch (Exception e) {
                 Log.d("VPException2", "" + e.getMessage());
 
-                Replacement v = new Replacement("1-10", "Keine Daten");
-                v.setRegularTeacher("Überprüfe deine Verbindung!");
-                v.setHint(e.getMessage());
-                replacements.add(v);
+                Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Keine Daten", "Überprüfe deine Verbindung!", "", e.getMessage());
+                replacements.add(replacement);
             }
 
             Log.d("Plan", "Plan loadToday!");

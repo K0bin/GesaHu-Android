@@ -27,6 +27,18 @@
                 android:value=".MainActivity" />
         </activity>
 
+        <service android:name=".DashClockExtension"
+            android:icon="@drawable/icon_notification"
+            android:label="Gesahu Vertretungsplan"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+        <meta-data android:name="protocolVersion" android:value="2" />
+        <meta-data android:name="worldReadable" android:value="true" />
+        <meta-data android:name="description"
+            android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
+        </service>
 
         <receiver android:name=".Alarm.AlarmReceiver" />
 
