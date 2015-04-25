@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Robin on 19.04.2015.
  */
-public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements OnDownloadedListener{
+public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements OnDownloadedListener {
     @Override
     protected void onUpdateData(int reason) {
         ReplacementsList list = new ReplacementsList();
@@ -29,22 +29,23 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 
     @Override
     public void onDownloaded(Context context, List<Replacement> replacements) {
-        if(replacements.size() > 0) {
+        if (replacements != null) {
             int count = 0;
 
-            for(int i = 0; i < replacements.size(); i++) {
-                if(replacements.get(i).getImportant())
+            for (int i = 0; i < replacements.size(); i++) {
+                if (replacements.get(i).getImportant())
                     count++;
             }
-
-            publishUpdate(new ExtensionData()
-                    .visible(true)
-                    .icon(R.drawable.icon_notification)
-                    .status(count + " Stunden")
-                    .expandedTitle("Gesahu Vertretungsplan")
-                    .expandedBody(count + " Vertretungsstunden")
-                    .clickIntent(new Intent(context, MainActivity.class)));
+            if (count > 0) {
+                publishUpdate(new ExtensionData()
+                        .visible(true)
+                        .icon(R.drawable.icon_notification)
+                        .status(count + " Stunden")
+                        .expandedTitle("Gesahu Vertretungsplan")
+                        .expandedBody(count + " Vertretungsstunden")
+                        .clickIntent(new Intent(context, MainActivity.class)));
+            }
         }
-
     }
+
 }
