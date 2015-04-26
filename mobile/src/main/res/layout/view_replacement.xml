@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:id="@+id/container_card">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="@dimen/tileAvatarSize"
         android:layout_height="@dimen/tileAvatarSize"
         android:id="@+id/lesson"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Deutsch Förderu. 05a"
@@ -55,7 +55,7 @@
                 android:singleLine="true"
                 />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="R 08-05"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Lindenberg xxxxxxxxx Lawl"
@@ -94,7 +94,7 @@
                 android:maxLines="1"
                 android:singleLine="true"/>
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Körschner"
@@ -112,7 +112,7 @@
 
         </LinearLayout>
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Klausur findet statt"

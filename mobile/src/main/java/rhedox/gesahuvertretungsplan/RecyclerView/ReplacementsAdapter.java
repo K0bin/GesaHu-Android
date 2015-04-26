@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.RecyclerView;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -33,13 +34,8 @@ public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementsAdapte
 
     @Override
     public void onBindViewHolder(ReplacementViewHolder viewHolder, int i) {
-        viewHolder.setLesson(replacements.get(i).getLesson());
-        viewHolder.setSubjectName(replacements.get(i).getSubject());
-        viewHolder.setRegularTeacher(replacements.get(i).getRegularTeacher());
-        viewHolder.setReplacementTeacher(replacements.get(i).getReplacementTeacher());
-        viewHolder.setRoom(replacements.get(i).getRoom());
-        viewHolder.setHint(replacements.get(i).getHint());
-        viewHolder.setImportant(replacements.get(i).getImportant());
+        if(replacements!= null && replacements.size() > i)
+            viewHolder.setReplacement(replacements.get(i));
     }
 
     @Override
@@ -82,54 +78,44 @@ public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementsAdapte
 
     public class ReplacementViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        private TextView lesson;
-        private TextView subjectName;
-        private TextView regularTeacher;
-        private TextView replacementTeacher;
-        private TextView room;
-        private TextView hint;
+        private AppCompatTextView lesson;
+        private AppCompatTextView subjectName;
+        private AppCompatTextView regularTeacher;
+        private AppCompatTextView replacementTeacher;
+        private AppCompatTextView room;
+        private AppCompatTextView hint;
 
         private Drawable highlightBackground;
         private Drawable background;
 
         public ReplacementViewHolder(ViewGroup view, Drawable highlightBackground, Drawable background) {
             super(view);
-            lesson = (TextView) view.findViewById(R.id.lesson);
-            subjectName = (TextView) view.findViewById(R.id.subjectName);
-            regularTeacher = (TextView) view.findViewById(R.id.regularTeacher);
-            replacementTeacher = (TextView) view.findViewById(R.id.replacementTeacher);
-            room = (TextView) view.findViewById(R.id.room);
-            hint = (TextView) view.findViewById(R.id.hint);
+            lesson = (AppCompatTextView) view.findViewById(R.id.lesson);
+            subjectName = (AppCompatTextView) view.findViewById(R.id.subjectName);
+            regularTeacher = (AppCompatTextView) view.findViewById(R.id.regularTeacher);
+            replacementTeacher = (AppCompatTextView) view.findViewById(R.id.replacementTeacher);
+            room = (AppCompatTextView) view.findViewById(R.id.room);
+            hint = (AppCompatTextView) view.findViewById(R.id.hint);
 
             this.highlightBackground = highlightBackground;
             this.background = background;
         }
 
-        public void setLesson(String text) {
-            lesson.setText(text);
-        }
-        public void setSubjectName(String text) {
-            subjectName.setText(text);
-        }
-        public void setRegularTeacher(String text) {
-            regularTeacher.setText(text);
-        }
-        public void setReplacementTeacher(String text) {
-            replacementTeacher.setText(text);
-        }
-        public void setRoom(String text) {
-            room.setText(text);
-        }
-        public void setHint(String text) {
-            hint.setText(text);
-        }
-        public void setImportant(boolean important) {
-            if(important) {
-                lesson.setBackground(highlightBackground);
-                subjectName.setTypeface(Typeface.DEFAULT_BOLD);
-            } else {
-                lesson.setBackground(background);
-                subjectName.setTypeface(Typeface.DEFAULT);
+        public void setReplacement(Replacement replacement) {
+            if(replacement != null) {
+                lesson.setText(replacement.getLesson());
+                subjectName.setText(replacement.getSubject());
+                regularTeacher.setText(replacement.getRegularTeacher());
+                replacementTeacher.setText(replacement.getReplacementTeacher());
+                room.setText(replacement.getRoom());
+                hint.setText(replacement.getHint());
+                if (replacement.getImportant()) {
+                    lesson.setBackground(highlightBackground);
+                    subjectName.setTypeface(Typeface.DEFAULT_BOLD);
+                } else {
+                    lesson.setBackground(background);
+                    subjectName.setTypeface(Typeface.DEFAULT);
+                }
             }
         }
     }

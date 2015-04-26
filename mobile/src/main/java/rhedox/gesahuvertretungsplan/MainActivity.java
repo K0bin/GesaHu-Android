@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import rhedox.gesahuvertretungsplan.RecyclerView.*;
 
-public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener, OnDownloadedListener  {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, OnDownloadedListener  {
     private int day=1;
     private int month=1;
     private int year=2014;
