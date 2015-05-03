@@ -24,9 +24,7 @@ import java.util.List;
 import rhedox.gesahuvertretungsplan.RecyclerView.*;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, OnDownloadedListener  {
-    private int day=1;
-    private int month=1;
-    private int year=2014;
+    private Date currentDate;
     private ReplacementsList plan = new ReplacementsList();
     private ReplacementsAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     //Preferences
     private boolean darkTheme;
-    private String schoolYear, schoolClass;
+    private StudentInformation studentInformation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +40,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = prefs.getBoolean("pref_dark", false);
         String time = prefs.getString("pref_notification_time", "00:00");
-        schoolClass = prefs.getString("pref_class", "a");
-        schoolYear = prefs.getString("pref_year","5");
+        studentInformation = new StudentInformation(prefs.getString("pref_year","5"), prefs.getString("pref_class", "a"));
 
         //Theming
         if(darkTheme) {
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        load(day, month, year);
+        load(currentDate);
     }
 
     @Override
@@ -104,11 +101,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             case R.id.action_load:
                 DatePickerFragment fragment = new DatePickerFragment();
-                fragment.Picked=false;
-                fragment.Day = day;
-                fragment.Month = month;
-                fragment.Year = year;
-                fragment.show(getFragmentManager(), "datePicker");
+                fragment.show(currentDate, getSupportFragmentManager(), "datePicker");
                 break;
 
             case R.id.action_about:
@@ -120,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         return super.onOptionsItemSelected(item);
     }
 
-    public void load(int day, int month, int year) {
+    public void load(Date date) {
         if(isNetworkConnected())
         {
             if(!loading) {
@@ -128,11 +121,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 loading = true;
                 adapter.removeAll();
 
-                this.day = day;
-                this.month = month;
-                this.year = year;
+                this.currentDate = date;
 
-                plan.load(this, day, month, year, schoolClass, schoolYear, this);
+                plan.load(this, currentDate, studentInformation, this);
             }
         } else {
             refreshLayout.setRefreshing(false);
@@ -143,12 +134,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
     public void loadToday() {
-        GregorianCalendar calendar = SchoolWeek.next();
-        int todayDay = calendar.get(GregorianCalendar.DAY_OF_MONTH);
-        int todayMonth = calendar.get(GregorianCalendar.MONTH) + 1;
-        int todayYear = calendar.get(GregorianCalendar.YEAR);
-
-        load(todayDay, todayMonth, todayYear);
+        load( SchoolWeek.next());
     }
 
     // Check network connection
@@ -170,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     @Override
-    public void onDownloaded(Context context,  List<Replacement> replacements) {
-        getSupportActionBar().setTitle(SchoolWeek.getDateString(day, month, year));
+    public void onDownloaded(Context context, List<Replacement> replacements) {
+        getSupportActionBar().setTitle(currentDate.toString());
 
         adapter.addAll(replacements);
 

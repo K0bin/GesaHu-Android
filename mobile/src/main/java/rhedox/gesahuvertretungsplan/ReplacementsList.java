@@ -15,15 +15,15 @@ public class ReplacementsList {
 
     private List<Replacement> replacements = new ArrayList<Replacement>();
 
-    private Shorts shorts = new Shorts();
+    private ShortNameResolver shortNameResolver = new ShortNameResolver();
 
     public ReplacementsList() {
     }
 
-    public void load(Context context, int day, int month, int year, String schoolyear, String schoolclass, OnDownloadedListener listener) {
+    public void load(Context context, Date date, StudentInformation studentInformation, OnDownloadedListener listener) {
         replacements.clear();
         ReplacementslistLoader loader = new ReplacementslistLoader(context);
-        loader.execute(new ReplacementsListLoaderArgs(day, month, year, schoolyear, schoolclass, context, listener));
+        loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, context, listener));
     }
 
     public List<Replacement> getReplacements() {
@@ -48,7 +48,7 @@ public class ReplacementsList {
             loaderArgs = args[0];
 
             try {
-                String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDay()) + "&m=" + String.valueOf(loaderArgs.getMonth()) + "&y=" + String.valueOf(loaderArgs.getYear());
+                String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDate().getDay()) + "&m=" + String.valueOf(loaderArgs.getDate().getMonth()) + "&y=" + String.valueOf(loaderArgs.getDate().getYear());
                 URL url = new URL(getString);
                 Log.d("Plan","Downloading: "+getString);
 
@@ -62,11 +62,10 @@ public class ReplacementsList {
 
                 InputStreamReader stream = new InputStreamReader(request.getInputStream(), "windows-1252");
                 BufferedReader in = new BufferedReader(stream);
-                String line = "";
+                String line;
 
                 //Parsing
                 int cellIndex = 0;
-                int lineIndex = 0;
 
                 String lesson = "";
                 String subject ="";
@@ -75,116 +74,125 @@ public class ReplacementsList {
                 String room ="";
                 String hint ="";
 
+                //Vor der Aufsichtstabelle aufhören
                 boolean done = false;
 
                 while ((line = in.readLine()) != null && !done) {
+                    //Dopplete Leerzeichen, HTML Zeichen und Newline entfernen
                     line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), "").replaceAll(" +", " ").trim();
                     if (line.length() > 3) {
+                        //HTML Tag auslesen
                         String tag = line.substring(1, 4).trim().replaceAll(">", "");
+
+                        //Tabellenzelle
                         if (tag.equals("td")) {
+                            //Text bis Zellenindex ausschneiden
                             int textEnd = line.lastIndexOf("</td>");
-                            String textEndless = line.substring(0, textEnd).trim();
-                            int textStart = textEndless.lastIndexOf(">") + ">".length();
-                            String text = textEndless.substring(textStart).trim();
-                            switch (cellIndex) {
-                                case 0:
-                                    if (!text.equals("") && !text.equals(" ")) {
-                                        lesson = text.replaceAll(" ", "");
-                                    }
-                                    break;
-                                case 1:
-                                    if (lineIndex != 0) {
-                                        if (!text.equals("") && !text.equals(" ")) {
-                                            //Subjectname isn't empty => add previous lesson
-                                            Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint);
-                                            replacement.trim();
-                                            replacement.check(loaderArgs.getSchoolyear(), loaderArgs.getSchoolclass());
+                            String textCut = line.substring(0, textEnd).trim();
+                            int textStart = textCut.lastIndexOf(">") + ">".length();
+                            String text = textCut.substring(textStart).trim();
+
+                            if (!text.equals("") && !text.equals(" ")) {
+                                switch (cellIndex) {
+                                    case 0:
+                                            String lessonText = text.replaceAll(" ", "");
+
+                                            if (!lesson.equals(lessonText) && !subject.equals("")) {
+                                                Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                                                replacements.add(replacement);
+
+                                                subject = "";
+                                                regularTeacher = "";
+                                                replacementTeacher = "";
+                                                room = "";
+                                                hint = "";
+                                            }
+                                        lesson = lessonText;
+                                        break;
+                                    case 1:
+                                        if (!subject.equals("")) {
+                                                //Subjectname isn't empty => add previous lesson
+                                                Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
                                             replacements.add(replacement);
 
-                                            //Resolve subject shortnames
-                                            String[] parts = text.split(" ");
-                                            if(parts.length > 1) {
-                                                text = shorts.resolveSubject(parts[0]) + " " + parts[1];
-                                            }
-
-                                            subject=text;
-                                            regularTeacher="";
-                                            replacementTeacher="";
-                                            room="";
-                                            hint="";
+                                            subject = "";
+                                            regularTeacher = "";
+                                            replacementTeacher = "";
+                                            room = "";
+                                            hint = "";
                                         }
-                                    } else {
+
                                         String[] parts = text.split(" ");
-                                        if(parts.length > 1) {
-                                            text = shorts.resolveSubject(parts[0]) + " " + parts[1];
+                                        if (parts.length > 1) {
+                                            text = shortNameResolver.resolveSubject(parts[0]) + " " + parts[1];
                                         }
 
                                         subject += text;
+                                        break;
+                                    case 2:
+                                        //Lehrerkürzel auflesen
+                                        text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
+                                        String[] regularTeachers = text.split(",");
+                                        for (int i = 0; i < regularTeachers.length; i++) {
+                                            if (!isEmpty(regularTeachers[i]) && !isEmpty(text)) {
 
-                                    }
-                                    break;
-                                case 2:
-                                    if (!text.equals("") && !text.equals(" ")) {
-                                        //Resolve Teacher short names
-                                        text = text.replaceAll(", |; |,+|;+|"+System.getProperty("line.separator"), ",");
-                                        String[] teachers = text.split(",");
-                                        for (int i = 0; i < teachers.length; i++) {
-                                            if (!teachers[i].equals("") && !teachers[i].equals(" ") && !text.equals("") && !text.equals(" ")) {
-                                                if(!regularTeacher.equals("") && !regularTeacher.equals(" ")) {
+                                                //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
+                                                if (!isEmpty(regularTeacher)) {
                                                     regularTeacher += "; ";
                                                 }
-                                                regularTeacher += shorts.resolveTeacher(teachers[i].trim());
+
+                                                regularTeacher += shortNameResolver.resolveTeacher(regularTeachers[i].trim());
                                             }
                                         }
-                                    }
-                                    break;
-                                case 3:
-                                    if (!text.equals("") && !text.equals(" ")) {
-                                        //Resolve Teacher short names
-                                        text = text.replaceAll(", |; |,+|;+|"+System.getProperty("line.separator"), ",");
-                                        String[] teachers = text.split(",");
-                                        for (int i = 0; i < teachers.length; i++) {
-                                            if (!teachers[i].equals("") && !teachers[i].equals(" ") && !text.equals("") && !text.equals(" ")) {
-                                                if(!replacementTeacher.equals("") && !replacementTeacher.equals(" ")) {
-                                                    replacementTeacher+="; ";
+
+                                        break;
+                                    case 3:
+                                        //Lehrerkürzel auflesen
+                                        text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
+                                        String[] replacementTeachers = text.split(",");
+                                        for (int i = 0; i < replacementTeachers.length; i++) {
+                                            if (!isEmpty(replacementTeachers[i]) && !isEmpty(text)) {
+
+                                                //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
+                                                if (!isEmpty(replacementTeacher)) {
+                                                    replacementTeacher += "; ";
                                                 }
-                                                replacementTeacher+=shorts.resolveTeacher(teachers[i].trim());
+
+                                                replacementTeacher += shortNameResolver.resolveTeacher(replacementTeachers[i].trim());
                                             }
+
                                         }
-                                    }
-                                    break;
-                                case 4:
-                                    if (!text.equals("") && !text.equals(" ")) {
+                                        break;
+                                    case 4:
                                         room += text + " ";
-                                    }
-                                    break;
-                                case 5:
-                                    if (!text.equals("") && !text.equals(" ")) {
+                                        break;
+                                    case 5:
                                         hint += text + " ";
-                                    }
-                                    break;
+                                        break;
+                                }
                             }
                             cellIndex++;
                         }
+
+                        //Tabellenzeilenende
                         if (tag.equals("/tr")) {
                             cellIndex = 0;
-                            lineIndex++;
                         }
+
+                        //Tabellende
                         if (tag.equals("/ta")) {
                             done = true;
                         }
                     }
                 }
 
-                if (!subject.equals("") && !subject.equals(" ")) {
-                    Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint);
-                    replacement.trim();
-                    replacement.check(loaderArgs.getSchoolyear(), loaderArgs.getSchoolclass());
+                if (!isEmpty(subject)) {
+                    Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
                     replacements.add(replacement);
                 }
 
                 if(replacements.size() == 0) {
-                    Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "");
+                    Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "", new StudentInformation("",""));
                     replacements.add(replacement);
                 }
 
@@ -194,7 +202,7 @@ public class ReplacementsList {
             } catch (Exception e) {
                 Log.d("VPException2", "" + e.getMessage());
 
-                Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Keine Daten", "Überprüfe deine Verbindung!", "", e.getMessage());
+                Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Keine Daten", "Überprüfe deine Verbindung!", "", e.getMessage(), new StudentInformation("",""));
                 replacements.add(replacement);
             }
 
@@ -214,6 +222,10 @@ public class ReplacementsList {
             } else {
                 notifications(loaderArgs.context);
             }*/
+        }
+
+        private boolean isEmpty(String string) {
+            return string == null || string.isEmpty() || string.equals(" ");
         }
     }
 }

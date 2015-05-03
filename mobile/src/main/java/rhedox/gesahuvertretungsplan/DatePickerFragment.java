@@ -1,19 +1,14 @@
 package rhedox.gesahuvertretungsplan;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.DatePicker;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-    public int Day, Month, Year;
-    public boolean Picked = false;
+public class DatePickerFragment extends DialogFragment {
+    private Date date;
+    private boolean picked = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,25 +17,23 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     @Override
     public android.app.Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new DatePickerDialog(getActivity(), this, Year, Month-1, Day);
+        return new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                if(!picked) {
+                    MainActivity activity = (MainActivity)getActivity();
+                    Date date = SchoolWeek.nextDay(Date.fromJavaDate(dayOfMonth, monthOfYear, year));
+                    activity.load(date);
+                    picked=true;
+                }
+            }
+        }, date.getYear(), date.getJavaMonth(), date.getDay());
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        if(!Picked) {
-            MainActivity activity = (MainActivity)getActivity();
-            Calendar calendar = SchoolWeek.next(dayOfMonth, monthOfYear+1, year);
-            dayOfMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
-            monthOfYear = calendar.get(GregorianCalendar.MONTH)+1;
-            year = calendar.get(GregorianCalendar.YEAR);
-            activity.load(dayOfMonth,monthOfYear,year);
-            Picked=true;
-        }
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
+    public void show(Date date, FragmentManager fragmentManager, String tag) {
+        picked = false;
+        this.date = date;
+        show(fragmentManager, tag);
     }
 }
 

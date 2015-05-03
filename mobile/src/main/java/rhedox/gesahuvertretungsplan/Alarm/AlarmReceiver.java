@@ -16,12 +16,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import rhedox.gesahuvertretungsplan.Date;
 import rhedox.gesahuvertretungsplan.MainActivity;
 import rhedox.gesahuvertretungsplan.OnDownloadedListener;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.Replacement;
 import rhedox.gesahuvertretungsplan.ReplacementsList;
 import rhedox.gesahuvertretungsplan.SchoolWeek;
+import rhedox.gesahuvertretungsplan.StudentInformation;
 
 public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedListener{
     private Context context;
@@ -33,13 +35,9 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String schoolClass = prefs.getString("pref_class", "a");
-        String schoolYear = prefs.getString("pref_year","5");
+        String schoolYear = prefs.getString("pref_year", "5");
 
-        GregorianCalendar calendar = SchoolWeek.next();
-        int day = calendar.get(GregorianCalendar.DAY_OF_MONTH);
-        int month = calendar.get(GregorianCalendar.MONTH);
-        int year = calendar.get(GregorianCalendar.YEAR);
-        plan.load(context,day,month+1,year,schoolClass,schoolYear, this);
+        plan.load(context, SchoolWeek.next(), new StudentInformation(schoolYear, schoolClass), this);
 
         this.context = context;
     }

@@ -18,13 +18,14 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     protected void onUpdateData(int reason) {
         ReplacementsList list = new ReplacementsList();
 
-        Calendar calendar = SchoolWeek.next();
+        Date date = SchoolWeek.next();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
+        StudentInformation information = new StudentInformation(schoolYear, schoolClass);
 
-        list.load(getBaseContext(), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR), schoolYear, schoolClass, this);
+        list.load(getBaseContext(), date, information, this);
     }
 
     @Override

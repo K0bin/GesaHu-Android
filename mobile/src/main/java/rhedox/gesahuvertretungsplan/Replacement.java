@@ -1,17 +1,23 @@
 package rhedox.gesahuvertretungsplan;
 
 public class Replacement {
-    private String lesson, subject, regularTeacher, replacementTeacher, room, hint;
-    private boolean important;
+    private final String lesson, subject, regularTeacher, replacementTeacher, room, hint;
+    private final boolean important;
 
-    public Replacement(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint) {
-        this.lesson = lesson;
-        this.subject = subject;
-        this.regularTeacher = replacementTeacher;
-        this.replacementTeacher = replacementTeacher;
-        this.room = room;
-        this.hint = hint;
-        important = false;
+    public Replacement(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint, StudentInformation information) {
+        this.lesson = lesson.trim();
+        this.subject = subject.trim();
+        this.regularTeacher = regularTeacher.trim();
+        this.replacementTeacher = replacementTeacher.trim();
+        this.room = room.trim();
+        this.hint = hint.trim();
+
+        String[] classes = subject.split(" ");
+        String _class = classes[classes.length - 1];
+        if (_class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass()))
+            important = true;
+        else
+            important = false;
     }
 
     public String getLesson() {
@@ -39,28 +45,6 @@ public class Replacement {
     }
 
     public boolean getImportant() {
-        return important;
-    }
-
-
-    public void trim() {
-        lesson = lesson.trim();
-        subject = subject.trim();
-        regularTeacher=regularTeacher.trim();
-        replacementTeacher = replacementTeacher.trim();
-        room=room.trim();
-        hint = hint.trim();
-    }
-
-    public boolean check(String schoolyear, String schoolclass) {
-        important = false;
-        String[] classes = subject.split(" ");
-        int index = classes.length - 1;
-        String _class = classes[index];
-        if (_class.contains(schoolyear) && _class.contains(schoolclass)) {
-            important = true;
-        }
-
         return important;
     }
 }
