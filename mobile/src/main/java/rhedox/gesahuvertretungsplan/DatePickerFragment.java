@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.DatePicker;
 
@@ -34,6 +35,11 @@ public class DatePickerFragment extends DialogFragment {
         picked = false;
         this.date = date;
         show(fragmentManager, tag);
+    }
+
+    public static Fragment newInstance()
+    {
+        return new DatePickerFragment();
     }
 }
 

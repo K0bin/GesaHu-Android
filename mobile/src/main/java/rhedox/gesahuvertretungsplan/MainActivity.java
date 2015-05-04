@@ -7,18 +7,15 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
 import android.widget.Toast;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.RecyclerView.*;
@@ -29,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private ReplacementsAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private boolean loading = false;
+    private DatePickerFragment datePickerDialog;
 
     //Preferences
     private boolean darkTheme;
@@ -72,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         recyclerView.setItemAnimator(new SlideAnimator(recyclerView));
 
+        datePickerDialog = (DatePickerFragment)DatePickerFragment.newInstance();
+
         loadToday();
     }
 
@@ -100,8 +100,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 break;
 
             case R.id.action_load:
-                DatePickerFragment fragment = new DatePickerFragment();
-                fragment.show(currentDate, getSupportFragmentManager(), "datePicker");
+                datePickerDialog.show(currentDate, getSupportFragmentManager(), "datePicker");
                 break;
 
             case R.id.action_about:

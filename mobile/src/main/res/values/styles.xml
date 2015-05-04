@@ -4,7 +4,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/background</item>
         <item name="circle">@drawable/circle</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
