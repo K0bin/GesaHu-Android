@@ -41,7 +41,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Deutsch Förderu. 05a"
-                android:textSize="16sp"
                 android:id="@+id/subjectName"
                 android:layout_weight="1"
                 android:textColor="?android:attr/textColorPrimary"
@@ -53,6 +52,7 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 />
 
             <android.support.v7.widget.AppCompatTextView
@@ -63,14 +63,14 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="right"
                 android:layout_marginLeft="8dp"
-                android:textSize="12sp"
                 android:textColor="?android:attr/textColorHint"
                 android:fontFamily="sans-serif-condensed"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:lines="1"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
         </LinearLayout>
 
@@ -85,14 +85,14 @@
                 android:text="Lindenberg xxxxxxxxx Lawl"
                 android:id="@+id/regularTeacher"
                 android:layout_weight="1"
-                android:textSize="14sp"
                 android:layout_marginRight="8dp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:lines="1"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -101,14 +101,14 @@
                 android:id="@+id/replacementTeacher"
                 android:gravity="end"
                 android:textAlignment="gravity"
-                android:textSize="14sp"
                 android:layout_marginLeft="8dp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:includeFontPadding="false"
                 android:ellipsize="end"
                 android:lines="1"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
         </LinearLayout>
 
@@ -117,14 +117,14 @@
             android:layout_height="wrap_content"
             android:text="Klausur findet statt"
             android:id="@+id/hint"
-            android:textSize="12sp"
             android:textColor="?android:attr/textColorHint"
             android:fontFamily="sans-serif-condensed"
             android:includeFontPadding="false"
             android:ellipsize="end"
             android:lines="1"
             android:maxLines="1"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
     </LinearLayout>
 </FrameLayout>
