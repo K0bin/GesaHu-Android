@@ -6,39 +6,34 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.RecyclerView.*;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, OnDownloadedListener  {
-    private Date currentDate;
-    private ReplacementsList plan = new ReplacementsList();
-    private ReplacementsAdapter adapter;
-    private SwipeRefreshLayout refreshLayout;
-    private boolean loading = false;
-    private DatePickerFragment datePickerDialog;
-
-    //Preferences
-    private boolean darkTheme;
-    private StudentInformation studentInformation;
+public class MainActivity extends AppCompatActivity {
+    MainFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = prefs.getBoolean("pref_dark", false);
-        String time = prefs.getString("pref_notification_time", "00:00");
-        studentInformation = new StudentInformation(prefs.getString("pref_year","5"), prefs.getString("pref_class", "a"));
+        boolean darkTheme = prefs.getBoolean("pref_dark", false);
+        StudentInformation studentInformation = new StudentInformation(prefs.getString("pref_year","5"), prefs.getString("pref_class", "a"));
 
         //Theming
         if(darkTheme) {
@@ -53,32 +48,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         Toolbar toolbar = (Toolbar) findViewById(R.id.actionToolBar);
         setSupportActionBar(toolbar);
 
-        refreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe);
-        refreshLayout.setOnRefreshListener(this);
-
-
-        //RecyclerView
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recylcler);
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(manager);
-        adapter = new ReplacementsAdapter(this);
-        recyclerView.setAdapter(adapter);
-
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
-        recyclerView.addItemDecoration(itemDecoration);
-
-        recyclerView.setItemAnimator(new SlideAnimator(recyclerView));
-
-        datePickerDialog = (DatePickerFragment)DatePickerFragment.newInstance();
-
-        loadToday();
+        fragment = MainFragment.newInstance(studentInformation);
+        getSupportFragmentManager().beginTransaction().add(R.id.putfragmentherepls, fragment ).commit();
     }
 
-    @Override
-    public void onRefresh() {
-        load(currentDate);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 break;
 
             case R.id.action_load:
-                datePickerDialog.show(currentDate, getSupportFragmentManager(), "datePicker");
+                if(fragment != null)
+                    fragment.showPicker();
                 break;
 
             case R.id.action_about:
@@ -112,56 +86,123 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         return super.onOptionsItemSelected(item);
     }
 
-    public void load(Date date) {
-        if(isNetworkConnected())
-        {
-            if(!loading) {
-                refreshLayout.setRefreshing(true);
-                loading = true;
-                adapter.removeAll();
+    public static class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener {
+        private Date currentDate;
+        private ReplacementsList plan = new ReplacementsList();
+        private ReplacementsAdapter adapter;
+        private SwipeRefreshLayout refreshLayout;
+        private boolean loading = false;
+        private DatePickerFragment datePickerDialog;
 
-                this.currentDate = date;
+        private StudentInformation studentInformation;
 
-                plan.load(this, currentDate, studentInformation, this);
+        public static final String STUDENT_INFORMATION = "STUDENT_INFORMATION";
+
+        public MainFragment() {}
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            this.setRetainInstance(true);
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+            //Get Arguments
+            Bundle arguments = getArguments();
+            if(arguments != null)
+                studentInformation = arguments.getParcelable(STUDENT_INFORMATION);
+
+            if(studentInformation == null) {
+                studentInformation = new StudentInformation("","");
             }
-        } else {
+
+            View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+            refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe);
+            refreshLayout.setOnRefreshListener(this);
+
+            //RecyclerView
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recylcler);
+            recyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
+            recyclerView.setLayoutManager(manager);
+            adapter = new ReplacementsAdapter(this.getActivity());
+            recyclerView.setAdapter(adapter);
+
+            RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
+            recyclerView.addItemDecoration(itemDecoration);
+
+            recyclerView.setItemAnimator(new SlideAnimator(recyclerView));
+
+            datePickerDialog = (DatePickerFragment)DatePickerFragment.newInstance();
+
+            loadToday();
+
+            return view;
+        }
+
+        @Override
+        public void onDownloaded(Context context, List<Replacement> replacements) {
+            adapter.addAll(replacements);
+
             refreshLayout.setRefreshing(false);
             loading = false;
 
-            String noConnection = "Keine Internetverbindung!";
-            Toast.makeText(this, noConnection, Toast.LENGTH_SHORT).show();
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(currentDate.toString());
         }
-    }
-    public void loadToday() {
-        load( SchoolWeek.next());
-    }
 
-    // Check network connection
-    private boolean isNetworkConnected(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+        @Override
+        public void onRefresh() {
+            load(currentDate);
+        }
 
+        public void load(Date date) {
+            if(isNetworkConnected())
+            {
+                if(!loading) {
+                    refreshLayout.setRefreshing(true);
+                    loading = true;
+                    adapter.removeAll();
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
+                    this.currentDate = date;
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
+                    plan.load(this.getActivity(), currentDate, studentInformation, this);
+                }
+            } else {
+                refreshLayout.setRefreshing(false);
+                loading = false;
 
-    @Override
-    public void onDownloaded(Context context, List<Replacement> replacements) {
-        getSupportActionBar().setTitle(currentDate.toString());
+                String noConnection = "Keine Internetverbindung!";
+                Toast.makeText(this.getActivity(), noConnection, Toast.LENGTH_SHORT).show();
+            }
+        }
+        public void loadToday() {
+            load(SchoolWeek.next());
+        }
 
-        adapter.addAll(replacements);
+        // Check network connection
+        private boolean isNetworkConnected(){
+            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
 
-        refreshLayout.setRefreshing(false);
-        loading = false;
+        public void showPicker() {
+            if(datePickerDialog != null)
+                datePickerDialog.show(currentDate, getChildFragmentManager(), "datePicker");
+        }
 
+        public static MainFragment newInstance(StudentInformation information) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(STUDENT_INFORMATION, information);
+            MainFragment fragment = new MainFragment();
+            fragment.setArguments(arguments);
+
+            return fragment;
+        }
     }
 }

@@ -22,7 +22,7 @@ public class DatePickerFragment extends DialogFragment {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 if(!picked) {
-                    MainActivity activity = (MainActivity)getActivity();
+                    MainActivity.MainFragment activity = (MainActivity.MainFragment)getParentFragment();
                     Date date = SchoolWeek.nextDay(Date.fromJavaDate(dayOfMonth, monthOfYear, year));
                     activity.load(date);
                     picked=true;
