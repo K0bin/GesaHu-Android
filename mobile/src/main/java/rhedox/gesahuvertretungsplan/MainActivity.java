@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fragment = MainFragment.newInstance(studentInformation);
-        getSupportFragmentManager().beginTransaction().add(R.id.putfragmentherepls, fragment ).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.content, fragment ).commit();
     }
 
 
