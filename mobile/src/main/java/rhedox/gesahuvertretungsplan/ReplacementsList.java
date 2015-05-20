@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan;
 
 import android.content.Context;
+import android.content.Loader;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -17,13 +18,19 @@ public class ReplacementsList {
 
     private ShortNameResolver shortNameResolver = new ShortNameResolver();
 
+    private ReplacementslistLoader loader;
+
     public ReplacementsList() {
     }
 
     public void load(Context context, Date date, StudentInformation studentInformation, OnDownloadedListener listener) {
         replacements.clear();
-        ReplacementslistLoader loader = new ReplacementslistLoader(context);
+        loader = new ReplacementslistLoader(context);
         loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, context, listener));
+    }
+
+    public void stop() {
+        loader.cancel(true);
     }
 
     public List<Replacement> getReplacements() {

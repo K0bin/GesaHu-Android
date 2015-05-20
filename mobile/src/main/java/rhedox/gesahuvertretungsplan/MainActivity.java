@@ -48,8 +48,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.actionToolBar);
         setSupportActionBar(toolbar);
 
-        fragment = MainFragment.newInstance(studentInformation);
-        getSupportFragmentManager().beginTransaction().add(R.id.content, fragment ).commit();
+        fragment = (MainFragment)getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
+        if(fragment == null) {
+            fragment = MainFragment.newInstance(studentInformation);
+            getSupportFragmentManager().beginTransaction().add(R.id.content, fragment, MainFragment.TAG).commit();
+        }
     }
 
 
@@ -97,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         private StudentInformation studentInformation;
 
         public static final String STUDENT_INFORMATION = "STUDENT_INFORMATION";
+        public static final String TAG ="MAIN_FRAGMENT";
 
         public MainFragment() {}
 
@@ -104,7 +108,9 @@ public class MainActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            this.setRetainInstance(true);
+            adapter = new ReplacementsAdapter(this.getActivity());
+
+            setRetainInstance(true);
         }
 
         @Nullable
@@ -130,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
             recyclerView.setLayoutManager(manager);
-            adapter = new ReplacementsAdapter(this.getActivity());
             recyclerView.setAdapter(adapter);
 
             RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
@@ -140,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
 
             datePickerDialog = (DatePickerFragment)DatePickerFragment.newInstance();
 
-            loadToday();
+            if(adapter.getItemCount() == 0)
+                loadToday();
 
             return view;
         }
@@ -153,6 +159,26 @@ public class MainActivity extends AppCompatActivity {
             loading = false;
 
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(currentDate.toString());
+        }
+
+
+        @Override
+        public void onDetach() {
+            plan.stop();
+
+            super.onDetach();
+        }
+
+        @Override
+        public void onStop() {
+            plan.stop();
+
+            super.onStop();
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
         }
 
         @Override
