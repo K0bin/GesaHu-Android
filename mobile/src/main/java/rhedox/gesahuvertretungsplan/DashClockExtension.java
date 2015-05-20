@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 
 import com.google.android.apps.dashclock.api.ExtensionData;
 
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -34,7 +33,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
             int count = 0;
 
             for (int i = 0; i < replacements.size(); i++) {
-                if (replacements.get(i).getImportant())
+                if (replacements.get(i).getIsImportant())
                     count++;
             }
             if (count > 0) {

@@ -5,7 +5,9 @@ import java.util.GregorianCalendar;
 /**
  * Created by Robin on 02.03.2015.
  */
-public class SchoolWeek {
+public final class SchoolWeek {
+    private SchoolWeek() {}
+
     public static Date next() {
         GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
 

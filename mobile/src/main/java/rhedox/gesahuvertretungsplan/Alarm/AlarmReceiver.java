@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import rhedox.gesahuvertretungsplan.Date;
 import rhedox.gesahuvertretungsplan.MainActivity;
 import rhedox.gesahuvertretungsplan.OnDownloadedListener;
 import rhedox.gesahuvertretungsplan.R;
@@ -83,7 +82,7 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
         for (int i = 0; i < replacements.size(); i++) {
             //NotificationManagerCompat notificationManager = (NotificationManagerCompat) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            if (replacements.get(i).getImportant()) {
+            if (replacements.get(i).getIsImportant()) {
                 String notificationText = "";
                 if (!replacements.get(i).getSubject().trim().equals("")) {
                     notificationText += replacements.get(i).getSubject().trim();

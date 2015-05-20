@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +108,7 @@ public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementsAdapte
                 replacementTeacher.setText(replacement.getReplacementTeacher());
                 room.setText(replacement.getRoom());
                 hint.setText(replacement.getHint());
-                if (replacement.getImportant()) {
+                if (replacement.getIsImportant()) {
                     lesson.setBackground(highlightBackground);
                     subjectName.setTypeface(Typeface.DEFAULT_BOLD);
                 } else {

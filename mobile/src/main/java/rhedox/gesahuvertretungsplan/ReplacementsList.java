@@ -74,10 +74,7 @@ public class ReplacementsList {
                 String room ="";
                 String hint ="";
 
-                //Vor der Aufsichtstabelle aufhören
-                boolean done = false;
-
-                while ((line = in.readLine()) != null && !done) {
+                while ((line = in.readLine()) != null) {
                     //Dopplete Leerzeichen, HTML Zeichen und Newline entfernen
                     line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), "").replaceAll(" +", " ").trim();
                     if (line.length() > 3) {
@@ -123,9 +120,8 @@ public class ReplacementsList {
                                         }
 
                                         String[] parts = text.split(" ");
-                                        if (parts.length > 1) {
+                                        if (parts.length > 1)
                                             text = shortNameResolver.resolveSubject(parts[0]) + " " + parts[1];
-                                        }
 
                                         subject += text;
                                         break;
@@ -175,14 +171,12 @@ public class ReplacementsList {
                         }
 
                         //Tabellenzeilenende
-                        if (tag.equals("/tr")) {
+                        if (tag.equals("/tr"))
                             cellIndex = 0;
-                        }
 
                         //Tabellende
-                        if (tag.equals("/ta")) {
-                            done = true;
-                        }
+                        if (tag.equals("/ta"))
+                            break;
                     }
                 }
 

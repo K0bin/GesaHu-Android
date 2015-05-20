@@ -19,4 +19,8 @@ public class StudentInformation {
     public String getSchoolClass() {
         return schoolClass;
     }
+
+    public boolean isEmpty() {
+        return (schoolYear == null || schoolYear.equals("") || schoolYear.equals(" ")) && (schoolClass == null || schoolClass.equals("") || schoolClass.equals(" "));
+    }
 }

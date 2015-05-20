@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan;
 
 public class Replacement {
     private final String lesson, subject, regularTeacher, replacementTeacher, room, hint;
-    private final boolean important;
+    private final boolean isImportant;
 
     public Replacement(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint, StudentInformation information) {
         this.lesson = lesson.trim();
@@ -13,11 +13,11 @@ public class Replacement {
         this.hint = hint.trim();
 
         String[] classes = subject.split(" ");
-        String _class = classes[classes.length - 1];
-        if (_class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass()))
-            important = true;
-        else
-            important = false;
+        if(classes.length > 0 && !information.isEmpty()) {
+            String _class = classes[classes.length - 1];
+            isImportant = _class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass());
+        } else
+            isImportant = false;
     }
 
     public String getLesson() {
@@ -44,7 +44,7 @@ public class Replacement {
         return hint;
     }
 
-    public boolean getImportant() {
-        return important;
+    public boolean getIsImportant() {
+        return isImportant;
     }
 }

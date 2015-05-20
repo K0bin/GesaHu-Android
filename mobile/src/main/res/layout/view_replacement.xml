@@ -53,6 +53,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:minWidth="64dp"
                 />
 
             <android.support.v7.widget.AppCompatTextView
@@ -70,7 +71,8 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:minWidth="64dp"/>
 
         </LinearLayout>
 
@@ -92,7 +94,8 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:minWidth="64dp"/>
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -108,7 +111,8 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:minWidth="64dp"/>
 
         </LinearLayout>
 
