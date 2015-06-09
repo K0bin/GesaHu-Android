@@ -226,7 +226,7 @@ public class ReplacementsList {
         }
 
         private boolean isEmpty(String string) {
-            return string == null || string.isEmpty() || string.equals(" ");
+            return string == null || string.isEmpty() || string.trim().length() == 0;
         }
     }
 }

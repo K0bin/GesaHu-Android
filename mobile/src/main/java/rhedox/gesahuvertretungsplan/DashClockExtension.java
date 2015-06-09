@@ -45,6 +45,9 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
                         .expandedBody(count + " Vertretungsstunden")
                         .clickIntent(new Intent(context, MainActivity.class)));
             }
+            else
+                publishUpdate(new ExtensionData()
+                .visible(false));
         }
     }
 
