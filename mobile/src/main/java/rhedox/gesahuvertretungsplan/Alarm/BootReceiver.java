@@ -17,8 +17,8 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean notification = prefs.getBoolean("pref_notification", true);
-            String alarmString = prefs.getString("pref_notification_time", "00:00");
+            boolean notification = prefs.getBoolean(NotificationPreference.PREF_NOTIFICATION, true);
+            String alarmString = prefs.getString(NotificationPreference.PREF_NOTIFICATION_TIME, "00:00");
             int alarmHour = TimePreference.getHour(alarmString);
             int alarmMinute = TimePreference.getMinute(alarmString);
 
@@ -28,14 +28,14 @@ public class BootReceiver extends BroadcastReceiver {
         }
     }
 
-    public void create(Context context) {
+    public static void create(Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
 
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
-    public void cancel(Context context) {
+    public static void cancel(Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
 

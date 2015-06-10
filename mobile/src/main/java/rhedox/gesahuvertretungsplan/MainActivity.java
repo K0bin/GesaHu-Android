@@ -26,14 +26,18 @@ import java.util.List;
 import rhedox.gesahuvertretungsplan.RecyclerView.*;
 
 public class MainActivity extends AppCompatActivity {
+    public final String PREF_YEAR ="pref_year";
+    public final String PREF_CLASS ="pref_class";
+    public final String PREF_DARK ="pref_dark";
+
     MainFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean darkTheme = prefs.getBoolean("pref_dark", false);
-        StudentInformation studentInformation = new StudentInformation(prefs.getString("pref_year","5"), prefs.getString("pref_class", "a"));
+        boolean darkTheme = prefs.getBoolean(PREF_DARK, false);
+        StudentInformation studentInformation = new StudentInformation(prefs.getString(PREF_YEAR,"5"), prefs.getString(PREF_CLASS, "a"));
 
         //Theming
         if(darkTheme) {
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         private StudentInformation studentInformation;
 
-        public static final String STUDENT_INFORMATION = "STUDENT_INFORMATION";
+        public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
         public static final String TAG ="MAIN_FRAGMENT";
 
         public MainFragment() {}
@@ -120,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             //Get Arguments
             Bundle arguments = getArguments();
             if(arguments != null)
-                studentInformation = arguments.getParcelable(STUDENT_INFORMATION);
+                studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
 
             if(studentInformation == null) {
                 studentInformation = new StudentInformation("","");
@@ -224,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
         public static MainFragment newInstance(StudentInformation information) {
             Bundle arguments = new Bundle();
-            arguments.putParcelable(STUDENT_INFORMATION, information);
+            arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
             MainFragment fragment = new MainFragment();
             fragment.setArguments(arguments);
 
