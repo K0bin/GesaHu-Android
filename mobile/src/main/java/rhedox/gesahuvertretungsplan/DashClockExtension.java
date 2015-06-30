@@ -1,11 +1,12 @@
 package rhedox.gesahuvertretungsplan;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.android.apps.dashclock.api.ExtensionData;
+
+import org.joda.time.LocalDate;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     protected void onUpdateData(int reason) {
         ReplacementsList list = new ReplacementsList();
 
-        Date date = SchoolWeek.next();
+        LocalDate date = SchoolWeek.next();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String schoolClass = prefs.getString("pref_class", "a");
@@ -28,7 +29,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     }
 
     @Override
-    public void onDownloaded(Context context, List<Replacement> replacements) {
+    public void onDownloaded(List<Replacement> replacements) {
         if (replacements != null) {
             int count = 0;
 
@@ -43,12 +44,17 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
                         .status(count + " Stunden")
                         .expandedTitle("Gesahu Vertretungsplan")
                         .expandedBody(count + " Vertretungsstunden")
-                        .clickIntent(new Intent(context, MainActivity.class)));
+                        .clickIntent(new Intent(getBaseContext(), MainActivity.class)));
             }
             else
                 publishUpdate(new ExtensionData()
                 .visible(false));
         }
+    }
+
+    @Override
+    public void onDownloadFailed(int error) {
+
     }
 
 }

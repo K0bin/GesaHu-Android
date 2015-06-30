@@ -1,12 +1,12 @@
 package rhedox.gesahuvertretungsplan;
 
-import android.content.Context;
+import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.DatePicker;
+
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatterBuilder;
 
 import java.util.List;
 
@@ -30,13 +37,14 @@ public class MainActivity extends AppCompatActivity {
     public final String PREF_CLASS ="pref_class";
     public final String PREF_DARK ="pref_dark";
 
-    MainFragment fragment;
+    private MainFragment fragment;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean darkTheme = prefs.getBoolean(PREF_DARK, false);
+        darkTheme = prefs.getBoolean(PREF_DARK, false);
         StudentInformation studentInformation = new StudentInformation(prefs.getString(PREF_YEAR,"5"), prefs.getString(PREF_CLASS, "a"));
 
         //Theming
@@ -55,10 +63,9 @@ public class MainActivity extends AppCompatActivity {
         fragment = (MainFragment)getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
         if(fragment == null) {
             fragment = MainFragment.newInstance(studentInformation);
-            getSupportFragmentManager().beginTransaction().add(R.id.content, fragment, MainFragment.TAG).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.coordinator, fragment, MainFragment.TAG).commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,52 +81,62 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent TargetActivity in AndroidManifest.xml.
 
         switch(item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_settings: {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+            }
                 break;
 
-            case R.id.action_load:
-                if(fragment != null)
+            case R.id.action_load: {
+                if (fragment != null)
                     fragment.showPicker();
+            }
                 break;
 
-            case R.id.action_about:
-                String credits = "Vertretungsplanx3" + System.getProperty("line.separator") + "Entwickelt von Robin Kertels" + System.getProperty("line.separator") + "Viel Feedback von Felix Bastian" + System.getProperty("line.separator") + "Wollen unbedingt erwähnt werden: Jonas Dietz, Robin Möbus und Heidi Meyer";
-                Toast.makeText(this, credits, Toast.LENGTH_LONG).show();
+            case R.id.action_about: {
+
+                new LibsBuilder()
+                        .withFields(R.string.class.getFields())
+                        .withAboutAppName(getResources().getString(R.string.app_name))
+                        .withActivityTitle("Über")
+                        .withAboutIconShown(true)
+                        .withAboutVersionShown(true)
+                        .withAboutDescription("Zeigt den <b>Gesahu Vertretungsplan</b> in einem für Smartphones optimierten Layout an.<br>Entwickelt von Robin Kertels<br>Feedback von Felix Bastian")
+                        .withVersionShown(true)
+                        .withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                        .withLibraries("AppCompat","MaterialDesignIcons")
+                        .start(this);
+            }
                 break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public static class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener {
-        private Date currentDate;
+    public static class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener, DatePickerDialog.OnDateSetListener {
         private ReplacementsList plan = new ReplacementsList();
         private ReplacementsAdapter adapter;
         private SwipeRefreshLayout refreshLayout;
-        private boolean loading = false;
+
         private DatePickerFragment datePickerDialog;
+
+        private CoordinatorLayout coordinatorLayout;
 
         private StudentInformation studentInformation;
 
         public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
         public static final String TAG ="MAIN_FRAGMENT";
 
+        private LocalDate lastDate;
+
+        //Datepicker double workaround
+        private boolean picked = false;
+
         public MainFragment() {}
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
-            adapter = new ReplacementsAdapter(this.getActivity());
-
-            setRetainInstance(true);
-        }
-
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
             //Get Arguments
             Bundle arguments = getArguments();
@@ -129,6 +146,16 @@ public class MainActivity extends AppCompatActivity {
             if(studentInformation == null) {
                 studentInformation = new StudentInformation("","");
             }
+
+            adapter = new ReplacementsAdapter(this.getActivity());
+            load(SchoolWeek.next());
+
+            setRetainInstance(true);
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
             View view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -149,81 +176,92 @@ public class MainActivity extends AppCompatActivity {
 
             datePickerDialog = (DatePickerFragment)DatePickerFragment.newInstance();
 
-            if(adapter.getItemCount() == 0)
-                loadToday();
+            coordinatorLayout = (CoordinatorLayout)getActivity().findViewById(R.id.coordinator);
 
             return view;
         }
 
         @Override
-        public void onDownloaded(Context context, List<Replacement> replacements) {
-            adapter.addAll(replacements);
+        public void onDownloaded(List<Replacement> replacements) {
+            if(adapter != null)
+                adapter.addAll(replacements);
+            else {
+                adapter = new ReplacementsAdapter(getActivity());
+                adapter.setReplacements(replacements);
+            }
 
-            refreshLayout.setRefreshing(false);
-            loading = false;
+            if(refreshLayout != null)
+                refreshLayout.setRefreshing(false);
 
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(currentDate.toString());
+            if(getActivity() != null && getActivity() instanceof AppCompatActivity) {
+                AppCompatActivity activity = (AppCompatActivity)getActivity();
+                if(activity.getSupportActionBar() != null) {
+                    String title = lastDate.toString(DateTimeFormat.forPattern("dd.MM.yyyy"));
+                    activity.setTitle(title);
+                }
+            }
+        }
+
+        @Override
+        public void onDownloadFailed(int error) {
+            if(refreshLayout != null)
+                refreshLayout.setRefreshing(false);
+
+            String errorMessage = "Fehler";
+            if(error == Error.NO_CONNECTION)
+                errorMessage = "Keine Internetverbindung";
+            else if(error == Error.NO_DATA)
+                errorMessage = "Keine Daten empfangen";
+
+            if(coordinatorLayout != null)
+            Snackbar.make(coordinatorLayout, errorMessage, Snackbar.LENGTH_LONG).setAction("Erneut versuchen", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainFragment.this.onRefresh();
+                }
+            }).show();
         }
 
 
         @Override
         public void onDetach() {
-            plan.stop();
+            if(plan != null)
+                plan.stop();
 
             super.onDetach();
         }
 
         @Override
         public void onStop() {
-            plan.stop();
+            if(plan != null)
+                plan.stop();
 
             super.onStop();
         }
 
         @Override
-        public void onDestroy() {
-            super.onDestroy();
-        }
-
-        @Override
         public void onRefresh() {
-            load(currentDate);
+            load(lastDate);
         }
 
-        public void load(Date date) {
-            if(isNetworkConnected())
-            {
-                if(!loading) {
+        public void load(LocalDate date) {
+            if(!plan.isLoading()) {
+                if(refreshLayout != null)
                     refreshLayout.setRefreshing(true);
-                    loading = true;
+
+                if(adapter != null)
                     adapter.removeAll();
 
-                    this.currentDate = date;
+                lastDate = date;
 
-                    plan.load(this.getActivity(), currentDate, studentInformation, this);
-                }
-            } else {
-                refreshLayout.setRefreshing(false);
-                loading = false;
-
-                String noConnection = "Keine Internetverbindung!";
-                Toast.makeText(this.getActivity(), noConnection, Toast.LENGTH_SHORT).show();
+                plan.load(getActivity(), date, studentInformation, this);
             }
-        }
-        public void loadToday() {
-            load(SchoolWeek.next());
-        }
-
-        // Check network connection
-        private boolean isNetworkConnected(){
-            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
 
         public void showPicker() {
+            picked = false;
             if(datePickerDialog != null)
-                datePickerDialog.show(currentDate, getChildFragmentManager(), "datePicker");
+                datePickerDialog.show(lastDate, getChildFragmentManager(), "datePicker", this);
         }
 
         public static MainFragment newInstance(StudentInformation information) {
@@ -233,6 +271,15 @@ public class MainActivity extends AppCompatActivity {
             fragment.setArguments(arguments);
 
             return fragment;
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            if(!picked) {
+                LocalDate date = SchoolWeek.next(new LocalDate(year, monthOfYear + 1, dayOfMonth));
+                load(date);
+            }
+            picked = true;
         }
     }
 }

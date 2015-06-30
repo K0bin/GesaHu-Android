@@ -13,7 +13,7 @@ public class Replacement {
         this.hint = hint.trim();
 
         String[] classes = subject.split(" ");
-        if(classes.length > 0 && !information.isEmpty()) {
+        if(classes.length > 0 && information != null && !information.isEmpty()) {
             String _class = classes[classes.length - 1];
             isImportant = _class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass());
         } else

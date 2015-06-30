@@ -31,8 +31,4 @@
         android:title="Dark Theme"
         android:summary="Dunkle Farben verwenden"
         android:defaultValue="false" />
-    <Preference
-        android:key="licenses"
-        android:title="Open Source Lizenzen"
-        android:summary="Die Lizenzen der verwendeten Open Source Libraries" />
 </PreferenceScreen>

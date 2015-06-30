@@ -54,22 +54,16 @@ public class ReplacementsAdapter extends RecyclerView.Adapter<ReplacementsAdapte
         this.replacements = new ArrayList<Replacement>(replacements);
     }
 
-    public void clear() {
-        replacements.clear();
-    }
-    public void addAll() {
+    public void addAll(List<Replacement> replacements) {
+        setReplacements(replacements);
         if(getItemCount() > 0) {
             notifyItemRangeInserted(0, getItemCount());
         }
     }
-    public void addAll(List<Replacement> replacements) {
-        setReplacements(replacements);
-        addAll();
-    }
     public void removeAll() {
         if(getItemCount() > 0) {
             int count = getItemCount();
-            clear();
+            replacements.clear();
             notifyItemRangeRemoved(0, count);
         }
     }

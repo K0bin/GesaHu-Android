@@ -8,13 +8,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import org.joda.time.Chronology;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.DurationFieldType;
+import org.joda.time.LocalDateTime;
+
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import rhedox.gesahuvertretungsplan.MainActivity;
 import rhedox.gesahuvertretungsplan.OnDownloadedListener;
@@ -42,41 +52,34 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
     }
 
     public static void create(Context context, int hour, int minute) {
-        GregorianCalendar calendar = (GregorianCalendar)GregorianCalendar.getInstance();
-        int nowHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int nowMinute = calendar.get(Calendar.MINUTE);
-        if(hour < nowHour || (hour == nowHour && minute < nowMinute)) {
-            calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-        }
-        calendar.set(GregorianCalendar.HOUR_OF_DAY, hour);
-        calendar.set(GregorianCalendar.MINUTE, minute);
-        calendar.set(GregorianCalendar.SECOND, 0);
-        calendar.set(GregorianCalendar.MILLISECOND, 0);
+        DateTime time = DateTime.now();
 
-        AlarmManager manager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
+        if(hour < time.getHourOfDay() || (hour == time.getHourOfDay() && minute < time.getMinuteOfHour()))
+            time = time.withFieldAdded(DurationFieldType.days(), 1);
+
+        DateTime alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), hour, minute, 0, 0);
+        long millis = alarm.getMillis();
+
+        AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pending = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if(manager!=null) {
-            manager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pending);
+        if(manager != null) {
+            manager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending);
         }
-
-        Log.d("Alarm", "Alarm set!");
     }
 
     public static void cancel(Context context) {
         PendingIntent intent = PendingIntent.getBroadcast(context, 0 , new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager manager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
+        AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         if(manager!=null) {
             manager.cancel(intent);
         }
     }
 
     @Override
-    public void onDownloaded(Context context, List<Replacement> replacements) {
-
-        Log.d("Plan", "Notifications now! Size: " + Integer.toString(replacements.size()));
+    public void onDownloaded(List<Replacement> replacements) {
 
         int count = 0;
         for (int i = 0; i < replacements.size(); i++) {
@@ -136,6 +139,11 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
                 count++;
             }
         }
+
+    }
+
+    @Override
+    public void onDownloadFailed(int error) {
 
     }
 }

@@ -2,8 +2,15 @@ package rhedox.gesahuvertretungsplan;
 
 import android.content.Context;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
+
+import org.joda.time.LocalDate;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,35 +21,45 @@ import java.util.List;
 
 public class ReplacementsList {
 
-    private List<Replacement> replacements = new ArrayList<Replacement>();
-
     private ShortNameResolver shortNameResolver = new ShortNameResolver();
 
     private ReplacementslistLoader loader;
+    private boolean loading = false;
 
-    public ReplacementsList() {
+    public void load(Context context, LocalDate date, StudentInformation studentInformation, OnDownloadedListener listener) {
+        if(isNetworkConnected(context)) {
+            loading = true;
+            loader = new ReplacementslistLoader();
+            loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, listener));
+        } else {
+            if(listener != null)
+                listener.onDownloadFailed(Error.NO_CONNECTION);
+        }
     }
 
-    public void load(Context context, Date date, StudentInformation studentInformation, OnDownloadedListener listener) {
-        replacements.clear();
-        loader = new ReplacementslistLoader(context);
-        loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, context, listener));
+    // Check network connection
+    private boolean isNetworkConnected(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public void stop() {
-        loader.cancel(true);
+        if(loader != null && !loader.isCancelled())
+            loader.cancel(true);
+
+        loading = false;
     }
 
-    public List<Replacement> getReplacements() {
-        return replacements;
+    public boolean isLoading() {
+        return loading;
     }
 
     class ReplacementslistLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Replacement>> {
         private ReplacementsListLoaderArgs loaderArgs;
-        private Context context;
 
-        public ReplacementslistLoader(Context context) {
-            this.context = context;
+        public ReplacementslistLoader() {
+
         }
 
         @Override
@@ -53,12 +70,12 @@ public class ReplacementsList {
         @Override
         protected List<Replacement> doInBackground(ReplacementsListLoaderArgs... args) {
             loaderArgs = args[0];
+            List<Replacement> replacements = new ArrayList<Replacement>();
 
             try {
-                String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDate().getDay()) + "&m=" + String.valueOf(loaderArgs.getDate().getMonth()) + "&y=" + String.valueOf(loaderArgs.getDate().getYear());
+                String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDate().getDayOfMonth()) + "&m=" + String.valueOf(loaderArgs.getDate().getMonthOfYear()) + "&y=" + String.valueOf(loaderArgs.getDate().getYear());
                 URL url = new URL(getString);
-                Log.d("Plan","Downloading: "+getString);
-
+                Log.d("Plan", "Downloading: " + getString);
 
                 HttpURLConnection request = (HttpURLConnection) url.openConnection();
                 request.setRequestProperty("User-Agent", "Gesahu Replacementplan Android");
@@ -115,8 +132,8 @@ public class ReplacementsList {
                                         break;
                                     case 1:
                                         if (!subject.equals("")) {
-                                                //Subjectname isn't empty => add previous lesson
-                                                Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                                            //Subjectname isn't empty => add previous lesson
+                                            Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
                                             replacements.add(replacement);
 
                                             subject = "";
@@ -201,28 +218,24 @@ public class ReplacementsList {
                 in.close();
 
             } catch (Exception e) {
-                Log.d("VPException2", "" + e.getMessage());
-
-                Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Keine Daten", "Überprüfe deine Verbindung!", "", e.getMessage(), new StudentInformation("",""));
-                replacements.add(replacement);
+                Log.d("VPException", "" + e.getMessage());
             }
-
-            Log.d("Plan", "Plan loadToday!");
 
             return replacements;
         }
 
         @Override
-        protected void onPostExecute(List<Replacement> Replacements) {
-            super.onPostExecute(Replacements);
-            Log.d("Plan","PostExecute");
-            loaderArgs.getCallback().onDownloaded(context, Replacements);
+        protected void onPostExecute(List<Replacement> replacements) {
+            super.onPostExecute(replacements);
 
-            /*if(loaderArgs.populate) {
-                ((MainActivity)loaderArgs.context).populateList(Replacements);
-            } else {
-                notifications(loaderArgs.context);
-            }*/
+            ReplacementsList.this.loading = false;
+
+            if(loaderArgs.getCallback() != null)
+                if(replacements != null && replacements.size() > 0) {
+                        loaderArgs.getCallback().onDownloaded(replacements);
+                } else {
+                    loaderArgs.getCallback().onDownloadFailed(Error.NO_DATA);
+                }
         }
 
         private boolean isEmpty(String string) {

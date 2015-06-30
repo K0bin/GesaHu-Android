@@ -1,5 +1,10 @@
 package rhedox.gesahuvertretungsplan;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.DurationFieldType;
+import org.joda.time.LocalDate;
+
 import java.util.GregorianCalendar;
 
 /**
@@ -8,28 +13,22 @@ import java.util.GregorianCalendar;
 public final class SchoolWeek {
     private SchoolWeek() {}
 
-    public static Date next() {
-        GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
+    public static LocalDate next(LocalDate date){
+        if(date.getDayOfWeek() == DateTimeConstants.SUNDAY)
+            return date.withFieldAdded(DurationFieldType.days(), 1);
+        else if (date.getDayOfWeek() == DateTimeConstants.SATURDAY)
+            return date.withFieldAdded(DurationFieldType.days(), 2);
 
-        if(calendar.get(GregorianCalendar.HOUR_OF_DAY) > 18)
-            calendar.add(GregorianCalendar.DAY_OF_MONTH,1);
-
-        if(calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SUNDAY)
-            calendar.add(GregorianCalendar.DAY_OF_MONTH,1);
-        else if(calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SATURDAY)
-            calendar.add(GregorianCalendar.DAY_OF_MONTH,2);
-
-        return Date.fromCalendar(calendar);
+        return date;
     }
 
-    public static Date nextDay(Date date) {
-        GregorianCalendar calendar = (GregorianCalendar) date.toCalendar();
+    public static LocalDate next(){
+        DateTime dateTime = DateTime.now();
 
-        if (calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SUNDAY)
-            calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-        else if (calendar.get(GregorianCalendar.DAY_OF_WEEK) == GregorianCalendar.SATURDAY)
-            calendar.add(GregorianCalendar.DAY_OF_MONTH, 2);
-
-        return Date.fromCalendar(calendar);
+        LocalDate date = dateTime.toLocalDate();
+        if(dateTime.getHourOfDay() > 18)
+            return SchoolWeek.next(date.withFieldAdded(DurationFieldType.days(), 1));
+        else
+            return date;
     }
 }

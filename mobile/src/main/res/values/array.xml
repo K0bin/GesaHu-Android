@@ -11,14 +11,6 @@
         <item>12</item>
         <item>13</item>
     </string-array>
-    <string-array name="classes_array">
-        <item>a</item>
-        <item>b</item>
-        <item>c</item>
-        <item>d</item>
-        <item>e</item>
-        <item>f</item>
-    </string-array>
     <string-array name="years_array_values">
         <item>5</item>
         <item>6</item>
@@ -30,6 +22,15 @@
         <item>12</item>
         <item>13</item>
     </string-array>
+
+    <string-array name="classes_array">
+        <item>a</item>
+        <item>b</item>
+        <item>c</item>
+        <item>d</item>
+        <item>e</item>
+        <item>f</item>
+    </string-array>
     <string-array name="classes_array_values">
         <item>a</item>
         <item>b</item>
@@ -38,4 +39,5 @@
         <item>e</item>
         <item>f</item>
     </string-array>
+
 </resources>

@@ -2,16 +2,16 @@ package rhedox.gesahuvertretungsplan;
 
 import android.content.Context;
 
+import org.joda.time.LocalDate;
+
 class ReplacementsListLoaderArgs {
     private StudentInformation studentInformation;
-    private Context context;
     private OnDownloadedListener callback;
-    private Date date;
+    private LocalDate date;
 
-    public ReplacementsListLoaderArgs(Date date, StudentInformation studentInformation, Context context, OnDownloadedListener callback) {
+    public ReplacementsListLoaderArgs(LocalDate date, StudentInformation studentInformation, OnDownloadedListener callback) {
         this.date = date;
         this.studentInformation = studentInformation;
-        this.context = context;
         this.callback = callback;
     }
 
@@ -19,11 +19,7 @@ class ReplacementsListLoaderArgs {
         return studentInformation;
     }
 
-    public Context getContext() {
-        return context;
-    }
-
-    public Date getDate() { return date; }
+    public LocalDate getDate() { return date; }
 
     public OnDownloadedListener getCallback() {
         return callback;

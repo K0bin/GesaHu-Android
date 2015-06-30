@@ -23,7 +23,7 @@ public class BootReceiver extends BroadcastReceiver {
             int alarmMinute = TimePreference.getMinute(alarmString);
 
             if(notification) {
-                new AlarmReceiver().create(context, alarmHour, alarmMinute);
+                AlarmReceiver.create(context, alarmHour, alarmMinute);
             }
         }
     }

@@ -68,7 +68,7 @@ public class TimePreference extends DialogPreference {
             boolean notification = prefs.getBoolean("pref_notification", true);
 
             if(!time.equals(lastTime) && notification) {
-                new AlarmReceiver().create(this.getContext(), lastHour, lastMinute);
+                AlarmReceiver.create(this.getContext(), lastHour, lastMinute);
             }
 
             if (callChangeListener(time)) {
@@ -86,7 +86,7 @@ public class TimePreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        String time=null;
+        String time;
 
         if (restoreValue) {
             if (defaultValue==null) {

@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.DatePicker;
 
+import org.joda.time.LocalDate;
+
 public class DatePickerFragment extends DialogFragment {
-    private Date date;
-    private boolean picked = false;
+    private LocalDate date;
+    private DatePickerDialog.OnDateSetListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -18,22 +20,15 @@ public class DatePickerFragment extends DialogFragment {
 
     @Override
     public android.app.Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                if(!picked) {
-                    MainActivity.MainFragment activity = (MainActivity.MainFragment)getParentFragment();
-                    Date date = SchoolWeek.nextDay(Date.fromJavaDate(dayOfMonth, monthOfYear, year));
-                    activity.load(date);
-                    picked=true;
-                }
-            }
-        }, date.getYear(), date.getJavaMonth(), date.getDay());
+        if(date == null)
+            date = LocalDate.now();
+
+        return new DatePickerDialog(getActivity(), listener, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
     }
 
-    public void show(Date date, FragmentManager fragmentManager, String tag) {
-        picked = false;
+    public void show(LocalDate date, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener listener) {
         this.date = date;
+        this.listener = listener;
         show(fragmentManager, tag);
     }
 
