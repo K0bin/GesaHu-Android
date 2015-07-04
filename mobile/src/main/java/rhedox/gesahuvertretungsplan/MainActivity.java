@@ -4,48 +4,40 @@ import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.DatePicker;
 
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
+import org.joda.time.DateTimeConstants;
+import org.joda.time.DurationFieldType;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatterBuilder;
 
-import java.util.List;
+import java.util.Locale;
 
-import rhedox.gesahuvertretungsplan.RecyclerView.*;
-
-public class MainActivity extends AppCompatActivity {
-    public final String PREF_YEAR ="pref_year";
-    public final String PREF_CLASS ="pref_class";
-    public final String PREF_DARK ="pref_dark";
-
-    private MainFragment fragment;
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private boolean darkTheme;
+
+    //Datepicker double workaround
+    private boolean picked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = prefs.getBoolean(PREF_DARK, false);
-        StudentInformation studentInformation = new StudentInformation(prefs.getString(PREF_YEAR,"5"), prefs.getString(PREF_CLASS, "a"));
+        darkTheme = prefs.getBoolean(SettingsFragment.PREF_DARK, false);
+        StudentInformation studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR, "5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
 
         //Theming
         if(darkTheme) {
@@ -60,11 +52,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.actionToolBar);
         setSupportActionBar(toolbar);
 
-        fragment = (MainFragment)getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
-        if(fragment == null) {
-            fragment = MainFragment.newInstance(studentInformation);
-            getSupportFragmentManager().beginTransaction().add(R.id.coordinator, fragment, MainFragment.TAG).commit();
-        }
+        LocalDate now = SchoolWeek.next();
+        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), now, studentInformation);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(pagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.setCurrentItem(pagerAdapter.getItemPosition(now));
     }
 
     @Override
@@ -88,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_load: {
-                if (fragment != null)
-                    fragment.showPicker();
+                showPicker();
             }
                 break;
 
@@ -101,10 +97,10 @@ public class MainActivity extends AppCompatActivity {
                         .withActivityTitle("Über")
                         .withAboutIconShown(true)
                         .withAboutVersionShown(true)
-                        .withAboutDescription("Zeigt den <b>Gesahu Vertretungsplan</b> in einem für Smartphones optimierten Layout an.<br>Entwickelt von Robin Kertels<br>Feedback von Felix Bastian")
+                        .withAboutDescription("Zeigt den <b>Gesahu Vertretungsplan</b> in einem für Smartphones optimierten Layout an.<br>Entwickelt von Robin Kertels<br>Feedback von Felix Bastian<br><i>Wollen unbedingt erwähnt werden: Jonas Dietz, Heidi Meyer, Robin Möbus</i>")
                         .withVersionShown(true)
                         .withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                        .withLibraries("AppCompat","MaterialDesignIcons")
+                        .withLibraries("AppCompat","MaterialDesignIcons","ACRA")
                         .start(this);
             }
                 break;
@@ -113,173 +109,66 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener, DatePickerDialog.OnDateSetListener {
-        private ReplacementsList plan = new ReplacementsList();
-        private ReplacementsAdapter adapter;
-        private SwipeRefreshLayout refreshLayout;
+    public void showPicker() {
+        picked = false;
+        DatePickerFragment.newInstance().show(LocalDate.now(), getSupportFragmentManager(), "datePicker", this);
+    }
 
-        private DatePickerFragment datePickerDialog;
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        if(!picked) {
+            LocalDate date = SchoolWeek.next(new LocalDate(year, monthOfYear + 1, dayOfMonth));
 
-        private CoordinatorLayout coordinatorLayout;
+            Intent intent = new Intent(this, SingleDayActivity.class);
+            intent.putExtra(SingleDayActivity.OPTION_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            startActivity(intent);
+        }
+        picked = true;
+    }
 
+    public class PagerAdapter extends FragmentPagerAdapter {
         private StudentInformation studentInformation;
 
-        public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
-        public static final String TAG ="MAIN_FRAGMENT";
+        private LocalDate date;
 
-        private LocalDate lastDate;
+        public PagerAdapter(FragmentManager manager, LocalDate date, StudentInformation information) {
+            super(manager);
 
-        //Datepicker double workaround
-        private boolean picked = false;
-
-        public MainFragment() {}
-
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            //Get Arguments
-            Bundle arguments = getArguments();
-            if(arguments != null)
-                studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
-
-            if(studentInformation == null) {
-                studentInformation = new StudentInformation("","");
-            }
-
-            adapter = new ReplacementsAdapter(this.getActivity());
-            load(SchoolWeek.next());
-
-            setRetainInstance(true);
+            this.date = date;
+            this.studentInformation = information;
         }
 
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-            View view = inflater.inflate(R.layout.fragment_main, container, false);
-
-            refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe);
-            refreshLayout.setOnRefreshListener(this);
-
-            //RecyclerView
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recylcler);
-            recyclerView.setHasFixedSize(true);
-            RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
-            recyclerView.setLayoutManager(manager);
-            recyclerView.setAdapter(adapter);
-
-            RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
-            recyclerView.addItemDecoration(itemDecoration);
-
-            recyclerView.setItemAnimator(new SlideAnimator(recyclerView));
-
-            datePickerDialog = (DatePickerFragment)DatePickerFragment.newInstance();
-
-            coordinatorLayout = (CoordinatorLayout)getActivity().findViewById(R.id.coordinator);
-
-            return view;
+        public void setDate(LocalDate date) {
+            if(date.getDayOfWeek() != DateTimeConstants.SUNDAY && date.getDayOfWeek() != DateTimeConstants.SATURDAY)
+                this.date = date;
+            else
+                throw new IllegalArgumentException("Must not be saturday or sunday!");
         }
 
         @Override
-        public void onDownloaded(List<Replacement> replacements) {
-            if(adapter != null)
-                adapter.addAll(replacements);
-            else {
-                adapter = new ReplacementsAdapter(getActivity());
-                adapter.setReplacements(replacements);
-            }
+        public Fragment getItem(int position) {
+            LocalDate fragmentDate = date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek());
 
-            if(refreshLayout != null)
-                refreshLayout.setRefreshing(false);
-
-            if(getActivity() != null && getActivity() instanceof AppCompatActivity) {
-                AppCompatActivity activity = (AppCompatActivity)getActivity();
-                if(activity.getSupportActionBar() != null) {
-                    String title = lastDate.toString(DateTimeFormat.forPattern("dd.MM.yyyy"));
-                    activity.setTitle(title);
-                }
-            }
+            return MainFragment.newInstance(studentInformation, fragmentDate);
         }
 
         @Override
-        public void onDownloadFailed(int error) {
-            if(refreshLayout != null)
-                refreshLayout.setRefreshing(false);
-
-            String errorMessage = "Fehler";
-            if(error == Error.NO_CONNECTION)
-                errorMessage = "Keine Internetverbindung";
-            else if(error == Error.NO_DATA)
-                errorMessage = "Keine Daten empfangen";
-
-            if(coordinatorLayout != null)
-            Snackbar.make(coordinatorLayout, errorMessage, Snackbar.LENGTH_LONG).setAction("Erneut versuchen", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MainFragment.this.onRefresh();
-                }
-            }).show();
-        }
-
-
-        @Override
-        public void onDetach() {
-            if(plan != null)
-                plan.stop();
-
-            super.onDetach();
+        public int getCount() {
+            return 5;
         }
 
         @Override
-        public void onStop() {
-            if(plan != null)
-                plan.stop();
-
-            super.onStop();
+        public CharSequence getPageTitle(int position) {
+            return date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek()).toString("EEE dd.MM.yy", Locale.GERMANY);
         }
 
-        @Override
-        public void onRefresh() {
-            load(lastDate);
+        public String getFragmentTag(int viewPagerId, int fragmentPosition)
+        {
+            return "android:switcher:" + viewPagerId + ":" + fragmentPosition;
         }
 
-        public void load(LocalDate date) {
-            if(!plan.isLoading()) {
-                if(refreshLayout != null)
-                    refreshLayout.setRefreshing(true);
-
-                if(adapter != null)
-                    adapter.removeAll();
-
-                lastDate = date;
-
-                plan.load(getActivity(), date, studentInformation, this);
-            }
-        }
-
-        public void showPicker() {
-            picked = false;
-            if(datePickerDialog != null)
-                datePickerDialog.show(lastDate, getChildFragmentManager(), "datePicker", this);
-        }
-
-        public static MainFragment newInstance(StudentInformation information) {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
-            MainFragment fragment = new MainFragment();
-            fragment.setArguments(arguments);
-
-            return fragment;
-        }
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            if(!picked) {
-                LocalDate date = SchoolWeek.next(new LocalDate(year, monthOfYear + 1, dayOfMonth));
-                load(date);
-            }
-            picked = true;
+        public int getItemPosition(LocalDate date) {
+            return date.getDayOfWeek() - 1 < 5 ? date.getDayOfWeek() - 1 : 0;
         }
     }
 }

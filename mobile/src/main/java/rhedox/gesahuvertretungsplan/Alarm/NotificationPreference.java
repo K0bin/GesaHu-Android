@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.Alarm;
+package rhedox.gesahuvertretungsplan.alarm;
 
 import android.content.Context;
 import android.content.SharedPreferences;

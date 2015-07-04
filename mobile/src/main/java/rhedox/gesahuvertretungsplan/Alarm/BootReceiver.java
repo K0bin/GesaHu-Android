@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.Alarm;
+package rhedox.gesahuvertretungsplan.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -30,6 +30,7 @@ public class BootReceiver extends BroadcastReceiver {
 
     public static void create(Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        //ComponentName receiver = new ComponentName("rhedox.gesahuvertretungsplan.alarm","BootReceiver");
         PackageManager pm = context.getPackageManager();
 
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);

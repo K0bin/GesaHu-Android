@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.Alarm;
+package rhedox.gesahuvertretungsplan.alarm;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,8 +8,6 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TimePicker;
-
-import rhedox.gesahuvertretungsplan.Alarm.AlarmReceiver;
 
 public class TimePreference extends DialogPreference {
     private int lastHour=0;

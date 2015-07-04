@@ -2,14 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="rhedox.gesahuvertretungsplan" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/GesahuTheme"
         android:supportsRtl="false"
-        android:name=".App">
-
+        android:theme="@style/GesahuTheme" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -19,7 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SettingsActivity"
             android:label="Einstellungen"
@@ -28,33 +31,41 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".SingleDayActivity"
+            android:label="@string/title_activity_single_day"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="rhedox.gesahuvertretungsplan.MainActivity" />
+        </activity>
 
-        <service android:name=".DashClockExtension"
+        <service
+            android:name=".DashClockExtension"
             android:icon="@drawable/icon_notification"
             android:label="Gesahu Vertretungsplan"
-            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
             <intent-filter>
                 <action android:name="com.google.android.apps.dashclock.Extension" />
             </intent-filter>
-        <meta-data android:name="protocolVersion" android:value="2" />
-        <meta-data android:name="worldReadable" android:value="true" />
-        <meta-data android:name="description"
-            android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
+
+            <meta-data
+                android:name="protocolVersion"
+                android:value="2" />
+            <meta-data
+                android:name="worldReadable"
+                android:value="true" />
+            <meta-data
+                android:name="description"
+                android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
         </service>
 
-        <receiver android:name=".Alarm.AlarmReceiver" />
-
-        <receiver android:name=".Alarm.BootReceiver">
+        <receiver android:name=".alarm.AlarmReceiver" />
+        <receiver android:name=".alarm.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 </manifest>

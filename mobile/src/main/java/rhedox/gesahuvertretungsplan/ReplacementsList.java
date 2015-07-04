@@ -1,18 +1,16 @@
 package rhedox.gesahuvertretungsplan;
 
 import android.content.Context;
-import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.joda.time.LocalDate;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -23,13 +21,13 @@ public class ReplacementsList {
 
     private ShortNameResolver shortNameResolver = new ShortNameResolver();
 
-    private ReplacementslistLoader loader;
-    private boolean loading = false;
+    private ReplacementsListLoader loader;
+    private boolean isLoading = false;
 
     public void load(Context context, LocalDate date, StudentInformation studentInformation, OnDownloadedListener listener) {
         if(isNetworkConnected(context)) {
-            loading = true;
-            loader = new ReplacementslistLoader();
+            isLoading = true;
+            loader = new ReplacementsListLoader();
             loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, listener));
         } else {
             if(listener != null)
@@ -48,17 +46,17 @@ public class ReplacementsList {
         if(loader != null && !loader.isCancelled())
             loader.cancel(true);
 
-        loading = false;
+        isLoading = false;
     }
 
     public boolean isLoading() {
-        return loading;
+        return isLoading;
     }
 
-    class ReplacementslistLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Replacement>> {
+    class ReplacementsListLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Replacement>> {
         private ReplacementsListLoaderArgs loaderArgs;
 
-        public ReplacementslistLoader() {
+        public ReplacementsListLoader() {
 
         }
 
@@ -217,7 +215,7 @@ public class ReplacementsList {
                 stream.close();
                 in.close();
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 Log.d("VPException", "" + e.getMessage());
             }
 
@@ -228,7 +226,7 @@ public class ReplacementsList {
         protected void onPostExecute(List<Replacement> replacements) {
             super.onPostExecute(replacements);
 
-            ReplacementsList.this.loading = false;
+            ReplacementsList.this.isLoading = false;
 
             if(loaderArgs.getCallback() != null)
                 if(replacements != null && replacements.size() > 0) {

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.DatePicker;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class DatePickerFragment extends DialogFragment {
@@ -32,7 +33,7 @@ public class DatePickerFragment extends DialogFragment {
         show(fragmentManager, tag);
     }
 
-    public static Fragment newInstance()
+    public static DatePickerFragment newInstance()
     {
         return new DatePickerFragment();
     }

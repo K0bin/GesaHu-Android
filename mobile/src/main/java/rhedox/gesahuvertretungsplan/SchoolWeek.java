@@ -29,6 +29,6 @@ public final class SchoolWeek {
         if(dateTime.getHourOfDay() > 18)
             return SchoolWeek.next(date.withFieldAdded(DurationFieldType.days(), 1));
         else
-            return date;
+            return SchoolWeek.next(date);
     }
 }

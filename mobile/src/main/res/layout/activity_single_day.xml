@@ -20,25 +20,16 @@
             app:popupTheme="?attr/toolbarPopupTheme"
             android:elevation="4dp"
             android:titleTextAppearance="@color/white"
-            app:layout_scrollFlags="scroll"
-            android:transitionName="toolbar"
-        />
-        <android.support.design.widget.TabLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_scrollFlags="scroll|enterAlways"
-            android:id="@+id/tabLayout"
-            app:tabMode="scrollable"
-            app:tabContentStart="72dp"
-            app:tabIndicatorColor="@color/white"
-            android:elevation="4dp"/>
+            android:transitionName="toolbar"
+            />
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/viewPager"/>
+        android:id="@+id/content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 </android.support.design.widget.CoordinatorLayout>

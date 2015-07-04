@@ -8,6 +8,9 @@ import android.preference.PreferenceFragment;
  * Created by Robin on 18.10.2014.
  */
 public class SettingsFragment extends PreferenceFragment {
+    public static final String PREF_YEAR ="pref_year";
+    public static final String PREF_CLASS ="pref_class";
+    public static final String PREF_DARK ="pref_dark";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
