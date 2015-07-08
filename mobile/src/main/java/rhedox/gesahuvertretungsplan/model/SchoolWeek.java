@@ -1,11 +1,9 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.model;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DurationFieldType;
 import org.joda.time.LocalDate;
-
-import java.util.GregorianCalendar;
 
 /**
  * Created by Robin on 02.03.2015.

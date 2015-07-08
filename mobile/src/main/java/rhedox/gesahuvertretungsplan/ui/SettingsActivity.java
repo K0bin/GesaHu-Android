@@ -1,11 +1,12 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+
+import rhedox.gesahuvertretungsplan.R;
 
 public class SettingsActivity extends ActionBarActivity {
 

@@ -1,13 +1,10 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.widget.DatePicker;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public class DatePickerFragment extends DialogFragment {

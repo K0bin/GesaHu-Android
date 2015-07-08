@@ -15,12 +15,12 @@
         android:entries="@array/classes_array"
         android:entryValues="@array/classes_array_values"
         android:defaultValue="a" />
-    <rhedox.gesahuvertretungsplan.alarm.NotificationPreference
+    <rhedox.gesahuvertretungsplan.util.NotificationPreference
         android:key="pref_notification"
         android:title="Benachrichtigen"
         android:summary="Täglich bei Vertretungsstunden benachrichtigen"
         android:defaultValue="true" />
-    <rhedox.gesahuvertretungsplan.alarm.TimePreference
+    <rhedox.gesahuvertretungsplan.util.TimePreference
         android:key="pref_notification_time"
         android:title="Abrufzeit"
         android:summary="Zeit der Benachrichtigungen"

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -25,6 +24,10 @@ import org.joda.time.DurationFieldType;
 import org.joda.time.LocalDate;
 
 import java.util.Locale;
+
+import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.SchoolWeek;
+import rhedox.gesahuvertretungsplan.model.StudentInformation;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private boolean darkTheme;

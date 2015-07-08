@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.recyclerView;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.animation.Animator;
 import android.support.v7.widget.RecyclerView;

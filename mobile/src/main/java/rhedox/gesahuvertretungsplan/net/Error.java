@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.net;
 
 /**
  * Created by Robin on 29.06.2015.

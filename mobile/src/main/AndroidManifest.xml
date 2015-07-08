@@ -15,7 +15,7 @@
         android:supportsRtl="false"
         android:theme="@style/GesahuTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,24 +24,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:label="Einstellungen"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".ui.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ui.MainActivity" />
         </activity>
         <activity
-            android:name=".SingleDayActivity"
+            android:name=".ui.SingleDayActivity"
             android:label="@string/title_activity_single_day"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".ui.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="rhedox.gesahuvertretungsplan.MainActivity" />
+                android:value=".ui.MainActivity" />
         </activity>
 
         <service
-            android:name=".DashClockExtension"
+            android:name=".util.DashClockExtension"
             android:icon="@drawable/icon_notification"
             android:label="Gesahu Vertretungsplan"
             android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
@@ -60,8 +60,8 @@
                 android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
         </service>
 
-        <receiver android:name=".alarm.AlarmReceiver" />
-        <receiver android:name=".alarm.BootReceiver" >
+        <receiver android:name=".util.AlarmReceiver" />
+        <receiver android:name=".util.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

@@ -1,10 +1,10 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.model;
 
-public class Replacement {
+public class Substitute {
     private final String lesson, subject, regularTeacher, replacementTeacher, room, hint;
     private final boolean isImportant;
 
-    public Replacement(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint, StudentInformation information) {
+    public Substitute(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint, StudentInformation information) {
         this.lesson = lesson.trim();
         this.subject = subject.trim();
         this.regularTeacher = regularTeacher.trim();

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,15 +19,20 @@ import org.joda.time.LocalDate;
 
 import java.util.List;
 
-import rhedox.gesahuvertretungsplan.recyclerView.DividerItemDecoration;
-import rhedox.gesahuvertretungsplan.recyclerView.ReplacementsAdapter;
+import rhedox.gesahuvertretungsplan.*;
+import rhedox.gesahuvertretungsplan.net.Error;
+import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.SchoolWeek;
+import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.net.OnDownloadedListener;
+import rhedox.gesahuvertretungsplan.net.SubstitutesList;
 
 /**
  * Created by Robin on 30.06.2015.
  */
 public class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener{
-    private ReplacementsList plan = new ReplacementsList();
-    private ReplacementsAdapter adapter;
+    private SubstitutesList plan = new SubstitutesList();
+    private SubstitutesAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private CoordinatorLayout coordinatorLayout;
     private RecyclerView recyclerView;
@@ -62,7 +67,7 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
         if(date == null)
             date = SchoolWeek.next();
 
-        adapter = new ReplacementsAdapter(this.getActivity());
+        adapter = new SubstitutesAdapter(this.getActivity());
 
         load(date, studentInformation);
     }
@@ -117,14 +122,14 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
     }
 
     @Override
-    public void onDownloaded(List<Replacement> replacements) {
+    public void onDownloaded(List<Substitute> substitutes) {
         if(adapter != null) {
             adapter.removeAll();
-            adapter.addAll(replacements);
+            adapter.addAll(substitutes);
         }
         else if(recyclerView != null){
-            adapter = new ReplacementsAdapter(getActivity());
-            adapter.setReplacements(replacements);
+            adapter = new SubstitutesAdapter(getActivity());
+            adapter.setSubstitutes(substitutes);
             recyclerView.setAdapter(adapter);
         }
 

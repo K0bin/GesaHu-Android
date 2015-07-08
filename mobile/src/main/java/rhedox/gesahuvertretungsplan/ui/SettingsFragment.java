@@ -1,8 +1,10 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+
+import rhedox.gesahuvertretungsplan.R;
 
 /**
  * Created by Robin on 18.10.2014.

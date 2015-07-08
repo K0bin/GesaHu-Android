@@ -1,8 +1,8 @@
-package rhedox.gesahuvertretungsplan;
-
-import android.content.Context;
+package rhedox.gesahuvertretungsplan.net;
 
 import org.joda.time.LocalDate;
+
+import rhedox.gesahuvertretungsplan.model.StudentInformation;
 
 class ReplacementsListLoaderArgs {
     private StudentInformation studentInformation;

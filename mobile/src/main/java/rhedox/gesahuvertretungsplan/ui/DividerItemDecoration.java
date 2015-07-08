@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.recyclerView;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.alarm;
+package rhedox.gesahuvertretungsplan.util;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;

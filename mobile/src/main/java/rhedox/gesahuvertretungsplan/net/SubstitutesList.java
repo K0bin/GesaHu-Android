@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.net;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -17,17 +17,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReplacementsList {
+import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
+import rhedox.gesahuvertretungsplan.model.StudentInformation;
+
+public class SubstitutesList {
 
     private ShortNameResolver shortNameResolver = new ShortNameResolver();
 
-    private ReplacementsListLoader loader;
+    private SubstitutesListLoader loader;
     private boolean isLoading = false;
 
     public void load(Context context, LocalDate date, StudentInformation studentInformation, OnDownloadedListener listener) {
         if(isNetworkConnected(context)) {
             isLoading = true;
-            loader = new ReplacementsListLoader();
+            loader = new SubstitutesListLoader();
             loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, listener));
         } else {
             if(listener != null)
@@ -53,10 +57,10 @@ public class ReplacementsList {
         return isLoading;
     }
 
-    class ReplacementsListLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Replacement>> {
+    class SubstitutesListLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Substitute>> {
         private ReplacementsListLoaderArgs loaderArgs;
 
-        public ReplacementsListLoader() {
+        public SubstitutesListLoader() {
 
         }
 
@@ -66,9 +70,9 @@ public class ReplacementsList {
         }
 
         @Override
-        protected List<Replacement> doInBackground(ReplacementsListLoaderArgs... args) {
+        protected List<Substitute> doInBackground(ReplacementsListLoaderArgs... args) {
             loaderArgs = args[0];
-            List<Replacement> replacements = new ArrayList<Replacement>();
+            List<Substitute> substitutes = new ArrayList<Substitute>();
 
             try {
                 String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDate().getDayOfMonth()) + "&m=" + String.valueOf(loaderArgs.getDate().getMonthOfYear()) + "&y=" + String.valueOf(loaderArgs.getDate().getYear());
@@ -117,8 +121,8 @@ public class ReplacementsList {
                                             String lessonText = text.replaceAll(" ", "");
 
                                             if (!lesson.equals(lessonText) && !subject.equals("")) {
-                                                Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
-                                                replacements.add(replacement);
+                                                Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                                                substitutes.add(substitute);
 
                                                 subject = "";
                                                 regularTeacher = "";
@@ -131,8 +135,8 @@ public class ReplacementsList {
                                     case 1:
                                         if (!subject.equals("")) {
                                             //Subjectname isn't empty => add previous lesson
-                                            Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
-                                            replacements.add(replacement);
+                                            Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                                            substitutes.add(substitute);
 
                                             subject = "";
                                             regularTeacher = "";
@@ -203,13 +207,13 @@ public class ReplacementsList {
                 }
 
                 if (!isEmpty(subject)) {
-                    Replacement replacement = new Replacement(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
-                    replacements.add(replacement);
+                    Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                    substitutes.add(substitute);
                 }
 
-                if(replacements.size() == 0) {
-                    Replacement replacement = new Replacement("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "", new StudentInformation("",""));
-                    replacements.add(replacement);
+                if(substitutes.size() == 0) {
+                    Substitute substitute = new Substitute("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "", new StudentInformation("",""));
+                    substitutes.add(substitute);
                 }
 
                 stream.close();
@@ -219,18 +223,18 @@ public class ReplacementsList {
                 Log.d("VPException", "" + e.getMessage());
             }
 
-            return replacements;
+            return substitutes;
         }
 
         @Override
-        protected void onPostExecute(List<Replacement> replacements) {
-            super.onPostExecute(replacements);
+        protected void onPostExecute(List<Substitute> substitutes) {
+            super.onPostExecute(substitutes);
 
-            ReplacementsList.this.isLoading = false;
+            SubstitutesList.this.isLoading = false;
 
             if(loaderArgs.getCallback() != null)
-                if(replacements != null && replacements.size() > 0) {
-                        loaderArgs.getCallback().onDownloaded(replacements);
+                if(substitutes != null && substitutes.size() > 0) {
+                        loaderArgs.getCallback().onDownloaded(substitutes);
                 } else {
                     loaderArgs.getCallback().onDownloadFailed(Error.NO_DATA);
                 }

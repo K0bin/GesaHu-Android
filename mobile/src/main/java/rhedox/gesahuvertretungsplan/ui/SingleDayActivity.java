@@ -1,20 +1,18 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.ui;
 
 import android.content.SharedPreferences;
-import android.media.audiofx.BassBoost;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.Date;
 import java.util.Locale;
+
+import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.StudentInformation;
 
 
 public class SingleDayActivity extends AppCompatActivity {
