@@ -19,7 +19,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="?attr/toolbarPopupTheme"
             android:elevation="4dp"
-            android:titleTextAppearance="@color/white"
+            android:titleTextAppearance="@android:color/white"
             app:layout_scrollFlags="scroll|enterAlways"
             android:transitionName="toolbar"
             />

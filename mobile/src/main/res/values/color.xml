@@ -5,7 +5,5 @@
 
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorAccentOld">#00C853</color>
     <color name="colorAccent">#AA00FF</color>
-    <color name="white">#ffffff</color>
 </resources>

@@ -9,7 +9,8 @@
         <item name="circleHighlighted">?attr/colorAccent</item>
         <item name="circleTextColor">@android:color/white</item>
         <item name="circleHighlightedTextColor">@android:color/white</item>
-        <item name="tabIndicatorColor">@android:color/white</item>
+
+        <item name="tabIndicatorColor">?attr/colorAccent</item>
     </style>
 
     <style name="GesahuThemeDark" parent="Theme.AppCompat.NoActionBar">
