@@ -70,7 +70,7 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
     }
 
     @Override
-    public void onDownloaded(List<Substitute> substitutes) {
+    public void onDownloaded(List<Substitute> substitutes, String annotation) {
 
         int count = 0;
         for (int i = 0; i < substitutes.size(); i++) {

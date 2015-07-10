@@ -32,8 +32,8 @@
             android:id="@+id/tabLayout"
             app:tabMode="scrollable"
             app:tabContentStart="72dp"
-            app:tabIndicatorColor="@color/white"
-            android:elevation="4dp"/>
+            android:elevation="4dp"
+            app:tabIndicatorColor="?attr/tabIndicatorColor"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
@@ -41,4 +41,16 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/viewPager"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_date"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/bug_fab_margin"
+        app:borderWidth="@dimen/bug_fab_border"
+        android:id="@+id/fab"
+        />
+
 </android.support.design.widget.CoordinatorLayout>

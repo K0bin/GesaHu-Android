@@ -32,7 +32,7 @@ public class SubstitutesList {
         if(isNetworkConnected(context)) {
             isLoading = true;
             loader = new SubstitutesListLoader();
-            loader.execute(new ReplacementsListLoaderArgs(date, studentInformation, listener));
+            loader.execute(new SubstitutesListArgs(date, studentInformation, listener));
         } else {
             if(listener != null)
                 listener.onDownloadFailed(Error.NO_CONNECTION);
@@ -57,8 +57,8 @@ public class SubstitutesList {
         return isLoading;
     }
 
-    class SubstitutesListLoader extends AsyncTask<ReplacementsListLoaderArgs, Void, List<Substitute>> {
-        private ReplacementsListLoaderArgs loaderArgs;
+    class SubstitutesListLoader extends AsyncTask<SubstitutesListArgs, Void, SubstitutesListResult> {
+        private SubstitutesListArgs loaderArgs;
 
         public SubstitutesListLoader() {
 
@@ -70,9 +70,10 @@ public class SubstitutesList {
         }
 
         @Override
-        protected List<Substitute> doInBackground(ReplacementsListLoaderArgs... args) {
+        protected SubstitutesListResult doInBackground(SubstitutesListArgs... args) {
             loaderArgs = args[0];
             List<Substitute> substitutes = new ArrayList<Substitute>();
+            String announcement = null;
 
             try {
                 String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDate().getDayOfMonth()) + "&m=" + String.valueOf(loaderArgs.getDate().getMonthOfYear()) + "&y=" + String.valueOf(loaderArgs.getDate().getYear());
@@ -103,7 +104,21 @@ public class SubstitutesList {
                 while ((line = in.readLine()) != null) {
                     //Dopplete Leerzeichen, HTML Zeichen und Newline entfernen
                     line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), "").replaceAll(" +", " ").trim();
-                    if (line.length() > 3) {
+
+                    if(announcement == null) {
+                        int start = line.indexOf("<b><font face=Arial size=2>");
+                        start += "<b><font face=Arial size=2>".length();
+                        if(start != -1 && line.length() > start) {
+                            announcement = line.substring(start);
+
+                            int end = announcement.indexOf("</font>");
+                            if(end != -1)
+                                announcement = announcement.substring(0, end);
+                            else
+                                announcement = "";
+                        } else
+                            announcement = "";
+                    } else if (line.length() > 3) {
                         //HTML Tag auslesen
                         String tag = line.substring(1, 4).trim().replaceAll(">", "");
 
@@ -223,18 +238,20 @@ public class SubstitutesList {
                 Log.d("VPException", "" + e.getMessage());
             }
 
-            return substitutes;
+            return new SubstitutesListResult(substitutes, announcement);
         }
 
         @Override
-        protected void onPostExecute(List<Substitute> substitutes) {
-            super.onPostExecute(substitutes);
+        protected void onPostExecute(SubstitutesListResult result) {
+            super.onPostExecute(result);
 
             SubstitutesList.this.isLoading = false;
 
+            List<Substitute> substitutes = result.getSubstitutes();
+
             if(loaderArgs.getCallback() != null)
                 if(substitutes != null && substitutes.size() > 0) {
-                        loaderArgs.getCallback().onDownloaded(substitutes);
+                        loaderArgs.getCallback().onDownloaded(substitutes, result.getAnnouncement());
                 } else {
                     loaderArgs.getCallback().onDownloadFailed(Error.NO_DATA);
                 }

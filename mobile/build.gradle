@@ -9,7 +9,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 2901
+        versionCode 2961
         versionName "3"
     }
     buildTypes {

@@ -37,7 +37,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     }
 
     @Override
-    public void onDownloaded(List<Substitute> substitutes) {
+    public void onDownloaded(List<Substitute> substitutes, String annotation) {
         if (substitutes != null) {
             int count = 0;
 

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,10 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
+import android.view.View;
 import android.widget.DatePicker;
-
-import com.mikepenz.aboutlibraries.Libs;
-import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DurationFieldType;
@@ -65,6 +64,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.setCurrentItem(pagerAdapter.getItemPosition(now));
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPicker();
+            }
+        });
     }
 
     @Override
@@ -83,28 +90,18 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch(item.getItemId()) {
             case R.id.action_settings: {
                 Intent intent = new Intent(this, SettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
                 break;
 
-            case R.id.action_load: {
+            /*case R.id.action_load: {
                 showPicker();
             }
-                break;
+                break;*/
 
             case R.id.action_about: {
-
-                new LibsBuilder()
-                        .withFields(R.string.class.getFields())
-                        .withAboutAppName(getResources().getString(R.string.app_name))
-                        .withActivityTitle("Über")
-                        .withAboutIconShown(true)
-                        .withAboutVersionShown(true)
-                        .withAboutDescription("Zeigt den <b>Gesahu Vertretungsplan</b> in einem für Smartphones optimierten Layout an.<br>Entwickelt von Robin Kertels<br>Feedback von Felix Bastian<br><i>Wollen unbedingt erwähnt werden: Jonas Dietz, Heidi Meyer, Robin Möbus</i>")
-                        .withVersionShown(true)
-                        .withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                        .withLibraries("AppCompat","MaterialDesignIcons","ACRA")
-                        .start(this);
+                AboutLibs.start(this, darkTheme);
             }
                 break;
         }
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     public void showPicker() {
         picked = false;
-        DatePickerFragment.newInstance().show(LocalDate.now(), getSupportFragmentManager(), "datePicker", this);
+        DatePickerFragment.newInstance(LocalDate.now(), this).show(getSupportFragmentManager(), DatePickerFragment.TAG);
     }
 
     @Override
@@ -123,7 +120,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             LocalDate date = SchoolWeek.next(new LocalDate(year, monthOfYear + 1, dayOfMonth));
 
             Intent intent = new Intent(this, SingleDayActivity.class);
-            intent.putExtra(SingleDayActivity.OPTION_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            intent.putExtra(SingleDayActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         picked = true;

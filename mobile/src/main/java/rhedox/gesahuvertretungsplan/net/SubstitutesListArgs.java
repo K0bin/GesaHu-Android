@@ -4,12 +4,12 @@ import org.joda.time.LocalDate;
 
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 
-class ReplacementsListLoaderArgs {
+class SubstitutesListArgs {
     private StudentInformation studentInformation;
     private OnDownloadedListener callback;
     private LocalDate date;
 
-    public ReplacementsListLoaderArgs(LocalDate date, StudentInformation studentInformation, OnDownloadedListener callback) {
+    public SubstitutesListArgs(LocalDate date, StudentInformation studentInformation, OnDownloadedListener callback) {
         this.date = date;
         this.studentInformation = studentInformation;
         this.callback = callback;

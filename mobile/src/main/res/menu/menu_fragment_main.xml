@@ -1,0 +1,10 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <item android:id="@+id/action_announcement"
+        android:icon="@drawable/icon_announcement"
+        android:title="Ankündigung anzeigen"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
+</menu>

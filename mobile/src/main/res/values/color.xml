@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="circle">#585858</color>
-    <color name="circleDark">#A8A8A8</color>-->
-
     <color name="circle">#4C4C4C</color>
     <color name="circleDark">#B2B2B2</color>
 
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorAccent">#00C853</color>
+    <color name="colorAccentOld">#00C853</color>
+    <color name="colorAccent">#AA00FF</color>
     <color name="white">#ffffff</color>
 </resources>

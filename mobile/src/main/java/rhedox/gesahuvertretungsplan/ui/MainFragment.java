@@ -11,8 +11,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -44,6 +48,7 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
     public static final String TAG ="MAIN_FRAGMENT";
 
     private LocalDate lastDate;
+    private String announcement;
 
     public MainFragment() {}
 
@@ -51,6 +56,7 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
 
         LocalDate date = null;
 
@@ -94,6 +100,16 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
         //recyclerView.setItemAnimator(new SlideAnimator(recyclerView));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        float listMargin = getActivity().getResources().getDimension(R.dimen.listMargin);
+        float listMarginBottom = getActivity().getResources().getDimension(R.dimen.listMarginBottom);
+
+        if(getActivity().findViewById(R.id.fab) != null)
+            recyclerView.setPadding(0,(int)listMargin,0, (int)listMarginBottom);
+        else
+            recyclerView.setPadding(0,(int)listMargin,0, (int)listMargin);
+
+        recyclerView.setClipToPadding(false);
+
         coordinatorLayout = (CoordinatorLayout)getActivity().findViewById(R.id.coordinator);
 
         return view;
@@ -122,7 +138,7 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
     }
 
     @Override
-    public void onDownloaded(List<Substitute> substitutes) {
+    public void onDownloaded(List<Substitute> substitutes, String announcement) {
         if(adapter != null) {
             adapter.removeAll();
             adapter.addAll(substitutes);
@@ -135,6 +151,8 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
 
         if(refreshLayout != null)
             refreshLayout.setRefreshing(false);
+
+        this.announcement = announcement;
     }
 
     @Override
@@ -201,5 +219,25 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
             if(refreshLayout != null)
                 refreshLayout.setEnabled(false);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.menu_fragment_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_announcement) {
+            if(announcement == null)
+                return true;
+
+            //Toast.makeText(getActivity(), announcement, Toast.LENGTH_LONG).show();
+            AnnouncementFragment.newInstance(announcement).show(getChildFragmentManager(), AnnouncementFragment.TAG);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

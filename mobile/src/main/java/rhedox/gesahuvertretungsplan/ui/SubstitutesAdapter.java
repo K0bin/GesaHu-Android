@@ -1,8 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,12 +26,19 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
 
     private Drawable highlightBackground;
     private Drawable background;
+    private int textColor;
+    private int highlightedTextColor;
 
     public SubstitutesAdapter(Context context) {
         this.substitutes = new ArrayList<Substitute>(0);
 
-        highlightBackground = context.getResources().getDrawable(R.drawable.circle_highlight);
-        background = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circle}).getDrawable(0);
+        highlightBackground = ContextCompat.getDrawable(context, R.drawable.circle_highlight);
+        background = ContextCompat.getDrawable(context, R.drawable.circle);
+
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleTextColor, R.attr.circleHighlightedTextColor});
+        textColor = typedArray.getColor(0, 0);
+        highlightedTextColor = typedArray.getColor(1, 0);
+        typedArray.recycle();
     }
 
     @Override
@@ -42,7 +52,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
         FrameLayout view;
         view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_replacement, viewGroup, false);
 
-        return new SubstituteViewHolder(view, highlightBackground, background);
+        return new SubstituteViewHolder(view, background, highlightBackground, textColor, highlightedTextColor);
     }
 
     @Override
@@ -80,8 +90,10 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
 
         private Drawable highlightBackground;
         private Drawable background;
+        private int textColor;
+        private int highlightedTextColor;
 
-        public SubstituteViewHolder(ViewGroup view, Drawable highlightBackground, Drawable background) {
+        public SubstituteViewHolder(ViewGroup view, Drawable background, Drawable highlightBackground, int textColor, int highlightedTextColor) {
             super(view);
             lesson = (AppCompatTextView) view.findViewById(R.id.lesson);
             subjectName = (AppCompatTextView) view.findViewById(R.id.subjectName);
@@ -90,8 +102,10 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
             room = (AppCompatTextView) view.findViewById(R.id.room);
             hint = (AppCompatTextView) view.findViewById(R.id.hint);
 
-            this.highlightBackground = highlightBackground;
             this.background = background;
+            this.highlightBackground = highlightBackground;
+            this.textColor = textColor;
+            this.highlightedTextColor = highlightedTextColor;
         }
 
         public void setSubstitute(Substitute substitute) {
@@ -105,9 +119,11 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
                 if (substitute.getIsImportant()) {
                     lesson.setBackground(highlightBackground);
                     subjectName.setTypeface(Typeface.DEFAULT_BOLD);
+                    lesson.setTextColor(highlightedTextColor);
                 } else {
                     lesson.setBackground(background);
                     subjectName.setTypeface(Typeface.DEFAULT);
+                    lesson.setTextColor(textColor);
                 }
             }
         }
