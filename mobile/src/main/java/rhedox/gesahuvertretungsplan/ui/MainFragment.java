@@ -1,27 +1,43 @@
 package rhedox.gesahuvertretungsplan.ui;
 
+import android.animation.Animator;
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import junit.runner.Version;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
+import java.util.WeakHashMap;
 
 import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.net.Error;
@@ -30,12 +46,14 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.net.OnDownloadedListener;
 import rhedox.gesahuvertretungsplan.net.SubstitutesList;
+import rhedox.gesahuvertretungsplan.net.SubstitutesListResult;
+import rhedox.gesahuvertretungsplan.net.SubstitutesLoader;
 
 /**
  * Created by Robin on 30.06.2015.
  */
-public class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener{
-    private SubstitutesList plan = new SubstitutesList();
+public class MainFragment extends Fragment implements OnDownloadedListener, SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener, View.OnClickListener, LoaderManager.LoaderCallbacks<SubstitutesListResult>{
+    //private SubstitutesList plan = new SubstitutesList();
     private SubstitutesAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private CoordinatorLayout coordinatorLayout;
@@ -47,18 +65,18 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
     public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
     public static final String TAG ="MAIN_FRAGMENT";
 
-    private LocalDate lastDate;
+    private LocalDate date;
     private String announcement;
+    private List<Substitute> substitutes;
+
+    private static final int LOADER_SUBSTITUTES = 1;
 
     public MainFragment() {}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        setHasOptionsMenu(true);
-
-        LocalDate date = null;
+        //setRetainInstance(true);
 
         //Get Arguments
         Bundle arguments = getArguments();
@@ -73,8 +91,6 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
         if(date == null)
             date = SchoolWeek.next();
 
-        adapter = new SubstitutesAdapter(this.getActivity());
-
         load(date, studentInformation);
     }
 
@@ -86,29 +102,33 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
 
         refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe);
         refreshLayout.setOnRefreshListener(this);
+        TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
+        refreshLayout.setColorSchemeColors(typedArray.getColor(0, 0xff000000));
+        typedArray.recycle();
+        //DisplayMetrics metrics = getResources().getDisplayMetrics();
+        //refreshLayout.setProgressViewOffset(false, 0, (int)(metrics.density * 64));
 
         //RecyclerView
         recyclerView = (RecyclerView) view.findViewById(R.id.recylcler);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(manager);
+
+
+        adapter = new SubstitutesAdapter(this.getActivity());
+        if(substitutes != null)
+            adapter.addAll(substitutes);
+        else
+            onRefresh();
         recyclerView.setAdapter(adapter);
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
 
-        //recyclerView.setItemAnimator(new SlideAnimator(recyclerView));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        float listMargin = getActivity().getResources().getDimension(R.dimen.listMargin);
-        float listMarginBottom = getActivity().getResources().getDimension(R.dimen.listMarginBottom);
-
-        if(getActivity().findViewById(R.id.fab) != null)
-            recyclerView.setPadding(0,(int)listMargin,0, (int)listMarginBottom);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            recyclerView.setItemAnimator(null);
         else
-            recyclerView.setPadding(0,(int)listMargin,0, (int)listMargin);
-
-        recyclerView.setClipToPadding(false);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         coordinatorLayout = (CoordinatorLayout)getActivity().findViewById(R.id.coordinator);
 
@@ -132,27 +152,31 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
         if(layout != null)
             layout.addOnOffsetChangedListener(this);
 
-        if(!plan.isLoading() && (adapter == null || adapter.getItemCount() == 0)) {
+        if(substitutes == null)
             onRefresh();
-        }
     }
 
     @Override
     public void onDownloaded(List<Substitute> substitutes, String announcement) {
-        if(adapter != null) {
+        this.announcement = announcement;
+        this.substitutes = substitutes;
+
+        if(recyclerView != null) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && getUserVisibleHint()) {
+                int top = refreshLayout != null ? refreshLayout.getTop() : recyclerView.getTop() + recyclerView.getHeight() / 2;
+                int left = refreshLayout != null ? refreshLayout.getLeft() : recyclerView.getLeft() + recyclerView.getWidth() / 2;
+
+                Animator animator = ViewAnimationUtils.createCircularReveal(recyclerView, left, top, 0, Math.max(Math.abs(left - recyclerView.getRight()), Math.abs(top - recyclerView.getHeight())));
+                animator.start();
+            }
+
             adapter.removeAll();
             adapter.addAll(substitutes);
-        }
-        else if(recyclerView != null){
-            adapter = new SubstitutesAdapter(getActivity());
-            adapter.setSubstitutes(substitutes);
-            recyclerView.setAdapter(adapter);
-        }
 
-        if(refreshLayout != null)
-            refreshLayout.setRefreshing(false);
-
-        this.announcement = announcement;
+            if (refreshLayout != null)
+                refreshLayout.setRefreshing(false);
+        }
     }
 
     @Override
@@ -176,26 +200,36 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
     }
 
     @Override
-    public void onDestroy() {
-        if(plan != null)
-            plan.stop();
-
-        super.onDestroy();
+    public void onDestroyView() {
+        if(refreshLayout != null) {
+            refreshLayout.setRefreshing(false);
+            refreshLayout.clearAnimation();
+        }
+        refreshLayout = null;
+        recyclerView = null;
+        coordinatorLayout = null;
+        adapter = null;
+        super.onDestroyView();
     }
 
     @Override
     public void onRefresh() {
-        load(lastDate, studentInformation);
+        load(date, studentInformation);
     }
 
     public void load(LocalDate date, StudentInformation information) {
-        if(!plan.isLoading() && date != null) {
+
+        //if(!plan.isLoading() && date != null) {
+        if(date != null) {
+
             if(refreshLayout != null)
                 refreshLayout.setRefreshing(true);
 
-            lastDate = date;
+            this.date = date;
 
-            plan.load(getActivity(), date, information, this);
+            getLoaderManager().initLoader(LOADER_SUBSTITUTES, Bundle.EMPTY, this);
+
+            //plan.load(getActivity(), date, information, this);
         }
     }
 
@@ -234,10 +268,42 @@ public class MainFragment extends Fragment implements OnDownloadedListener, Swip
             if(announcement == null)
                 return true;
 
-            //Toast.makeText(getActivity(), announcement, Toast.LENGTH_LONG).show();
             AnnouncementFragment.newInstance(announcement).show(getChildFragmentManager(), AnnouncementFragment.TAG);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        AnnouncementFragment.newInstance(announcement != null ? announcement : "Keine Ankündigungen").show(getChildFragmentManager(), AnnouncementFragment.TAG);
+    }
+
+    @Override
+    public Loader<SubstitutesListResult> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LOADER_SUBSTITUTES:
+                return new SubstitutesLoader(getActivity(), date, studentInformation);
+
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<SubstitutesListResult> loader, SubstitutesListResult data) {
+        switch (loader.getId()) {
+            case LOADER_SUBSTITUTES:
+                if(data.getStatus() == Error.SUCCESS)
+                    onDownloaded(data.getSubstitutes(), data.getAnnouncement());
+                else
+                    onDownloadFailed(data.getStatus());
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<SubstitutesListResult> loader) {
+
     }
 }

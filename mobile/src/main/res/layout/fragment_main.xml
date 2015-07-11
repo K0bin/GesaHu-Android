@@ -12,7 +12,7 @@
         android:id="@+id/recylcler"
         android:scrollbars="vertical"
         android:paddingTop="@dimen/listMargin"
-        android:paddingBottom="@dimen/listMarginBottom"
+        android:paddingBottom="@dimen/listMargin"
         android:clipToPadding="false"/>
 
 </android.support.v4.widget.SwipeRefreshLayout>

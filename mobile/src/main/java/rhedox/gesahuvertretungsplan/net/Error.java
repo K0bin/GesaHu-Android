@@ -6,6 +6,7 @@ package rhedox.gesahuvertretungsplan.net;
 public final class Error {
     private Error() {}
 
+    public static final int SUCCESS = 0;
     public static final int NO_CONNECTION = 1;
     public static final int NO_DATA = 2;
 }

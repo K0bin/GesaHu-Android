@@ -3,12 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-    <!--
     <item android:id="@+id/action_load"
         android:icon="@drawable/icon_date"
         android:title="Datum auswählen"
         app:showAsAction="always"
-        android:orderInCategory="2"/>-->
+        android:orderInCategory="2"/>
 
     <item android:id="@+id/action_settings"
         android:title="Einstellungen"

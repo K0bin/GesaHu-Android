@@ -3,7 +3,7 @@ package rhedox.gesahuvertretungsplan.net;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -17,26 +17,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Substitute;
 
-public class SubstitutesList {
-
+/**
+ * Created by Robin on 11.07.2015.
+ */
+public class SubstitutesLoader extends AsyncTaskLoader<SubstitutesListResult> {
+    private LocalDate date;
+    private StudentInformation studentInformation;
     private ShortNameResolver shortNameResolver;
 
-    private SubstitutesListLoader loader;
+    private SubstitutesListResult data;
 
-    public void load(Context context, LocalDate date, StudentInformation studentInformation, OnDownloadedListener listener) {
-        if(isNetworkConnected(context)) {
-            shortNameResolver = new ShortNameResolver();
+    public SubstitutesLoader(Context context, LocalDate date, StudentInformation studentInformation) {
+        super(context);
 
-            loader = new SubstitutesListLoader();
-            loader.execute(new SubstitutesListArgs(date, studentInformation, listener));
-        } else {
-            if(listener != null)
-                listener.onDownloadFailed(Error.NO_CONNECTION);
-        }
+        this.date=date;
+        this.studentInformation = studentInformation;
+        this.shortNameResolver = new ShortNameResolver();
     }
 
     // Check network connection
@@ -46,41 +46,15 @@ public class SubstitutesList {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void stop() {
-        if(loader != null && !loader.isCancelled())
-            loader.cancel(true);
-    }
 
-    public boolean isLoading() {
-        return loader == null || loader.isRunning;
-    }
-
-    class SubstitutesListLoader extends AsyncTask<SubstitutesListArgs, Void, SubstitutesListResult> {
-        private SubstitutesListArgs loaderArgs;
-        private boolean isRunning = false;
-
-        public SubstitutesListLoader() {
-
-        }
-
-        public boolean getIsRunning() {
-            return isRunning;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            isRunning = true;
-        }
-
-        @Override
-        protected SubstitutesListResult doInBackground(SubstitutesListArgs... args) {
-            loaderArgs = args[0];
+    @Override
+    public SubstitutesListResult loadInBackground() {
+        if(isNetworkConnected(getContext())) {
             List<Substitute> substitutes = new ArrayList<Substitute>();
             String announcement = null;
 
             try {
-                String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(loaderArgs.getDate().getDayOfMonth()) + "&m=" + String.valueOf(loaderArgs.getDate().getMonthOfYear()) + "&y=" + String.valueOf(loaderArgs.getDate().getYear());
+                String getString = "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + String.valueOf(date.getDayOfMonth()) + "&m=" + String.valueOf(date.getMonthOfYear()) + "&y=" + String.valueOf(date.getYear());
                 URL url = new URL(getString);
                 Log.d("Plan", "Downloading: " + getString);
 
@@ -89,7 +63,7 @@ public class SubstitutesList {
                 request.connect();
 
                 int responseCode = request.getResponseCode();
-                Log.d("Plan","HTTP Responsecode: "+Integer.toString(responseCode));
+                Log.d("Plan", "HTTP Responsecode: " + Integer.toString(responseCode));
 
                 InputStreamReader stream = new InputStreamReader(request.getInputStream(), "windows-1252");
                 BufferedReader in = new BufferedReader(stream);
@@ -99,24 +73,24 @@ public class SubstitutesList {
                 int cellIndex = 0;
 
                 String lesson = "";
-                String subject ="";
-                String regularTeacher ="";
-                String replacementTeacher ="";
-                String room ="";
-                String hint ="";
+                String subject = "";
+                String regularTeacher = "";
+                String replacementTeacher = "";
+                String room = "";
+                String hint = "";
 
                 while ((line = in.readLine()) != null) {
                     //Dopplete Leerzeichen, HTML Zeichen und Newline entfernen
                     line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), "").replaceAll(" +", " ").trim();
 
-                    if(announcement == null) {
+                    if (announcement == null) {
                         int start = line.indexOf("<b><font face=Arial size=2>");
                         start += "<b><font face=Arial size=2>".length();
-                        if(start != -1 && line.length() > start) {
+                        if (start != -1 && line.length() > start) {
                             announcement = line.substring(start);
 
                             int end = announcement.indexOf("</font>");
-                            if(end != -1)
+                            if (end != -1)
                                 announcement = announcement.substring(0, end);
                             else
                                 announcement = "";
@@ -137,24 +111,24 @@ public class SubstitutesList {
                             if (!text.equals("") && !text.equals(" ")) {
                                 switch (cellIndex) {
                                     case 0:
-                                            String lessonText = text.replaceAll(" ", "");
+                                        String lessonText = text.replaceAll(" ", "");
 
-                                            if (!lesson.equals(lessonText) && !subject.equals("")) {
-                                                Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
-                                                substitutes.add(substitute);
+                                        if (!lesson.equals(lessonText) && !subject.equals("")) {
+                                            Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, studentInformation);
+                                            substitutes.add(substitute);
 
-                                                subject = "";
-                                                regularTeacher = "";
-                                                replacementTeacher = "";
-                                                room = "";
-                                                hint = "";
-                                            }
+                                            subject = "";
+                                            regularTeacher = "";
+                                            replacementTeacher = "";
+                                            room = "";
+                                            hint = "";
+                                        }
                                         lesson = lessonText;
                                         break;
                                     case 1:
                                         if (!subject.equals("")) {
                                             //Subjectname isn't empty => add previous lesson
-                                            Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                                            Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, studentInformation);
                                             substitutes.add(substitute);
 
                                             subject = "";
@@ -226,12 +200,12 @@ public class SubstitutesList {
                 }
 
                 if (!isEmpty(subject)) {
-                    Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, loaderArgs.getStudentInformation());
+                    Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, studentInformation);
                     substitutes.add(substitute);
                 }
 
-                if(substitutes.size() == 0) {
-                    Substitute substitute = new Substitute("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "", new StudentInformation("",""));
+                if (substitutes.size() == 0) {
+                    Substitute substitute = new Substitute("1-10", "Keine Vertretungsstunden", "Alles nach Plan", "", "", "", new StudentInformation("", ""));
                     substitutes.add(substitute);
                 }
 
@@ -240,35 +214,60 @@ public class SubstitutesList {
 
             } catch (IOException e) {
                 Log.d("VPException", "" + e.getMessage());
+                return new SubstitutesListResult(null, null, Error.NO_DATA);
             }
 
             return new SubstitutesListResult(substitutes, announcement, Error.SUCCESS);
+        } else {
+            return new SubstitutesListResult(null, null, Error.NO_CONNECTION);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Override
+    public void deliverResult(SubstitutesListResult data) {
+        if(isReset()) {
+            this.data = null;
+            return;
         }
 
-        @Override
-        protected void onPostExecute(SubstitutesListResult result) {
-            super.onPostExecute(result);
+        SubstitutesListResult oldData = this.data;
+        this.data = data;
 
-            isRunning = false;
+        if(isStarted())
+            super.deliverResult(data);
 
-            List<Substitute> substitutes = result.getSubstitutes();
+        if(oldData != data)
+            oldData = null;
+    }
 
-            if(loaderArgs.getCallback() != null)
-                if(substitutes != null && substitutes.size() > 0) {
-                        loaderArgs.getCallback().onDownloaded(substitutes, result.getAnnouncement());
-                } else {
-                    loaderArgs.getCallback().onDownloadFailed(Error.NO_DATA);
-                }
-        }
+    @Override
+    protected void onStartLoading() {
+        if(data != null)
+            deliverResult(data);
 
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            isRunning = false;
-        }
+        if(takeContentChanged() || data == null)
+            forceLoad();
 
-        private boolean isEmpty(String string) {
-            return string == null || string.isEmpty() || string.trim().length() == 0;
-        }
+        super.onStartLoading();
+    }
+
+    @Override
+    protected void onStopLoading() {
+        super.onStopLoading();
+        cancelLoad();
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+
+        onStopLoading();
+
+        data = null;
+    }
+
+    private boolean isEmpty(String string) {
+        return string == null || string.isEmpty() || string.trim().length() == 0;
     }
 }

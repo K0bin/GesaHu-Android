@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -28,11 +30,14 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 
-public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TabLayout.OnTabSelectedListener {
     private boolean darkTheme;
 
     //Datepicker double workaround
     private boolean picked = false;
+    private PagerAdapter pagerAdapter;
+    private FloatingActionButton floatingActionButton;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,24 +59,21 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         Toolbar toolbar = (Toolbar) findViewById(R.id.actionToolBar);
         setSupportActionBar(toolbar);
 
-        LocalDate now = SchoolWeek.next();
-        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), now, studentInformation);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        LocalDate now = SchoolWeek.next();
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), now, studentInformation);
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(this);
 
-        viewPager.setCurrentItem(pagerAdapter.getItemPosition(now));
-
-        FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPicker();
-            }
-        });
+        int position = pagerAdapter.getItemPosition(now);
+        viewPager.setCurrentItem(position);
+        this.onTabSelected(tabLayout.getTabAt(position));
     }
 
     @Override
@@ -95,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
                 break;
 
-            /*case R.id.action_load: {
+            case R.id.action_load: {
                 showPicker();
             }
-                break;*/
+                break;
 
             case R.id.action_about: {
                 AboutLibs.start(this, darkTheme);
@@ -125,6 +127,31 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             startActivity(intent);
         }
         picked = true;
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        if(pagerAdapter == null)
+            return;
+
+        String tag = pagerAdapter.getFragmentTag(R.id.viewPager, tab.getPosition());
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(tag);
+        if(fragment != null) {
+            if(floatingActionButton != null)
+                floatingActionButton.setOnClickListener(fragment);
+        }
+
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 
     public class PagerAdapter extends FragmentPagerAdapter {
@@ -173,3 +200,5 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
     }
 }
+
+//https://code.google.com/p/android/issues/detail?id=78062

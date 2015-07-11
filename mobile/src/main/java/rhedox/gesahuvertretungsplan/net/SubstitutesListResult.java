@@ -11,10 +11,12 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 public class SubstitutesListResult {
     private List<Substitute> substitutes;
     private String announcement;
+    private int status;
 
-    public SubstitutesListResult(List<Substitute> substitutes, String announcement) {
+    public SubstitutesListResult(List<Substitute> substitutes, String announcement, int status) {
         this.substitutes = substitutes;
         this.announcement = announcement;
+        this.status = status;
     }
 
     public List<Substitute> getSubstitutes() {
@@ -24,4 +26,6 @@ public class SubstitutesListResult {
     public String getAnnouncement() {
         return announcement;
     }
+
+    public int getStatus() { return status; }
 }
