@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -32,7 +31,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
     public SubstitutesAdapter(Context context) {
         this.substitutes = new ArrayList<Substitute>(0);
 
-        highlightBackground = ContextCompat.getDrawable(context, R.drawable.circle_highlight);
+        highlightBackground = ContextCompat.getDrawable(context, R.drawable.circle_important);
         background = ContextCompat.getDrawable(context, R.drawable.circle);
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleTextColor, R.attr.circleHighlightedTextColor});

@@ -1,7 +1,13 @@
 package rhedox.gesahuvertretungsplan.ui.activity;
 
+import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +15,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -79,6 +86,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 MainActivity.this.onPageSelected(position);
             }
         });
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            TypedArray a = obtainStyledAttributes(new int[] { R.attr.colorPrimary });
+            int primaryColor = a.getColor(0, 0);
+            a.recycle();
+
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_task);
+            ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(getString(R.string.app_name), bitmap, primaryColor);
+            this.setTaskDescription(description);
+        }
     }
 
     @Override
