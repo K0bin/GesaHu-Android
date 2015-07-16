@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string name="define_int_acra"></string>
+	<!-- Author section -->
+	<string name="library_acra_author">Kevin Gaudin</string>
+	<string name="library_acra_authorWebsite">https://plus.google.com/+KevinGaudin</string>
+	<!-- Library section -->
+	<string name="library_acra_libraryName">ACRA</string>
+	<string name="library_acra_libraryDescription">Acra catches exceptions, retrieves lots of context data and send them to the backend of your choice.</string>
+	<string name="library_acra_libraryWebsite">http://www.acra.ch/</string>
+	<string name="library_acra_libraryVersion">4.6.2</string>
+	<!-- OpenSource section -->
+	<string name="library_acra_isOpenSource">true</string>
+	<string name="library_acra_repositoryLink">https://github.com/ACRA/acra</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_acra_classPath">org.acra.ACRA</string>
+	<!-- License section -->
+   <string name="library_acra_licenseId">apache_2_0</string>
+</resources>

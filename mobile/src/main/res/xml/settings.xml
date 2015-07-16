@@ -1,34 +1,55 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:key="pref_year"
-        android:title="Jahrgangsstufe"
-        android:dialogTitle="Wähle deine Jahrgangsstufe"
-        android:summary="Deine Jahrgangsstufe"
-        android:entries="@array/years_array"
-        android:entryValues="@array/years_array_values"
-        android:defaultValue="5" />
-    <ListPreference
-        android:key="pref_class"
-        android:title="Klasse"
-        android:dialogTitle="Wähle deine Klasse"
-        android:summary="Deine Klasse"
-        android:entries="@array/classes_array"
-        android:entryValues="@array/classes_array_values"
-        android:defaultValue="a" />
-    <rhedox.gesahuvertretungsplan.util.NotificationPreference
-        android:key="pref_notification"
-        android:title="Benachrichtigen"
-        android:summary="Täglich bei Vertretungsstunden benachrichtigen"
-        android:defaultValue="true" />
-    <rhedox.gesahuvertretungsplan.util.TimePreference
-        android:key="pref_notification_time"
-        android:title="Abrufzeit"
-        android:summary="Zeit der Benachrichtigungen"
-        android:defaultValue="00:00"
-        android:dependency="pref_notification" />
-    <CheckBoxPreference
-        android:key="pref_dark"
-        android:title="Dark Theme"
-        android:summary="Dunkle Farben verwenden"
-        android:defaultValue="false" />
+    <PreferenceCategory
+        android:title="Schülerinformationen">
+        <ListPreference
+            android:key="pref_year"
+            android:title="Jahrgangsstufe"
+            android:dialogTitle="Wähle deine Jahrgangsstufe"
+            android:summary="Deine Jahrgangsstufe"
+            android:entries="@array/years_array"
+            android:entryValues="@array/years_array_values"
+            android:defaultValue="5" />
+        <ListPreference
+            android:key="pref_class"
+            android:title="Klasse"
+            android:dialogTitle="Wähle deine Klasse"
+            android:summary="Deine Klasse"
+            android:entries="@array/classes_array"
+            android:entryValues="@array/classes_array_values"
+            android:defaultValue="a" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Benachrichtigungen">
+        <rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference
+            android:key="pref_notification"
+            android:title="Benachrichtigen"
+            android:summary="Täglich bei Vertretungsstunden benachrichtigen"
+            android:defaultValue="true" />
+        <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
+            android:key="pref_notification_time"
+            android:title="Abrufzeit"
+            android:summary="Zeit der Benachrichtigungen"
+            android:defaultValue="00:00"
+            android:dependency="pref_notification" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Aussehen">
+        <CheckBoxPreference
+            android:key="pref_dark"
+            android:title="Dark Theme"
+            android:summary="Dunkle Farben verwenden"
+            android:defaultValue="false" />
+        <com.android.colorpicker.ColorPickerPreference
+            android:key="pref_color"
+            android:title="Farbe"
+            android:summary="Akzentfarbe"
+            android:defaultValue="@color/colorDefaultAccent" />
+        <CheckBoxPreference
+            android:key="pref_white_tab_indicator"
+            android:title="Weißer Tab Indikator"
+            android:summary="Linie unter dem aktiven Tab weiß färben"
+            android:defaultValue="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="rhedox.gesahuvertretungsplan.ui.SingleDayActivity">
+    tools:context="rhedox.gesahuvertretungsplan.ui.activity.SingleDayActivity">
 
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
@@ -9,6 +9,6 @@
         app:showAsAction="never" />
 
     <item android:id="@+id/action_about"
-        android:title="Über"
+        android:title="@string/action_about"
         app:showAsAction="never" />
 </menu>

@@ -12,32 +12,38 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
 import java.util.List;
 
-import rhedox.gesahuvertretungsplan.ui.MainActivity;
-import rhedox.gesahuvertretungsplan.net.OnDownloadedListener;
-import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.net.SubstitutesList;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
+import rhedox.gesahuvertretungsplan.net.SubstitutesList;
+import rhedox.gesahuvertretungsplan.net.VolleySingleton;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.Substitute;
 
-public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedListener{
+public class AlarmReceiver extends BroadcastReceiver implements Response.Listener<SubstitutesList> {
     private Context context;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("Alarm", "Alarm received!");
-        SubstitutesList plan = new SubstitutesList();
+        //SubstitutesList plan = new SubstitutesList();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
 
-        plan.load(context, SchoolWeek.next(), new StudentInformation(schoolYear, schoolClass), this);
+        StudentInformation information = new StudentInformation(schoolYear, schoolClass);
+
+        VolleySingleton.getInstance(context).getRequestQueue().add(new SubstituteRequest(context, SchoolWeek.next(), information, this, null));
 
         this.context = context;
     }
@@ -70,11 +76,14 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
     }
 
     @Override
-    public void onDownloaded(List<Substitute> substitutes, String annotation) {
+    public void onResponse(SubstitutesList response) {
+        if(response == null || response.getSubstitutes() == null)
+            return;
+
+        List<Substitute> substitutes = response.getSubstitutes();
 
         int count = 0;
         for (int i = 0; i < substitutes.size(); i++) {
-            //NotificationManagerCompat notificationManager = (NotificationManagerCompat) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (substitutes.get(i).getIsImportant()) {
                 String notificationText = "";
@@ -82,16 +91,16 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
                     notificationText += substitutes.get(i).getSubject().trim();
                 }
                 if (!substitutes.get(i).getRoom().trim().equals("")) {
-                    notificationText += "; Raum: " + substitutes.get(i).getRoom().trim();
+                    notificationText += "; "+context.getString(R.string.room)+": " + substitutes.get(i).getRoom().trim();
                 }
                 if (!substitutes.get(i).getRegularTeacher().trim().equals("")) {
-                    notificationText += System.getProperty("line.separator") + "Lehrer: " + substitutes.get(i).getRegularTeacher().trim() + "; ";
+                    notificationText += System.getProperty("line.separator") + context.getString(R.string.teacher) + ": " + substitutes.get(i).getRegularTeacher().trim() + "; ";
                 }
                 if (!substitutes.get(i).getReplacementTeacher().trim().equals("") && !substitutes.get(i).getReplacementTeacher().trim().equals(" ")) {
-                    notificationText += "Vertretungslehrer: " + substitutes.get(i).getReplacementTeacher().trim();
+                    notificationText += context.getString(R.string.substitute_teacher)+": " + substitutes.get(i).getReplacementTeacher().trim();
                 }
                 if (!substitutes.get(i).getHint().trim().equals("")) {
-                    notificationText += System.getProperty("line.separator") + "Hinweis: " + substitutes.get(i).getHint().trim();
+                    notificationText += System.getProperty("line.separator") + context.getString(R.string.hint)+": " + substitutes.get(i).getHint().trim();
                 }
 
 
@@ -103,23 +112,22 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
                 NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
                 bigTextStyle.bigText(notificationText);
 
-                bigTextStyle.setBigContentTitle("Vertretung");
-                bigTextStyle.setSummaryText("Du hast Vertretung in der " + substitutes.get(i).getLesson() + " Stunde");
+                bigTextStyle.setBigContentTitle(context.getString(R.string.substitute));
+                bigTextStyle.setSummaryText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour)+".");
                 builder.setStyle(bigTextStyle);
                 builder.setSmallIcon(R.drawable.icon_notification);
-                builder.setContentTitle("Vertretung");
-                builder.setContentText("Du hast Vertretung in der " + substitutes.get(i).getLesson() + " Stunde");
+                builder.setContentTitle(context.getString(R.string.substitute));
+                builder.setContentText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour)+".");
                 builder.setContentInfo(substitutes.get(i).getLesson());
                 builder.setContentIntent(launchPending);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     Intent share = new Intent();
                     share.setAction(Intent.ACTION_SEND);
-                    //share.putExtra(Intent.EXTRA_SUBJECT, "Vertretung");
-                    share.putExtra(Intent.EXTRA_TEXT, "Wir haben " + notificationText);
+                    share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text) + notificationText);
                     share.setType("text/plain");
                     PendingIntent pending = PendingIntent.getActivity(context, 2 + count * 2, share, PendingIntent.FLAG_UPDATE_CURRENT);
-                    builder.addAction(R.drawable.icon_share, "Teilen", pending);
+                    builder.addAction(R.drawable.icon_share, context.getString(R.string.share), pending);
                 }
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder.setCategory(NotificationCompat.CATEGORY_EVENT);
@@ -130,11 +138,5 @@ public class AlarmReceiver extends BroadcastReceiver implements OnDownloadedList
                 count++;
             }
         }
-
-    }
-
-    @Override
-    public void onDownloadFailed(int error) {
-
     }
 }

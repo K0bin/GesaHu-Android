@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="subjects_m">Mathematik</string>
+    <string name="subjects_e">Englisch</string>
+    <string name="subjects_d">Deutsch</string>
+    <string name="subjects_al">Arbeitslehre</string>
+    <string name="subjects_ge">Geschichte</string>
+    <string name="subjects_spo">Sport</string>
+    <string name="subjects_wpu1">Wahlpflichtu. 1</string>
+    <string name="subjects_wpu2">Wahlpflichtu. 2</string>
+    <string name="subjects_d_foe">Deutsch Förderu.</string>
+    <string name="subjects_e_foe">Englisch Förderu.</string>
+    <string name="subjects_m_foe">Mathematik Förderu.</string>
+    <string name="subjects_ch">Chemie</string>
+    <string name="subjects_rel">Religion</string>
+    <string name="subjects_bio">Biologie</string>
+    <string name="subjects_ph">Physik</string>
+    <string name="subjects_eth">Ethik</string>
+    <string name="subjects_fr">Franzoesisch</string>
+    <string name="subjects_f">Franzoesisch</string>
+    <string name="subjects_info">Informatik</string>
+    <string name="subjects_mu">Musik</string>
+    <string name="subjects_la">Latein</string>
+    <string name="subjects_l">Latein</string>
+    <string name="subjects_spa">Spanisch</string>
+    <string name="subjects_ita">Italienisch</string>
+    <string name="subjects_bso">Berufsorientierter U.</string>
+    <string name="subjects_ku">Kunst</string>
+    <string name="subjects_dsp">Darstellendes Spiel</string>
+    <string name="subjects_gl">Gesellschaftsw.</string>
+    <string name="subjects_ek">Erdkunde</string>
+    <string name="subjects_ver">Vertretungsreserve</string>
+    <string name="subjects_rev">Evang. Religion</string>
+    <string name="subjects_rk">Kath. Religion</string>
+    <string name="subjects_powi">Politik und Wirtschaft</string>
+    <string name="subjects_ikg">Informatik KG</string>
+    <string name="subjects_profil">Profilgruppe</string>
+    <string name="subjects_pu">Praxisorientierter U.</string>
+    <string name="subjects_nawi">Naturwissenschaftlicher U.</string>
+    <string name="subjects_sl">Soziales Lernen</string>
+    <string name="subjects_kl">Klassenlehrer U.</string>
+    <string name="subjects_vert">Vertretungsreserve</string>
+    <string name="subjects_d_lrs">Deutsch-LRS</string>
+    <string name="subjects_ch_lk">Chemie LK</string>
+    <string name="subjects_swi">Schwimmen</string>
+
+</resources>

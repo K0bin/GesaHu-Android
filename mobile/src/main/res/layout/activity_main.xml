@@ -31,6 +31,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             android:id="@+id/tabLayout"
             app:tabMode="scrollable"
+            app:tabGravity="fill"
             app:tabContentStart="72dp"
             android:elevation="4dp"
             app:tabIndicatorColor="?attr/tabIndicatorColor"/>

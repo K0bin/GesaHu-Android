@@ -32,4 +32,16 @@
         android:id="@+id/content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_announcement"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/bug_fab_margin"
+        app:borderWidth="@dimen/bug_fab_border"
+        android:id="@+id/fab"
+        app:layout_behavior="rhedox.gesahuvertretungsplan.ui.ScrollAwareFabBehavior"
+        />
+
 </android.support.design.widget.CoordinatorLayout>

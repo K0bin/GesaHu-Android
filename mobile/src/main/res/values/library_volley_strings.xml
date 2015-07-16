@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string name="define_int_volley"></string>
+	<!-- Author section -->
+	<string name="library_volley_author">AOSP</string>
+	<string name="library_volley_authorWebsite">https://source.android.com/</string>
+	<!-- Library section -->
+	<string name="library_volley_libraryName">Volley</string>
+	<string name="library_volley_libraryDescription">Volley is an HTTP library that makes networking for Android apps easier and most importantly, faster.</string>
+	<string name="library_volley_libraryWebsite">https://developer.android.com/training/volley/index.html</string>
+	<!-- OpenSource section -->
+	<string name="library_volley_isOpenSource">true</string>
+	<string name="library_volley_repositoryLink">https://android.googlesource.com/platform/frameworks/volley</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_volley_classPath">com.android.volley.Request</string>
+	<!-- License section -->
+   <string name="library_volley_licenseId">apache_2_0</string>
+</resources>

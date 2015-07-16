@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog bulletedList="false">
+
+    <changelogversion changeDate="TBA" versionName="3.0">
+        <changelogtext> Tabs für die aktuelle Woche</changelogtext>
+        <changelogtext> Herausscrollende App Leiste &amp; Tab Leiste</changelogtext>
+        <changelogtext> Anzeigen der Ankündigung des Vertretungsplans</changelogtext>
+        <changelogtext> Neue Akzentfarbe</changelogtext>
+        <changelogtext> Verwendung eines Floating Action Buttons</changelogtext>
+        <changelogtext> Verwendung von Snackbars, um Fehler anzuzeigen</changelogtext>
+        <changelogtext> Automatisches Neuladen beim erneuten Öffnen nach einem Fehler</changelogtext>
+        <changelogtext> Neuer Über-Bildschirm.</changelogtext>
+        <changelogtext> Auch beim ersten Laden wird der "Ladekreis" angezeigt</changelogtext>
+        <changelogtext> Crashes wurden behoben</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="10.06.15" versionName="2.6.1">
+        <changelogtext> Die Kürzelliste wurde aktualisiert.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="20.05.15" versionName="2.6">
+        <changelogtext> Das Drehen des Handys erfordert kein Neuladen mehr.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="05.03.15" versionName="2.5.1">
+        <changelogtext> Bugfixes (Falsche Stunden)</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="19.04.15" versionName="2.5">
+        <changelogtext> Dashclock Support</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="05.03.15" versionName="2.4.2">
+        <changelogtext> Bugfixes</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="02.03.15" versionName="2.4.1">
+        <changelogtext> Es wird nun nach 18:00 Uhr automatisch der nächste Tag angezeigt, was bei den Benachrichtigungen schon lange der Fall war.</changelogtext>
+        <changelogtext> Neues, an das Launcher-Icon angepasstes, Benachrichtigungsicon.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="28.12.14" versionName="2.4">
+        <changelogtext> Neues Icon</changelogtext>
+        <changelogtext> App Größe weiter verringert (1mb -> 0.6mb)</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="28.12.14" versionName="2.3.1">
+        <changelogtext> Bugfixes</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="23.11.14" versionName="2.3">
+        <changelogtext> Die Actionbar zeigt nun auch den ausgewählten Wochentag.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="21.11.14" versionName="2.2.2">
+        <changelogtext> Benachrichtigungen nach 19:00 zeigen nun den nächsten Tag!</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="15.11.14" versionName="2.2.1">
+        <changelogtext> Tägliches Benachrichtigen funktioniert nun auch nach Gerätneustart</changelogtext>
+        <changelogtext> Benachrichtigungen lassen sich wieder korrekt #deinstallieren</changelogtext>
+        <changelogtext> Zeitauswahl in den Einstellungen wird nun ausgegraut, wenn Benachrichtigungen deaktiviert sind</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="14.11.14" versionName="2.2">
+        <changelogtext> Performance optimiert</changelogtext>
+        <changelogtext> Animation eingefügt</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="06.11.14" versionName="2.1.1">
+        <changelogtext> Problem beim täglichen Benachrichtigen behoben</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="04.11.14" versionName="2.1">
+        <changelogtext> Änderung der Farbpalette</changelogtext>
+        <changelogtext> Layout leicht überarbeitet</changelogtext>
+        <changelogtext> Benachrichtigungen funktionieren wieder</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="02.11.14" versionName="2.0">
+        <changelogtext> Überarbeitetes Design</changelogtext>
+        <changelogtext> Bessere Performance</changelogtext>
+        <changelogtext> Pull to Refresh Geste</changelogtext>
+        <changelogtext> Animationen</changelogtext>
+        <changelogtext> App Größe verringert (9mb -> 1mb)</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="10.10.14" versionName="1.3.1">
+        <changelogtext> Bugfixes</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="08.10.14" versionName="1.3">
+        <changelogtext> Die App speichert die zuletzt geladenen Vertretungsstunden, sodass nach betägen des Home Buttons kein Neuladen erforderlich ist.</changelogtext>
+        <changelogtext> Das aktuell ausgewählte Datum steht nun in der Action Bar.</changelogtext>
+        <changelogtext> Neues Icon</changelogtext>
+        <changelogtext> Dark Theme</changelogtext>
+        <changelogtext> Die Tabelle passt nun die Spaltenbreite automatisch an den Inhalt an.</changelogtext>
+        <changelogtext> Animationen</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="25.09.14" versionName="1.2.4">
+        <changelogtext> Bugfixes</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="22.09.14" versionName="1.2.3">
+        <changelogtext> Der Datumspicker schlägt jetzt immer das zuletzt gewählte Datum vor.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="16.09.14" versionName="1.2.2">
+        <changelogtext> Der Vertretungsplan zeigt nun den geladenen Tag an.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="12.09.14" versionName="1.2.1">
+        <changelogtext> Die Benachrichtigung wurden verbessert.</changelogtext>
+    </changelogversion>
+
+    <changelogversion changeDate="07.09.14" versionName="1.2">
+        <changelogtext> Das Cards Layout ist nun einstellbar.</changelogtext>
+        <changelogtext> Der Abstand der einzelnen Karten wurde reduziert.</changelogtext>
+        <changelogtext> Die Ergebnisse lassen sich nun abhängig der Stunde gruppieren.</changelogtext>
+    </changelogversion>
+
+</changelog>

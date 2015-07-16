@@ -1,8 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Gesahu VP</string>
-    <string name="title_activity_single_day">SingleDayActivity</string>
+    <string name="app_name_long">Gesahu Vertretungsplan</string>
+    <string name="title_activity_single_day">Einzelner Tag</string>
+    <string name="title_activity_about">Über</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_date">Datum auswählen</string>
+    <string name="action_about">Über</string>
+
+    <string name="hour">Stunde</string>
+    <string name="hours">Stunden</string>
+    <string name="lesson">Vertretungsstunde</string>
+    <string name="lessons">Vertretungsstunden</string>
+    <string name="substitute">Vertretung</string>
+    <string name="notification_text">Vertretung in der</string>
+    <string name="share_text">Wir haben </string>
+    <string name="share">Teilen</string>
+
+    <string name="announcements">Ankündigungen</string>
+
+    <string name="teacher">Lehrer</string>
+    <string name="substitute_teacher">Vertretungslehrer</string>
+    <string name="hint">Hinweis</string>
+    <string name="room">Raum</string>
+
+    <string name="error_no_data">Keine Daten</string>
+    <string name="error_no_connection">Keine Internetverbindung</string>
+    <string name="error_server">Serverfehler</string>
+    <string name="error">Fehler</string>
+    <string name="retry">Erneut versuchen</string>
+    <string name="no_announcements">Keine Ankündigungen</string>
+    <string name="no_substitutes">Keine Vertretungsstunden</string>
+    <string name="no_substitutes_hint">Alles nach Plan</string>
+
+    <string name="positive_button">Festlegen</string>
+    <string name="negative_button">Abbrechen</string>
+
+    <string name="about_text">Zeigt den &lt;b>Gesahu Vertretungsplan&lt;/b> in einem für Smartphones optimierten Layout an.&lt;br>Entwickelt von Robin Kertels&lt;br>Feedback von Felix Bastian&lt;br>&lt;i>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz&lt;/i></string>
+
 </resources>

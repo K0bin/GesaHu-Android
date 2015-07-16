@@ -1,0 +1,115 @@
+<resources>
+
+    <style name="red1" parent="GesahuTheme">
+        <item name="colorAccent">#FF1744</item>
+    </style>
+    <style name="red2" parent="GesahuTheme">
+        <item name="colorAccent">#D50000</item>
+    </style>
+
+    <style name="pink1" parent="GesahuTheme">
+        <item name="colorAccent">#F50057</item>
+    </style>
+    <style name="pink2" parent="GesahuTheme">
+        <item name="colorAccent">#C51162</item>
+    </style>
+
+    <style name="purple1" parent="GesahuTheme">
+        <item name="colorAccent">#D500F9</item>
+    </style>
+    <style name="purple2" parent="GesahuTheme">
+        <item name="colorAccent">#AA00FF</item>
+    </style>
+
+    <style name="deep_purple1" parent="GesahuTheme">
+        <item name="colorAccent">#651FFF</item>
+    </style>
+    <style name="deep_purple2" parent="GesahuTheme">
+        <item name="colorAccent">#6200EA</item>
+    </style>
+
+    <style name="indigo1" parent="GesahuTheme">
+        <item name="colorAccent">#3D5AFE</item>
+    </style>
+    <style name="indigo2" parent="GesahuTheme">
+        <item name="colorAccent">#304FFE</item>
+    </style>
+
+    <style name="blue1" parent="GesahuTheme">
+        <item name="colorAccent">#2979FF</item>
+    </style>
+    <style name="blue2" parent="GesahuTheme">
+        <item name="colorAccent">#2962FF</item>
+    </style>
+
+    <style name="light_blue1" parent="GesahuTheme">
+        <item name="colorAccent">#00B0FF</item>
+    </style>
+    <style name="light_blue2" parent="GesahuTheme">
+        <item name="colorAccent">#0091EA</item>
+    </style>
+
+    <style name="cyan1" parent="GesahuTheme">
+        <item name="colorAccent">#00E5FF</item>
+    </style>
+    <style name="cyan2" parent="GesahuTheme">
+        <item name="colorAccent">#00B8D4</item>
+    </style>
+
+    <style name="teal1" parent="GesahuTheme">
+        <item name="colorAccent">#1DE9B6</item>
+    </style>
+    <style name="teal2" parent="GesahuTheme">
+        <item name="colorAccent">#00BFA5</item>
+    </style>
+
+    <style name="green1" parent="GesahuTheme">
+        <item name="colorAccent">#00E676</item>
+    </style>
+    <style name="green2" parent="GesahuTheme">
+        <item name="colorAccent">#00C853</item>
+    </style>
+
+    <style name="light_green1" parent="GesahuTheme">
+        <item name="colorAccent">#76FF03</item>
+    </style>
+    <style name="light_green2" parent="GesahuTheme">
+        <item name="colorAccent">#64DD17</item>
+    </style>
+
+    <style name="lime1" parent="GesahuTheme">
+        <item name="colorAccent">#C6FF00</item>
+    </style>
+    <style name="lime2" parent="GesahuTheme">
+        <item name="colorAccent">#AEEA00</item>
+    </style>
+
+    <style name="yellow1" parent="GesahuTheme">
+        <item name="colorAccent">#FFEA00</item>
+    </style>
+    <style name="yellow2" parent="GesahuTheme">
+        <item name="colorAccent">#FFD600</item>
+    </style>
+
+    <style name="amber1" parent="GesahuTheme">
+        <item name="colorAccent">#FFC400</item>
+    </style>
+    <style name="amber2" parent="GesahuTheme">
+        <item name="colorAccent">#FFAB00</item>
+    </style>
+
+    <style name="orange1" parent="GesahuTheme">
+        <item name="colorAccent">#FF9100</item>
+    </style>
+    <style name="orange2" parent="GesahuTheme">
+        <item name="colorAccent">#FF6D00</item>
+    </style>
+
+    <style name="deep_orange1" parent="GesahuTheme">
+        <item name="colorAccent">#FF3D00</item>
+    </style>
+    <style name="deep_orange2" parent="GesahuTheme">
+        <item name="colorAccent">#DD2C00</item>
+    </style>
+
+</resources>

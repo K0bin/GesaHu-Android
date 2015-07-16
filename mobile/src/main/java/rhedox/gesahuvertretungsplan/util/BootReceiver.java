@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 
+import rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference;
+import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
+
 /**
  * Created by Robin on 15.11.2014.
  */

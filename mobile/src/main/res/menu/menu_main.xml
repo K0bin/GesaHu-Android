@@ -5,15 +5,15 @@
 
     <item android:id="@+id/action_load"
         android:icon="@drawable/icon_date"
-        android:title="Datum auswählen"
+        android:title="@string/action_date"
         app:showAsAction="always"
         android:orderInCategory="2"/>
 
     <item android:id="@+id/action_settings"
-        android:title="Einstellungen"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_about"
-        android:title="Über"
+        android:title="@string/action_about"
         app:showAsAction="never" />
 </menu>
