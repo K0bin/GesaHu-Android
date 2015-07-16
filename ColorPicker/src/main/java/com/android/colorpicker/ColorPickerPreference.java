@@ -112,9 +112,14 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
         AppCompatTextView summary = (AppCompatTextView)view.findViewById(R.id.summary);
         swatch = (ColorPickerSwatch)view.findViewById(R.id.swatch);
 
-        title.setText(getTitle());
-        summary.setText(getSummary());
-        swatch.setColor(mSelectedColor);
+        if(title != null)
+            title.setText(getTitle());
+
+        if(summary != null)
+            summary.setText(getSummary());
+
+        if(swatch != null)
+            swatch.setColor(mSelectedColor);
 
         return view;
     }
