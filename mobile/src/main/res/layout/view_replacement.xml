@@ -16,7 +16,7 @@
         android:layout_gravity="top"
         android:gravity="center"
         android:fontFamily="sans-serif-condensed"
-        android:background="?attr/circle"
+        android:background="?attr/circleColor"
         android:lines="1"
         android:layout_margin="@dimen/tilePadding"
         android:shadowRadius="0"

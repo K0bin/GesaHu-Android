@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +24,7 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.SubstituteViewHolder> {
     private List<Substitute> substitutes;
 
-    private Drawable highlightBackground;
+    private Drawable highlightedBackground;
     private Drawable background;
     private int textColor;
     private int highlightedTextColor;
@@ -31,13 +32,22 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
     public SubstitutesAdapter(Context context) {
         this.substitutes = new ArrayList<Substitute>(0);
 
-        highlightBackground = ContextCompat.getDrawable(context, R.drawable.circle_important);
-        background = ContextCompat.getDrawable(context, R.drawable.circle);
-
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleTextColor, R.attr.circleHighlightedTextColor});
-        textColor = typedArray.getColor(0, 0);
-        highlightedTextColor = typedArray.getColor(1, 0);
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleHighlightedColor, R.attr.circleTextColor, R.attr.circleHighlightedTextColor});
+        textColor = typedArray.getColor(2, 0);
+        highlightedTextColor = typedArray.getColor(3, 0);
+        int circleColorImportant= typedArray.getColor(1, 0);
+        int circleColor = typedArray.getColor(0, 0);
         typedArray.recycle();
+
+        highlightedBackground = ContextCompat.getDrawable(context, R.drawable.circle);
+        GradientDrawable highlightedGradientDrawable = (GradientDrawable) highlightedBackground;
+        highlightedGradientDrawable.setColor(circleColorImportant);
+        highlightedBackground = highlightedGradientDrawable;
+
+        background = ContextCompat.getDrawable(context, R.drawable.circle);
+        GradientDrawable gradientDrawable = (GradientDrawable) background;
+        gradientDrawable.setColor(circleColor);
+        background = gradientDrawable;
     }
 
     @Override
@@ -51,7 +61,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
         FrameLayout view;
         view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_replacement, viewGroup, false);
 
-        return new SubstituteViewHolder(view, background, highlightBackground, textColor, highlightedTextColor);
+        return new SubstituteViewHolder(view, background, highlightedBackground, textColor, highlightedTextColor);
     }
 
     @Override
