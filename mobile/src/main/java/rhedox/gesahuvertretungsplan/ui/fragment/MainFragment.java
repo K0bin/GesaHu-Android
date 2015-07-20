@@ -154,6 +154,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(layout != null)
             layout.addOnOffsetChangedListener(this);
 
+        if(refreshLayout != null)
+            refreshLayout.setEnabled(true);
+
         if(substitutes == null)
             onRefresh();
     }
@@ -257,7 +260,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         request = null;
 
         if(refreshLayout != null)
-        refreshLayout.setRefreshing(false);
+            refreshLayout.setRefreshing(false);
 
         String errorMessage = error.getMessage();
         if(SubstituteRequest.isEmpty(errorMessage))

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string name="define_int_materialpreference"></string>
+	<!-- Author section -->
+	<string name="library_materialpreference_author">Jens Driller</string>
+	<string name="library_materialpreference_authorWebsite">http://www.jensdriller.com/</string>
+	<!-- Library section -->
+	<string name="library_materialpreference_libraryName">MaterialPreference</string>
+	<string name="library_materialpreference_libraryDescription">A simple backward-compatible implementation of a Material Design Preference aka settings item</string>
+	<!-- OpenSource section -->
+	<string name="library_materialpreference_isOpenSource">true</string>
+	<string name="library_materialpreference_repositoryLink">https://github.com/jenzz/Android-MaterialPreference</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_materialpreference_classPath">com.jenzz.materialpreference.Preference</string>
+	<!-- License section -->
+   <string name="library_materialpreference_licenseId">mit</string>
+</resources>

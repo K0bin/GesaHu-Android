@@ -24,7 +24,7 @@ public final class AboutLibs {
                 .withAboutDescription(Html.fromHtml(context.getString(R.string.about_text)).toString())
                 .withVersionShown(true)
                 .withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                .withLibraries("AppCompat", "MaterialDesignIcons", "ACRA", "Volley", "ChangelogLib")
+                .withLibraries("AppCompat", "MaterialDesignIcons", "ACRA", "Volley", "materialpreference")
                 .start(context);
     }
 }
