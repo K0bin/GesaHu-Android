@@ -1,1 +1,1 @@
-include ':mobile', ':Volley', ':ColorPicker'
+include ':mobile', ':ColorPicker'

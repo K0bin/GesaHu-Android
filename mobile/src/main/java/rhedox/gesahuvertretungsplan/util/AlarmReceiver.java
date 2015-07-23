@@ -2,7 +2,10 @@ package rhedox.gesahuvertretungsplan.util;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +20,7 @@ import com.android.volley.VolleyError;
 
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
+import org.joda.time.Period;
 
 import java.util.List;
 
@@ -29,7 +33,7 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 
-public class AlarmReceiver extends BroadcastReceiver implements Response.Listener<SubstitutesList> {
+public class AlarmReceiver extends BroadcastReceiver implements Response.Listener<SubstitutesList>, Response.ErrorListener {
     private Context context;
 
     @Override
@@ -137,6 +141,17 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
                 notificationManager.notify(i, builder.build());
                 count++;
             }
+        }
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo jobInfo  = new JobInfo.Builder(1, new ComponentName(context.getPackageName(), NotificationJob.class.getName()))
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).build();
+
+            scheduler.schedule(jobInfo);
         }
     }
 }

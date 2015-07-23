@@ -28,6 +28,7 @@ import java.sql.Time;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.util.AlarmReceiver;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 public class TimePreference extends DialogPreference {
     private LocalTime time;
@@ -176,12 +177,12 @@ public class TimePreference extends DialogPreference {
             CharSequence title = getTitle();
             titleView = (TextView) view.findViewById(R.id.title);
             titleView.setText(title);
-            titleView.setVisibility(!SubstituteRequest.isEmpty(title.toString()) ? View.VISIBLE : View.GONE);
+            titleView.setVisibility(!TextUtils.isEmpty(title.toString()) ? View.VISIBLE : View.GONE);
 
             CharSequence summary = getSummary();
             summaryView = (TextView) view.findViewById(R.id.summary);
             summaryView.setText(summary);
-            summaryView.setVisibility(!SubstituteRequest.isEmpty(summary.toString()) ? View.VISIBLE : View.GONE);
+            summaryView.setVisibility(!TextUtils.isEmpty(summary.toString()) ? View.VISIBLE : View.GONE);
 
             if (icon == null && iconResId > 0)
                 icon = ResourcesCompat.getDrawable(getContext().getResources(), iconResId, getContext().getTheme());

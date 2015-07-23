@@ -23,6 +23,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
  * Created by Robin on 12.07.2015.
@@ -66,7 +67,7 @@ public class SubstituteRequest extends Request<SubstitutesList> {
 
                     while ((line = in.readLine()) != null) {
                         //Dopplete Leerzeichen, HTML Zeichen und Newline entfernen
-                        line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), "").replaceAll(" +", " ").trim();
+                        line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), " ").replaceAll(" +", " ").trim();
 
                         if (announcement == null) {
                             int start = line.indexOf("<b><font face=Arial size=2>");
@@ -134,10 +135,10 @@ public class SubstituteRequest extends Request<SubstitutesList> {
                                             text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                             String[] regularTeachers = text.split(",");
                                             for (int i = 0; i < regularTeachers.length; i++) {
-                                                if (!isEmpty(regularTeachers[i]) && !isEmpty(text)) {
+                                                if (!TextUtils.isEmpty(regularTeachers[i]) && !TextUtils.isEmpty(text)) {
 
                                                     //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
-                                                    if (!isEmpty(regularTeacher)) {
+                                                    if (!TextUtils.isEmpty(regularTeacher)) {
                                                         regularTeacher += "; ";
                                                     }
 
@@ -151,10 +152,10 @@ public class SubstituteRequest extends Request<SubstitutesList> {
                                             text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                             String[] replacementTeachers = text.split(",");
                                             for (int i = 0; i < replacementTeachers.length; i++) {
-                                                if (!isEmpty(replacementTeachers[i]) && !isEmpty(text)) {
+                                                if (!TextUtils.isEmpty(replacementTeachers[i]) && !TextUtils.isEmpty(text)) {
 
                                                     //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
-                                                    if (!isEmpty(replacementTeacher)) {
+                                                    if (!TextUtils.isEmpty(replacementTeacher)) {
                                                         replacementTeacher += "; ";
                                                     }
 
@@ -184,7 +185,7 @@ public class SubstituteRequest extends Request<SubstitutesList> {
                         }
                     }
 
-                    if (!isEmpty(subject)) {
+                    if (!TextUtils.isEmpty(subject)) {
                         Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, studentInformation);
                         substitutes.add(substitute);
                     }
@@ -213,9 +214,5 @@ public class SubstituteRequest extends Request<SubstitutesList> {
             if(listener != null)
                 listener.onResponse(response);
         }
-
-    public static boolean isEmpty(String string) {
-        return string == null || string.isEmpty() || string.trim().length() == 0;
-    }
 }
 

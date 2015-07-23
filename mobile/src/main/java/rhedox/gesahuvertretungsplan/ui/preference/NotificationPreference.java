@@ -1,6 +1,9 @@
 package rhedox.gesahuvertretungsplan.ui.preference;
 
 import android.annotation.TargetApi;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -17,10 +20,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.joda.time.Interval;
+import org.joda.time.LocalTime;
+import org.joda.time.Period;
+
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.util.AlarmReceiver;
 import rhedox.gesahuvertretungsplan.util.BootReceiver;
+import rhedox.gesahuvertretungsplan.util.NotificationJob;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
  * Created by Robin on 15.11.2014.
@@ -103,12 +112,12 @@ public class NotificationPreference extends CheckBoxPreference {
             CharSequence title = getTitle();
             titleView = (TextView) view.findViewById(R.id.title);
             titleView.setText(title);
-            titleView.setVisibility(!SubstituteRequest.isEmpty(title.toString()) ? View.VISIBLE : View.GONE);
+            titleView.setVisibility(!TextUtils.isEmpty(title.toString()) ? View.VISIBLE : View.GONE);
 
             CharSequence summary = getSummary();
             summaryView = (TextView) view.findViewById(R.id.summary);
             summaryView.setText(summary);
-            summaryView.setVisibility(!SubstituteRequest.isEmpty(summary.toString()) ? View.VISIBLE : View.GONE);
+            summaryView.setVisibility(!TextUtils.isEmpty(summary.toString()) ? View.VISIBLE : View.GONE);
 
             if (icon == null && iconResId > 0)
                 icon = ResourcesCompat.getDrawable(getContext().getResources(), iconResId, getContext().getTheme());

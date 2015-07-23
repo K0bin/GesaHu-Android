@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -38,6 +39,8 @@ import rhedox.gesahuvertretungsplan.net.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.SubstitutesAdapter;
+import rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
  * Created by Robin on 30.06.2015.
@@ -192,7 +195,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void load(LocalDate date, StudentInformation information) {
         if(date != null && !isLoading) {
-            if(isNetworkConnected()) {
+            if(VolleySingleton.isNetworkConnected(getActivity())) {
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
 
@@ -206,6 +209,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 onErrorResponse(new VolleyError(getString(R.string.error_no_connection)));
             }
         }
+    }
+
+    public boolean getHasAnnouncement() {
+        return !TextUtils.isEmpty(announcement) && !announcement.equals("keine");
     }
 
     public static MainFragment newInstance(StudentInformation information, LocalDate date) {
@@ -251,7 +258,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onClick(View v) {
-        AnnouncementFragment.newInstance(announcement != null ? announcement : getString(R.string.no_announcements)).show(getChildFragmentManager(), AnnouncementFragment.TAG);
+        AnnouncementFragment.newInstance(getHasAnnouncement() ? announcement : getString(R.string.no_announcements)).show(getChildFragmentManager(), AnnouncementFragment.TAG);
     }
 
     @Override
@@ -263,7 +270,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             refreshLayout.setRefreshing(false);
 
         String errorMessage = error.getMessage();
-        if(SubstituteRequest.isEmpty(errorMessage))
+        if(TextUtils.isEmpty(errorMessage))
             errorMessage = getString(R.string.error);
 
         if(coordinatorLayout != null && getUserVisibleHint())
@@ -293,12 +300,13 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             adapter.removeAll();
             adapter.addAll(substitutes);
         }
-    }
 
-    // Check network connection
-    private boolean isNetworkConnected(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        if(getHasAnnouncement() && getActivity() != null && getUserVisibleHint()) {
+            FloatingActionButton floatingActionButton = (FloatingActionButton)getActivity().findViewById(R.id.fab);
+            if(floatingActionButton != null) {
+                floatingActionButton.setEnabled(true);
+                floatingActionButton.show();
+            }
+        }
     }
 }

@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Körschner"
-                android:id="@+id/replacementTeacher"
+                android:id="@+id/substituteTeacher"
                 android:gravity="right"
                 android:layout_gravity="center_vertical"
                 android:textAlignment="gravity"

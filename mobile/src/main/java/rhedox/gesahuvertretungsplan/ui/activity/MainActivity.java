@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
+import android.view.View;
 import android.widget.DatePicker;
 
 import org.joda.time.DurationFieldType;
@@ -159,10 +160,20 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         if(pagerAdapter == null || floatingActionButton == null)
             return;
 
+        //Set
         String tag = pagerAdapter.getFragmentTag(R.id.viewPager, position);
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        if(fragment != null && fragment instanceof MainFragment)
-            floatingActionButton.setOnClickListener((MainFragment)fragment);
+        if(fragment != null && fragment instanceof MainFragment) {
+            MainFragment mainFragment = (MainFragment)fragment;
+            floatingActionButton.setOnClickListener((MainFragment) fragment);
+            if(mainFragment.getHasAnnouncement()) {
+                floatingActionButton.setEnabled(true);
+                floatingActionButton.show();
+            } else {
+                floatingActionButton.hide();
+                floatingActionButton.setEnabled(false);
+            }
+        }
     }
 
     @Override

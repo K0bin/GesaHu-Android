@@ -1,6 +1,9 @@
 package rhedox.gesahuvertretungsplan.net;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -30,5 +33,12 @@ public class VolleySingleton {
             VolleySingleton.volleySingleton = new VolleySingleton(context);
 
         return VolleySingleton.volleySingleton;
+    }
+
+    // Check network connection
+    public static boolean isNetworkConnected(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

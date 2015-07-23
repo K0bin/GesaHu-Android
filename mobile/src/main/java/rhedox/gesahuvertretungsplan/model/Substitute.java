@@ -1,5 +1,8 @@
 package rhedox.gesahuvertretungsplan.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Substitute {
     private final String lesson, subject, regularTeacher, replacementTeacher, room, hint;
     private final boolean isImportant;
@@ -46,5 +49,14 @@ public class Substitute {
 
     public boolean getIsImportant() {
         return isImportant;
+    }
+
+    public static List<Substitute> filterImportant(List<Substitute> substitutes) {
+        List<Substitute> list = new ArrayList<Substitute>();
+        for(Substitute substitute : substitutes) {
+            if(substitute.getIsImportant())
+                list.add(substitute);
+        }
+        return list;
     }
 }

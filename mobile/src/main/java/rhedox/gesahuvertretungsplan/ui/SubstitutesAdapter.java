@@ -92,7 +92,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
         // each data item is just a string in this case
         private AppCompatTextView lesson;
         private AppCompatTextView subjectName;
-        private AppCompatTextView regularTeacher;
+        private AppCompatTextView substituteTeacher;
         private AppCompatTextView replacementTeacher;
         private AppCompatTextView room;
         private AppCompatTextView hint;
@@ -106,8 +106,8 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
             super(view);
             lesson = (AppCompatTextView) view.findViewById(R.id.lesson);
             subjectName = (AppCompatTextView) view.findViewById(R.id.subjectName);
-            regularTeacher = (AppCompatTextView) view.findViewById(R.id.regularTeacher);
-            replacementTeacher = (AppCompatTextView) view.findViewById(R.id.replacementTeacher);
+            substituteTeacher = (AppCompatTextView) view.findViewById(R.id.regularTeacher);
+            replacementTeacher = (AppCompatTextView) view.findViewById(R.id.substituteTeacher);
             room = (AppCompatTextView) view.findViewById(R.id.room);
             hint = (AppCompatTextView) view.findViewById(R.id.hint);
 
@@ -121,7 +121,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
             if(substitute != null) {
                 lesson.setText(substitute.getLesson());
                 subjectName.setText(substitute.getSubject());
-                regularTeacher.setText(substitute.getRegularTeacher());
+                substituteTeacher.setText(substitute.getRegularTeacher());
                 replacementTeacher.setText(substitute.getReplacementTeacher());
                 room.setText(substitute.getRoom());
                 hint.setText(substitute.getHint());

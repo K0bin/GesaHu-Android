@@ -39,4 +39,6 @@
 
     <string name="about_text">Zeigt den &lt;b>Gesahu Vertretungsplan&lt;/b> in einem für Smartphones optimierten Layout an.&lt;br>Entwickelt von Robin Kertels&lt;br>Feedback von Felix Bastian&lt;br>&lt;i>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz&lt;/i></string>
 
+    <string name="logo_content_description">Icon</string>
+
 </resources>
