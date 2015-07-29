@@ -17,6 +17,11 @@
             android:entries="@array/classes_array"
             android:entryValues="@array/classes_array_values"
             android:defaultValue="a" />
+        <com.jenzz.materialpreference.CheckBoxPreference
+            android:key="pref_filter"
+            android:title="Nur relevante Vertretungsstunden"
+            android:summary="Zeigt nur Vertretungsstunden an, die deine Klasse betreffen"
+            android:defaultValue="false" />
     </com.jenzz.materialpreference.PreferenceCategory>
 
     <com.jenzz.materialpreference.PreferenceCategory
@@ -41,11 +46,19 @@
             android:title="Dark Theme"
             android:summary="Dunkle Farben verwenden"
             android:defaultValue="false" />
+
+        <com.jenzz.materialpreference.CheckBoxPreference
+            android:key="pref_widget_dark"
+            android:title="Widget Dark Theme"
+            android:summary="Dunkle Farben in den Widgets verwenden"
+            android:defaultValue="false" />
+
         <com.android.colorpicker.ColorPickerPreference
             android:key="pref_color"
             android:title="Farbe"
             android:summary="Akzentfarbe"
             android:defaultValue="@color/colorDefaultAccent" />
+
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="pref_white_tab_indicator"
             android:title="Weißer Tab Indikator"

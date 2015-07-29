@@ -42,6 +42,4 @@ dependencies {
         transitive = true
     }
     compile 'ch.acra:acra:4.6.+'
-    //compile 'com.jakewharton:butterknife:7.0.1'
-    //compile 'frankiesardo:icepick:3.0.2'
 }

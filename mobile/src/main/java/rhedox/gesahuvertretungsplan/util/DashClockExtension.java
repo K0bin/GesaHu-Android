@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.android.apps.dashclock.api.ExtensionData;
 
 import org.joda.time.LocalDate;
@@ -17,7 +16,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
-import rhedox.gesahuvertretungsplan.net.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
@@ -44,12 +43,8 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
             return;
 
         List<Substitute> substitutes = response.getSubstitutes();
-        int count = 0;
+        int count = SubstitutesList.countImportant(substitutes);
 
-        for (int i = 0; i < substitutes.size(); i++) {
-            if (substitutes.get(i).getIsImportant())
-                count++;
-        }
         if (count > 0) {
             publishUpdate(new ExtensionData()
                     .visible(true)

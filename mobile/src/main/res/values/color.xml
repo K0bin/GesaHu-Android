@@ -6,4 +6,10 @@
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorDefaultAccent">#AA00FF</color>
+
+    <color name="widgetBackgroundDark">#FF303030</color>
+    <color name="widgetBackgroundLight">#FFEEEEEE</color>
+
+    <color name="cardBackgroundDark">#FF404040</color>
+    <color name="cardBackgroundLight">#FFFFFFFF</color>
 </resources>

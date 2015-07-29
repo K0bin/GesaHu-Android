@@ -42,6 +42,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, ViewPager.OnPageChangeListener {
     private boolean darkTheme;
+    private boolean filterImportant;
 
     //For Floating Action Button
     private PagerAdapter pagerAdapter;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = prefs.getBoolean(SettingsFragment.PREF_DARK, false);
+        filterImportant = prefs.getBoolean(SettingsFragment.PREF_FILTER, false);
         int color = prefs.getInt(SettingsFragment.PREF_COLOR, getResources().getColor(R.color.colorDefaultAccent));
         boolean whiteIndicator = prefs.getBoolean(SettingsFragment.PREF_WHITE_TAB_INDICATOR, false);
         StudentInformation studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR, "5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
         Theming.setTabSelectorColor(tabLayout, whiteIndicator ? 0xFFFFFFFF : color);
 
@@ -87,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void run() {
                 MainActivity.this.onPageSelected(position);
+                TabLayout.Tab tab = tabLayout.getTabAt(position);
+                if(tab != null)
+                    tab.select();
             }
         });
 
@@ -197,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         public Fragment getItem(int position) {
             LocalDate fragmentDate = date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek());
 
-            return MainFragment.newInstance(studentInformation, fragmentDate);
+            return MainFragment.newInstance(studentInformation, fragmentDate, filterImportant);
         }
 
         @Override

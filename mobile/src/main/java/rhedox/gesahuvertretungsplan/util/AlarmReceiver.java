@@ -6,9 +6,11 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
@@ -20,14 +22,13 @@ import com.android.volley.VolleyError;
 
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
-import org.joda.time.Period;
 
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
-import rhedox.gesahuvertretungsplan.net.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.R;
@@ -91,19 +92,20 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (substitutes.get(i).getIsImportant()) {
                 String notificationText = "";
-                if (!substitutes.get(i).getSubject().trim().equals("")) {
+
+                if (!TextUtils.isEmpty(substitutes.get(i).getSubject())) {
                     notificationText += substitutes.get(i).getSubject().trim();
                 }
-                if (!substitutes.get(i).getRoom().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getRoom())) {
                     notificationText += "; "+context.getString(R.string.room)+": " + substitutes.get(i).getRoom().trim();
                 }
-                if (!substitutes.get(i).getRegularTeacher().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getRegularTeacher())) {
                     notificationText += System.getProperty("line.separator") + context.getString(R.string.teacher) + ": " + substitutes.get(i).getRegularTeacher().trim() + "; ";
                 }
-                if (!substitutes.get(i).getReplacementTeacher().trim().equals("") && !substitutes.get(i).getReplacementTeacher().trim().equals(" ")) {
-                    notificationText += context.getString(R.string.substitute_teacher)+": " + substitutes.get(i).getReplacementTeacher().trim();
+                if (!TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher()) && !TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher())) {
+                    notificationText += context.getString(R.string.substitute_teacher)+": " + substitutes.get(i).getSubstituteTeacher().trim();
                 }
-                if (!substitutes.get(i).getHint().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getHint())) {
                     notificationText += System.getProperty("line.separator") + context.getString(R.string.hint)+": " + substitutes.get(i).getHint().trim();
                 }
 
@@ -117,31 +119,46 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
                 bigTextStyle.bigText(notificationText);
 
                 bigTextStyle.setBigContentTitle(context.getString(R.string.substitute));
-                bigTextStyle.setSummaryText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour)+".");
+                bigTextStyle.setSummaryText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour) + ".");
                 builder.setStyle(bigTextStyle);
                 builder.setSmallIcon(R.drawable.icon_notification);
                 builder.setContentTitle(context.getString(R.string.substitute));
-                builder.setContentText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour)+".");
+                builder.setContentText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour) + ".");
                 builder.setContentInfo(substitutes.get(i).getLesson());
                 builder.setContentIntent(launchPending);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    Intent share = new Intent();
-                    share.setAction(Intent.ACTION_SEND);
-                    share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text) + notificationText);
-                    share.setType("text/plain");
-                    PendingIntent pending = PendingIntent.getActivity(context, 2 + count * 2, share, PendingIntent.FLAG_UPDATE_CURRENT);
-                    builder.addAction(R.drawable.icon_share, context.getString(R.string.share), pending);
-                }
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder.setCategory(NotificationCompat.CATEGORY_EVENT);
-                    builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-                }
+                //Only relevant for JELLY_BEAN and higher
+                Intent share = new Intent();
+                share.setAction(Intent.ACTION_SEND);
+                share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text) + notificationText);
+                share.setType("text/plain");
+                PendingIntent pending = PendingIntent.getActivity(context, count, share, PendingIntent.FLAG_UPDATE_CURRENT);
+                builder.addAction(R.drawable.icon_share, context.getString(R.string.share), pending);
+
+
+                //Only relevant for LOLLIPOP and higher
+                builder.setCategory(NotificationCompat.CATEGORY_EVENT);
+                builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
                 notificationManager.notify(i, builder.build());
                 count++;
             }
         }
+
+
+
+        //TeslaUnread
+        try {
+            ContentValues cv = new ContentValues();
+
+            cv.put("tag", "com.yourpackagename/com.youractivityname");
+
+            cv.put("count", SubstitutesList.countImportant(substitutes));
+
+            context.getContentResolver().insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv);
+
+        } catch (IllegalArgumentException ex) { /* TeslaUnread is not installed. */ }
     }
 
     @Override

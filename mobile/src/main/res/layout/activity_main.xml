@@ -10,16 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/appbarLayout"
-        android:transitionName="appbar">
-        <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:transitionName="appbar"
+        android:elevation="4dp">
+        <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:id="@+id/actionToolBar"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="?attr/toolbarPopupTheme"
-            android:elevation="4dp"
-            android:titleTextAppearance="@android:color/white"
             app:layout_scrollFlags="scroll"
             android:transitionName="toolbar"
         />
@@ -33,7 +32,6 @@
             app:tabMode="scrollable"
             app:tabGravity="fill"
             app:tabContentStart="72dp"
-            android:elevation="4dp"
             app:tabIndicatorColor="?attr/tabIndicatorColor"/>
     </android.support.design.widget.AppBarLayout>
 
@@ -49,7 +47,7 @@
         android:src="@drawable/icon_announcement"
         app:fabSize="normal"
         android:layout_gravity="bottom|right"
-        android:layout_margin="@dimen/bug_fab_margin"
+        android:layout_margin="16dp"
         app:borderWidth="@dimen/bug_fab_border"
         android:id="@+id/fab"
         app:layout_behavior="rhedox.gesahuvertretungsplan.ui.ScrollAwareFabBehavior"

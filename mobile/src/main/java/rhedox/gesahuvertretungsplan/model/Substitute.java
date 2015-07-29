@@ -1,7 +1,11 @@
 package rhedox.gesahuvertretungsplan.model;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import rhedox.gesahuvertretungsplan.R;
 
 public class Substitute {
     private final String lesson, subject, regularTeacher, replacementTeacher, room, hint;
@@ -16,7 +20,7 @@ public class Substitute {
         this.hint = hint.trim();
 
         String[] classes = subject.split(" ");
-        if(classes.length > 0 && information != null && !information.isEmpty()) {
+        if(classes.length > 0 && information != null && !information.getIsEmpty()) {
             String _class = classes[classes.length - 1];
             isImportant = _class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass());
         } else
@@ -35,7 +39,7 @@ public class Substitute {
         return regularTeacher;
     }
 
-    public String getReplacementTeacher() {
+    public String getSubstituteTeacher() {
         return replacementTeacher;
     }
 
@@ -51,12 +55,7 @@ public class Substitute {
         return isImportant;
     }
 
-    public static List<Substitute> filterImportant(List<Substitute> substitutes) {
-        List<Substitute> list = new ArrayList<Substitute>();
-        for(Substitute substitute : substitutes) {
-            if(substitute.getIsImportant())
-                list.add(substitute);
-        }
-        return list;
+    public static Substitute makeEmptyListSubstitute(Context context) {
+        return new Substitute("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", null);
     }
 }

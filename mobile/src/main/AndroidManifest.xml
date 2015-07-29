@@ -67,19 +67,30 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".util.widget.WidgetProvider">
+        <!--List Widget-->
+        <receiver android:name=".provider.ListWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                       android:resource="@xml/appwidget_info" />
+                       android:resource="@xml/list_widget_info" />
         </receiver>
 
-        <service android:name=".util.widget.RemoteViewsService">
+        <service android:name=".util.widget.ListFactoryService"
+                 android:permission="android.permission.BIND_REMOTEVIEWS"
+                 android:exported="false">
         </service>
 
-        <service android:name=".util.widget.WidgetCounterService" >
-        </service>
+        <!--Counter Widget-->
+        <receiver android:name=".provider.CounterWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/counter_widget_info" />
+        </receiver>
+
+        <service android:name=".util.widget.CounterWidgetService" />
 
     </application>
 

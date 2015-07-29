@@ -13,7 +13,9 @@ public class SettingsFragment extends PreferenceFragment {
     public static final String PREF_YEAR ="pref_year";
     public static final String PREF_CLASS ="pref_class";
     public static final String PREF_DARK ="pref_dark";
+    public static final String PREF_WIDGET_DARK ="pref_widget_dark";
     public static final String PREF_COLOR ="pref_color";
+    public static final String PREF_FILTER ="pref_filter";
     public static final String PREF_WHITE_TAB_INDICATOR ="pref_white_tab_indicator";
 
     @Override

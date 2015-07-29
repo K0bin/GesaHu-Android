@@ -40,6 +40,7 @@ public class SingleDayActivity extends AppCompatActivity {
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = prefs.getBoolean(SettingsFragment.PREF_DARK, false);
+        boolean filterImportant = prefs.getBoolean(SettingsFragment.PREF_FILTER, false);
         studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR,"5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
         int color = prefs.getInt(SettingsFragment.PREF_COLOR, getResources().getColor(R.color.colorDefaultAccent));
 
@@ -47,7 +48,7 @@ public class SingleDayActivity extends AppCompatActivity {
         this.setTheme(Theming.getTheme(darkTheme, color));
 
         LocalDate date = LocalDate.now();
-        if(getIntent().getExtras()!=null && getIntent().getExtras().containsKey(EXTRA_DATE))
+        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE))
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
 
         super.onCreate(savedInstanceState);
@@ -61,12 +62,14 @@ public class SingleDayActivity extends AppCompatActivity {
 
         fragment = (MainFragment)getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
         if(fragment == null) {
-            fragment = MainFragment.newInstance(studentInformation, date);
+            fragment = MainFragment.newInstance(studentInformation, date, filterImportant);
             getSupportFragmentManager().beginTransaction().add(R.id.content, fragment, MainFragment.TAG).commit();
         }
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(fragment);
+        floatingActionButton.hide();
+        floatingActionButton.setEnabled(false);
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             TypedArray a = obtainStyledAttributes(new int[] { R.attr.colorPrimary });

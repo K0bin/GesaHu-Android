@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui;
+package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -69,12 +69,8 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
         return substitutes.size();
     }
 
-    public void setSubstitutes(List<Substitute> substitutes) {
-        this.substitutes = new ArrayList<Substitute>(substitutes);
-    }
-
     public void addAll(List<Substitute> substitutes) {
-        setSubstitutes(substitutes);
+        this.substitutes = new ArrayList<Substitute>(substitutes);
         if(getItemCount() > 0) {
             notifyItemRangeInserted(0, getItemCount());
         }
@@ -88,7 +84,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
     }
 
 
-    public class SubstituteViewHolder extends RecyclerView.ViewHolder {
+    public static class SubstituteViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         private AppCompatTextView lesson;
         private AppCompatTextView subjectName;
@@ -122,7 +118,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstitutesAdapter.
                 lesson.setText(substitute.getLesson());
                 subjectName.setText(substitute.getSubject());
                 substituteTeacher.setText(substitute.getRegularTeacher());
-                replacementTeacher.setText(substitute.getReplacementTeacher());
+                replacementTeacher.setText(substitute.getSubstituteTeacher());
                 room.setText(substitute.getRoom());
                 hint.setText(substitute.getHint());
                 if (substitute.getIsImportant()) {

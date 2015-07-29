@@ -1,8 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.content.res.TypedArray;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -11,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +25,7 @@ import com.android.volley.VolleyError;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.*;
@@ -35,11 +33,10 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
-import rhedox.gesahuvertretungsplan.net.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
-import rhedox.gesahuvertretungsplan.ui.SubstitutesAdapter;
-import rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference;
+import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
@@ -53,9 +50,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private RecyclerView recyclerView;
 
     private StudentInformation studentInformation;
+    private boolean filterImportant = false;
 
     public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
     public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
+    public static final String ARGUMENT_IMPORTANT = "ARGUMENT_IMPORTANT";
     public static final String TAG ="MAIN_FRAGMENT";
 
     private LocalDate date;
@@ -77,6 +76,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(arguments != null) {
             studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
             date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
+            filterImportant = arguments.getBoolean(ARGUMENT_IMPORTANT, false);
         }
 
         if(studentInformation == null) {
@@ -215,14 +215,18 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return !TextUtils.isEmpty(announcement) && !announcement.equals("keine");
     }
 
-    public static MainFragment newInstance(StudentInformation information, LocalDate date) {
+    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant) {
         Bundle arguments = new Bundle();
         arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
         arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
+        arguments.putBoolean(ARGUMENT_IMPORTANT,  filterImportant);
         MainFragment fragment = new MainFragment();
         fragment.setArguments(arguments);
 
         return fragment;
+    }
+    public static MainFragment newInstance(StudentInformation information, LocalDate date) {
+        return MainFragment.newInstance(information, date, false);
     }
 
     @Override
@@ -294,18 +298,34 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             return;
 
         this.announcement = response.getAnnouncement();
-        this.substitutes = response.getSubstitutes();
+        if(!filterImportant)
+            this.substitutes = response.getSubstitutes();
+        else
+            this.substitutes = SubstitutesList.filterImportant(getActivity(), response.getSubstitutes());
 
-        if(recyclerView != null) {
+        if (recyclerView != null) {
             adapter.removeAll();
-            adapter.addAll(substitutes);
+
+            if(substitutes == null)
+                substitutes = new ArrayList<Substitute>();
+
+            if (substitutes.size() == 0) {
+                Substitute substitute = Substitute.makeEmptyListSubstitute(getActivity());
+                substitutes.add(substitute);
+            }
+            adapter.addAll(this.substitutes);
         }
 
-        if(getHasAnnouncement() && getActivity() != null && getUserVisibleHint()) {
-            FloatingActionButton floatingActionButton = (FloatingActionButton)getActivity().findViewById(R.id.fab);
-            if(floatingActionButton != null) {
-                floatingActionButton.setEnabled(true);
-                floatingActionButton.show();
+        if (getActivity() != null && getUserVisibleHint()) {
+            FloatingActionButton floatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+            if (floatingActionButton != null) {
+                if(getHasAnnouncement()) {
+                    floatingActionButton.setEnabled(true);
+                    floatingActionButton.show();
+                } else {
+                    floatingActionButton.hide();
+                    floatingActionButton.setEnabled(false);
+                }
             }
         }
     }

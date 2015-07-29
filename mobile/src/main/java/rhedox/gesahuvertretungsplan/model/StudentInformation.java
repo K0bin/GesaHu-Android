@@ -33,7 +33,7 @@ public class StudentInformation implements Parcelable {
         return schoolClass;
     }
 
-    public boolean isEmpty() {
+    public boolean getIsEmpty() {
         return (schoolYear == null || schoolYear.equals("") || schoolYear.equals(" ")) && (schoolClass == null || schoolClass.equals("") || schoolClass.equals(" "));
     }
 

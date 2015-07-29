@@ -21,7 +21,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
-import rhedox.gesahuvertretungsplan.net.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
@@ -68,22 +68,21 @@ public class NotificationJob extends JobService implements Response.Listener<Sub
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
             if (substitutes.get(i).getIsImportant()) {
                 String notificationText = "";
-                if (!substitutes.get(i).getSubject().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getSubject())) {
                     notificationText += substitutes.get(i).getSubject().trim();
                 }
-                if (!substitutes.get(i).getRoom().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getRoom())) {
                     notificationText += "; "+getApplicationContext().getString(R.string.room)+": " + substitutes.get(i).getRoom().trim();
                 }
-                if (!substitutes.get(i).getRegularTeacher().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getRegularTeacher())) {
                     notificationText += System.getProperty("line.separator") + getApplicationContext().getString(R.string.teacher) + ": " + substitutes.get(i).getRegularTeacher().trim() + "; ";
                 }
-                if (!substitutes.get(i).getReplacementTeacher().trim().equals("") && !substitutes.get(i).getReplacementTeacher().trim().equals(" ")) {
-                    notificationText += getApplicationContext().getString(R.string.substitute_teacher)+": " + substitutes.get(i).getReplacementTeacher().trim();
+                if (!TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher()) && !TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher())) {
+                    notificationText += getApplicationContext().getString(R.string.substitute_teacher)+": " + substitutes.get(i).getSubstituteTeacher().trim();
                 }
-                if (!substitutes.get(i).getHint().trim().equals("")) {
+                if (!TextUtils.isEmpty(substitutes.get(i).getHint())) {
                     notificationText += System.getProperty("line.separator") + getApplicationContext().getString(R.string.hint)+": " + substitutes.get(i).getHint().trim();
                 }
-
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
 

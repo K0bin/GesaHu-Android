@@ -23,6 +23,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
@@ -67,7 +68,7 @@ public class SubstituteRequest extends Request<SubstitutesList> {
 
                     while ((line = in.readLine()) != null) {
                         //Dopplete Leerzeichen, HTML Zeichen und Newline entfernen
-                        line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), " ").replaceAll(" +", " ").trim();
+                        line = line.replaceAll("&nbsp;|\u00a0|" + System.getProperty("line.separator"), "").replaceAll(" +", " ").trim();
 
                         if (announcement == null) {
                             int start = line.indexOf("<b><font face=Arial size=2>");
@@ -187,11 +188,6 @@ public class SubstituteRequest extends Request<SubstitutesList> {
 
                     if (!TextUtils.isEmpty(subject)) {
                         Substitute substitute = new Substitute(lesson, subject, regularTeacher, replacementTeacher, room, hint, studentInformation);
-                        substitutes.add(substitute);
-                    }
-
-                    if (substitutes.size() == 0) {
-                        Substitute substitute = new Substitute("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", new StudentInformation("", ""));
                         substitutes.add(substitute);
                     }
 
