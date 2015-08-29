@@ -5,11 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -88,8 +85,8 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_replacement);
             remoteViews.setTextViewText(R.id.lesson, substitute.getLesson());
-            remoteViews.setTextViewText(R.id.subjectName, substitute.getSubject());
-            remoteViews.setTextViewText(R.id.regularTeacher, substitute.getRegularTeacher());
+            remoteViews.setTextViewText(R.id.subject, substitute.getSubject());
+            remoteViews.setTextViewText(R.id.teacher, substitute.getTeacher());
             remoteViews.setTextViewText(R.id.substituteTeacher, substitute.getSubstituteTeacher());
             remoteViews.setTextViewText(R.id.hint, substitute.getHint());
             remoteViews.setTextViewText(R.id.room, substitute.getRoom());
@@ -97,14 +94,14 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
             remoteViews.setTextColor(R.id.lesson, 0xFFFFFFFF);
 
             if(darkTheme) {
-                remoteViews.setTextColor(R.id.subjectName, 0xFFFFFFFF);
-                remoteViews.setTextColor(R.id.regularTeacher, 0xFFFFFFFF);
+                remoteViews.setTextColor(R.id.subject, 0xFFFFFFFF);
+                remoteViews.setTextColor(R.id.teacher, 0xFFFFFFFF);
                 remoteViews.setTextColor(R.id.substituteTeacher, 0xFFFFFFFF);
                 remoteViews.setTextColor(R.id.hint, 0xFFFFFFFF);
                 remoteViews.setTextColor(R.id.room, 0xFFFFFFFF);
             } else {
-                remoteViews.setTextColor(R.id.subjectName, 0xFF000000);
-                remoteViews.setTextColor(R.id.regularTeacher, 0xFF000000);
+                remoteViews.setTextColor(R.id.subject, 0xFF000000);
+                remoteViews.setTextColor(R.id.teacher, 0xFF000000);
                 remoteViews.setTextColor(R.id.substituteTeacher, 0xFF000000);
                 remoteViews.setTextColor(R.id.hint, 0xFF000000);
                 remoteViews.setTextColor(R.id.room, 0xFF000000);

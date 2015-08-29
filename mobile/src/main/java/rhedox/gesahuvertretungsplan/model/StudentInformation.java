@@ -3,6 +3,8 @@ package rhedox.gesahuvertretungsplan.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import rhedox.gesahuvertretungsplan.util.TextUtils;
+
 /**
  * Created by Robin on 03.05.2015.
  */
@@ -34,7 +36,7 @@ public class StudentInformation implements Parcelable {
     }
 
     public boolean getIsEmpty() {
-        return (schoolYear == null || schoolYear.equals("") || schoolYear.equals(" ")) && (schoolClass == null || schoolClass.equals("") || schoolClass.equals(" "));
+        return TextUtils.isEmpty(schoolYear) && TextUtils.isEmpty(schoolClass);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package rhedox.gesahuvertretungsplan.util;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -13,8 +15,11 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresPermission;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -53,7 +58,9 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
         this.context = context;
     }
 
+    @RequiresPermission(Manifest.permission.SET_ALARM)
     public static void create(Context context, int hour, int minute) {
+
         DateTime time = DateTime.now();
 
         if(hour < time.getHourOfDay() || (hour == time.getHourOfDay() && minute < time.getMinuteOfHour()))
@@ -99,8 +106,8 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
                 if (!TextUtils.isEmpty(substitutes.get(i).getRoom())) {
                     notificationText += "; "+context.getString(R.string.room)+": " + substitutes.get(i).getRoom().trim();
                 }
-                if (!TextUtils.isEmpty(substitutes.get(i).getRegularTeacher())) {
-                    notificationText += System.getProperty("line.separator") + context.getString(R.string.teacher) + ": " + substitutes.get(i).getRegularTeacher().trim() + "; ";
+                if (!TextUtils.isEmpty(substitutes.get(i).getTeacher())) {
+                    notificationText += System.getProperty("line.separator") + context.getString(R.string.teacher) + ": " + substitutes.get(i).getTeacher().trim() + "; ";
                 }
                 if (!TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher()) && !TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher())) {
                     notificationText += context.getString(R.string.substitute_teacher)+": " + substitutes.get(i).getSubstituteTeacher().trim();
@@ -147,7 +154,6 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
         }
 
 
-
         //TeslaUnread
         try {
             ContentValues cv = new ContentValues();
@@ -164,11 +170,16 @@ public class AlarmReceiver extends BroadcastReceiver implements Response.Listene
     @Override
     public void onErrorResponse(VolleyError error) {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            JobInfo jobInfo  = new JobInfo.Builder(1, new ComponentName(context.getPackageName(), NotificationJob.class.getName()))
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).build();
-
-            scheduler.schedule(jobInfo);
+            scheduleJob();
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void scheduleJob() {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo jobInfo  = new JobInfo.Builder(1, new ComponentName(context.getPackageName(), NotificationJob.class.getName()))
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).build();
+
+        scheduler.schedule(jobInfo);
     }
 }

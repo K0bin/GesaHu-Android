@@ -1,20 +1,19 @@
 package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import rhedox.gesahuvertretungsplan.R;
 
 public class Substitute {
-    private final String lesson, subject, regularTeacher, replacementTeacher, room, hint;
+    private final String lesson, subject, teacher, replacementTeacher, room, hint;
     private final boolean isImportant;
 
-    public Substitute(String lesson, String subject, String regularTeacher, String replacementTeacher, String room, String hint, StudentInformation information) {
+    public Substitute(String lesson, String subject, String teacher, String replacementTeacher, String room, String hint, @Nullable StudentInformation information) {
         this.lesson = lesson.trim();
         this.subject = subject.trim();
-        this.regularTeacher = regularTeacher.trim();
+        this.teacher = teacher.trim();
         this.replacementTeacher = replacementTeacher.trim();
         this.room = room.trim();
         this.hint = hint.trim();
@@ -35,8 +34,8 @@ public class Substitute {
         return subject;
     }
 
-    public String getRegularTeacher() {
-        return regularTeacher;
+    public String getTeacher() {
+        return teacher;
     }
 
     public String getSubstituteTeacher() {
@@ -55,7 +54,7 @@ public class Substitute {
         return isImportant;
     }
 
-    public static Substitute makeEmptyListSubstitute(Context context) {
+    public static Substitute makeEmptyListSubstitute(@NonNull Context context) {
         return new Substitute("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", null);
     }
 }

@@ -1,6 +1,8 @@
 package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ public class SubstitutesList {
     private List<Substitute> substitutes;
     private String announcement;
 
-    public SubstitutesList(List<Substitute> substitutes, String announcement) {
+    public SubstitutesList(@Nullable List<Substitute> substitutes, @Nullable String announcement) {
         this.substitutes = substitutes;
         this.announcement = announcement;
     }
@@ -27,7 +29,7 @@ public class SubstitutesList {
         return announcement;
     }
 
-    public static List<Substitute> filterImportant(Context context, List<Substitute> substitutes) {
+    public static List<Substitute> filterImportant(@NonNull Context context, @Nullable List<Substitute> substitutes) {
         if(substitutes == null)
             return null;
 
@@ -43,7 +45,7 @@ public class SubstitutesList {
         return list;
     }
 
-    public static int countImportant(List<Substitute> substitutes) {
+    public static int countImportant(@Nullable List<Substitute> substitutes) {
         if(substitutes == null)
             return 0;
 

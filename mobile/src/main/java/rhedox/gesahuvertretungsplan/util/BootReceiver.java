@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.util;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresPermission;
 
 import rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
@@ -31,6 +33,7 @@ public class BootReceiver extends BroadcastReceiver {
         }
     }
 
+    @RequiresPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
     public static void create(Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         //ComponentName receiver = new ComponentName("rhedox.gesahuvertretungsplan.alarm","BootReceiver");

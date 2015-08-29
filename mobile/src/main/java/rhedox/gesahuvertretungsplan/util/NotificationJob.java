@@ -74,8 +74,8 @@ public class NotificationJob extends JobService implements Response.Listener<Sub
                 if (!TextUtils.isEmpty(substitutes.get(i).getRoom())) {
                     notificationText += "; "+getApplicationContext().getString(R.string.room)+": " + substitutes.get(i).getRoom().trim();
                 }
-                if (!TextUtils.isEmpty(substitutes.get(i).getRegularTeacher())) {
-                    notificationText += System.getProperty("line.separator") + getApplicationContext().getString(R.string.teacher) + ": " + substitutes.get(i).getRegularTeacher().trim() + "; ";
+                if (!TextUtils.isEmpty(substitutes.get(i).getTeacher())) {
+                    notificationText += System.getProperty("line.separator") + getApplicationContext().getString(R.string.teacher) + ": " + substitutes.get(i).getTeacher().trim() + "; ";
                 }
                 if (!TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher()) && !TextUtils.isEmpty(substitutes.get(i).getSubstituteTeacher())) {
                     notificationText += getApplicationContext().getString(R.string.substitute_teacher)+": " + substitutes.get(i).getSubstituteTeacher().trim();
