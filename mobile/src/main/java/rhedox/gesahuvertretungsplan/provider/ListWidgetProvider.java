@@ -14,7 +14,7 @@ import org.joda.time.LocalDate;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.ui.activity.SingleDayActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 import rhedox.gesahuvertretungsplan.util.widget.ListFactoryService;
 
@@ -39,11 +39,11 @@ public class ListWidgetProvider extends AppWidgetProvider {
             boolean darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list);
-            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", context.getResources().getColor(darkTheme ? R.color.widgetBackgroundDark : R.color.widgetBackgroundLight));
+            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", context.getResources().getColor(darkTheme ? R.color.windowBackgroundDark : R.color.windowBackgroundLight));
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
-            Intent onClickIntent = new Intent(context, SingleDayActivity.class);
-            onClickIntent.putExtra(SingleDayActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            Intent onClickIntent = new Intent(context, MainActivity.class);
+            onClickIntent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
             PendingIntent onClickPending = PendingIntent.getActivity(context, 7, onClickIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 

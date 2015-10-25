@@ -6,7 +6,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.preference.DialogPreference;
+import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -89,6 +90,9 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
     }
 
 
+
+
+    /*
     @Override
     protected View onCreateDialogView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.color_picker_dialog, null);
@@ -103,10 +107,13 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
         }
 
         return view;
-    }
+    }*/
 
+    /*
     @Override
     protected View onCreateView(ViewGroup parent) {
+        //super.onCreateView(parent);
+
         View view = LayoutInflater.from(getContext()).inflate(R.layout.color_picker_preference, parent, false);
         AppCompatTextView title = (AppCompatTextView)view.findViewById(R.id.title);
         AppCompatTextView summary = (AppCompatTextView)view.findViewById(R.id.summary);
@@ -122,7 +129,7 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
             swatch.setColor(mSelectedColor);
 
         return view;
-    }
+    }*/
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
@@ -149,8 +156,8 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
             swatch.setColor(mSelectedColor);
             mPalette.drawPalette(mColors, mSelectedColor);
         }
-        if (getDialog() != null)
-            getDialog().dismiss();
+        //if (getDialog() != null)
+        //    getDialog().dismiss();
     }
 
     @Override

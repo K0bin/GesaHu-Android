@@ -22,3 +22,7 @@ public class App extends Application {
         ACRA.init(this);
     }
 }
+
+//https://code.google.com/p/android/issues/detail?id=184887
+//https://code.google.com/p/android/issues/detail?id=77712
+//https://code.google.com/p/android/issues/detail?id=183783

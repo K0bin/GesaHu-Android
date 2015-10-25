@@ -1,16 +1,24 @@
 package rhedox.gesahuvertretungsplan.util.widget;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.RemoteViews;
 
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -25,13 +33,12 @@ import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.provider.CounterWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.activity.SingleDayActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 
 /**
  * Created by Robin on 23.07.2015.
  */
-public class CounterWidgetService extends Service implements Response.Listener<SubstitutesList>{
+public class CounterWidgetService extends Service implements Response.Listener<SubstitutesList>, Response.ErrorListener {
     private boolean darkTheme;
 
     private int[] allWidgetIds;
@@ -72,5 +79,8 @@ public class CounterWidgetService extends Service implements Response.Listener<S
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
     }
-}
 
+    @Override
+    public void onErrorResponse(VolleyError error) {
+    }
+}

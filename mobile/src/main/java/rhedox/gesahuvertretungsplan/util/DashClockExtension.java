@@ -48,7 +48,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         if (count > 0) {
             publishUpdate(new ExtensionData()
                     .visible(true)
-                    .icon(R.drawable.icon_notification)
+                    .icon(R.drawable.ic_notification)
                     .status(count + " " + getString(R.string.hours))
                     .expandedTitle(getString(R.string.app_name))
                     .expandedBody(count + " " + getString(R.string.lessons))

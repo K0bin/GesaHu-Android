@@ -14,7 +14,7 @@ import org.joda.time.LocalDate;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.ui.activity.SingleDayActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 import rhedox.gesahuvertretungsplan.util.widget.CounterWidgetService;
 
@@ -63,8 +63,8 @@ public class CounterWidgetProvider extends AppWidgetProvider {
         } else
             remoteViews.setViewVisibility(R.id.counter, View.GONE);
 
-        Intent intent = new Intent(context, SingleDayActivity.class);
-        intent.putExtra(SingleDayActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 7, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.widget_frame, pendingIntent);
 

@@ -10,6 +10,9 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresPermission;
 
+import org.joda.time.LocalTime;
+
+import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 import rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 
@@ -22,13 +25,11 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean notification = prefs.getBoolean(NotificationPreference.PREF_NOTIFICATION, true);
-            String alarmString = prefs.getString(NotificationPreference.PREF_NOTIFICATION_TIME, "00:00");
-            int alarmHour = TimePreference.getHour(alarmString);
-            int alarmMinute = TimePreference.getMinute(alarmString);
+            boolean notification = prefs.getBoolean(SettingsFragment.PREF_NOTIFICATION, true);
+            LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(SettingsFragment.PREF_NOTIFICATION_TIME, 0));
 
             if(notification) {
-                AlarmReceiver.create(context, alarmHour, alarmMinute);
+                AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour());
             }
         }
     }
@@ -36,7 +37,6 @@ public class BootReceiver extends BroadcastReceiver {
     @RequiresPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
     public static void create(Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
-        //ComponentName receiver = new ComponentName("rhedox.gesahuvertretungsplan.alarm","BootReceiver");
         PackageManager pm = context.getPackageManager();
 
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);

@@ -5,6 +5,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorDefaultAccent</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+		<item name="android:windowBackground">@color/windowBackgroundLight</item>
 
         <item name="circleColor">@color/circle</item>
         <item name="circleHighlightedColor">?attr/colorAccent</item>
@@ -12,6 +13,15 @@
         <item name="circleHighlightedTextColor">@android:color/white</item>
 
         <item name="tabIndicatorColor">?attr/colorAccent</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
+
+        <item name="selectedColor">@color/selected_light</item>
+		<item name="activatedColor">@color/activated_light</item>
+
+        <item name="textPrimary">#ff212121</item>
+        <item name="textSecondary">#ff757575</item>
     </style>
 
     <style name="GesahuThemeDark" parent="Theme.AppCompat.NoActionBar">
@@ -26,6 +36,24 @@
         <item name="circleHighlightedTextColor">@android:color/white</item>
 
         <item name="tabIndicatorColor">?attr/colorAccent</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
+
+		<item name="selectedColor">@color/selected_dark</item>
+		<item name="activatedColor">@color/activated_dark</item>
+
+        <item name="textPrimary">#ffffffff</item>
+        <item name="textSecondary">#ffB2B2B2</item>
     </style>
+
+
+	<!--Preference AppCompat bugfix-->
+	<style name="Preference_TextAppearanceMaterialBody2">
+		<item name="android:textSize">14sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">?android:attr/textColorPrimary</item>
+	</style>
 
 </resources>

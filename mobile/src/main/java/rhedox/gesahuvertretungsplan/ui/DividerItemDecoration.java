@@ -46,7 +46,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         setOrientation(orientation);
 
         height = divider.getIntrinsicHeight();
-        height = 1;
+        //height = 1;
     }
 
     public void setOrientation(int orientation) {

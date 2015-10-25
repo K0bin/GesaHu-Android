@@ -4,6 +4,7 @@
     <string name="app_name_long">Gesahu Vertretungsplan</string>
     <string name="title_activity_single_day">Einzelner Tag</string>
     <string name="title_activity_about">Über</string>
+	<string name="title_activity_settings">Einstellungen</string>
 
     <string name="action_settings">Einstellungen</string>
     <string name="action_date">Datum auswählen</string>
@@ -17,6 +18,8 @@
     <string name="notification_text">Vertretung in der</string>
     <string name="share_text">Wir haben </string>
     <string name="share">Teilen</string>
+	<string name="main_cab_title">Teile eine Stunde!</string>
+	<string name="failed">Da hat etwas nicht funktioniert!</string>
 
     <string name="announcements">Ankündigungen</string>
 
@@ -40,5 +43,19 @@
     <string name="about_text">Zeigt den &lt;b>Gesahu Vertretungsplan&lt;/b> in einem für Smartphones optimierten Layout an.&lt;br>Entwickelt von Robin Kertels&lt;br>Feedback von Felix Bastian&lt;br>&lt;i>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz&lt;/i></string>
 
     <string name="logo_content_description">Icon</string>
+	<string name="title_activity_welcome">Willkommen</string>
+
+	<string name="title_section1">Section 1</string>
+	<string name="title_section2">Section 2</string>
+	<string name="title_section3">Section 3</string>
+
+	<string name="hello_world">Hello world!</string>
+
+	<string name="feature_design">Gesahu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys angepasstem Design an.</string>
+	<string name="feature_highlight">Die App kann außerdem für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
+	<string name="feature_notify">Gesahu VP für Android kann dich einmal am Tag benachrichtigen, wenn du Vertretungsstunden hast.</string>
+    <string name="feature_notify2">Dadurch bist du bei Freistunden immer informiert!</string>+
+
+    <string name="error_title">Uups.</string>
 
 </resources>

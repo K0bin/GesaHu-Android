@@ -5,11 +5,19 @@
 
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorDefaultAccent">#AA00FF</color>
+    <color name="colorDefaultAccent">#448aff</color>
 
-    <color name="widgetBackgroundDark">#FF303030</color>
-    <color name="widgetBackgroundLight">#FFEEEEEE</color>
+    <color name="windowBackgroundDark">#FF303030</color>
+    <color name="windowBackgroundLight">#FFFAFAFA</color>
+
 
     <color name="cardBackgroundDark">#FF404040</color>
-    <color name="cardBackgroundLight">#FFFFFFFF</color>
+    <color name="cardBackgroundLight">#FFFeFeFe</color>
+
+    <color name="preference_fallback_accent_color">#AA00FF</color>
+
+    <color name="selected_light">#ffBCBCBC</color>
+	<color name="selected_dark">#ff424242</color>
+	<color name="activated_light">#ffEBEBEB</color>
+	<color name="activated_dark">#ff4B4B4B</color>
 </resources>

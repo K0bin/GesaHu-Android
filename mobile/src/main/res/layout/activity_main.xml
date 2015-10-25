@@ -12,6 +12,10 @@
         android:id="@+id/appbarLayout"
         android:transitionName="appbar"
         android:elevation="4dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+			app:layout_scrollFlags="scroll|enterAlways|snap">
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -19,19 +23,22 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="?attr/toolbarPopupTheme"
-            app:layout_scrollFlags="scroll"
-            android:transitionName="toolbar"
-        />
+            android:transitionName="toolbar" />
+
+            <ViewStub
+				android:id="@+id/cab_stub"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
+        </FrameLayout>
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_scrollFlags="scroll|enterAlways"
             android:id="@+id/tabLayout"
             app:tabMode="scrollable"
             app:tabGravity="fill"
-            app:tabContentStart="72dp"
+            app:tabContentStart="16dp"
             app:tabIndicatorColor="?attr/tabIndicatorColor"/>
     </android.support.design.widget.AppBarLayout>
 
@@ -44,13 +51,13 @@
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/icon_announcement"
+        android:src="@drawable/ic_announcement"
         app:fabSize="normal"
         android:layout_gravity="bottom|right"
+        app:layout_anchorGravity="bottom|right|end"
         android:layout_margin="16dp"
-        app:borderWidth="@dimen/bug_fab_border"
         android:id="@+id/fab"
-        app:layout_behavior="rhedox.gesahuvertretungsplan.ui.ScrollAwareFabBehavior"
+        app:layout_behavior="rhedox.gesahuvertretungsplan.ui.behavior.ScrollAwareFabBehavior"
         />
 
 </android.support.design.widget.CoordinatorLayout>

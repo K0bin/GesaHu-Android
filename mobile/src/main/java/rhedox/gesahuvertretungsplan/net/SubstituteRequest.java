@@ -31,6 +31,7 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
 /**
  * Created by Robin on 12.07.2015.
  */
+@Deprecated
 public class SubstituteRequest extends Request<SubstitutesList> {
     private StudentInformation studentInformation;
     private ShortNameResolver shortNameResolver;

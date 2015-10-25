@@ -1,21 +1,18 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -32,21 +29,22 @@ import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
+import rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
+import tr.xip.errorview.ErrorView;
 
 /**
  * Created by Robin on 30.06.2015.
  */
-public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener, View.OnClickListener, Response.Listener<SubstitutesList>, Response.ErrorListener{
-    //private SubstitutesList plan = new SubstitutesList();
+public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Response.Listener<SubstitutesList>, Response.ErrorListener, ErrorView.RetryListener {
     private SubstitutesAdapter adapter;
-    private SwipeRefreshLayout refreshLayout;
-    private CoordinatorLayout coordinatorLayout;
+    private SwipeRefreshLayoutFix refreshLayout;
     private RecyclerView recyclerView;
 
     private StudentInformation studentInformation;
@@ -64,6 +62,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private boolean isLoading = false;
     private SubstituteRequest request;
 
+    private ErrorView errorView;
+
+    private MaterialActivity activity;
+
     public MainFragment() {}
 
     @Override
@@ -77,15 +79,18 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
             date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
             filterImportant = arguments.getBoolean(ARGUMENT_IMPORTANT, false);
-        }
+        } else {
 
-        if(studentInformation == null) {
-            studentInformation = new StudentInformation("","");
-        }
-        if(date == null)
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            String infoClass = prefs.getString(SettingsFragment.PREF_CLASS, "");
+            String infoYear = prefs.getString(SettingsFragment.PREF_YEAR, "");
+            studentInformation = new StudentInformation(infoYear, infoClass);
+            filterImportant = prefs.getBoolean(ARGUMENT_IMPORTANT, false);
+
             date = SchoolWeek.next();
+        }
 
-        load(date, studentInformation);
+        load(date);
     }
 
     @Nullable
@@ -95,7 +100,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         //RefreshLayout
-        refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe);
+        refreshLayout = (SwipeRefreshLayoutFix)view.findViewById(R.id.swipe);
         refreshLayout.setOnRefreshListener(this);
 
         //RefreshLayout color scheme
@@ -118,82 +123,62 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView.setAdapter(adapter);
 
         //RefreshLayout immediate refresh bug workaround
-        if(isLoading)
-            refreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    refreshLayout.setRefreshing(true);
-                }
-            });
+        if(isLoading) {
+            refreshLayout.setRefreshing(true);
+        }
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //Get a CoordinatorLayout from parent activity for the snackbar
-        coordinatorLayout = (CoordinatorLayout)getActivity().findViewById(R.id.coordinator);
+        errorView = (ErrorView)view.findViewById(R.id.error_view);
+
+        if(errorView != null) {
+            errorView.setVisibility(View.GONE);
+            errorView.setOnRetryListener(this);
+        }
+
+        if(getActivity() instanceof MaterialActivity)
+            activity = (MaterialActivity)getActivity();
 
         return view;
-    }
-
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        //Remove AppBarLayout Listener so AppBarLayout and RefreshLayout work together
-        AppBarLayout layout = (AppBarLayout) getActivity().findViewById(R.id.appbarLayout);
-        if(layout != null)
-            layout.removeOnOffsetChangedListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        //Add AppBarLayout Listener so AppBarLayout and RefreshLayout work together
-        AppBarLayout layout = (AppBarLayout) getActivity().findViewById(R.id.appbarLayout);
-        if(layout != null)
-            layout.addOnOffsetChangedListener(this);
-
-        if(refreshLayout != null)
-            refreshLayout.setEnabled(true);
-
-        if(substitutes == null)
+        if(isLoading)
+            refreshLayout.setRefreshing(true);
+        else if(substitutes == null || substitutes.isEmpty())
             onRefresh();
     }
 
     @Override
     public void onDestroyView() {
-        //RefreshLayout keeping views in hierarchy bug workaround
-        if(refreshLayout != null) {
-            refreshLayout.setRefreshing(false);
-            refreshLayout.clearAnimation();
-        }
         //Remove all view references to prevent leaking
         refreshLayout = null;
         recyclerView = null;
-        coordinatorLayout = null;
         adapter = null;
+        errorView = null;
+        activity = null;
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        if(request != null) {
+        if(request != null)
             request.cancel();
-        }
 
         super.onDestroy();
     }
 
     @Override
     public void onRefresh() {
-        load(date, studentInformation);
+        load(date);
     }
 
-    public void load(LocalDate date, StudentInformation information) {
+    public void load(LocalDate date) {
         if(date != null && !isLoading) {
             if(VolleySingleton.isNetworkConnected(getActivity())) {
                 if (refreshLayout != null)
@@ -202,7 +187,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 //Store date for refreshing
                 this.date = date;
 
-                request = new SubstituteRequest(getActivity(), date, studentInformation, this, this);
+                //request = new SubstituteRequest(getActivity(), date, studentInformation, this, this);
+                request = new SubstituteJSoupRequest(getActivity(), date, studentInformation, this, this);
                 VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
                 isLoading = true;
             } else {
@@ -211,58 +197,21 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
-    public boolean getHasAnnouncement() {
+    public boolean hasAnnouncement() {
         return !TextUtils.isEmpty(announcement) && !announcement.equals("keine");
     }
 
-    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant) {
-        Bundle arguments = new Bundle();
-        arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
-        arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
-        arguments.putBoolean(ARGUMENT_IMPORTANT,  filterImportant);
-        MainFragment fragment = new MainFragment();
-        fragment.setArguments(arguments);
-
-        return fragment;
-    }
-    public static MainFragment newInstance(StudentInformation information, LocalDate date) {
-        return MainFragment.newInstance(information, date, false);
+    public LocalDate getDate() {
+        return date;
     }
 
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
-        if(offset == 0) {
-            if(refreshLayout != null)
-                refreshLayout.setEnabled(true);
-        }
-        else {
-            if(refreshLayout != null)
-                refreshLayout.setEnabled(false);
-        }
+    public String getAnnouncement() {
+        return announcement;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        inflater.inflate(R.menu.menu_fragment_main, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_announcement) {
-            if(announcement == null)
-                return true;
-
-            AnnouncementFragment.newInstance(announcement).show(getChildFragmentManager(), AnnouncementFragment.TAG);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
-        AnnouncementFragment.newInstance(getHasAnnouncement() ? announcement : getString(R.string.no_announcements)).show(getChildFragmentManager(), AnnouncementFragment.TAG);
+    public void setSwipeToRefreshEnabled(boolean isEnabled) {
+        if(refreshLayout != null)
+            refreshLayout.setEnabled(isEnabled);
     }
 
     @Override
@@ -270,20 +219,17 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         isLoading = false;
         request = null;
 
-        if(refreshLayout != null)
+        if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
 
-        String errorMessage = error.getMessage();
-        if(TextUtils.isEmpty(errorMessage))
-            errorMessage = getString(R.string.error);
-
-        if(coordinatorLayout != null && getUserVisibleHint())
-            Snackbar.make(coordinatorLayout, errorMessage, Snackbar.LENGTH_LONG).setAction(getString(R.string.retry), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MainFragment.this.onRefresh();
-                }
-            }).show();
+        if(adapter != null && adapter.getItemCount() == 0) {
+            if (error != null && error.networkResponse != null)
+                showError(error.networkResponse.statusCode);
+            else if (error != null && TextUtils.isEmpty(error.getMessage()))
+                showError(error.getMessage());
+            else
+                showError(getString(R.string.error));
+        }
     }
 
     @Override
@@ -316,17 +262,66 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             adapter.addAll(this.substitutes);
         }
 
-        if (getActivity() != null && getUserVisibleHint()) {
-            FloatingActionButton floatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-            if (floatingActionButton != null) {
-                if(getHasAnnouncement()) {
-                    floatingActionButton.setEnabled(true);
-                    floatingActionButton.show();
-                } else {
-                    floatingActionButton.hide();
-                    floatingActionButton.setEnabled(false);
-                }
-            }
+        if (activity != null && getUserVisibleHint())
+            activity.setFabVisibility(hasAnnouncement());
+
+        hideError();
+    }
+
+    private void hideError() {
+        if(errorView != null) {
+            errorView.setVisibility(View.GONE);
         }
+        if(refreshLayout != null)
+            refreshLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void showError(int errorCode) {
+        if(errorView != null) {
+            errorView.setVisibility(View.VISIBLE);
+            errorView.setError(errorCode);
+        }
+        if(refreshLayout != null)
+            refreshLayout.setVisibility(View.GONE);
+    }
+    private void showError(String errorMessage) {
+        if(errorView != null) {
+            errorView.setVisibility(View.VISIBLE);
+            errorView.setSubtitle(errorMessage);
+        }
+        if(refreshLayout != null)
+            refreshLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRetry() {
+        hideError();
+        onRefresh();
+    }
+
+    public SubstitutesAdapter getAdapter() {
+        return adapter;
+    }
+
+    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant) {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
+        arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
+        arguments.putBoolean(ARGUMENT_IMPORTANT,  filterImportant);
+        MainFragment fragment = new MainFragment();
+        fragment.setArguments(arguments);
+
+        return fragment;
+    }
+    public static MainFragment newInstance(StudentInformation information, LocalDate date) {
+        return MainFragment.newInstance(information, date, false);
+    }
+
+    public interface MaterialActivity {
+        FloatingActionButton getFloatingActionButton();
+        void setFabVisibility(boolean visible);
+        AppBarLayout getAppBarLayout();
+        void setAppBarExpanded(boolean expanded);
+        void setCabVisibility(boolean visibility);
     }
 }
