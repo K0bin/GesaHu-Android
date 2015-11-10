@@ -27,8 +27,6 @@ public class ListWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for(int i= 0; i < appWidgetIds.length; i++) {
             LocalDate date = SchoolWeek.next();
-            //TODO: Remove following line
-            date = new LocalDate(2015, 7, 24);
 
             Intent factoryServiceIntent = new Intent(context, ListFactoryService.class);
             factoryServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);

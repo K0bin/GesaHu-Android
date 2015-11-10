@@ -10,6 +10,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.squareup.okhttp.OkHttpClient;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Robin on 12.07.2015.
  */
@@ -23,8 +25,13 @@ public class VolleySingleton {
     }
 
     public RequestQueue getRequestQueue() {
-        if(requestQueue == null)
-            requestQueue = Volley.newRequestQueue(context, new OkHttpStack());
+        if(requestQueue == null) {
+            OkHttpClient client = new OkHttpClient();
+            client.setConnectTimeout(20, TimeUnit.SECONDS);
+            client.setReadTimeout(20, TimeUnit.SECONDS);
+            client.setWriteTimeout(20, TimeUnit.SECONDS);
+            requestQueue = Volley.newRequestQueue(context, new OkHttpStack(client));
+        }
 
         return requestQueue;
     }

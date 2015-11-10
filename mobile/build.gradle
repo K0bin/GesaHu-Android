@@ -9,13 +9,11 @@ android {
         targetSdkVersion 23
         versionCode 3091
         versionName "3.1"
-        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
-            signingConfig signingConfigs.config
         }
     }
     compileOptions {

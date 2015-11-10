@@ -7,14 +7,15 @@ import com.squareup.okhttp.OkUrlFactory;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Robin on 29.08.2015.
  */
 public class OkHttpStack extends HurlStack {
     private final OkUrlFactory okUrlFactory;
-    public OkHttpStack() {
-        this(new OkUrlFactory(new OkHttpClient()));
+    public OkHttpStack(OkHttpClient client) {
+        this(new OkUrlFactory(client));
     }
     public OkHttpStack(OkUrlFactory okUrlFactory) {
         if (okUrlFactory == null) {

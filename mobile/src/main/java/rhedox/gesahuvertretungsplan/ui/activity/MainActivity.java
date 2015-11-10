@@ -270,6 +270,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             setFabVisibility(currentFragment.hasAnnouncement());
             currentFragment.setSwipeToRefreshEnabled(appBarLayoutOffset == 0);
 
+            if(currentFragment.isEmpty())
+                setAppBarExpanded(true);
+
             if(currentFragment.getAdapter() != null)
                 currentFragment.getAdapter().clearSelection(false);
         }

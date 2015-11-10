@@ -40,7 +40,7 @@ public class SubstituteRequest extends Request<SubstitutesList> {
 
     @RequiresPermission(Manifest.permission.INTERNET)
     public SubstituteRequest(@NonNull Context context, @NonNull LocalDate date, StudentInformation studentInformation, Response.Listener<SubstitutesList> listener, Response.ErrorListener errorListener) {
-        super(Method.GET, "http://www.gesahui.de/intranet/view.php" + "?" + "d=" + Integer.toString(date.getDayOfMonth()) + "&m=" + Integer.toString(date.getMonthOfYear()) + "&y=" + Integer.toString(date.getYear()), errorListener);
+        super(Method.GET, "http://www.gesahui.de/home/view.php" + "?" + "d=" + Integer.toString(date.getDayOfMonth()) + "&m=" + Integer.toString(date.getMonthOfYear()) + "&y=" + Integer.toString(date.getYear()), errorListener);
 
         this.studentInformation = studentInformation;
         this.shortNameResolver = new ShortNameResolver(context);

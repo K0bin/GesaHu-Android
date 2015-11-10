@@ -29,8 +29,6 @@ public class CounterWidgetProvider extends AppWidgetProvider {
         boolean darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
 
         LocalDate date = SchoolWeek.next();
-        //TODO: Remove following line
-        date = new LocalDate(2015, 7, 24);
 
         for(int appWidgetId : appWidgetIds) {
             RemoteViews remoteViews = makeAppWidget(context, darkTheme, date, -1);

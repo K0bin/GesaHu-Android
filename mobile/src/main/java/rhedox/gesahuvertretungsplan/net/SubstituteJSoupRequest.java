@@ -36,7 +36,7 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
 /**
  * Created by Robin on 12.07.2015.
  */
-public class SubstituteJSoupRequest extends SubstituteRequest {
+public class SubstituteJSoupRequest extends Request<SubstitutesList> {
     private StudentInformation studentInformation;
     private ShortNameResolver shortNameResolver;
     private Response.Listener<SubstitutesList> listener;
@@ -44,7 +44,7 @@ public class SubstituteJSoupRequest extends SubstituteRequest {
 
     @RequiresPermission(Manifest.permission.INTERNET)
     public SubstituteJSoupRequest(@NonNull Context context, @NonNull LocalDate date, StudentInformation studentInformation, Response.Listener<SubstitutesList> listener, Response.ErrorListener errorListener) {
-        super(context, date, studentInformation, listener, errorListener);
+        super(Method.GET, "http://www.gesahui.de/home/view.php" + "?" + "d=" + Integer.toString(date.getDayOfMonth()) + "&m=" + Integer.toString(date.getMonthOfYear()) + "&y=" + Integer.toString(date.getYear()), errorListener);
 
         this.studentInformation = studentInformation;
         this.shortNameResolver = new ShortNameResolver(context);
@@ -87,7 +87,7 @@ public class SubstituteJSoupRequest extends SubstituteRequest {
                             switch (i) {
                                 case 0: {
                                     if(!text.equals(lesson) && !TextUtils.isEmpty(subject)) {
-                                        substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, null));
+                                        substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
 
                                         subject = "";
                                         teacher = "";
@@ -101,7 +101,7 @@ public class SubstituteJSoupRequest extends SubstituteRequest {
 
                                 case 1: {
                                     if(!TextUtils.isEmpty(subject)) {
-                                        substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, null));
+                                        substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
 
                                         teacher = "";
                                         substituteTeacher = "";
@@ -174,7 +174,7 @@ public class SubstituteJSoupRequest extends SubstituteRequest {
     }
 
     private String readAnnouncement(Document document) {
-        Elements hinweise = document.select("body>p>b>font[size=\"2\"][face=\"Arial\"]");
+        Elements hinweise = document.select("body>div>center>div>p>b>font[size=\"2\"][face=\"Arial\"]");
         if(hinweise.hasText())
             return hinweise.text();
 

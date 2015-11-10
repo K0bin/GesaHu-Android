@@ -8,7 +8,7 @@
 
 	<android.support.design.widget.AppBarLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="300dp"
 		android:fitsSystemWindows="true">
 		<android.support.design.widget.CollapsingToolbarLayout
 			android:layout_width="match_parent"
@@ -23,12 +23,12 @@
 			android:fitsSystemWindows="true">
 
 			<ImageView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
 				android:src="@drawable/logogesahu"
 				app:layout_collapseMode="parallax"
-				android:scaleType="fitStart"
+				android:scaleType="fitCenter"
 				android:minHeight="100dp"
 				android:layout_margin="16dp"
 				android:fitsSystemWindows="true"/>
@@ -38,6 +38,7 @@
 				android:layout_height="?attr/actionBarSize"
 				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 				app:popupTheme="?attr/toolbarPopupTheme"
+				app:layout_collapseMode="pin"
 				android:id="@id/actionToolBar"/>
 		</android.support.design.widget.CollapsingToolbarLayout>
 	</android.support.design.widget.AppBarLayout>

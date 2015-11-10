@@ -2,16 +2,21 @@ package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,9 +65,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private List<Substitute> substitutes;
 
     private boolean isLoading = false;
-    private SubstituteRequest request;
+    private SubstituteJSoupRequest request;
 
     private ErrorView errorView;
+    private NestedScrollView errorViewScroll;
+    private Drawable errorImage;
+    private Drawable noneImage;
 
     private MaterialActivity activity;
 
@@ -132,11 +140,16 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         errorView = (ErrorView)view.findViewById(R.id.error_view);
+        errorViewScroll = (NestedScrollView)view.findViewById(R.id.error_view_scroll);
 
         if(errorView != null) {
             errorView.setVisibility(View.GONE);
             errorView.setOnRetryListener(this);
+            errorImage = errorView.getImage();
+            noneImage = ContextCompat.getDrawable(getActivity(), R.drawable.no_substitutes);
         }
+        if(errorViewScroll != null)
+            errorViewScroll.setVisibility(View.GONE);
 
         if(getActivity() instanceof MaterialActivity)
             activity = (MaterialActivity)getActivity();
@@ -162,6 +175,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         adapter = null;
         errorView = null;
         activity = null;
+        errorImage = null;
+        noneImage = null;
         super.onDestroyView();
     }
 
@@ -201,6 +216,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return !TextUtils.isEmpty(announcement) && !announcement.equals("keine");
     }
 
+    public boolean isEmpty() {
+        return adapter == null ||substitutes == null || substitutes.size() == 0 || adapter.getItemCount() == 0;
+    }
+
     public LocalDate getDate() {
         return date;
     }
@@ -219,16 +238,21 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         isLoading = false;
         request = null;
 
+        Log.d("net-error", "Millis: "+Long.toString(error.getNetworkTimeMs()));
+        Log.d("net-error", "Message: "+error.getMessage());
+
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
 
         if(adapter != null && adapter.getItemCount() == 0) {
-            if (error != null && error.networkResponse != null)
+            if (error.networkResponse != null) {
                 showError(error.networkResponse.statusCode);
-            else if (error != null && TextUtils.isEmpty(error.getMessage()))
-                showError(error.getMessage());
+                Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
+            }
+            else if (!TextUtils.isEmpty(error.getMessage()))
+                showError(error.getMessage(), getString(R.string.oops), errorImage);
             else
-                showError(getString(R.string.error));
+                showError(getString(R.string.error), getString(R.string.oops), errorImage);
         }
     }
 
@@ -256,41 +280,53 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 substitutes = new ArrayList<Substitute>();
 
             if (substitutes.size() == 0) {
-                Substitute substitute = Substitute.makeEmptyListSubstitute(getActivity());
-                substitutes.add(substitute);
+                showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
+            } else {
+                adapter.addAll(this.substitutes);
+                hideError();
             }
-            adapter.addAll(this.substitutes);
         }
 
         if (activity != null && getUserVisibleHint())
             activity.setFabVisibility(hasAnnouncement());
-
-        hideError();
     }
 
     private void hideError() {
-        if(errorView != null) {
+        if(errorViewScroll != null)
+            errorViewScroll.setVisibility(View.GONE);
+        if(errorView != null)
             errorView.setVisibility(View.GONE);
-        }
         if(refreshLayout != null)
             refreshLayout.setVisibility(View.VISIBLE);
     }
 
     private void showError(int errorCode) {
+        if(errorViewScroll != null)
+            errorViewScroll.setVisibility(View.VISIBLE);
         if(errorView != null) {
             errorView.setVisibility(View.VISIBLE);
             errorView.setError(errorCode);
+            errorView.setTitle(R.string.oops);
+            errorView.setImage(errorImage);
         }
         if(refreshLayout != null)
             refreshLayout.setVisibility(View.GONE);
+        if(activity != null)
+            activity.setAppBarExpanded(true);
     }
-    private void showError(String errorMessage) {
+    private void showError(String errorMessage, String title, Drawable image) {
+        if(errorViewScroll != null)
+            errorViewScroll.setVisibility(View.VISIBLE);
         if(errorView != null) {
             errorView.setVisibility(View.VISIBLE);
             errorView.setSubtitle(errorMessage);
+            errorView.setTitle(title);
+            errorView.setImage(image);
         }
         if(refreshLayout != null)
             refreshLayout.setVisibility(View.GONE);
+        if(activity != null)
+            activity.setAppBarExpanded(true);
     }
 
     @Override
