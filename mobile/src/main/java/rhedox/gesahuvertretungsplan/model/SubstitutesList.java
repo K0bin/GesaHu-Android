@@ -39,9 +39,6 @@ public class SubstitutesList {
                 list.add(substitute);
         }
 
-        if(list.size() == 0)
-            list.add(Substitute.makeEmptyListSubstitute(context));
-
         return list;
     }
 
