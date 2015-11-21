@@ -8,6 +8,10 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.ListPreferenceDialogFragmentCompat;
 import android.support.v7.preference.Preference;
 
+import com.android.colorpicker.ColorPickerDialog;
+import com.android.colorpicker.ColorPickerPreference;
+
+import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 
 /**
@@ -17,6 +21,8 @@ public abstract class PreferenceFragmentCompat extends android.support.v7.prefer
 
     private static final String DIALOG_FRAGMENT_TAG =
             "android.support.v7.preference.PreferenceFragment.DIALOG";
+
+
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
@@ -47,6 +53,8 @@ public abstract class PreferenceFragmentCompat extends android.support.v7.prefer
             f = ListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
         } else if(preference instanceof TimePreference) {
             f = TimePreferenceDialogFragment.newInstance(preference.getKey());
+        } else if(preference instanceof ColorPickerPreference) {
+            f = ColorPickerDialog.newInstance(R.string.color_picker_default_title, new int[] {0xFFFFFFFF, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF}, 0xFFFFFFFF, 2, 2);
         } else {
             throw new IllegalArgumentException("Tried to display dialog for unknown " +
                     "preference type. Did you forget to override onDisplayPreferenceDialog()?");

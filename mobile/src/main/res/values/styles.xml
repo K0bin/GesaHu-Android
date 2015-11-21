@@ -7,6 +7,8 @@
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 		<item name="android:windowBackground">@color/windowBackgroundLight</item>
 
+		<item name="about_libraries_card">#FFFFFFFF</item>
+
         <item name="circleColor">@color/circle</item>
         <item name="circleHighlightedColor">?attr/colorAccent</item>
         <item name="circleTextColor">@android:color/white</item>
@@ -14,7 +16,7 @@
 
         <item name="tabIndicatorColor">?attr/colorAccent</item>
 
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->-
 		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
 
         <item name="selectedColor">@color/selected_light</item>
@@ -37,7 +39,11 @@
 
         <item name="tabIndicatorColor">?attr/colorAccent</item>
 
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+		<item name="about_libraries_card">#ff424242</item>
+		<item name="about_libraries_title_openSource">#FFFFFFFF</item>
+		<item name="about_libraries_text_openSource">#FFE3E3E3</item>
+
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
 		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
 
 		<item name="selectedColor">@color/selected_dark</item>
@@ -45,15 +51,45 @@
 
         <item name="textPrimary">#ffffffff</item>
         <item name="textSecondary">#ffB2B2B2</item>
+
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Fix</item>
+
     </style>
 
+	<style name="Preference.Category.Fix">
+		<item name="android:layout">@layout/preference_category</item>
+		<!-- The title should not dim if the category is disabled, instead only the preference children should dim. -->
+		<item name="android:shouldDisableView">false</item>
+		<item name="android:selectable">false</item>
+		<item name="android:layout_margin">0dp</item>
+		<item name="android:layout_height">2dp</item>
+	</style>
 
-	<!--Preference AppCompat bugfix-->
+	<style name="PreferenceThemeOverlay.Fix" parent="@style/PreferenceThemeOverlay.v14.Material">
+		<item name="preferenceCategoryStyle">@style/Preference.Category.Fix</item>
+		<item name="preferenceScreenStyle">@style/Preference.PreferenceScreen.Material</item>
+		<item name="preferenceStyle">@style/Preference.Material</item>
+		<item name="preferenceInformationStyle">@style/Preference.Information.Material</item>
+		<item name="checkBoxPreferenceStyle">@style/Preference.CheckBoxPreference.Material</item>
+		<item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.Material</item>
+		<item name="switchPreferenceStyle">@style/Preference.SwitchPreference.Material</item>
+		<item name="dialogPreferenceStyle">@style/Preference.DialogPreference.Material</item>
+		<item name="editTextPreferenceStyle">@style/Preference.DialogPreference.EditTextPreference.Material</item>
+		<item name="preferenceFragmentListStyle">@style/PreferenceFragmentList.Material</item>
+	</style>
+
+
+
+
+	<!--Preference AppCompat bugfix
+
 	<style name="Preference_TextAppearanceMaterialBody2">
 		<item name="android:textSize">14sp</item>
 		<item name="android:fontFamily">sans-serif-medium</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:textColor">?android:attr/textColorPrimary</item>
-	</style>
+	</style>-->
+
+
 
 </resources>

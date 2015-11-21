@@ -6,26 +6,22 @@ import android.util.AttributeSet;
 import org.joda.time.LocalTime;
 
 public class TimePreference extends android.support.v7.preference.DialogPreference {
-    private LocalTime time;
+    private LocalTime time = new LocalTime();
 
     public TimePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        time = new LocalTime();
     }
 
     public TimePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        time = new LocalTime();
     }
 
     public TimePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        time = new LocalTime();
     }
 
     public TimePreference(Context context) {
         super(context);
-        time = new LocalTime();
     }
 
     public void setTime(LocalTime time) {
@@ -51,7 +47,11 @@ public class TimePreference extends android.support.v7.preference.DialogPreferen
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        setTime(restorePersistedValue ? LocalTime.fromMillisOfDay(getPersistedInt(time.getMillisOfDay())) : (LocalTime) defaultValue);
+        LocalTime localTime = null;
+        if(defaultValue != null && defaultValue instanceof LocalTime)
+            localTime = (LocalTime)defaultValue;
+
+        setTime(restorePersistedValue ? LocalTime.fromMillisOfDay(getPersistedInt(localTime != null? localTime.getMillisOfDay() : 0)) : localTime);
     }
 
 

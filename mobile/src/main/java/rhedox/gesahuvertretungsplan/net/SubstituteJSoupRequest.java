@@ -117,31 +117,33 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
                                 } break;
 
                                 case 2:
+                                    text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                     String[] teachers = text.split(",");
-                                    for (int namesI = 0; namesI < teachers.length; namesI++) {
-                                        if (!TextUtils.isEmpty(teachers[namesI]) && !TextUtils.isEmpty(text)) {
+                                    for (String _teacher : teachers) {
+                                        if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
 
                                             //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
                                             if (!TextUtils.isEmpty(teacher)) {
                                                 teacher += "; ";
                                             }
 
-                                            teacher += shortNameResolver.resolveTeacher(teachers[namesI].trim());
+                                            teacher += shortNameResolver.resolveTeacher(_teacher.trim());
                                         }
                                     }
                                     break;
 
-                                case 3:text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
+                                case 3:
+                                    text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                     String[] substituteTeachers = text.split(",");
-                                    for (int namesI = 0; namesI < substituteTeachers.length; namesI++) {
-                                        if (!TextUtils.isEmpty(substituteTeachers[namesI]) && !TextUtils.isEmpty(text)) {
+                                    for (String _teacher : substituteTeachers) {
+                                        if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
 
                                             //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
                                             if (!TextUtils.isEmpty(substituteTeacher)) {
                                                 substituteTeacher += "; ";
                                             }
 
-                                            substituteTeacher += shortNameResolver.resolveTeacher(substituteTeachers[namesI].trim());
+                                            substituteTeacher += shortNameResolver.resolveTeacher(_teacher.trim());
                                         }
 
                                     }
@@ -153,6 +155,7 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
 
                                 case 5:
                                     hint += text + " ";
+                                    break;
                             }
                         }
                     }

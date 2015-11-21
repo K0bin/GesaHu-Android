@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -112,8 +113,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout.setOnRefreshListener(this);
 
         //RefreshLayout color scheme
-        TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
+        TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});
         refreshLayout.setColorSchemeColors(typedArray.getColor(0, 0xff000000));
+        refreshLayout.setProgressBackgroundColorSchemeColor(typedArray.getColor(1, 0xff000000));
         typedArray.recycle();
 
         //RecyclerView
@@ -131,9 +133,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView.setAdapter(adapter);
 
         //RefreshLayout immediate refresh bug workaround
-        if(isLoading) {
+        if(isLoading)
             refreshLayout.setRefreshing(true);
-        }
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
@@ -152,7 +153,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             errorViewScroll.setVisibility(View.GONE);
 
         if(getActivity() instanceof MaterialActivity)
-            activity = (MaterialActivity)getActivity();
+            activity = (MaterialActivity) getActivity();
 
         return view;
     }
@@ -357,6 +358,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         FloatingActionButton getFloatingActionButton();
         void setFabVisibility(boolean visible);
         AppBarLayout getAppBarLayout();
+        CoordinatorLayout getCoordinatorLayout();
         void setAppBarExpanded(boolean expanded);
         void setCabVisibility(boolean visibility);
     }

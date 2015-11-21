@@ -92,6 +92,7 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
 
 
 
+    //region Old unused
     /*
     @Override
     protected View onCreateDialogView() {
@@ -130,21 +131,22 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
 
         return view;
     }*/
+    //endregion
+
+
+    @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        mSelectedColor = a.getInt(index, 0);
+        return mSelectedColor;
+    }
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        if(restorePersistedValue) {
-            if(defaultValue == null)
-                setSelectedColor(getPersistedInt(0));
-            else
-                setSelectedColor(getPersistedInt(Integer.parseInt((String)defaultValue)));
-        } else {
-            if(defaultValue != null)
-                setSelectedColor(Integer.parseInt((String)defaultValue));
-            else
-                setSelectedColor(0);
+        int defaultColor = 0;
+        if(defaultValue != null && defaultValue instanceof Integer)
+            defaultColor = (Integer)defaultValue;
 
-        }
+        setSelectedColor(restorePersistedValue ? getPersistedInt(defaultColor) : defaultColor);
     }
 
     @Override
@@ -158,12 +160,6 @@ public class ColorPickerPreference extends DialogPreference implements ColorPick
         }
         //if (getDialog() != null)
         //    getDialog().dismiss();
-    }
-
-    @Override
-    protected Object onGetDefaultValue(TypedArray a, int index) {
-        mSelectedColor = a.getInt(index, 0);
-        return super.onGetDefaultValue(a, index);
     }
 
     private void showProgressBarView() {

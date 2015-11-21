@@ -1,8 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.os.Bundle;
+import android.view.View;
 
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
+import rhedox.gesahuvertretungsplan.ui.PreferencesDividerItemDecoration;
 
 /**
  * Created by Robin on 18.10.2014.
@@ -22,6 +25,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.settings);
+
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        getListView().addItemDecoration(new PreferencesDividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        int margin = (int)getContext().getResources().getDimension(R.dimen.small_margin);
+        getListView().setPadding(margin,0, margin, 0);
     }
 
     public static SettingsFragment newInstance() {

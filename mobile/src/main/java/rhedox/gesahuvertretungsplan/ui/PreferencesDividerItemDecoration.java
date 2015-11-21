@@ -5,11 +5,15 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.AndroidCharacter;
+import android.view.Gravity;
 import android.view.View;
-
-import rhedox.gesahuvertretungsplan.R;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 /*
  * Copyright (C) 2014 The Android Open Source Project
@@ -26,7 +30,7 @@ import rhedox.gesahuvertretungsplan.R;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+public class PreferencesDividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int[] ATTRS = new int[]{
             android.R.attr.listDivider
@@ -40,7 +44,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private int height;
 
-    public DividerItemDecoration(Context context, int orientation) {
+    public PreferencesDividerItemDecoration(Context context, int orientation) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         divider = a.getDrawable(0);
         a.recycle();
@@ -70,6 +74,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         final int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);
+
+            if (child instanceof TextView || i == childCount - 1 || parent.getChildAt(i + 1) instanceof TextView)
+                continue;
+
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int bottom = child.getBottom() + params.bottomMargin;
             divider.setBounds(left, bottom - height, right, bottom);

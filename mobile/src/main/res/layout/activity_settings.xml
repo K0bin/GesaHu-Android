@@ -11,9 +11,9 @@
         android:background="?attr/colorPrimary"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:elevation="4dp" />
+        android:elevation="4dp"/>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/fragment_container"
         android:orientation="vertical"
         android:layout_width="match_parent"

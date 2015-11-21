@@ -19,8 +19,9 @@ package com.android.colorpicker;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -31,7 +32,7 @@ import com.android.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
  * A dialog which takes in as input an array of colors and creates a palette allowing the user to
  * select a specific color swatch, which invokes a listener.
  */
-public class ColorPickerDialog extends DialogFragment implements OnColorSelectedListener {
+public class ColorPickerDialog extends PreferenceDialogFragmentCompat implements OnColorSelectedListener {
 
     public static final int SIZE_LARGE = 1;
     public static final int SIZE_SMALL = 2;
@@ -78,7 +79,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         bundle.putInt(KEY_TITLE_ID, titleResId);
         bundle.putInt(KEY_COLUMNS, columns);
         bundle.putInt(KEY_SIZE, size);
-        setArguments(bundle);
+        //setArguments(bundle);
     }
 
     public void setOnColorSelectedListener(OnColorSelectedListener listener) {
@@ -103,7 +104,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         }
     }
 
-    @Override
+    @Override @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Activity activity = getActivity();
 
@@ -122,6 +123,11 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
             .create();
 
         return mAlertDialog;
+    }
+
+    @Override
+    public void onDialogClosed(boolean b) {
+
     }
 
     @Override

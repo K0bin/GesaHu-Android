@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DimenRes;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private boolean canGoBack = false;
 
+    private CoordinatorLayout coordinatorLayout;
     private PagerAdapter pagerAdapter;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
@@ -110,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         };
         appBarLayout.addOnOffsetChangedListener(appBarLayoutOffsetListener);
+
+        coordinatorLayout = (CoordinatorLayout)appBarLayout.getParent();
 
         if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
@@ -302,8 +306,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     }
 
+    @Override
     public AppBarLayout getAppBarLayout() {
         return appBarLayout;
+    }
+
+    @Override
+    public CoordinatorLayout getCoordinatorLayout() {
+        return coordinatorLayout;
     }
 
     @Override
@@ -312,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             appBarLayout.setExpanded(expanded);
     }
 
+    @Override
     public void setCabVisibility(boolean visible) {
         if(cab != null) {
             if (visible) {

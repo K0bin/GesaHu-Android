@@ -1,7 +1,7 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.v7.preference.PreferenceCategory
         android:title="Schülerinformationen">
-        <ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="pref_year"
             android:title="Jahrgangsstufe"
             android:dialogTitle="Wähle deine Jahrgangsstufe"
@@ -9,7 +9,7 @@
             android:entries="@array/years_array"
             android:entryValues="@array/years_array_values"
             android:defaultValue="5" />
-        <ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="pref_class"
             android:title="Klasse"
             android:dialogTitle="Wähle deine Klasse"
@@ -17,14 +17,14 @@
             android:entries="@array/classes_array"
             android:entryValues="@array/classes_array_values"
             android:defaultValue="a" />
-        <SwitchPreferenceCompat
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:key="pref_filter"
             android:title="Nur relevante Vertretungsstunden"
             android:summary="Zeigt nur Vertretungsstunden an, die die eingestellte Klasse betreffen"
             android:defaultValue="false" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:title="Benachrichtigungen">
         <rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference
             android:key="pref_notification"
@@ -37,17 +37,17 @@
             android:summary="Zeit der Benachrichtigungen"
             android:defaultValue="0"
             android:dependency="pref_notification" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:title="Aussehen">
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:key="pref_dark"
             android:title="Dark Theme"
             android:summary="Dunkle Farben verwenden"
             android:defaultValue="false" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:key="pref_widget_dark"
             android:title="Widget Dark Theme"
             android:summary="Dunkle Farben in den Widgets verwenden"
@@ -57,12 +57,13 @@
             android:key="pref_color"
             android:title="Farbe"
             android:summary="Akzentfarbe"
-            android:defaultValue="@color/colorDefaultAccent" />-->
+            android:defaultValue="@color/colorDefaultAccent"
+            android:widgetLayout="@layout/color_picker_swatch"/>-->
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:key="pref_white_tab_indicator"
             android:title="Weißer Tab Indikator"
             android:summary="Linie unter dem aktiven Tab weiß färben"
             android:defaultValue="false" />
-    </PreferenceCategory>
-</PreferenceScreen>
+    </android.support.v7.preference.PreferenceCategory>
+</android.support.v7.preference.PreferenceScreen>
