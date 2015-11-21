@@ -70,6 +70,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private ErrorView errorView;
     private NestedScrollView errorViewScroll;
+    private SwipeRefreshLayoutFix errorViewRefresh;
     private Drawable errorImage;
     private Drawable noneImage;
 
@@ -105,18 +106,19 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //RefreshLayout color scheme
+        TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});
+        int accentColor = typedArray.getColor(0, 0xff000000);
+        int cardColor = typedArray.getColor(1, 0xff000000);
+        typedArray.recycle();
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         //RefreshLayout
         refreshLayout = (SwipeRefreshLayoutFix)view.findViewById(R.id.swipe);
         refreshLayout.setOnRefreshListener(this);
-
-        //RefreshLayout color scheme
-        TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});
-        refreshLayout.setColorSchemeColors(typedArray.getColor(0, 0xff000000));
-        refreshLayout.setProgressBackgroundColorSchemeColor(typedArray.getColor(1, 0xff000000));
-        typedArray.recycle();
+        refreshLayout.setColorSchemeColors(accentColor);
+        refreshLayout.setProgressBackgroundColorSchemeColor(cardColor);
 
         //RecyclerView
         recyclerView = (RecyclerView) view.findViewById(R.id.recylcler);
@@ -141,16 +143,18 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         errorView = (ErrorView)view.findViewById(R.id.error_view);
-        errorViewScroll = (NestedScrollView)view.findViewById(R.id.error_view_scroll);
+        errorView.setVisibility(View.GONE);
+        errorView.setOnRetryListener(this);
+        errorImage = errorView.getImage();
+        noneImage = ContextCompat.getDrawable(getActivity(), R.drawable.no_substitutes);
 
-        if(errorView != null) {
-            errorView.setVisibility(View.GONE);
-            errorView.setOnRetryListener(this);
-            errorImage = errorView.getImage();
-            noneImage = ContextCompat.getDrawable(getActivity(), R.drawable.no_substitutes);
-        }
-        if(errorViewScroll != null)
-            errorViewScroll.setVisibility(View.GONE);
+        errorViewScroll = (NestedScrollView)view.findViewById(R.id.error_view_scroll);
+        errorViewScroll.setVisibility(View.GONE);
+        errorViewRefresh = (SwipeRefreshLayoutFix)view.findViewById(R.id.error_view_swipe);
+        errorViewRefresh.setOnRefreshListener(this);
+        errorViewRefresh.setVisibility(View.GONE);
+        errorViewRefresh.setColorSchemeColors(accentColor);
+        errorViewRefresh.setProgressBackgroundColorSchemeColor(cardColor);
 
         if(getActivity() instanceof MaterialActivity)
             activity = (MaterialActivity) getActivity();
@@ -218,7 +222,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public boolean isEmpty() {
-        return adapter == null ||substitutes == null || substitutes.size() == 0 || adapter.getItemCount() == 0;
+        return adapter == null || substitutes == null || substitutes.size() == 0 || adapter.getItemCount() == 0;
     }
 
     public LocalDate getDate() {
@@ -264,6 +268,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
+        if (errorViewRefresh != null)
+            errorViewRefresh.setRefreshing(false);
 
         if (response == null)
             return;
@@ -293,41 +299,73 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void hideError() {
-        if(errorViewScroll != null)
+        if(errorViewScroll != null) {
             errorViewScroll.setVisibility(View.GONE);
-        if(errorView != null)
+            errorViewScroll.setEnabled(false);
+        }
+        if(errorViewRefresh != null) {
+            errorViewRefresh.setVisibility(View.GONE);
+            errorViewRefresh.setEnabled(false);
+        }
+        if(errorView != null) {
             errorView.setVisibility(View.GONE);
-        if(refreshLayout != null)
-            refreshLayout.setVisibility(View.VISIBLE);
+            errorView.setEnabled(false);
+        }
+        if(recyclerView != null) {
+            recyclerView.setEnabled(true);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showError(int errorCode) {
-        if(errorViewScroll != null)
+        if(recyclerView != null) {
+            recyclerView.setEnabled(false);
+            recyclerView.setVisibility(View.GONE);
+        }
+        if(activity != null)
+            activity.setAppBarExpanded(true);
+
+        if(errorViewScroll != null) {
+            errorViewScroll.setEnabled(true);
             errorViewScroll.setVisibility(View.VISIBLE);
+        }
+        if(errorViewRefresh != null) {
+            errorViewRefresh.setEnabled(true);
+            errorViewRefresh.setVisibility(View.VISIBLE);
+        }
+
         if(errorView != null) {
+            errorView.setEnabled(true);
             errorView.setVisibility(View.VISIBLE);
             errorView.setError(errorCode);
             errorView.setTitle(R.string.oops);
             errorView.setImage(errorImage);
         }
-        if(refreshLayout != null)
-            refreshLayout.setVisibility(View.GONE);
-        if(activity != null)
-            activity.setAppBarExpanded(true);
     }
     private void showError(String errorMessage, String title, Drawable image) {
-        if(errorViewScroll != null)
+        if(recyclerView != null) {
+            recyclerView.setEnabled(false);
+            recyclerView.setVisibility(View.GONE);
+        }
+        if(activity != null)
+            activity.setAppBarExpanded(true);
+
+        if(errorViewScroll != null) {
+            errorViewScroll.setEnabled(true);
             errorViewScroll.setVisibility(View.VISIBLE);
+        }
+        if(errorViewRefresh != null) {
+            errorViewRefresh.setEnabled(true);
+            errorViewRefresh.setVisibility(View.VISIBLE);
+        }
+
         if(errorView != null) {
+            errorView.setEnabled(true);
             errorView.setVisibility(View.VISIBLE);
             errorView.setSubtitle(errorMessage);
             errorView.setTitle(title);
             errorView.setImage(image);
         }
-        if(refreshLayout != null)
-            refreshLayout.setVisibility(View.GONE);
-        if(activity != null)
-            activity.setAppBarExpanded(true);
     }
 
     @Override

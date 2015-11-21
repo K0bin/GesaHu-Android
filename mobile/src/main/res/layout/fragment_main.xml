@@ -12,39 +12,52 @@
 		android:maxWidth="400dp"
 		android:id="@+id/swipe">
 
-		<android.support.v7.widget.RecyclerView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:id="@+id/recylcler"
-			android:scrollbars="vertical"
-			android:paddingTop="@dimen/listMargin"
-			android:paddingBottom="@dimen/listMargin"
-			android:clipToPadding="false"/>
+			<android.support.v7.widget.RecyclerView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/recylcler"
+				android:scrollbars="vertical"
+				android:paddingTop="@dimen/listMargin"
+				android:paddingBottom="@dimen/listMargin"
+				android:clipToPadding="false"/>
 
 	</rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix>
 
-	<android.support.v4.widget.NestedScrollView
+	<rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:id="@+id/error_view_scroll"
+		android:id="@+id/error_view_swipe"
 		android:visibility="gone">
-		<tr.xip.errorview.ErrorView xmlns:errorview="http://schemas.android.com/apk/res-auto"
-									android:id="@+id/error_view"
-									android:layout_width="match_parent"
-									android:layout_height="match_parent"
-									android:layout_marginTop="64dp"
-									android:layout_marginBottom="64dp"
-									errorview:ev_title="@string/error_title"
-									errorview:ev_titleColor="?attr/textPrimary"
-									errorview:ev_subtitle="@string/error"
-									errorview:ev_subtitleColor="?attr/textSecondary"
-									errorview:ev_errorImage="@drawable/error_view_cloud"
-									errorview:ev_showTitle="true"
-									errorview:ev_showSubtitle="true"
-									errorview:ev_showRetryButton="true"
-									errorview:ev_retryButtonText="@string/retry"
-									errorview:ev_retryButtonTextColor="?attr/colorAccent"
-									android:visibility="gone" />
-	</android.support.v4.widget.NestedScrollView>
+
+
+		<android.support.v4.widget.NestedScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/error_view_scroll"
+			android:visibility="gone">
+
+			<tr.xip.errorview.ErrorView xmlns:errorview="http://schemas.android.com/apk/res-auto"
+										android:id="@+id/error_view"
+										android:layout_width="match_parent"
+										android:layout_height="match_parent"
+										android:layout_marginTop="64dp"
+										android:layout_marginBottom="64dp"
+										errorview:ev_title="@string/error_title"
+										errorview:ev_titleColor="?attr/textPrimary"
+										errorview:ev_subtitle="@string/error"
+										errorview:ev_subtitleColor="?attr/textSecondary"
+										errorview:ev_errorImage="@drawable/error_view_cloud"
+										errorview:ev_showTitle="true"
+										errorview:ev_showSubtitle="true"
+										errorview:ev_showRetryButton="true"
+										errorview:ev_retryButtonText="@string/retry"
+										errorview:ev_retryButtonTextColor="?attr/colorAccent"
+										android:visibility="gone"/>
+
+		</android.support.v4.widget.NestedScrollView>
+
+	</rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix>
+
+
 
 </FrameLayout>
