@@ -18,7 +18,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public static final String PREF_COLOR ="pref_color";
     public static final String PREF_FILTER ="pref_filter";
     public static final String PREF_WHITE_TAB_INDICATOR ="pref_white_tab_indicator";
-    public static final String PREF_NOTIFICATION_TIME = "pref_notification_time";
+    public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_new";
     public static final String PREF_NOTIFICATION = "pref_notification";
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
 

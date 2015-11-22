@@ -17,7 +17,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +25,7 @@ import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
 import android.view.View;
+//import android.widget.DatePicker;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
@@ -39,7 +39,6 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.ui.Theming;
 import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter;
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
@@ -80,12 +79,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         darkTheme = prefs.getBoolean(SettingsFragment.PREF_DARK, false);
         filterImportant = prefs.getBoolean(SettingsFragment.PREF_FILTER, false);
 
-        int color = prefs.getInt(SettingsFragment.PREF_COLOR, ContextCompat.getColor(this, R.color.colorDefaultAccent));
         boolean whiteIndicator = prefs.getBoolean(SettingsFragment.PREF_WHITE_TAB_INDICATOR, false);
         StudentInformation studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR, "5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
 
         //Theming
-        this.setTheme(Theming.getTheme(darkTheme, color));
+        this.setTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme);
+
+        TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
+        int color = typedArray.getColor(0, 0xFFFFFFFF);
+        typedArray.recycle();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         else
             date = SchoolWeek.next();
 
-        setupViewPager(date, studentInformation, whiteIndicator, color, filterImportant);
+        setupViewPager(date, studentInformation, whiteIndicator ? 0xFFFFFFFF : color, filterImportant);
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription();
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
-    private void setupViewPager(LocalDate date, StudentInformation studentInformation, boolean whiteIndicator, @ColorInt int indicatorColor, boolean filterImportant)
+    private void setupViewPager(LocalDate date, StudentInformation studentInformation, @ColorInt int indicatorColor, boolean filterImportant)
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setSelectedTabIndicatorColor(whiteIndicator ? 0xFFFFFFFF : indicatorColor);
+        tabLayout.setSelectedTabIndicatorColor(indicatorColor);
         if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE))
             TabLayoutHelper.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
 

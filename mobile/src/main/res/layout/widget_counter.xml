@@ -6,15 +6,22 @@
 				android:id="@+id/widget_frame">
 
 	<ImageView android:layout_width="match_parent"
-			   android:layout_weight="1"
 			   android:layout_height="match_parent"
+			   android:gravity="center"
+			   android:id="@+id/icon"
+			   android:layout_margin="12dp"
+			   android:layout_centerHorizontal="true"
+			   android:layout_centerVertical="true"
 			   android:src="@mipmap/ic_launcher"
 			   android:contentDescription="@string/logo_content_description"/>
 
 	<TextView android:layout_width="wrap_content"
 			  android:layout_height="wrap_content"
 			  android:id="@+id/counter"
-			  android:layout_alignParentRight="true"
+			  android:layout_toRightOf="@id/icon"
+			  android:layout_above="@id/icon"
+			  android:layout_marginLeft="-28dp"
+			  android:layout_marginTop="28dp"
 			  android:gravity="center"
 			  android:padding="4dp"
 			  android:background="@drawable/widget_card"

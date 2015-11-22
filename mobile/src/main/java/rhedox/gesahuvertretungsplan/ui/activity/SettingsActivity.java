@@ -8,14 +8,11 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.ui.Theming;
 import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -24,10 +21,9 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean darkTheme = prefs.getBoolean("pref_dark", false);
-        int color = prefs.getInt(SettingsFragment.PREF_COLOR, ContextCompat.getColor(this, R.color.colorDefaultAccent));
 
         //Theming
-        this.setTheme(Theming.getTheme(darkTheme, color));
+        this.setTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);

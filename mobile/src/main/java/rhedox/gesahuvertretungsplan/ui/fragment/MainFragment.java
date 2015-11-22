@@ -243,8 +243,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         isLoading = false;
         request = null;
 
-        Log.d("net-error", "Millis: "+Long.toString(error.getNetworkTimeMs()));
-        Log.d("net-error", "Message: "+error.getMessage());
+        Log.e("net-error", "Millis: "+Long.toString(error.getNetworkTimeMs()));
+        Log.e("net-error", "Message: "+error.getMessage());
 
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);

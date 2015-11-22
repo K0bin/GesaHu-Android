@@ -32,7 +32,7 @@
             android:summary="Täglich bei Vertretungsstunden benachrichtigen"
             android:defaultValue="true" />
         <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
-            android:key="pref_notification_time"
+            android:key="pref_notification_time_new"
             android:title="Abrufzeit"
             android:summary="Zeit der Benachrichtigungen"
             android:defaultValue="0"
@@ -52,13 +52,6 @@
             android:title="Widget Dark Theme"
             android:summary="Dunkle Farben in den Widgets verwenden"
             android:defaultValue="false" />
-
-        <!--<com.android.colorpicker.ColorPickerPreference
-            android:key="pref_color"
-            android:title="Farbe"
-            android:summary="Akzentfarbe"
-            android:defaultValue="@color/colorDefaultAccent"
-            android:widgetLayout="@layout/color_picker_swatch"/>-->
 
         <android.support.v7.preference.CheckBoxPreference
             android:key="pref_white_tab_indicator"

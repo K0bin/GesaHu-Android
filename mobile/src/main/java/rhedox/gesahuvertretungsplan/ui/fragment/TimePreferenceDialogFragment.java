@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.media.tv.TvView;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.EditTextPreference;

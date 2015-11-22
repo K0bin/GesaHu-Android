@@ -27,9 +27,9 @@ public class VolleySingleton {
     public RequestQueue getRequestQueue() {
         if(requestQueue == null) {
             OkHttpClient client = new OkHttpClient();
-            client.setConnectTimeout(20, TimeUnit.SECONDS);
-            client.setReadTimeout(20, TimeUnit.SECONDS);
-            client.setWriteTimeout(20, TimeUnit.SECONDS);
+            client.setConnectTimeout(30, TimeUnit.SECONDS);
+            client.setReadTimeout(30, TimeUnit.SECONDS);
+            client.setWriteTimeout(30, TimeUnit.SECONDS);
             requestQueue = Volley.newRequestQueue(context, new OkHttpStack(client));
         }
 

@@ -5,5 +5,6 @@
 					android:updatePeriodMillis="86400000"
 					android:initialLayout="@layout/widget_counter"
 					android:resizeMode="none"
-					android:widgetCategory="home_screen">
+					android:widgetCategory="home_screen"
+					android:previewImage="@drawable/widget_preview_counter">
 </appwidget-provider>

@@ -24,7 +24,10 @@
 
         <item name="textPrimary">#ff212121</item>
         <item name="textSecondary">#ff757575</item>
-    </style>
+
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Fix</item>
+
+	</style>
 
     <style name="GesahuThemeDark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -53,8 +56,7 @@
         <item name="textSecondary">#ffB2B2B2</item>
 
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Fix</item>
-
-    </style>
+	</style>
 
 	<style name="Preference.Category.Fix">
 		<item name="android:layout">@layout/preference_category</item>
@@ -77,9 +79,6 @@
 		<item name="editTextPreferenceStyle">@style/Preference.DialogPreference.EditTextPreference.Material</item>
 		<item name="preferenceFragmentListStyle">@style/PreferenceFragmentList.Material</item>
 	</style>
-
-
-
 
 	<!--Preference AppCompat bugfix
 

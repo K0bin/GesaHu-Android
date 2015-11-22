@@ -28,7 +28,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:23.+'
     compile 'com.android.support:appcompat-v7:23.+'
-    compile 'com.android.support:cardview-v7:23.+'
     compile 'com.android.support:recyclerview-v7:23.+'
     compile 'com.android.support:design:23.+'
     //compile 'com.android.support:percent:23.+'
@@ -37,7 +36,6 @@ dependencies {
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
     compile 'net.danlew:android.joda:2.8.+'
     compile 'com.mcxiaoke.volley:library:+'
-    compile project(':ColorPicker')
     compile 'com.squareup.okhttp:okhttp:2.5.+'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.+'
     compile 'com.afollestad:material-cab:0.+'
@@ -47,10 +45,5 @@ dependencies {
     compile 'ch.acra:acra:+'
     compile 'com.github.xiprox.errorview:library:2.+'
     compile 'org.jsoup:jsoup:1.8.3'
-    // Unit testing dependencies
-    testCompile 'junit:junit:4.12'
-    // Set this dependency if you want to use Mockito
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    // Set this dependency if you want to use Hamcrest matching
-    testCompile 'org.hamcrest:hamcrest-library:1.1'
+
 }
