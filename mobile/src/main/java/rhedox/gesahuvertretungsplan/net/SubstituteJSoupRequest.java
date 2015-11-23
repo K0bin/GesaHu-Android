@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
 public class SubstituteJSoupRequest extends Request<SubstitutesList> {
     private StudentInformation studentInformation;
     private ShortNameResolver shortNameResolver;
-    private Response.Listener<SubstitutesList> listener;
+    private WeakReference<Response.Listener<SubstitutesList>> listener;
     private Context context;
 
     @RequiresPermission(Manifest.permission.INTERNET)
@@ -48,7 +49,7 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
 
         this.studentInformation = studentInformation;
         this.shortNameResolver = new ShortNameResolver(context);
-        this.listener = listener;
+        this.listener = new WeakReference<Response.Listener<SubstitutesList>>(listener);
         this.context = context.getApplicationContext();
     }
 
@@ -186,8 +187,8 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
 
     @Override
     protected void deliverResponse(SubstitutesList response) {
-        if(listener != null)
-            listener.onResponse(response);
+        if(listener != null && listener.get() != null)
+            listener.get().onResponse(response);
     }
 }
 
