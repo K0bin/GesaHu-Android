@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/tileHeight"
     android:orientation="horizontal"
-    android:id="@+id/container_card"
+    android:id="@+id/rootFrame"
     android:clickable="true"
 	android:padding="0dp">
 <FrameLayout

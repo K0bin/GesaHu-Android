@@ -3,6 +3,9 @@ package rhedox.gesahuvertretungsplan.ui.fragment;
 import android.os.Bundle;
 import android.view.View;
 
+import com.squareup.leakcanary.RefWatcher;
+
+import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.PreferencesDividerItemDecoration;
@@ -25,7 +28,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.settings);
-
     }
 
     @Override
@@ -36,6 +38,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         int margin = (int)getContext().getResources().getDimension(R.dimen.small_margin);
         getListView().setPadding(margin,0, margin, 0);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        //LeakCanary
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        if(refWatcher != null)
+            refWatcher.watch(this);
     }
 
     public static SettingsFragment newInstance() {

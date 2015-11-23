@@ -39,7 +39,7 @@
 				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 				app:popupTheme="?attr/toolbarPopupTheme"
 				app:layout_collapseMode="pin"
-				android:id="@id/actionToolBar"/>
+				android:id="@id/toolbar"/>
 		</android.support.design.widget.CollapsingToolbarLayout>
 	</android.support.design.widget.AppBarLayout>
 

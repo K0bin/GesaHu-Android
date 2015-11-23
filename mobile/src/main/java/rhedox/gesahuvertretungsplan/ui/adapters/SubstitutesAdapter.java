@@ -32,8 +32,6 @@ import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 public class SubstitutesAdapter extends RecyclerView.Adapter<SubstituteViewHolder> {
     private List<Substitute> substitutes;
 
-    private Context context;
-
     @ColorInt private int circleColorImportant;
     @ColorInt private int circleColor;
     @ColorInt private int textColor;
@@ -54,8 +52,6 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstituteViewHolde
         circleColor = typedArray.getColor(0, 0);
         activatedBackgroundColor = typedArray.getColor(4,0);
         typedArray.recycle();
-
-        this.context = context.getApplicationContext();
 
         if(context instanceof MainFragment.MaterialActivity)
             activity = (MainFragment.MaterialActivity)context;
@@ -79,13 +75,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstituteViewHolde
         FrameLayout view;
         view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_replacement, viewGroup, false);
 
-        Drawable circleBackgroundHighlighted = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.circle));
-        DrawableCompat.setTint(circleBackgroundHighlighted, circleColorImportant);
-
-        Drawable circleBackground = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.circle));
-        DrawableCompat.setTint(circleBackground, circleColor);
-
-        SubstituteViewHolder viewHolder = new SubstituteViewHolder(view, this, circleBackground, circleBackgroundHighlighted, textColor, highlightedTextColor, activatedBackgroundColor);
+        SubstituteViewHolder viewHolder = new SubstituteViewHolder(view, this, circleColor, circleColorImportant, textColor, highlightedTextColor, activatedBackgroundColor);
         return viewHolder;
     }
 

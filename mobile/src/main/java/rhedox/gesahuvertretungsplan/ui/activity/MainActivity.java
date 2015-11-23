@@ -35,6 +35,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
@@ -53,13 +56,18 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private boolean canGoBack = false;
 
-    private CoordinatorLayout coordinatorLayout;
+    @Bind(R.id.coordinator) CoordinatorLayout coordinatorLayout;
+
     private PagerAdapter pagerAdapter;
-    private FloatingActionButton floatingActionButton;
-    private AppBarLayout appBarLayout;
+
+    @Bind(R.id.fab) FloatingActionButton floatingActionButton;
+
+    @Bind(R.id.appbarLayout) AppBarLayout appBarLayout;
     private AppBarLayout.OnOffsetChangedListener appBarLayoutOffsetListener;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
+    @Bind(R.id.viewPager) ViewPager viewPager;
+    @Bind(R.id.tabLayout) TabLayout tabLayout;
+
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private int appBarLayoutOffset = 0;
 
@@ -92,10 +100,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.actionToolBar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         });
 
-        appBarLayout = (AppBarLayout) findViewById(R.id.appbarLayout);
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -114,8 +121,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         };
         appBarLayout.addOnOffsetChangedListener(appBarLayoutOffsetListener);
-
-        coordinatorLayout = (CoordinatorLayout)appBarLayout.getParent();
 
         if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
@@ -137,30 +142,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         cab.setTitleRes(R.string.main_cab_title);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean previouslyStarted = prefs.getBoolean(SettingsFragment.PREF_PREVIOUSLY_STARTED, false);
-        if(!previouslyStarted) {
-            Intent intent = new Intent(this, WelcomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
-    }
-
     private void setupViewPager(LocalDate date, StudentInformation studentInformation, @ColorInt int indicatorColor, boolean filterImportant)
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, studentInformation, filterImportant);
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(indicatorColor);
         if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE))
@@ -194,6 +184,25 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_task);
         ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(getString(R.string.app_name), bitmap, primaryColor);
         this.setTaskDescription(description);
+    }
+
+    @OnClick(R.id.fab)
+    public void showAnnouncement(View view) {
+        if(currentFragment != null && currentFragment.hasAnnouncement())
+            AnnouncementFragment.newInstance(currentFragment.getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean previouslyStarted = prefs.getBoolean(SettingsFragment.PREF_PREVIOUSLY_STARTED, false);
+        if(!previouslyStarted) {
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -252,6 +261,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     protected void onDestroy() {
+        ButterKnife.unbind(this);
+
         pagerAdapter.destroy();
         if(appBarLayout != null)
             appBarLayout.removeOnOffsetChangedListener(appBarLayoutOffsetListener);

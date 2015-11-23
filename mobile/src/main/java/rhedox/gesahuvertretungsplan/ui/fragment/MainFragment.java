@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -31,6 +32,9 @@ import org.joda.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.BindDrawable;
+import butterknife.ButterKnife;
 import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
@@ -50,8 +54,8 @@ import tr.xip.errorview.ErrorView;
  */
 public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Response.Listener<SubstitutesList>, Response.ErrorListener, ErrorView.RetryListener {
     private SubstitutesAdapter adapter;
-    private SwipeRefreshLayoutFix refreshLayout;
-    private RecyclerView recyclerView;
+    @Bind(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
+    @Bind(R.id.recylcler) RecyclerView recyclerView;
 
     private StudentInformation studentInformation;
     private boolean filterImportant = false;
@@ -68,11 +72,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private boolean isLoading = false;
     private SubstituteJSoupRequest request;
 
-    private ErrorView errorView;
-    private NestedScrollView errorViewScroll;
-    private SwipeRefreshLayoutFix errorViewRefresh;
-    private Drawable errorImage;
-    private Drawable noneImage;
+    @Bind(R.id.error_view) ErrorView errorView;
+    @Bind(R.id.error_view_scroll) NestedScrollView errorViewScroll;
+    @Bind(R.id.error_view_swipe) SwipeRefreshLayoutFix errorViewRefresh;
+    @BindDrawable(R.drawable.error_view_cloud) Drawable errorImage;
+    @BindDrawable(R.drawable.no_substitutes) Drawable noneImage;
 
     private MaterialActivity activity;
 
@@ -113,15 +117,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         typedArray.recycle();
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.bind(this, view);
 
         //RefreshLayout
-        refreshLayout = (SwipeRefreshLayoutFix)view.findViewById(R.id.swipe);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeColors(accentColor);
         refreshLayout.setProgressBackgroundColorSchemeColor(cardColor);
 
         //RecyclerView
-        recyclerView = (RecyclerView) view.findViewById(R.id.recylcler);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(manager);
@@ -142,15 +145,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        errorView = (ErrorView)view.findViewById(R.id.error_view);
         errorView.setVisibility(View.GONE);
         errorView.setOnRetryListener(this);
-        errorImage = errorView.getImage();
-        noneImage = ContextCompat.getDrawable(getActivity(), R.drawable.no_substitutes);
+        //errorImage = errorView.getImage();
+        //noneImage = ContextCompat.getDrawable(getActivity(), R.drawable.no_substitutes);
 
-        errorViewScroll = (NestedScrollView)view.findViewById(R.id.error_view_scroll);
         errorViewScroll.setVisibility(View.GONE);
-        errorViewRefresh = (SwipeRefreshLayoutFix)view.findViewById(R.id.error_view_swipe);
         errorViewRefresh.setOnRefreshListener(this);
         errorViewRefresh.setVisibility(View.GONE);
         errorViewRefresh.setColorSchemeColors(accentColor);
@@ -174,6 +174,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onDestroyView() {
+        ButterKnife.unbind(this);
+
         //Remove all view references to prevent leaking
         refreshLayout = null;
         recyclerView = null;
@@ -182,6 +184,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         activity = null;
         errorImage = null;
         noneImage = null;
+        errorViewScroll = null;
+        errorView = null;
+        errorViewRefresh = null;
+        errorImage = null;
+        noneImage = null;
+
         super.onDestroyView();
     }
 
@@ -189,6 +197,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onDestroy() {
         if(request != null)
             request.cancel();
+
+        //LeakCanary
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        if(refWatcher != null)
+            refWatcher.watch(this);
 
         super.onDestroy();
     }

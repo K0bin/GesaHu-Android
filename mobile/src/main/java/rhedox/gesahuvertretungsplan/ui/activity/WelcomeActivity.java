@@ -30,22 +30,30 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.leakcanary.RefWatcher;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
 
-public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
+public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     private PagerAdapter pagerAdapter;
 
-    private ViewPager viewPager;
-    private FloatingActionButton floatingActionButton;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.viewPager) ViewPager viewPager;
+    @Bind(R.id.fab) FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.actionToolBar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
         // Create the adapter that will return a fragment for each of the three
@@ -53,17 +61,11 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
 
-        floatingActionButton = (FloatingActionButton)findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(this);
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        else if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     }
 
     @Override
@@ -85,8 +87,8 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     }
 
-    @Override
-    public void onClick(View view) {
+    @OnClick(R.id.fab)
+    public void nextPage(View view) {
         if(viewPager.getCurrentItem() < pagerAdapter.getCount() - 1)
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         else {
@@ -101,6 +103,17 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ButterKnife.unbind(this);
+
+        //LeakCanary
+        RefWatcher refWatcher = App.getRefWatcher(this);
+        if(refWatcher != null && pagerAdapter != null)
+            refWatcher.watch(pagerAdapter);
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -166,10 +179,16 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
             View rootView = inflater.inflate(layoutId != -1 ? layoutId : R.layout.fragment_welcome, container, false);
             return rootView;
         }
-    }
 
-    public static class InitialSettingsFragment extends Fragment {
+        @Override
+        public void onDestroy() {
+            //LeakCanary
+            RefWatcher refWatcher = App.getRefWatcher(getActivity());
+            if(refWatcher != null)
+                refWatcher.watch(this);
 
+            super.onDestroy();
+        }
     }
 
 }
