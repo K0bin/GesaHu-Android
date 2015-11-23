@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
 import org.joda.time.LocalDate;
@@ -37,7 +38,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
             boolean darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list);
-            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", context.getResources().getColor(darkTheme ? R.color.windowBackgroundDark : R.color.windowBackgroundLight));
+            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", ContextCompat.getColor(context, darkTheme ? R.color.windowBackgroundDark : R.color.windowBackgroundLight));
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
             Intent onClickIntent = new Intent(context, MainActivity.class);
