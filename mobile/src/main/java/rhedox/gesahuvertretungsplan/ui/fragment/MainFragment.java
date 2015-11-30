@@ -6,12 +6,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -40,7 +38,6 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
-import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
@@ -132,7 +129,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
         if(substitutes != null)
-            adapter.addAll(substitutes);
+            adapter.setSubstitutes(substitutes);
         else
             onRefresh();
         recyclerView.setAdapter(adapter);
@@ -247,8 +244,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
-        if(refreshLayout != null)
+        if(refreshLayout != null) {
+            if(!isEnabled)
+                refreshLayout.setRefreshing(false);
+
             refreshLayout.setEnabled(isEnabled);
+        }
     }
 
     @Override
@@ -261,17 +262,15 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if (refreshLayout != null)
             refreshLayout.setRefreshing(false);
+        if (errorViewRefresh != null)
+            errorViewRefresh.setRefreshing(false);
 
         if(adapter != null && adapter.getItemCount() == 0) {
             if (error.networkResponse != null) {
-                showError(error.networkResponse.statusCode);
                 Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
             }
-            else if (!TextUtils.isEmpty(error.getMessage()))
-                showError(error.getMessage(), getString(R.string.oops), errorImage);
-            else
-                showError(getString(R.string.error), getString(R.string.oops), errorImage);
         }
+        showError(getString(R.string.error), getString(R.string.oops), errorImage);
     }
 
     @Override
@@ -294,15 +293,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             this.substitutes = SubstitutesList.filterImportant(getActivity(), response.getSubstitutes());
 
         if (recyclerView != null) {
-            adapter.removeAll();
-
-            if(substitutes == null)
-                substitutes = new ArrayList<Substitute>();
-
-            if (substitutes.size() == 0) {
+            if (substitutes == null || substitutes.size() == 0) {
                 showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
             } else {
-                adapter.addAll(this.substitutes);
+                adapter.setSubstitutes(this.substitutes);
                 hideError();
             }
         }
@@ -327,32 +321,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(recyclerView != null) {
             recyclerView.setEnabled(true);
             recyclerView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void showError(int errorCode) {
-        if(recyclerView != null) {
-            recyclerView.setEnabled(false);
-            recyclerView.setVisibility(View.GONE);
-        }
-        if(activity != null)
-            activity.setAppBarExpanded(true);
-
-        if(errorViewScroll != null) {
-            errorViewScroll.setEnabled(true);
-            errorViewScroll.setVisibility(View.VISIBLE);
-        }
-        if(errorViewRefresh != null) {
-            errorViewRefresh.setEnabled(true);
-            errorViewRefresh.setVisibility(View.VISIBLE);
-        }
-
-        if(errorView != null) {
-            errorView.setEnabled(true);
-            errorView.setVisibility(View.VISIBLE);
-            errorView.setError(errorCode);
-            errorView.setTitle(R.string.oops);
-            errorView.setImage(errorImage);
         }
     }
     private void showError(String errorMessage, String title, Drawable image) {

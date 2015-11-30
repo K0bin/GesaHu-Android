@@ -14,33 +14,21 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 public final class SubstituteShareHelper {
     private SubstituteShareHelper() {}
 
-    public static PendingIntent makeShareIntent(Substitute substitute, Context context) {
+    public static Intent makeShareIntent(Substitute substitute, Context context) {
         if(substitute == null)
             return null;
 
-        String text = "";
-
-        if (!TextUtils.isEmpty(substitute.getSubject())) {
-            text += substitute.getSubject().trim();
-        }
-        if (!TextUtils.isEmpty(substitute.getRoom())) {
-            text += "; "+context.getString(R.string.room)+": " + substitute.getRoom().trim();
-        }
-        if (!TextUtils.isEmpty(substitute.getTeacher())) {
-            text += System.getProperty("line.separator") + context.getString(R.string.teacher) + ": " + substitute.getTeacher().trim() + "; ";
-        }
-        if (!TextUtils.isEmpty(substitute.getSubstituteTeacher())) {
-            text += context.getString(R.string.substitute_teacher)+": " + substitute.getSubstituteTeacher().trim();
-        }
-        if (!TextUtils.isEmpty(substitute.getHint())) {
-            text += System.getProperty("line.separator") + context.getString(R.string.hint)+": " + substitute.getHint().trim();
-        }
+        String text = makeShareText(substitute, context);
         
         Intent share = new Intent();
         share.setAction(Intent.ACTION_SEND);
-        share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text)+ " " + text);
+        share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text) + " " + text);
         share.setType("text/plain");
-        return PendingIntent.getActivity(context, 1337, share, PendingIntent.FLAG_UPDATE_CURRENT);
+        return share;
+    }
+
+    public static PendingIntent makePendingShareIntent(Substitute substitute, Context context) {
+        return PendingIntent.getActivity(context.getApplicationContext(), 1337, makeShareIntent(substitute, context), PendingIntent.FLAG_UPDATE_CURRENT);
     }
     
     public static String makeShareText(Substitute substitute, Context context) {

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.support.annotation.DimenRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
@@ -291,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 setAppBarExpanded(true);
 
             if(currentFragment.getAdapter() != null)
-                currentFragment.getAdapter().clearSelection(false);
+                currentFragment.getAdapter().clearSelection(true);
         }
     }
 
@@ -363,12 +365,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         switch(item.getItemId()) {
             case R.id.action_share:
-                try {
-                    SubstituteShareHelper.makeShareIntent(substitute, getApplicationContext()).send();
-                }
-                catch (PendingIntent.CanceledException canceled) {
-                    Toast.makeText(getApplicationContext(), getText(R.string.failed), Toast.LENGTH_SHORT).show();
-                }
+                    try{startActivity(SubstituteShareHelper.makeShareIntent(substitute, this));}
+                    catch (ActivityNotFoundException e) {
+                        Toast.makeText(this, R.string.share_error, Toast.LENGTH_LONG).show();
+                    }
                 return true;
         }
 

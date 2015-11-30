@@ -95,7 +95,7 @@ public class NotificationChecker implements Response.Listener<SubstitutesList>, 
                 builder.setContentIntent(launchPending);
 
                 //Only relevant for JELLY_BEAN and higher
-                PendingIntent pending = SubstituteShareHelper.makeShareIntent(substitutes.get(i), context);
+                PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(substitutes.get(i), context);
                 NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
                 builder.addAction(action);
 

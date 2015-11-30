@@ -34,4 +34,11 @@ public class SwipeRefreshLayoutFix extends SwipeRefreshLayout {
             });
         }
     }
+
+    @Override
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        canRefresh = true;
+    }
 }

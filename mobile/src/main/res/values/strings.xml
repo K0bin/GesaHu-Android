@@ -59,4 +59,6 @@
 
     <string name="error_title">Uups.</string>
 
+    <string name="share_error">Keine Sharing-Apps installiert!</string>
+
 </resources>

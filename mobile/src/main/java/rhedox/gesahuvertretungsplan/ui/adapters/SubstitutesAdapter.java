@@ -1,20 +1,12 @@
 package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -84,16 +76,16 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstituteViewHolde
         return substitutes.size();
     }
 
-    public void addAll(@Nullable List<Substitute> substitutes) {
+    public void setSubstitutes(@Nullable List<Substitute> substitutes) {
         if(substitutes == null)
-            removeAll();
+            clear();
 
         this.substitutes = new ArrayList<Substitute>(substitutes);
         if(getItemCount() > 0) {
             notifyItemRangeInserted(0, getItemCount());
         }
     }
-    public void removeAll() {
+    public void clear() {
         clearSelection(false);
         if(getItemCount() > 0) {
             int count = getItemCount();
