@@ -73,12 +73,25 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<SubstituteViewHolde
 
     @Override
     public int getItemCount() {
-        return substitutes.size();
+        return substitutes == null ? 0 : substitutes.size();
     }
 
     public void setSubstitutes(@Nullable List<Substitute> substitutes) {
-        if(substitutes == null)
+        if(substitutes == null || substitutes.size() == 0)
             clear();
+        else {
+            int count = getItemCount();
+            this.substitutes = new ArrayList<Substitute>(substitutes);
+            if(count > substitutes.size())
+                notifyItemRangeRemoved(substitutes.size()-1, count - substitutes.size());
+            else
+                notifyItemRangeInserted(count - 1, substitutes.size() - count);
+
+            notifyItemRangeChanged(0, Math.min(substitutes.size(), count));
+
+            if(selected >= substitutes.size())
+                clearSelection(false);
+        }
 
         this.substitutes = new ArrayList<Substitute>(substitutes);
         if(getItemCount() > 0) {

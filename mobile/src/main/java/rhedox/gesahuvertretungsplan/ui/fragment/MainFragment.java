@@ -5,10 +5,12 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -63,8 +65,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public static final String TAG ="MAIN_FRAGMENT";
 
     private LocalDate date;
-    private String announcement;
-    private List<Substitute> substitutes;
+    private SubstitutesList substitutesList;
 
     private boolean isLoading = false;
     private SubstituteJSoupRequest request;
@@ -128,9 +129,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
-        if(substitutes != null)
-            adapter.setSubstitutes(substitutes);
-        else
+        if(substitutesList != null && substitutesList.hasSubstitutes())
+            adapter.setSubstitutes(substitutesList.getSubstitutes());
+        else if(substitutesList == null)
             onRefresh();
         recyclerView.setAdapter(adapter);
 
@@ -165,7 +166,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if(isLoading)
             refreshLayout.setRefreshing(true);
-        else if(substitutes == null || substitutes.isEmpty())
+        else if(substitutesList == null)
             onRefresh();
     }
 
@@ -227,20 +228,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
-    public boolean hasAnnouncement() {
-        return !TextUtils.isEmpty(announcement) && !announcement.equals("keine");
-    }
-
-    public boolean isEmpty() {
-        return adapter == null || substitutes == null || substitutes.size() == 0 || adapter.getItemCount() == 0;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public String getAnnouncement() {
-        return announcement;
+    public SubstitutesList getSubstitutesList() {
+        return substitutesList;
     }
 
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
@@ -270,11 +259,15 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
             }
         }
-        showError(getString(R.string.error), getString(R.string.oops), errorImage);
+
+        if(substitutesList == null)
+            showError(getString(R.string.error), getString(R.string.oops), errorImage);
+        else
+            Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
     }
 
     @Override
-    public void onResponse(SubstitutesList response) {
+    public void onResponse(@NonNull SubstitutesList response) {
         isLoading = false;
         request = null;
 
@@ -283,26 +276,25 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (errorViewRefresh != null)
             errorViewRefresh.setRefreshing(false);
 
-        if (response == null)
-            return;
+        //if(response == null)
+        //    return;
 
-        this.announcement = response.getAnnouncement();
         if(!filterImportant)
-            this.substitutes = response.getSubstitutes();
+            this.substitutesList = response;
         else
-            this.substitutes = SubstitutesList.filterImportant(getActivity(), response.getSubstitutes());
+            this.substitutesList = response.filterImportant();
 
-        if (recyclerView != null) {
-            if (substitutes == null || substitutes.size() == 0) {
+        if (recyclerView != null && substitutesList != null) {
+            if (!substitutesList.hasSubstitutes()) {
                 showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
             } else {
-                adapter.setSubstitutes(this.substitutes);
+                adapter.setSubstitutes(substitutesList.getSubstitutes());
                 hideError();
             }
         }
 
         if (activity != null && getUserVisibleHint())
-            activity.setFabVisibility(hasAnnouncement());
+            activity.setFabVisibility(substitutesList != null && substitutesList.hasAnnouncement());
     }
 
     private void hideError() {

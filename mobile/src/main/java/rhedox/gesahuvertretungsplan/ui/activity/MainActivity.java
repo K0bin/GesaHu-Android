@@ -106,14 +106,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         setSupportActionBar(toolbar);
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(currentFragment != null && currentFragment.hasAnnouncement())
-                    AnnouncementFragment.newInstance(currentFragment.getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
-            }
-        });
-
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -190,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @OnClick(R.id.fab)
     public void showAnnouncement(View view) {
-        if(currentFragment != null && currentFragment.hasAnnouncement())
-            AnnouncementFragment.newInstance(currentFragment.getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
+        if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement())
+            AnnouncementFragment.newInstance(currentFragment.getSubstitutesList().getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
     }
 
     @Override
@@ -228,8 +220,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             case R.id.action_load:
                 LocalDate date;
-                if(currentFragment != null && currentFragment.getDate() != null)
-                    date = currentFragment.getDate();
+                if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().getDate() != null)
+                    date = currentFragment.getSubstitutesList().getDate();
                 else
                     date = LocalDate.now();
 
@@ -284,12 +276,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             return;
 
         currentFragment = pagerAdapter.getFragment(position);
-        if(currentFragment != null) {
+        if(currentFragment != null && currentFragment.getSubstitutesList() != null) {
             setCabVisibility(false);
-            setFabVisibility(currentFragment.hasAnnouncement());
+            setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
             currentFragment.setSwipeToRefreshEnabled(appBarLayoutOffset == 0);
 
-            if(currentFragment.isEmpty())
+            if(!currentFragment.getSubstitutesList().hasSubstitutes())
                 setAppBarExpanded(true);
 
             if(currentFragment.getAdapter() != null)
@@ -348,8 +340,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             } else {
                 cab.finish();
                 setTabInset(false);
-                if(currentFragment != null)
-                    setFabVisibility(currentFragment.hasAnnouncement());
+                if(currentFragment != null && currentFragment.getSubstitutesList() != null)
+                    setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
             }
         }
     }

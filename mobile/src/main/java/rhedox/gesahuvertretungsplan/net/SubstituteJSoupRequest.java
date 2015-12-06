@@ -42,11 +42,13 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
     private ShortNameResolver shortNameResolver;
     private WeakReference<Response.Listener<SubstitutesList>> listener;
     private Context context;
+    private LocalDate date;
 
     @RequiresPermission(Manifest.permission.INTERNET)
     public SubstituteJSoupRequest(@NonNull Context context, @NonNull LocalDate date, StudentInformation studentInformation, Response.Listener<SubstitutesList> listener, Response.ErrorListener errorListener) {
         super(Method.GET, "http://www.gesahui.de/home/view.php" + "?" + "d=" + Integer.toString(date.getDayOfMonth()) + "&m=" + Integer.toString(date.getMonthOfYear()) + "&y=" + Integer.toString(date.getYear()), errorListener);
 
+        this.date = date;
         this.studentInformation = studentInformation;
         this.shortNameResolver = new ShortNameResolver(context);
         this.listener = new WeakReference<Response.Listener<SubstitutesList>>(listener);
@@ -67,7 +69,7 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
                 Elements tables = document.getElementsByTag("table");
 
                 if(tables.size() != 5)
-                    return Response.success(new SubstitutesList(substitutes, announcement), HttpHeaderParser.parseCacheHeaders(response));
+                    return Response.success(new SubstitutesList(substitutes, announcement, date), HttpHeaderParser.parseCacheHeaders(response));
 
                 Elements rows = tables.get(2).getElementsByTag("tr");
 
@@ -172,7 +174,7 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
                 return Response.error(new VolleyError(response));
             }
 
-            return Response.success(new SubstitutesList(substitutes, announcement), HttpHeaderParser.parseCacheHeaders(response));
+            return Response.success(new SubstitutesList(substitutes, announcement, date), HttpHeaderParser.parseCacheHeaders(response));
         }
         return Response.error(new VolleyError(context.getString(R.string.error_server)));
     }

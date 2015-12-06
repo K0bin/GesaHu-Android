@@ -133,7 +133,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onResponse(SubstitutesList response) {
-        this.substitutes = SubstitutesList.filterImportant(context, response.getSubstitutes());
+        this.substitutes = SubstitutesList.filterImportant(response.getSubstitutes());
 
         AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
         if (appWidgetId == -1) {
