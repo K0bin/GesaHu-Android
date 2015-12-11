@@ -20,6 +20,10 @@
     <string name="share">Teilen</string>
 	<string name="main_cab_title">Teile eine Stunde!</string>
 	<string name="failed">Da hat etwas nicht funktioniert!</string>
+    <string name="today">heute</string>
+    <string name="tomorrow">morgen</string>
+    <string name="date_prefix">am</string>
+    <string name="next_week">nächsten</string>
     <string name="oops">Uups!</string>
 
     <string name="announcements">Ankündigungen</string>

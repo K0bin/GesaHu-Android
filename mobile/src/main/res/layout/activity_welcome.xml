@@ -59,7 +59,6 @@
 		app:layout_anchorGravity="bottom|right|end"
 		android:layout_margin="16dp"
 		android:id="@+id/fab"
-		app:layout_behavior="rhedox.gesahuvertretungsplan.ui.behavior.ScrollAwareFabBehavior"
 		/>
 
 

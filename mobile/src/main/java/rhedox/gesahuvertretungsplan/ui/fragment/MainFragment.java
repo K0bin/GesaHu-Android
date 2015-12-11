@@ -22,7 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -129,9 +131,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
-        if(substitutesList != null && substitutesList.hasSubstitutes())
-            adapter.setSubstitutes(substitutesList.getSubstitutes());
-        else if(substitutesList == null)
+        if(substitutesList != null) {
+            if(substitutesList.hasSubstitutes())
+                adapter.setSubstitutes(substitutesList.getSubstitutes());
+            else
+                showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
+        } else
             onRefresh();
         recyclerView.setAdapter(adapter);
 
@@ -145,8 +150,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         errorView.setVisibility(View.GONE);
         errorView.setOnRetryListener(this);
-        //errorImage = errorView.getImage();
-        //noneImage = ContextCompat.getDrawable(getActivity(), R.drawable.no_substitutes);
 
         errorViewScroll.setVisibility(View.GONE);
         errorViewRefresh.setOnRefreshListener(this);
@@ -164,7 +167,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onResume() {
         super.onResume();
 
-        if(isLoading)
+        if(isLoading && refreshLayout != null && refreshLayout.isEnabled() && refreshLayout.getVisibility() == View.VISIBLE)
             refreshLayout.setRefreshing(true);
         else if(substitutesList == null)
             onRefresh();
@@ -218,8 +221,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 //Store date for refreshing
                 this.date = date;
 
-                //request = new SubstituteRequest(getActivity(), date, studentInformation, this, this);
                 request = new SubstituteJSoupRequest(getActivity(), date, studentInformation, this, this);
+                request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
                 isLoading = true;
             } else {
@@ -249,15 +252,17 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         Log.e("net-error", "Millis: "+Long.toString(error.getNetworkTimeMs()));
         Log.e("net-error", "Message: "+error.getMessage());
 
-        if (refreshLayout != null)
+        if (refreshLayout != null) {
             refreshLayout.setRefreshing(false);
-        if (errorViewRefresh != null)
+            refreshLayout.clearAnimation();
+        }
+        if (errorViewRefresh != null) {
             errorViewRefresh.setRefreshing(false);
+            errorViewRefresh.clearAnimation();
+        }
 
-        if(adapter != null && adapter.getItemCount() == 0) {
-            if (error.networkResponse != null) {
-                Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
-            }
+        if (error.networkResponse != null) {
+            Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
         }
 
         if(substitutesList == null)
@@ -267,32 +272,39 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void onResponse(@NonNull SubstitutesList response) {
+    public void onResponse(SubstitutesList response) {
         isLoading = false;
         request = null;
 
-        if (refreshLayout != null)
+        //Hide both swipe to refresh views
+        if (refreshLayout != null) {
             refreshLayout.setRefreshing(false);
-        if (errorViewRefresh != null)
+            refreshLayout.clearAnimation();
+        }
+        if (errorViewRefresh != null) {
             errorViewRefresh.setRefreshing(false);
+            errorViewRefresh.clearAnimation();
+        }
 
-        //if(response == null)
-        //    return;
+        if(response == null)
+            return;
 
         if(!filterImportant)
             this.substitutesList = response;
         else
             this.substitutesList = response.filterImportant();
 
-        if (recyclerView != null && substitutesList != null) {
-            if (!substitutesList.hasSubstitutes()) {
-                showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
-            } else {
+        //Display UI
+        if (!substitutesList.hasSubstitutes()) {
+            showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
+        } else {
+            if (adapter != null)
                 adapter.setSubstitutes(substitutesList.getSubstitutes());
-                hideError();
-            }
+
+            hideError();
         }
 
+        //Update the floating action button
         if (activity != null && getUserVisibleHint())
             activity.setFabVisibility(substitutesList != null && substitutesList.hasAnnouncement());
     }
@@ -328,6 +340,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             errorViewScroll.setVisibility(View.VISIBLE);
         }
         if(errorViewRefresh != null) {
+
             errorViewRefresh.setEnabled(true);
             errorViewRefresh.setVisibility(View.VISIBLE);
         }

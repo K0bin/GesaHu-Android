@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.google.android.apps.dashclock.api.ExtensionData;
 
@@ -15,6 +16,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
@@ -34,7 +36,9 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         String schoolYear = prefs.getString("pref_year", "5");
         StudentInformation information = new StudentInformation(schoolYear, schoolClass);
 
-        VolleySingleton.getInstance(getApplicationContext()).getRequestQueue().add(new SubstituteRequest(this, date, information, this, null));
+        SubstituteJSoupRequest request = new SubstituteJSoupRequest(this, date, information, this, null);
+        request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstance(getApplicationContext()).getRequestQueue().add(request);
     }
 
     @Override

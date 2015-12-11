@@ -3,7 +3,12 @@ package rhedox.gesahuvertretungsplan.util;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
@@ -14,11 +19,11 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 public final class SubstituteShareHelper {
     private SubstituteShareHelper() {}
 
-    public static Intent makeShareIntent(Substitute substitute, Context context) {
+    public static Intent makeShareIntent(@Nullable LocalDate date, Substitute substitute, Context context) {
         if(substitute == null)
             return null;
 
-        String text = makeShareText(substitute, context);
+        String text = makeShareText(date, substitute, context);
         
         Intent share = new Intent();
         share.setAction(Intent.ACTION_SEND);
@@ -27,15 +32,37 @@ public final class SubstituteShareHelper {
         return share;
     }
 
-    public static PendingIntent makePendingShareIntent(Substitute substitute, Context context) {
-        return PendingIntent.getActivity(context.getApplicationContext(), 1337, makeShareIntent(substitute, context), PendingIntent.FLAG_UPDATE_CURRENT);
+    public static PendingIntent makePendingShareIntent(@Nullable LocalDate date,  Substitute substitute, Context context) {
+        return PendingIntent.getActivity(context.getApplicationContext(), 1337, makeShareIntent(date, substitute, context), PendingIntent.FLAG_UPDATE_CURRENT);
     }
     
-    public static String makeShareText(Substitute substitute, Context context) {
+    public static String makeShareText(@Nullable LocalDate date, Substitute substitute, Context context) {
         if(substitute == null)
             return null;
 
         String text = "";
+
+        if(date != null) {
+            if (date.equals(LocalDate.now()))
+                text += context.getString(R.string.today) + " ";
+            else if (date.equals(LocalDate.now().plusDays(1)))
+                text += context.getString(R.string.tomorrow) + " ";
+            else {
+
+                if(date.getWeekOfWeekyear() == LocalDate.now().getWeekOfWeekyear()) {
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern("EEEE");
+                    text += context.getString(R.string.date_prefix) + " " + date.toString(fmt) + " ";
+                }
+                else if(date.getWeekOfWeekyear() == LocalDate.now().getWeekOfWeekyear() + 1) {
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern("EEEE");
+                    text += context.getString(R.string.next_week) + " " + date.toString(fmt) + " ";
+                }
+                else {
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.");
+                    text += context.getString(R.string.date_prefix) + " " + date.toString(fmt) + " ";
+                }
+            }
+        }
 
         if (!TextUtils.isEmpty(substitute.getSubject())) {
             text += substitute.getSubject().trim();

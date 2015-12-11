@@ -2,6 +2,10 @@ package rhedox.gesahuvertretungsplan.ui.activity;
 
 import java.util.Locale;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -19,6 +23,8 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +33,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +55,8 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.viewPager) ViewPager viewPager;
     @Bind(R.id.fab) FloatingActionButton floatingActionButton;
+
+    private ObjectAnimator animator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,40 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        animator = ObjectAnimator.ofFloat(new PagerHintMovement(10), "progress", -1f, 1f);
+        animator.setInterpolator(new BounceInterpolator());
+        animator.setDuration(2000);
+        animator.setRepeatCount(1);
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                viewPager.beginFakeDrag();
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                viewPager.endFakeDrag();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                viewPager.setCurrentItem(0);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        animator.setStartDelay(500);
+        animator.start();
+    }
+
+    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
@@ -76,8 +121,10 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     @Override
     public void onPageSelected(int position) {
 
-        if(position >= pagerAdapter.getCount() - 1)
+        if(position == pagerAdapter.getCount() - 2)
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_check_white_24dp));
+        else if(position == pagerAdapter.getCount() - 1)
+            nextPage(null);
         else
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_forward_white_24dp));
     }
@@ -89,10 +136,10 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     @OnClick(R.id.fab)
     public void nextPage(View view) {
-        if(viewPager.getCurrentItem() < pagerAdapter.getCount() - 1)
+        if(viewPager.getCurrentItem() < pagerAdapter.getCount() - 2)
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         else {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(SettingsFragment.PREF_PREVIOUSLY_STARTED, true);
             edit.apply();
@@ -107,12 +154,39 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     protected void onDestroy() {
         super.onDestroy();
 
+        if(animator != null)
+            animator.cancel();
+
         ButterKnife.unbind(this);
 
         //LeakCanary
         RefWatcher refWatcher = App.getRefWatcher(this);
         if(refWatcher != null && pagerAdapter != null)
             refWatcher.watch(pagerAdapter);
+    }
+
+    class PagerHintMovement{
+
+        float goal;
+        float progress;
+
+        PagerHintMovement(float goal) {
+            this.goal = goal;
+        }
+
+        public float getProgress() {
+            return progress;
+        }
+
+        public void setProgress(float progress) {
+            this.progress = progress;
+
+            if(viewPager.isFakeDragging()){
+                Log.d("ViewPager Hint", "Animation: Updating fake drag with value=" + goal * progress + "px");
+                viewPager.fakeDragBy( goal * progress);
+            }
+
+        }
     }
 
     /**
@@ -139,13 +213,16 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
                 case 2:
                     return SettingsFragment.newInstance();
+
+                case 3:
+                    return new Fragment();
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -190,5 +267,4 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
             super.onDestroy();
         }
     }
-
 }

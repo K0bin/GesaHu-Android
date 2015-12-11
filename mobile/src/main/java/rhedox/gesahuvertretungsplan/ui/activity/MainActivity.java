@@ -357,7 +357,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         switch(item.getItemId()) {
             case R.id.action_share:
-                    try{startActivity(SubstituteShareHelper.makeShareIntent(substitute, this));}
+                    try{
+                        LocalDate date;
+                        if(currentFragment != null && currentFragment.getSubstitutesList() != null)
+                            date = currentFragment.getSubstitutesList().getDate();
+                        else
+                            date = null;
+                        
+                        startActivity(SubstituteShareHelper.makeShareIntent(date, substitute, this));}
                     catch (ActivityNotFoundException e) {
                         Toast.makeText(this, R.string.share_error, Toast.LENGTH_LONG).show();
                     }

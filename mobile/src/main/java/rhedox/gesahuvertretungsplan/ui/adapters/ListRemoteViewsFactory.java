@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 
 import org.joda.time.DateTime;
@@ -21,6 +22,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
@@ -57,7 +59,9 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onCreate() {
-        VolleySingleton.getInstance(context).getRequestQueue().add(new SubstituteRequest(context, date, studentInformation, this, null));
+        SubstituteJSoupRequest request = new SubstituteJSoupRequest(context, date, studentInformation, this, null);
+        request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstance(context).getRequestQueue().add(request);
     }
 
     @Override

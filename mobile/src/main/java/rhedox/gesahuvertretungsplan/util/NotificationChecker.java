@@ -19,9 +19,13 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.util.SortedList;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.joda.time.LocalDate;
+
+import java.util.Date;
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.R;
@@ -29,6 +33,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
 import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
@@ -57,7 +62,9 @@ public class NotificationChecker implements Response.Listener<SubstitutesList>, 
 
     public void load() {
         if(!isLoading) {
-            VolleySingleton.getInstance(context).getRequestQueue().add(new SubstituteRequest(context, SchoolWeek.next(), information, this, null));
+            SubstituteJSoupRequest request = new SubstituteJSoupRequest(context, SchoolWeek.next(), information, this, null);
+            request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstance(context).getRequestQueue().add(request);
             isLoading = true;
         }
     }
@@ -75,7 +82,7 @@ public class NotificationChecker implements Response.Listener<SubstitutesList>, 
         for (int i = 0; i < substitutes.size(); i++) {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (substitutes.get(i).getIsImportant()) {
-                String notificationText = SubstituteShareHelper.makeShareText(substitutes.get(i), context);
+                String notificationText = SubstituteShareHelper.makeShareText(null, substitutes.get(i), context);
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
@@ -95,7 +102,7 @@ public class NotificationChecker implements Response.Listener<SubstitutesList>, 
                 builder.setContentIntent(launchPending);
 
                 //Only relevant for JELLY_BEAN and higher
-                PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(substitutes.get(i), context);
+                PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(LocalDate.now(), substitutes.get(i), context);
                 NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
                 builder.addAction(action);
 
