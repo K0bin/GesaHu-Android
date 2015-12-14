@@ -23,4 +23,5 @@
 	<attr name="activatedColor" format="color" />
 
     <attr name="list_item_background" format="reference" />
+    <attr name="ad_background" format="color|reference" />
 </resources>

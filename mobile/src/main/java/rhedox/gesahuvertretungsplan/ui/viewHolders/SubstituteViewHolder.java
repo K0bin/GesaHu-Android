@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
+
 import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
@@ -28,7 +31,6 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 
 
 public class SubstituteViewHolder extends RecyclerView.ViewHolder {
-    // each data item is just a string in this case
     private View view;
 
     @Bind(R.id.lesson) AppCompatTextView lesson;
@@ -55,8 +57,6 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
 
         view.setClickable(true);
-        //view.setOnClickListener(this);
-        //view.setOnTouchListener(this);
 
         circleBackground = DrawableCompat.wrap(circleBackground);
         DrawableCompat.setTint(circleBackground, circleColor);

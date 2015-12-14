@@ -1,0 +1,121 @@
+<com.google.android.gms.ads.formats.NativeAppInstallAdView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:minHeight="88dp"
+	android:background="?attr/ad_background">
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_margin="16dp">
+
+			<ImageView
+				android:layout_width="@dimen/tileAvatarSize"
+				android:layout_height="@dimen/tileAvatarSize"
+				android:scaleType="fitCenter"
+				android:id="@+id/icon"
+				android:adjustViewBounds="true"
+				android:layout_marginRight="16dp"/>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/title"
+				android:textColor="?android:attr/textColorPrimary"
+				android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+				android:layout_toRightOf="@id/icon" />
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/description"
+				android:layout_below="@id/title"
+				android:textColor="?android:attr/textColorSecondary"
+				android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+				android:layout_toRightOf="@id/icon"/>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/advertiser"
+				android:layout_below="@id/description"
+				android:layout_toRightOf="@id/icon"
+				android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+				android:textColor="?android:attr/textColorHint"/>
+
+			<!--<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:maxHeight="128dp"
+				android:scaleType="fitCenter"
+				android:id="@+id/image"
+				android:adjustViewBounds="true"
+				android:layout_below="@id/store"/>-->
+
+			<android.support.v7.widget.AppCompatButton
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/callToAction"
+				android:layout_below="@id/advertiser"/>
+
+
+
+		</RelativeLayout>
+
+		<!--<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="horizontal">
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:scaleType="fitCenter"
+				android:id="@+id/icon"
+				android:adjustViewBounds="true"/>
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:orientation="vertical">
+				<android.support.v7.widget.AppCompatTextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/title"
+					android:textAppearance="?attr/titleTextAppearance"/>
+
+				<android.support.v7.widget.AppCompatTextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/distributor" />
+
+				<android.support.v7.widget.AppCompatTextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/description"
+					/>
+			</LinearLayout>
+
+		</LinearLayout>
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:scaleType="fitCenter"
+				android:id="@+id/image"
+				android:adjustViewBounds="true"/>
+
+			<android.support.v7.widget.AppCompatButton
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/callToAction"/>
+
+		</LinearLayout>-->
+
+</com.google.android.gms.ads.formats.NativeAppInstallAdView>

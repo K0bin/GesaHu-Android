@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -24,21 +23,16 @@ import android.view.ViewGroup;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.ButterKnife;
 import rhedox.gesahuvertretungsplan.*;
-import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
@@ -47,7 +41,6 @@ import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 import rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix;
-import rhedox.gesahuvertretungsplan.util.TextUtils;
 import tr.xip.errorview.ErrorView;
 
 /**
@@ -133,7 +126,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         adapter = new SubstitutesAdapter(this.getActivity());
         if(substitutesList != null) {
             if(substitutesList.hasSubstitutes())
-                adapter.setSubstitutes(substitutesList.getSubstitutes());
+                adapter.setList(substitutesList.getSubstitutes());
             else
                 showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
         } else
@@ -299,7 +292,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
         } else {
             if (adapter != null)
-                adapter.setSubstitutes(substitutesList.getSubstitutes());
+                adapter.setList(substitutesList.getSubstitutes());
 
             hideError();
         }

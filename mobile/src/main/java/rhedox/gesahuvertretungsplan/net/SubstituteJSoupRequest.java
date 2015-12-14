@@ -63,6 +63,7 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
 
             try {
                 String body = new String(response.data, "windows-1252");
+                body = body.replaceAll("\\s+", " ");
                 Document document = Jsoup.parse(body);
                 announcement = readAnnouncement(document);
 
@@ -99,7 +100,7 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
                                         hint = "";
                                     }
 
-                                    lesson = text;
+                                    lesson = text.replaceAll(" ","");
                                 } break;
 
                                 case 1: {

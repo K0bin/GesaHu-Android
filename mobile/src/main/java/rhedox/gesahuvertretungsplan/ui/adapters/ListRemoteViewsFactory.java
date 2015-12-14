@@ -23,7 +23,6 @@ import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
-import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
 import rhedox.gesahuvertretungsplan.net.VolleySingleton;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
@@ -87,7 +86,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         else {
             Substitute substitute = substitutes.get(position);
 
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_replacement);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_substitute);
             remoteViews.setTextViewText(R.id.lesson, substitute.getLesson());
             remoteViews.setTextViewText(R.id.subject, substitute.getSubject());
             remoteViews.setTextViewText(R.id.teacher, substitute.getTeacher());
