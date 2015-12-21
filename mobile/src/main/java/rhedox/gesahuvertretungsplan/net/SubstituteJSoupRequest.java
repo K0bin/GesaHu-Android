@@ -193,5 +193,10 @@ public class SubstituteJSoupRequest extends Request<SubstitutesList> {
         if(listener != null && listener.get() != null)
             listener.get().onResponse(response);
     }
+
+    public void destroy() {
+        cancel();
+        onFinish();
+    }
 }
 

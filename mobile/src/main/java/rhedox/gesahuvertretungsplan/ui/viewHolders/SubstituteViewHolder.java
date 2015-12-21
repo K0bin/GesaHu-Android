@@ -11,9 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
-
 import java.lang.ref.WeakReference;
 
 import butterknife.Bind;

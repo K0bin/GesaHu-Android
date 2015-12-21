@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.adapters;
+/*package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,9 +32,9 @@ import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 
 /**
  * Created by Robin on 28.10.2014.
- */
-public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<Substitute> list;
+ *
+public class AdSubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private List list;
 
     @ColorInt private int circleColorImportant;
     @ColorInt private int circleColor;
@@ -42,14 +42,18 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @ColorInt private int highlightedTextColor;
     @ColorInt private int activatedBackgroundColor;
     private int selected = -1;
+    private int adCount = 0;
     private SubstituteViewHolder selectedViewHolder;
 
     private MainFragment.MaterialActivity activity;
+    private Context context;
 
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
+    private static final int ITEM_TYPE_CONTENT_AD = 1;
+    private static final int ITEM_TYPE_INSTALL_AD = 2;
 
-    public SubstitutesAdapter(@NonNull Activity context) {
-        this.list = new ArrayList<Substitute>(0);
+    public AdSubstitutesAdapter(@NonNull Activity context) {
+        this.list = new ArrayList(0);
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleHighlightedColor, R.attr.circleTextColor, R.attr.circleHighlightedTextColor, R.attr.activatedColor});
         textColor = typedArray.getColor(2, 0);
@@ -61,26 +65,42 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         if(context instanceof MainFragment.MaterialActivity)
             activity = (MainFragment.MaterialActivity)context;
+
+        this.context = context.getApplicationContext();
     }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         if(list == null || list.size() <= i)
             return;
 
-        SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
-        substituteViewHolder.setSubstitute(list.get(i));
-        substituteViewHolder.setSelected(i == selected && selected != -1);
+        if(getItemViewType(i) == ITEM_TYPE_SUBSTITUTE) {
+            SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
+            substituteViewHolder.setSubstitute((Substitute) list.get(i));
+            substituteViewHolder.setSelected(i == selected && selected != -1);
 
-        if(i == selected && selected != -1)
-            selectedViewHolder = substituteViewHolder;
-        else if(selectedViewHolder == substituteViewHolder)
-            selectedViewHolder = null;
+            if(i == selected && selected != -1)
+                selectedViewHolder = substituteViewHolder;
+            else if(selectedViewHolder == substituteViewHolder)
+                selectedViewHolder = null;
+        }
+        else {
+            NativeAdViewHolder adViewHolder = (NativeAdViewHolder) viewHolder;
+            adViewHolder.setAd((NativeAd) list.get(i));
+        }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        FrameLayout view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_substitute, viewGroup, false);
-        return new SubstituteViewHolder(view, this, circleColor, circleColorImportant, textColor, highlightedTextColor, activatedBackgroundColor);
+        if (viewType == ITEM_TYPE_SUBSTITUTE) {
+            FrameLayout view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_substitute, viewGroup, false);
+            return new SubstituteViewHolder(view, this, circleColor, circleColorImportant, textColor, highlightedTextColor, activatedBackgroundColor);
+        } else if (viewType == ITEM_TYPE_INSTALL_AD) {
+            NativeAdView view = (NativeAdView) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_install_ad, viewGroup, false);
+            return new InstallAppAdViewHolder(view);
+        } else {
+            NativeAdView view = (NativeAdView) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_content_ad, viewGroup, false);
+            return new ContentAdViewHolder(view);
+        }
     }
 
     @Override
@@ -93,6 +113,11 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if(list == null || list.size() <= position)
             return -1;
 
+        if(list.get(position) instanceof NativeContentAd)
+            return ITEM_TYPE_CONTENT_AD;
+        else if(list.get(position) instanceof NativeAppInstallAd)
+            return ITEM_TYPE_INSTALL_AD;
+        else
         return ITEM_TYPE_SUBSTITUTE;
     }
 
@@ -101,7 +126,7 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             clear();
         else {
             int count = getItemCount();
-            this.list = new ArrayList<Substitute>(list);
+            this.list = new ArrayList(list);
 
             //TODO Examine whether bug is fixed:
             if(count != list.size()) {
@@ -113,8 +138,13 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             notifyItemRangeChanged(0, Math.min(list.size(), count));
 
+            //notifyItemRangeRemoved(0, count);
+            //notifyItemRangeInserted(0, list.size());
+
             if(selected >= list.size())
                 clearSelection(false);
+
+            insert_ads();
         }
     }
     public void clear() {
@@ -123,6 +153,43 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             int count = getItemCount();
             list.clear();
             notifyItemRangeRemoved(0, count);
+        }
+    }
+
+    private void insert_ads() {
+        int size = list.size();
+        for (int i = 0; i < size / 6; i++) {
+            AdLoader loader = new AdLoader.Builder(context, "ca-app-pub-3940256099942544/2247696110")
+                    .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
+                        @Override
+                        public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
+                            if (list != null && list.size() >= (adCount + 1) * 5) {
+                                Log.i("Ads", "ContentAd loaded");
+                                list.add((adCount + 1) * 6, nativeAppInstallAd);
+                                notifyItemInserted((adCount + 1) * 5);
+
+                                adCount++;
+                                Log.i("Ads", "Ad count: "+Integer.toString(adCount));
+                            }
+                        }
+                    })
+                    .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
+                        @Override
+                        public void onContentAdLoaded(NativeContentAd nativeContentAd) {
+                            if (list != null && list.size() >= (adCount + 1) * 5) {
+                                Log.i("Ads", "ContentAd loaded");
+                                list.add((adCount + 1) * 5, nativeContentAd);
+                                notifyItemInserted((adCount + 1) * 5);
+
+                                adCount++;
+                                Log.i("Ads", "Ad count: "+Integer.toString(adCount));
+                            }
+                        }
+                    })
+                    .build();
+
+            AdRequest request = new AdRequest.Builder().build();
+            loader.loadAd(request);
         }
     }
 
@@ -158,7 +225,8 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public Substitute getSelected() {
         if(list == null || selected == -1) return null;
+        if(!(list.get(selected) instanceof Substitute)) return null;
 
-        return list.get(selected);
+        return (Substitute) list.get(selected);
     }
-}
+}*/

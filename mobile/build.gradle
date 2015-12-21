@@ -7,7 +7,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3211
+        versionCode 3210
         versionName "3.2"
         multiDexEnabled false
     }
@@ -43,7 +43,6 @@ dependencies {
     compile('com.mikepenz:aboutlibraries:5.2.+@aar') {
         transitive = true
     }
-    compile 'ch.acra:acra:+'
     compile 'com.github.xiprox.errorview:library:2.+'
     compile 'org.jsoup:jsoup:1.8.+'
     compile 'com.jakewharton:butterknife:7.0.+'

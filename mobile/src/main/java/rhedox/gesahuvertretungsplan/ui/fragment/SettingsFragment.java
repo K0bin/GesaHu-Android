@@ -9,6 +9,7 @@ import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.PreferencesDividerItemDecoration;
+import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity;
 
 /**
  * Created by Robin on 18.10.2014.
@@ -37,7 +38,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         getListView().addItemDecoration(new PreferencesDividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         int margin = (int)getContext().getResources().getDimension(R.dimen.small_margin);
-        getListView().setPadding(margin,0, margin, 0);
+        int marginBottom = (int)getContext().getResources().getDimension(R.dimen.list_fab_bottom);
+        getListView().setPadding(margin,0, margin, getActivity() instanceof WelcomeActivity ? marginBottom : margin);
     }
 
     @Override

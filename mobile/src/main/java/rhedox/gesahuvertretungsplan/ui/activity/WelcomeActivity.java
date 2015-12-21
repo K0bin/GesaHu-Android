@@ -136,6 +136,9 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     @OnClick(R.id.fab)
     public void nextPage(View view) {
+        if(animator != null)
+            animator.cancel();
+
         if(viewPager.getCurrentItem() < pagerAdapter.getCount() - 2)
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         else {
@@ -181,9 +184,13 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         public void setProgress(float progress) {
             this.progress = progress;
 
-            if(viewPager.isFakeDragging()){
+            if(viewPager != null && viewPager.isFakeDragging()){
                 Log.d("ViewPager Hint", "Animation: Updating fake drag with value=" + goal * progress + "px");
-                viewPager.fakeDragBy( goal * progress);
+                //try {
+                    viewPager.fakeDragBy(goal * progress);
+                //} catch (NullPointerException e) {
+
+                //}
             }
 
         }

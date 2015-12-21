@@ -189,8 +189,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onDestroy() {
-        if(request != null)
-            request.cancel();
+        if(request != null) {
+            request.destroy();
+        }
 
         //LeakCanary
         RefWatcher refWatcher = App.getRefWatcher(getActivity());
