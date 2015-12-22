@@ -259,8 +259,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
         }
 
-        if(substitutesList == null)
+        if(substitutesList == null) {
             showError(getString(R.string.error), getString(R.string.oops), errorImage);
+            if(activity != null)
+                activity.setFabVisibility(false);
+        }
         else
             Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
     }
