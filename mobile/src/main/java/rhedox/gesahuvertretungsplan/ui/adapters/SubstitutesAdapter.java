@@ -28,12 +28,13 @@ import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ContentAdViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.InstallAppAdViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.NativeAdViewHolder;
+import rhedox.gesahuvertretungsplan.ui.viewHolders.SelectableAdapter;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 
 /**
  * Created by Robin on 28.10.2014.
  */
-public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> {
     private List<Substitute> list;
 
     @ColorInt private int circleColorImportant;
@@ -126,21 +127,24 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public void setSelected(SubstituteViewHolder viewHolder) {
-        if(viewHolder == null || selected == viewHolder.getAdapterPosition())
+    @Override
+    public void setSelected(RecyclerView.ViewHolder viewHolder) {
+        if(viewHolder == null || selected == viewHolder.getAdapterPosition() || !(viewHolder instanceof SubstituteViewHolder))
             return;
 
         if(selectedViewHolder != null)
             selectedViewHolder.setSelected(false);
 
         selected = viewHolder.getAdapterPosition();
-        selectedViewHolder = viewHolder;
+        selectedViewHolder = (SubstituteViewHolder)viewHolder;
 
         if(activity != null) {
             activity.setCabVisibility(true);
         }
+
     }
 
+    @Override
     public void clearSelection(boolean cabFinished) {
         if(selectedViewHolder != null)
             selectedViewHolder.setSelected(false);
@@ -152,10 +156,12 @@ public class SubstitutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 activity.setCabVisibility(false);
     }
 
+    @Override
     public int getSelectedIndex() {
         return selected;
     }
 
+    @Override
     public Substitute getSelected() {
         if(list == null || selected == -1) return null;
 

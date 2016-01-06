@@ -45,9 +45,9 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 
     @ColorInt private int activatedBackgroundColor;
 
-    private WeakReference<SubstitutesAdapter> adapter;
+    private WeakReference<SelectableAdapter<Substitute, RecyclerView.ViewHolder>> adapter;
 
-    public SubstituteViewHolder(ViewGroup view, SubstitutesAdapter adapter, @ColorInt int circleColor, @ColorInt int circleHighlightedColor, @ColorInt int textColor, @ColorInt int highlightedTextColor, @ColorInt int activatedBackgroundColor) {
+    public SubstituteViewHolder(ViewGroup view, SelectableAdapter<Substitute, RecyclerView.ViewHolder> adapter, @ColorInt int circleColor, @ColorInt int circleHighlightedColor, @ColorInt int textColor, @ColorInt int highlightedTextColor, @ColorInt int activatedBackgroundColor) {
         super(view);
 
         this.view = view;
@@ -65,7 +65,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 
         this.activatedBackgroundColor = activatedBackgroundColor;
 
-        this.adapter = new WeakReference<SubstitutesAdapter>(adapter);
+        this.adapter = new WeakReference<SelectableAdapter<Substitute, RecyclerView.ViewHolder>>(adapter);
     }
 
     public void setSubstitute(Substitute substitute) {
