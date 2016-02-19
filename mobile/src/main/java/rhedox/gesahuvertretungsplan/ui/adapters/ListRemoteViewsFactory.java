@@ -5,33 +5,34 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Response;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
-import rhedox.gesahuvertretungsplan.net.VolleySingleton;
+import rhedox.gesahuvertretungsplan.net.GesahuiApi;
+import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.widget.ListFactoryService;
 
 /**
  * Created by Robin on 22.07.2015.
  */
-public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Response.Listener<SubstitutesList>{
+public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Callback<SubstitutesList> {
     private List<Substitute> substitutes;
 
     private Context context;
@@ -41,10 +42,6 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     private boolean darkTheme;
 
-    private int textColor;
-    private int highlightedTextColor;
-    private Drawable highlightedBackground;
-
     public ListRemoteViewsFactory(Context context, Intent intent) {
         this.context = context;
         appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -52,15 +49,20 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         date = new DateTime(intent.getLongExtra(ListFactoryService.EXTRA_DATE, 0l)).toLocalDate();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
-        studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR, "5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
+        darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+        studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
     }
 
     @Override
     public void onCreate() {
-        SubstituteJSoupRequest request = new SubstituteJSoupRequest(context, date, studentInformation, this, null);
-        request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleySingleton.getInstance(context).getRequestQueue().add(request);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://gesahui.de")
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context), studentInformation))
+                .build();
+
+        GesahuiApi gesahui = retrofit.create(GesahuiApi.class);
+        Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        call.enqueue(this);
     }
 
     @Override
@@ -79,7 +81,6 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public RemoteViews getViewAt(int position) {
-
 
         if(substitutes == null || substitutes.size() <= position)
             return null;
@@ -135,8 +136,14 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     }
 
     @Override
-    public void onResponse(SubstitutesList response) {
-        this.substitutes = SubstitutesList.filterImportant(response.getSubstitutes());
+    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
+        if(response == null || !response.isSuccess())
+            return;
+
+        if(response.body() != null)
+            this.substitutes = SubstitutesList.filterImportant(response.body().getSubstitutes());
+        else
+            this.substitutes = null;
 
         AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
         if (appWidgetId == -1) {
@@ -146,5 +153,10 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         } else {
             widgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list);
         }
+    }
+
+    @Override
+    public void onFailure(Call<SubstitutesList> call, Throwable t) {
+
     }
 }

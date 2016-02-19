@@ -1,43 +1,27 @@
 package rhedox.gesahuvertretungsplan.ui.activity;
 
-import java.util.Locale;
-
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.BounceInterpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.leakcanary.RefWatcher;
 
@@ -46,7 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
@@ -144,7 +128,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         else {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(SettingsFragment.PREF_PREVIOUSLY_STARTED, true);
+            edit.putBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, true);
             edit.apply();
 
             Intent intent = new Intent(this, MainActivity.class);
@@ -219,7 +203,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
                     return IntroductionFragment.newInstance(R.layout.fragment_notify);
 
                 case 2:
-                    return SettingsFragment.newInstance();
+                    return PreferenceFragment.newInstance();
 
                 case 3:
                     return new Fragment();

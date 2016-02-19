@@ -1,20 +1,26 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.squareup.leakcanary.RefWatcher;
+
+import org.joda.time.LocalTime;
 
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.PreferencesDividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity;
+import rhedox.gesahuvertretungsplan.util.AlarmReceiver;
+import rhedox.gesahuvertretungsplan.util.BootReceiver;
 
 /**
  * Created by Robin on 18.10.2014.
  */
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_YEAR ="pref_year";
     public static final String PREF_CLASS ="pref_class";
     public static final String PREF_DARK ="pref_dark";
@@ -39,7 +45,25 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         int margin = (int)getContext().getResources().getDimension(R.dimen.small_margin);
         int marginBottom = (int)getContext().getResources().getDimension(R.dimen.list_fab_bottom);
-        getListView().setPadding(margin,0, margin, getActivity() instanceof WelcomeActivity ? marginBottom : margin);
+        getListView().setPadding(margin, 0, margin, getActivity() instanceof WelcomeActivity ? marginBottom : margin);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean notification = prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION, true);
+        LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
+        if(notification) {
+            AlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour());
+            BootReceiver.create(getContext());
+        }
+        else {
+            AlarmReceiver.cancel(getContext());
+            BootReceiver.cancel(getContext());
+        }
+
     }
 
     @Override
@@ -52,7 +76,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             refWatcher.watch(this);
     }
 
-    public static SettingsFragment newInstance() {
-        return new SettingsFragment();
+    public static PreferenceFragment newInstance() {
+        return new PreferenceFragment();
     }
 }

@@ -26,7 +26,7 @@
 
     <android.support.v7.preference.PreferenceCategory
         android:title="Benachrichtigungen">
-        <rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:key="pref_notification"
             android:title="Benachrichtigen"
             android:summary="Täglich bei Vertretungsstunden benachrichtigen"

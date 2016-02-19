@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,9 +22,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.DateTime;
@@ -32,12 +30,19 @@ import org.joda.time.LocalDate;
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
+import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
-import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
+import rhedox.gesahuvertretungsplan.net.GesahuiApi;
+import rhedox.gesahuvertretungsplan.net.NetworkChecker;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.VolleySingleton;
+import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 import rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix;
@@ -46,12 +51,12 @@ import tr.xip.errorview.ErrorView;
 /**
  * Created by Robin on 30.06.2015.
  */
-public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Response.Listener<SubstitutesList>, Response.ErrorListener, ErrorView.RetryListener {
+public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Callback<SubstitutesList>, ErrorView.RetryListener {
     private SubstitutesAdapter adapter;
     @Bind(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
     @Bind(R.id.recylcler) RecyclerView recyclerView;
 
-    private StudentInformation studentInformation;
+    @NonNull private StudentInformation studentInformation;
     private boolean filterImportant = false;
 
     public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
@@ -59,11 +64,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public static final String ARGUMENT_IMPORTANT = "ARGUMENT_IMPORTANT";
     public static final String TAG ="MAIN_FRAGMENT";
 
-    private LocalDate date;
-    private SubstitutesList substitutesList;
-
+    @NonNull private LocalDate date;
+    @Nullable private SubstitutesList substitutesList;
     private boolean isLoading = false;
-    private SubstituteJSoupRequest request;
+    @NonNull private GesahuiApi gesahui;
+    @NonNull private retrofit2.Call<SubstitutesList> call;
 
     @Bind(R.id.error_view) ErrorView errorView;
     @Bind(R.id.error_view_scroll) NestedScrollView errorViewScroll;
@@ -89,13 +94,24 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         } else {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-            String infoClass = prefs.getString(SettingsFragment.PREF_CLASS, "");
-            String infoYear = prefs.getString(SettingsFragment.PREF_YEAR, "");
+            String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
+            String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
             studentInformation = new StudentInformation(infoYear, infoClass);
             filterImportant = prefs.getBoolean(ARGUMENT_IMPORTANT, false);
 
             date = SchoolWeek.next();
         }
+
+        //DEBUG
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://gesahui.de")
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity()), studentInformation))
+                .client(client)
+                .build();
+
+        gesahui = retrofit.create(GesahuiApi.class);
 
         load(date);
     }
@@ -189,8 +205,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onDestroy() {
-        if(request != null) {
-            request.destroy();
+        if(call != null) {
+            call.cancel();
+            call = null;
         }
 
         //LeakCanary
@@ -208,19 +225,21 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void load(LocalDate date) {
         if(date != null && !isLoading) {
-            if(VolleySingleton.isNetworkConnected(getActivity())) {
+
+            if(NetworkChecker.isNetworkConnected(getActivity())) {
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
 
                 //Store date for refreshing
                 this.date = date;
 
-                request = new SubstituteJSoupRequest(getActivity(), date, studentInformation, this, this);
-                request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VolleySingleton.getInstance(getActivity()).getRequestQueue().add(request);
+                call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+
+                call.enqueue(this);
+
                 isLoading = true;
             } else {
-                onErrorResponse(new VolleyError(getString(R.string.error_no_connection)));
+                onFailure(null, new Exception(getString(R.string.error_no_connection)));
             }
         }
     }
@@ -237,41 +256,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             refreshLayout.setEnabled(isEnabled);
         }
     }
-
     @Override
-    public void onErrorResponse(VolleyError error) {
+    public void onResponse(retrofit2.Call<SubstitutesList> call, Response<SubstitutesList> response) {
+
         isLoading = false;
-        request = null;
-
-        Log.e("net-error", "Millis: "+Long.toString(error.getNetworkTimeMs()));
-        Log.e("net-error", "Message: "+error.getMessage());
-
-        if (refreshLayout != null) {
-            refreshLayout.setRefreshing(false);
-            refreshLayout.clearAnimation();
-        }
-        if (errorViewRefresh != null) {
-            errorViewRefresh.setRefreshing(false);
-            errorViewRefresh.clearAnimation();
-        }
-
-        if (error.networkResponse != null) {
-            Log.d("net-error", "Status: " + Integer.toString(error.networkResponse.statusCode));
-        }
-
-        if(substitutesList == null) {
-            showError(getString(R.string.error), getString(R.string.oops), errorImage);
-            if(activity != null)
-                activity.setFabVisibility(false);
-        }
-        else
-            Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
-    }
-
-    @Override
-    public void onResponse(SubstitutesList response) {
-        isLoading = false;
-        request = null;
 
         //Hide both swipe to refresh views
         if (refreshLayout != null) {
@@ -283,16 +271,18 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             errorViewRefresh.clearAnimation();
         }
 
-        if(response == null)
+        if(!response.isSuccess()) {
+            onFailure(call, new NullPointerException());
             return;
+        }
 
-        if(!filterImportant)
-            this.substitutesList = response;
+        if(!filterImportant || response.body() == null)
+            this.substitutesList = response.body();
         else
-            this.substitutesList = response.filterImportant();
+            this.substitutesList = response.body().filterImportant();
 
         //Display UI
-        if (!substitutesList.hasSubstitutes()) {
+        if (substitutesList == null || !substitutesList.hasSubstitutes()) {
             showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
         } else {
             if (adapter != null)
@@ -306,6 +296,40 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             activity.setFabVisibility(substitutesList != null && substitutesList.hasAnnouncement());
     }
 
+    @Override
+    public void onFailure(retrofit2.Call<SubstitutesList> call, Throwable t) {
+
+        isLoading = false;
+
+        Log.e("net-error", "Message: "+t.getMessage());
+
+        if (refreshLayout != null) {
+            refreshLayout.setRefreshing(false);
+            refreshLayout.clearAnimation();
+        }
+        if (errorViewRefresh != null) {
+            errorViewRefresh.setRefreshing(false);
+            errorViewRefresh.clearAnimation();
+        }
+
+        if(substitutesList == null) {
+            showError(getString(R.string.error), getString(R.string.oops), errorImage);
+
+            //Update the floating action button
+            if(getUserVisibleHint()) {
+                if (activity != null)
+                    activity.setFabVisibility(false);
+            }
+            else
+                //Fragment is not visible, show snackbar
+                Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+        }
+        else
+            //Fragment is not empty, keep previous entries and show snackbar
+            Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+    }
+
+    //Hide the error ui
     private void hideError() {
         if(errorViewScroll != null) {
             errorViewScroll.setVisibility(View.GONE);
@@ -324,6 +348,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             recyclerView.setVisibility(View.VISIBLE);
         }
     }
+    //Show the error ui
     private void showError(String errorMessage, String title, Drawable image) {
         if(recyclerView != null) {
             recyclerView.setEnabled(false);
@@ -349,6 +374,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             errorView.setTitle(title);
             errorView.setImage(image);
         }
+
+        //if(!getUserVisibleHint())
+
     }
 
     @Override

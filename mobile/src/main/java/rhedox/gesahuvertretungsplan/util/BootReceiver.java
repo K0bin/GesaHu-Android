@@ -12,9 +12,7 @@ import android.support.annotation.RequiresPermission;
 
 import org.joda.time.LocalTime;
 
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
-import rhedox.gesahuvertretungsplan.ui.preference.NotificationPreference;
-import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
  * Created by Robin on 15.11.2014.
@@ -25,8 +23,8 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean notification = prefs.getBoolean(SettingsFragment.PREF_NOTIFICATION, true);
-            LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(SettingsFragment.PREF_NOTIFICATION_TIME, 0));
+            boolean notification = prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION, true);
+            LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
 
             if(notification) {
                 AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour());

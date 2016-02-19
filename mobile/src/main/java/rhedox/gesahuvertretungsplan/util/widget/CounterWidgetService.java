@@ -1,44 +1,32 @@
 package rhedox.gesahuvertretungsplan.util.widget;
 
-import android.annotation.TargetApi;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.app.job.JobService;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.view.View;
 import android.widget.RemoteViews;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.Date;
-
-import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.SchoolWeek;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
-import rhedox.gesahuvertretungsplan.net.VolleySingleton;
+import rhedox.gesahuvertretungsplan.net.GesahuiApi;
+import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.CounterWidgetProvider;
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
  * Created by Robin on 23.07.2015.
  */
-public class CounterWidgetService extends Service implements Response.Listener<SubstitutesList>, Response.ErrorListener {
+public class CounterWidgetService extends Service implements Callback<SubstitutesList> /*implements Response.Listener<SubstitutesList>, Response.ErrorListener */{
     private boolean darkTheme;
 
     private int[] allWidgetIds;
@@ -51,12 +39,19 @@ public class CounterWidgetService extends Service implements Response.Listener<S
         allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
-        StudentInformation studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR, "5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
+        darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+        StudentInformation studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
 
         date = new DateTime(intent.getLongExtra(EXTRA_DATE, 0l)).toLocalDate();
 
-        VolleySingleton.getInstance(getApplicationContext()).getRequestQueue().add(new SubstituteRequest(getApplicationContext(), date, studentInformation, this, null));
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://gesahui.de")
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext()), studentInformation))
+                .build();
+
+        GesahuiApi gesahui = retrofit.create(GesahuiApi.class);
+        Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        call.enqueue(this);
 
         return START_REDELIVER_INTENT;
     }
@@ -67,20 +62,21 @@ public class CounterWidgetService extends Service implements Response.Listener<S
     }
 
     @Override
-    public void onResponse(SubstitutesList response) {
-        if(response == null)
+    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
+        if(response == null || !response.isSuccess() || response.body() == null)
             return;
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 
         for(int appWidgetId : allWidgetIds) {
-            RemoteViews remoteViews = CounterWidgetProvider.makeAppWidget(getApplicationContext(), darkTheme, date, SubstitutesList.countImportant(response.getSubstitutes()));
+            RemoteViews remoteViews = CounterWidgetProvider.makeAppWidget(getApplicationContext(), darkTheme, date, SubstitutesList.countImportant(response.body().getSubstitutes()));
 
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
     }
 
     @Override
-    public void onErrorResponse(VolleyError error) {
+    public void onFailure(Call<SubstitutesList> call, Throwable t) {
+
     }
 }

@@ -43,9 +43,9 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     @ColorInt private int highlightedTextColor;
     @ColorInt private int activatedBackgroundColor;
     private int selected = -1;
-    private SubstituteViewHolder selectedViewHolder;
+    @Nullable private SubstituteViewHolder selectedViewHolder;
 
-    private MainFragment.MaterialActivity activity;
+    @Nullable private MainFragment.MaterialActivity activity;
 
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
 
@@ -104,7 +104,6 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
             int count = getItemCount();
             this.list = new ArrayList<Substitute>(list);
 
-            //TODO Examine whether bug is fixed:
             if(count != list.size()) {
                 if (count > list.size())
                     notifyItemRangeRemoved(Math.max(list.size() - 1, 0), count - list.size());

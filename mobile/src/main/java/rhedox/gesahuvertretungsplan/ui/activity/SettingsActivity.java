@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 public class SettingsActivity extends AppCompatActivity {
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -39,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Display the fragment as the activity_main content.
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new SettingsFragment())
+                .replace(R.id.fragment_container, new PreferenceFragment())
                 .commit();
 
 

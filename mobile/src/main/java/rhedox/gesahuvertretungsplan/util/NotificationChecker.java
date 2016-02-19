@@ -1,82 +1,93 @@
 package rhedox.gesahuvertretungsplan.util;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.util.SortedList;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import org.joda.time.LocalDate;
 
-import java.util.Date;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
+import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.SubstituteJSoupRequest;
-import rhedox.gesahuvertretungsplan.net.SubstituteRequest;
-import rhedox.gesahuvertretungsplan.net.VolleySingleton;
+import rhedox.gesahuvertretungsplan.net.GesahuiApi;
+import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
  * Created by Robin on 07.09.2015.
  */
-public class NotificationChecker implements Response.Listener<SubstitutesList>, Response.ErrorListener {
+public class NotificationChecker implements Callback<SubstitutesList> {
     private Context context;
     private int color;
     private boolean isLoading = false;
-    private StudentInformation information;
+
+    @NonNull private GesahuiApi gesahui;
 
     public NotificationChecker(Context context) {
         this.context = context.getApplicationContext(); //Prevent Activity leaking!
 
+        //Load stundent information for matching lessons
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
 
-        information = new StudentInformation(schoolYear, schoolClass);
+        StudentInformation information = new StudentInformation(schoolYear, schoolClass);
 
-        color = prefs.getInt(SettingsFragment.PREF_COLOR, ContextCompat.getColor(context, R.color.colorDefaultAccent));
+        //Color is used for the notifications
+        color = prefs.getInt(PreferenceFragment.PREF_COLOR, ContextCompat.getColor(context, R.color.colorDefaultAccent));
+
+        //Init retro fit for pulling the data
+        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://gesahui.de")
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context), information))
+                //.client(client)
+                .build();
+
+        gesahui = retrofit.create(GesahuiApi.class);
     }
 
     public void load() {
         if(!isLoading) {
-            SubstituteJSoupRequest request = new SubstituteJSoupRequest(context, SchoolWeek.next(), information, this, null);
-            request.setRetryPolicy(new DefaultRetryPolicy(30000,5,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleySingleton.getInstance(context).getRequestQueue().add(request);
+
+            LocalDate date = SchoolWeek.next();
+            Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+            call.enqueue(this);
+
             isLoading = true;
         }
     }
 
     @Override
-    public void onResponse(SubstitutesList response) {
+    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
         isLoading = false;
 
-        if(response == null || response.getSubstitutes() == null)
+        if(response == null || response.body() == null)
             return;
 
-        List<Substitute> substitutes = response.getSubstitutes();
+        List<Substitute> substitutes = response.body().getSubstitutes();
+
+        if(substitutes == null)
+            return;
 
         int count = 0;
         for (int i = 0; i < substitutes.size(); i++) {
@@ -128,12 +139,11 @@ public class NotificationChecker implements Response.Listener<SubstitutesList>, 
 
             context.getContentResolver().insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv);
 
-        } catch (IllegalArgumentException ex) { /* TeslaUnread is not installed. */ }
+        } catch (IllegalArgumentException ex) { /* TeslaUnread is not installed. */  }
     }
 
-
     @Override
-    public void onErrorResponse(VolleyError error) {
+    public void onFailure(Call<SubstitutesList> call, Throwable t) {
         isLoading = false;
     }
 }

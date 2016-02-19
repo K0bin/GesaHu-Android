@@ -127,9 +127,8 @@ public class AdSubstitutesAdapter extends SelectableAdapter<Substitute, Recycler
             clear();
         else {
             int count = getItemCount();
-            this.list = new ArrayList(list);
+            this.list = new ArrayList<Substitute>(list);
 
-            //TODO Examine whether bug is fixed:
             if(count != list.size()) {
                 if (count > list.size())
                     notifyItemRangeRemoved(Math.max(list.size() - 1, 0), count - list.size());
@@ -138,9 +137,6 @@ public class AdSubstitutesAdapter extends SelectableAdapter<Substitute, Recycler
             }
 
             notifyItemRangeChanged(0, Math.min(list.size(), count));
-
-            //notifyItemRangeRemoved(0, count);
-            //notifyItemRangeInserted(0, list.size());
 
             if(selected >= list.size())
                 clearSelection(false);

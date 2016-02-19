@@ -15,7 +15,7 @@ import org.joda.time.LocalDate;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.widget.CounterWidgetService;
 
 /**
@@ -26,7 +26,7 @@ public class CounterWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
+        boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
 
         LocalDate date = SchoolWeek.next();
 

@@ -16,7 +16,7 @@ import org.joda.time.LocalDate;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.widget.ListFactoryService;
 
 /**
@@ -35,7 +35,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
             factoryServiceIntent.setData(Uri.parse(factoryServiceIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean darkTheme = prefs.getBoolean(SettingsFragment.PREF_WIDGET_DARK, false);
+            boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list);
             remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", ContextCompat.getColor(context, darkTheme ? R.color.windowBackgroundDark : R.color.windowBackgroundLight));

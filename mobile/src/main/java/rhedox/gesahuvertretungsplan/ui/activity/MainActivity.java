@@ -3,7 +3,6 @@ package rhedox.gesahuvertretungsplan.ui.activity;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -17,7 +16,6 @@ import android.support.annotation.DimenRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
@@ -48,7 +46,7 @@ import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter;
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
-import rhedox.gesahuvertretungsplan.ui.fragment.SettingsFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareHelper;
 import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
 
@@ -86,11 +84,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     protected void onCreate(Bundle savedInstanceState) {
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = prefs.getBoolean(SettingsFragment.PREF_DARK, false);
-        filterImportant = prefs.getBoolean(SettingsFragment.PREF_FILTER, false);
+        darkTheme = prefs.getBoolean(PreferenceFragment.PREF_DARK, false);
+        filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
 
-        boolean whiteIndicator = prefs.getBoolean(SettingsFragment.PREF_WHITE_TAB_INDICATOR, false);
-        StudentInformation studentInformation = new StudentInformation(prefs.getString(SettingsFragment.PREF_YEAR, "5"), prefs.getString(SettingsFragment.PREF_CLASS, "a"));
+        boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
+        StudentInformation studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
 
         //Theming
         this.setTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme);
@@ -191,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean previouslyStarted = prefs.getBoolean(SettingsFragment.PREF_PREVIOUSLY_STARTED, false);
+        boolean previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false);
         if(!previouslyStarted) {
             Intent intent = new Intent(this, WelcomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -287,6 +285,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             if(currentFragment.getAdapter() != null)
                 currentFragment.getAdapter().clearSelection(true);
         }
+        else
+            setFabVisibility(false);
+
     }
 
     public void setTabInset(boolean wide) {
