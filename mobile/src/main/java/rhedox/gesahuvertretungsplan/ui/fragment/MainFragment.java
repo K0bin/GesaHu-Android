@@ -64,11 +64,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public static final String ARGUMENT_IMPORTANT = "ARGUMENT_IMPORTANT";
     public static final String TAG ="MAIN_FRAGMENT";
 
-    @NonNull private LocalDate date;
+    private LocalDate date;
     @Nullable private SubstitutesList substitutesList;
     private boolean isLoading = false;
-    @NonNull private GesahuiApi gesahui;
-    @NonNull private retrofit2.Call<SubstitutesList> call;
+    private GesahuiApi gesahui;
+    private retrofit2.Call<SubstitutesList> call;
 
     @Bind(R.id.error_view) ErrorView errorView;
     @Bind(R.id.error_view_scroll) NestedScrollView errorViewScroll;
@@ -92,7 +92,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
             filterImportant = arguments.getBoolean(ARGUMENT_IMPORTANT, false);
         } else {
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
             String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
@@ -103,12 +102,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
 
         //DEBUG
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
                 .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity()), studentInformation))
-                .client(client)
+        //        .client(client)
                 .build();
 
         gesahui = retrofit.create(GesahuiApi.class);
@@ -261,15 +260,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         isLoading = false;
 
-        //Hide both swipe to refresh views
-        if (refreshLayout != null) {
-            refreshLayout.setRefreshing(false);
-            refreshLayout.clearAnimation();
-        }
-        if (errorViewRefresh != null) {
-            errorViewRefresh.setRefreshing(false);
-            errorViewRefresh.clearAnimation();
-        }
+        if(getActivity() == null)
+            return;
 
         if(!response.isSuccess()) {
             onFailure(call, new NullPointerException());
@@ -300,17 +292,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onFailure(retrofit2.Call<SubstitutesList> call, Throwable t) {
 
         isLoading = false;
-
         Log.e("net-error", "Message: "+t.getMessage());
 
-        if (refreshLayout != null) {
-            refreshLayout.setRefreshing(false);
-            refreshLayout.clearAnimation();
-        }
-        if (errorViewRefresh != null) {
-            errorViewRefresh.setRefreshing(false);
-            errorViewRefresh.clearAnimation();
-        }
+        if(getActivity() == null)
+            return;
 
         if(substitutesList == null) {
             showError(getString(R.string.error), getString(R.string.oops), errorImage);
@@ -324,18 +309,24 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 //Fragment is not visible, show snackbar
                 Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
         }
-        else
+        else {
+            hideError();
             //Fragment is not empty, keep previous entries and show snackbar
             Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+        }
     }
 
     //Hide the error ui
     private void hideError() {
+        clearRefreshViews();
+
         if(errorViewScroll != null) {
             errorViewScroll.setVisibility(View.GONE);
             errorViewScroll.setEnabled(false);
         }
         if(errorViewRefresh != null) {
+            errorViewRefresh.setRefreshing(false);
+            errorViewRefresh.clearAnimation();
             errorViewRefresh.setVisibility(View.GONE);
             errorViewRefresh.setEnabled(false);
         }
@@ -350,6 +341,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
     //Show the error ui
     private void showError(String errorMessage, String title, Drawable image) {
+        clearRefreshViews();
+
         if(recyclerView != null) {
             recyclerView.setEnabled(false);
             recyclerView.setVisibility(View.GONE);
@@ -362,7 +355,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             errorViewScroll.setVisibility(View.VISIBLE);
         }
         if(errorViewRefresh != null) {
-
+            errorViewRefresh.setRefreshing(false);
+            errorViewRefresh.clearAnimation();
             errorViewRefresh.setEnabled(true);
             errorViewRefresh.setVisibility(View.VISIBLE);
         }
@@ -374,9 +368,17 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             errorView.setTitle(title);
             errorView.setImage(image);
         }
+    }
 
-        //if(!getUserVisibleHint())
-
+    private void clearRefreshViews() {
+        if (refreshLayout != null) {
+            refreshLayout.setRefreshing(false);
+            refreshLayout.clearAnimation();
+        }
+        if (errorViewRefresh != null) {
+            errorViewRefresh.setRefreshing(false);
+            errorViewRefresh.clearAnimation();
+        }
     }
 
     @Override

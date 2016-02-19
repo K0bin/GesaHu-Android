@@ -11,7 +11,7 @@ import org.joda.time.LocalDate;
 public final class SchoolWeek {
     private SchoolWeek() {}
 
-    public static LocalDate next(LocalDate date){
+    public static LocalDate nextDate(LocalDate date){
         if(date.getDayOfWeek() == DateTimeConstants.SUNDAY)
             return date.withFieldAdded(DurationFieldType.days(), 1);
         else if (date.getDayOfWeek() == DateTimeConstants.SATURDAY)
@@ -20,13 +20,15 @@ public final class SchoolWeek {
         return date;
     }
 
-    public static LocalDate next(){
-        DateTime dateTime = DateTime.now();
-
+    public static LocalDate next(DateTime dateTime){
         LocalDate date = dateTime.toLocalDate();
         if(dateTime.getHourOfDay() > 18)
-            return SchoolWeek.next(date.withFieldAdded(DurationFieldType.days(), 1));
+            return SchoolWeek.nextDate(date.withFieldAdded(DurationFieldType.days(), 1));
         else
-            return SchoolWeek.next(date);
+            return SchoolWeek.nextDate(date);
+    }
+
+    public static LocalDate next() {
+        return next(DateTime.now());
     }
 }

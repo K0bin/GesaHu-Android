@@ -22,6 +22,7 @@ import rhedox.gesahuvertretungsplan.util.widget.CounterWidgetService;
  * Created by Robin on 20.07.2015.
  */
 public class CounterWidgetProvider extends AppWidgetProvider {
+    public static final int REQUEST_CODE = 3;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -55,7 +56,7 @@ public class CounterWidgetProvider extends AppWidgetProvider {
             remoteViews.setTextColor(R.id.counter, 0xFF000000);
         }
 
-        if(substituteCount != -1) {
+        if(substituteCount != -1 && substituteCount != 0) {
             remoteViews.setViewVisibility(R.id.counter, View.VISIBLE);
             remoteViews.setTextViewText(R.id.counter, Integer.toString(substituteCount));
         } else
@@ -63,7 +64,7 @@ public class CounterWidgetProvider extends AppWidgetProvider {
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 7, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.widget_frame, pendingIntent);
 
         return remoteViews;

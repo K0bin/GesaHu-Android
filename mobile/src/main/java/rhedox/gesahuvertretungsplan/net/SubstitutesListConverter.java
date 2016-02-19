@@ -42,125 +42,130 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
     @Override
     public SubstitutesList convert(ResponseBody value) throws IOException {
 
-        List<Substitute> substitutes = new ArrayList<Substitute>();
-        String announcement;
-        LocalDate date;
+        try {
+            List<Substitute> substitutes = new ArrayList<Substitute>();
+            String announcement;
+            LocalDate date;
 
-        String body = new String(value.bytes(), "windows-1252");
-        body = body.replaceAll("\\s+", " ");
-        Document document = Jsoup.parse(body);
-        date = readDate(document);
-        announcement = readAnnouncement(document);
+            String body = new String(value.bytes(), "windows-1252");
+            body = body.replaceAll("\\s+", " ");
+            Document document = Jsoup.parse(body);
+            date = readDate(document);
+            announcement = readAnnouncement(document);
 
-        Elements tables = document.getElementsByTag("table");
+            Elements tables = document.getElementsByTag("table");
 
-        if (tables.size() != 5)
-            return new SubstitutesList(substitutes, announcement, date);
+            if (tables.size() != 5)
+                return new SubstitutesList(substitutes, announcement, date);
 
-        Elements rows = tables.get(2).getElementsByTag("tr");
+            Elements rows = tables.get(2).getElementsByTag("tr");
 
-        String lesson = "";
-        String subject = "";
-        String teacher = "";
-        String substituteTeacher = "";
-        String room = "";
-        String hint = "";
-        for (Element row : rows) {
-            Elements cells = row.getElementsByTag("td");
-            for (int i = 0; i < cells.size(); i++) {
-                Element cell = cells.get(i);
-                String text = cell.text();
-                text = text.replaceAll(((char) 160) + "| +", " ").trim();
+            String lesson = "";
+            String subject = "";
+            String teacher = "";
+            String substituteTeacher = "";
+            String room = "";
+            String hint = "";
+            for (Element row : rows) {
+                Elements cells = row.getElementsByTag("td");
+                for (int i = 0; i < cells.size(); i++) {
+                    Element cell = cells.get(i);
+                    String text = cell.text();
+                    text = text.replaceAll(((char) 160) + "| +", " ").trim();
 
-                if (!TextUtils.isEmpty(text)) {
-                    switch (i) {
-                        case 0: {
-                            if (!text.equals(lesson) && !TextUtils.isEmpty(subject)) {
-                                substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
+                    if (!TextUtils.isEmpty(text)) {
+                        switch (i) {
+                            case 0: {
+                                if (!text.equals(lesson) && !TextUtils.isEmpty(subject)) {
+                                    substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
 
-                                subject = "";
-                                teacher = "";
-                                substituteTeacher = "";
-                                room = "";
-                                hint = "";
-                            }
-
-                            lesson = text.replaceAll(" ", "");
-                        }
-                        break;
-
-                        case 1: {
-                            if (!TextUtils.isEmpty(subject)) {
-                                substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
-
-                                teacher = "";
-                                substituteTeacher = "";
-                                room = "";
-                                hint = "";
-                            }
-
-                            String[] parts = text.split(" ");
-                            if (parts.length > 1)
-                                text = shortNameResolver.resolveSubject(parts[0]) + " " + parts[1];
-
-                            subject = text;
-                        }
-                        break;
-
-                        case 2:
-                            text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
-                            String[] teachers = text.split(",");
-                            for (String _teacher : teachers) {
-                                if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
-
-                                    //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
-                                    if (!TextUtils.isEmpty(teacher)) {
-                                        teacher += "; ";
-                                    }
-
-                                    teacher += shortNameResolver.resolveTeacher(_teacher.trim());
-                                }
-                            }
-                            break;
-
-                        case 3:
-                            text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
-                            String[] substituteTeachers = text.split(",");
-                            for (String _teacher : substituteTeachers) {
-                                if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
-
-                                    //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
-                                    if (!TextUtils.isEmpty(substituteTeacher)) {
-                                        substituteTeacher += "; ";
-                                    }
-
-                                    substituteTeacher += shortNameResolver.resolveTeacher(_teacher.trim());
+                                    subject = "";
+                                    teacher = "";
+                                    substituteTeacher = "";
+                                    room = "";
+                                    hint = "";
                                 }
 
+                                lesson = text.replaceAll(" ", "");
                             }
                             break;
 
-                        case 4:
-                            room += text + " ";
+                            case 1: {
+                                if (!TextUtils.isEmpty(subject)) {
+                                    substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
+
+                                    teacher = "";
+                                    substituteTeacher = "";
+                                    room = "";
+                                    hint = "";
+                                }
+
+                                String[] parts = text.split(" ");
+                                if (parts.length > 1)
+                                    text = shortNameResolver.resolveSubject(parts[0]) + " " + parts[1];
+
+                                subject = text;
+                            }
                             break;
 
-                        case 5:
-                            hint += text + " ";
-                            break;
+                            case 2:
+                                text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
+                                String[] teachers = text.split(",");
+                                for (String _teacher : teachers) {
+                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
+
+                                        //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
+                                        if (!TextUtils.isEmpty(teacher)) {
+                                            teacher += "; ";
+                                        }
+
+                                        teacher += shortNameResolver.resolveTeacher(_teacher.trim());
+                                    }
+                                }
+                                break;
+
+                            case 3:
+                                text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
+                                String[] substituteTeachers = text.split(",");
+                                for (String _teacher : substituteTeachers) {
+                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
+
+                                        //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
+                                        if (!TextUtils.isEmpty(substituteTeacher)) {
+                                            substituteTeacher += "; ";
+                                        }
+
+                                        substituteTeacher += shortNameResolver.resolveTeacher(_teacher.trim());
+                                    }
+
+                                }
+                                break;
+
+                            case 4:
+                                room += text + " ";
+                                break;
+
+                            case 5:
+                                hint += text + " ";
+                                break;
+                        }
                     }
                 }
             }
+
+            if (!TextUtils.isEmpty(subject)) {
+                Substitute substitute = new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation);
+                substitutes.add(substitute);
+            }
+
+            if (substitutes.isEmpty() && TextUtils.isEmpty(announcement) && (date == null || date.equals(new LocalDate())))
+                return null;
+
+            return new SubstitutesList(substitutes, announcement, date);
         }
-
-        if (!TextUtils.isEmpty(subject)) {
-            Substitute substitute = new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation);
-            substitutes.add(substitute);
+        finally {
+            value.close();
         }
-
-        if(substitutes.isEmpty() && TextUtils.isEmpty(announcement) && (date == null || date.equals(new LocalDate())))
-            return null;
-
-        return new SubstitutesList(substitutes, announcement, date);
     }
 
     private LocalDate readDate(Document document) {

@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private int appBarLayoutOffset = 0;
 
     public static final String EXTRA_DATE ="date";
+    public static final String EXTRA_WIDGET ="widget";
 
     //Store Date of Monday of current week
     private LocalDate date;
@@ -114,12 +115,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         };
         appBarLayout.addOnOffsetChangedListener(appBarLayoutOffsetListener);
 
-        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE)) {
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
-            canGoBack = true;
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            toolbar.setContentInsetsRelative((int)getResources().getDimension(R.dimen.default_content_inset), toolbar.getContentInsetEnd());
+            if(extras.containsKey(EXTRA_WIDGET) && extras.getBoolean(EXTRA_WIDGET)) {
+                canGoBack = true;
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+            toolbar.setContentInsetsRelative((int) getResources().getDimension(R.dimen.default_content_inset), toolbar.getContentInsetEnd());
         }
         else
             date = SchoolWeek.next();
@@ -178,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         this.setTaskDescription(description);
     }
 
+    @SuppressWarnings("unused")
     @OnClick(R.id.fab)
     public void showAnnouncement(View view) {
         if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement())
@@ -226,14 +232,21 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 DatePickerFragment.newInstance(date, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                        LocalDate date = SchoolWeek.next(new LocalDate(year, monthOfYear + 1, dayOfMonth));
+                        LocalDate date = SchoolWeek.nextDate(new LocalDate(year, monthOfYear + 1, dayOfMonth));
 
                         if(date.getWeekOfWeekyear() != MainActivity.this.date.getWeekOfWeekyear()) {
+                            //Launch a new activity with that week
                             Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
                             intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
+                        } else {
+                            //Same week => just switch to day-tab
+                            int index = date.getDayOfWeek() - DateTimeConstants.MONDAY;
+                            int dayIndex = Math.max(0, Math.min(index, 5));
+                            viewPager.setCurrentItem(dayIndex);
                         }
+
                     }
                 }).show(getSupportFragmentManager(), DatePickerFragment.TAG);
                 break;

@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
 public class AlarmReceiver extends BroadcastReceiver {
+    public static final int REQUEST_CODE = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,10 +28,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         DateTime time = DateTime.now();
 
-        //DEBUG until JodaTime is fixed
-        //TODO Remove
-        time = time.withFieldAdded(DurationFieldType.hours(), 1);
-
         Log.d("time",time.getZone().toString());
 
         if(hour < time.getHourOfDay() || (hour == time.getHourOfDay() && minute < time.getMinuteOfHour()))
@@ -42,7 +39,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pending = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pending = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if(manager != null) {
             manager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending);
@@ -50,7 +47,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public static void cancel(Context context) {
-        PendingIntent intent = PendingIntent.getBroadcast(context, 0 , new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent intent = PendingIntent.getBroadcast(context, REQUEST_CODE, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         if(manager!=null) {
             manager.cancel(intent);

@@ -23,6 +23,7 @@ import rhedox.gesahuvertretungsplan.util.widget.ListFactoryService;
  * Created by Robin on 20.07.2015.
  */
 public class ListWidgetProvider extends AppWidgetProvider {
+    public static final int REQUEST_CODE = 1;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -43,7 +44,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
             Intent onClickIntent = new Intent(context, MainActivity.class);
             onClickIntent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
-            PendingIntent onClickPending = PendingIntent.getActivity(context, 7, onClickIntent, 0);
+            PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);

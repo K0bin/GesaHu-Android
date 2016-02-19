@@ -8,8 +8,6 @@ import com.squareup.leakcanary.RefWatcher;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import org.joda.time.DateTimeZone;
-
 /**
  * Created by Robin on 29.06.2015.
  */

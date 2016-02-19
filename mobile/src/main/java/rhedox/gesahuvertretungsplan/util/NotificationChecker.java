@@ -41,6 +41,8 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
     @NonNull private GesahuiApi gesahui;
 
+    public static final int REQUEST_CODE_BASE = 25;
+
     public NotificationChecker(Context context) {
         this.context = context.getApplicationContext(); //Prevent Activity leaking!
 
@@ -98,7 +100,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
                 Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
-                PendingIntent launchPending = PendingIntent.getActivity(context, 1 + count * 2, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
                 bigTextStyle.bigText(notificationText);

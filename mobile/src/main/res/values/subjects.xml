@@ -44,5 +44,6 @@
     <string name="subjects_d_lrs">Deutsch-LRS</string>
     <string name="subjects_ch_lk">Chemie LK</string>
     <string name="subjects_swi">Schwimmen</string>
+    <string name="subjects_int">Integration</string>
 
 </resources>

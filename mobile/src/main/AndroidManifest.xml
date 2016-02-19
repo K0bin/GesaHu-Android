@@ -92,7 +92,9 @@
                 android:resource="@xml/counter_widget_info" />
         </receiver>
 
-        <service android:name=".util.widget.CounterWidgetService" />
+        <service android:name=".util.widget.CounterWidgetService"
+                 android:exported="false"
+                 android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
 

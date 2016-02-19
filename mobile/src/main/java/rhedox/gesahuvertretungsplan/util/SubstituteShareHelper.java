@@ -17,6 +17,8 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
  * Created by Robin on 09.10.2015.
  */
 public final class SubstituteShareHelper {
+    public static final int REQUEST_CODE = 2;
+
     private SubstituteShareHelper() {}
 
     public static Intent makeShareIntent(@Nullable LocalDate date, Substitute substitute, Context context) {
@@ -33,7 +35,7 @@ public final class SubstituteShareHelper {
     }
 
     public static PendingIntent makePendingShareIntent(@Nullable LocalDate date,  Substitute substitute, Context context) {
-        return PendingIntent.getActivity(context.getApplicationContext(), 1337, makeShareIntent(date, substitute, context), PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(context.getApplicationContext(), REQUEST_CODE, makeShareIntent(date, substitute, context), PendingIntent.FLAG_UPDATE_CURRENT);
     }
     
     public static String makeShareText(@Nullable LocalDate date, Substitute substitute, Context context) {
