@@ -53,6 +53,7 @@ import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
     private boolean darkTheme;
     private boolean filterImportant;
+    private boolean specialMode;
 
     private boolean canGoBack = false;
 
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_DARK, false);
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+        specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
         boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
         StudentInformation studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, studentInformation, filterImportant);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, studentInformation, filterImportant, specialMode);
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
@@ -371,17 +373,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         switch(item.getItemId()) {
             case R.id.action_share:
-                    try{
-                        LocalDate date;
-                        if(currentFragment != null && currentFragment.getSubstitutesList() != null)
-                            date = currentFragment.getSubstitutesList().getDate();
-                        else
-                            date = null;
-                        
-                        startActivity(SubstituteShareHelper.makeShareIntent(date, substitute, this));}
-                    catch (ActivityNotFoundException e) {
-                        Toast.makeText(this, R.string.share_error, Toast.LENGTH_LONG).show();
-                    }
+                    LocalDate date;
+                    if(currentFragment != null && currentFragment.getSubstitutesList() != null)
+                        date = currentFragment.getSubstitutesList().getDate();
+                    else
+                        date = null;
+
+                    startActivity(Intent.createChooser(SubstituteShareHelper.makeShareIntent(date, substitute, this), getString(R.string.share)));
                 return true;
         }
 

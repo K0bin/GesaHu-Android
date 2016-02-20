@@ -58,10 +58,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @NonNull private StudentInformation studentInformation;
     private boolean filterImportant = false;
+    private boolean specialMode = false;
 
     public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
     public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
     public static final String ARGUMENT_IMPORTANT = "ARGUMENT_IMPORTANT";
+    public static final String ARGUMENT_SPECIAL_MODE = "ARGUMENT_SPECIAL_MODE";
     public static final String TAG ="MAIN_FRAGMENT";
 
     private LocalDate date;
@@ -91,12 +93,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
             date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
             filterImportant = arguments.getBoolean(ARGUMENT_IMPORTANT, false);
+            specialMode = arguments.getBoolean(ARGUMENT_SPECIAL_MODE, false);
         } else {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
             String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
             studentInformation = new StudentInformation(infoYear, infoClass);
-            filterImportant = prefs.getBoolean(ARGUMENT_IMPORTANT, false);
+            filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+            specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
             date = SchoolWeek.next();
         }
@@ -106,7 +110,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity()), studentInformation))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity(), specialMode), studentInformation))
         //        .client(client)
                 .build();
 
@@ -391,18 +395,19 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return adapter;
     }
 
-    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant) {
+    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant, boolean specialMode) {
         Bundle arguments = new Bundle();
         arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
         arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
-        arguments.putBoolean(ARGUMENT_IMPORTANT,  filterImportant);
+        arguments.putBoolean(ARGUMENT_IMPORTANT, filterImportant);
+        arguments.putBoolean(ARGUMENT_SPECIAL_MODE,  specialMode);
         MainFragment fragment = new MainFragment();
         fragment.setArguments(arguments);
 
         return fragment;
     }
-    public static MainFragment newInstance(StudentInformation information, LocalDate date) {
-        return MainFragment.newInstance(information, date, false);
+    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean specialMode) {
+        return MainFragment.newInstance(information, date, false, specialMode);
     }
 
     public interface MaterialActivity {

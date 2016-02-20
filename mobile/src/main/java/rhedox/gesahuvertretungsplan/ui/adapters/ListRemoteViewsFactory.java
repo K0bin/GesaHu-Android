@@ -41,6 +41,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private StudentInformation studentInformation;
 
     private boolean darkTheme;
+    private boolean specialMode;
 
     public ListRemoteViewsFactory(Context context, Intent intent) {
         this.context = context;
@@ -50,6 +51,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+        specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
         studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
     }
 
@@ -57,7 +59,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public void onCreate() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context), studentInformation))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), studentInformation))
                 .build();
 
         GesahuiApi gesahui = retrofit.create(GesahuiApi.class);

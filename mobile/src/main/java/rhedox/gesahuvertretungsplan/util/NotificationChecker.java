@@ -50,6 +50,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
+        boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
         StudentInformation information = new StudentInformation(schoolYear, schoolClass);
 
@@ -61,7 +62,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context), information))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), information))
                 //.client(client)
                 .build();
 

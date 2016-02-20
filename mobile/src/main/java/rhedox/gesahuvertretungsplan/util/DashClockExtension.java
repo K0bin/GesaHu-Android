@@ -24,6 +24,7 @@ import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
 import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
  * Created by Robin on 19.04.2015.
@@ -40,6 +41,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
+        boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
         StudentInformation information = new StudentInformation(schoolYear, schoolClass);
 
         //Init retro fit for pulling the data
@@ -47,7 +49,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext()), information))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext(), specialMode), information))
                         //.client(client)
                 .build();
 

@@ -20,15 +20,17 @@ public class PagerAdapter extends FragmentPagerAdapter {
     private LocalDate date;
 
     private boolean filterImportant;
+    private boolean specialMode;
 
     private Fragment[] fragments;
 
-    public PagerAdapter(FragmentManager manager, LocalDate date, StudentInformation information, boolean filterImportant) {
+    public PagerAdapter(FragmentManager manager, LocalDate date, StudentInformation information, boolean filterImportant, boolean specialMode) {
         super(manager);
 
         this.date = date;
         this.studentInformation = information;
         this.filterImportant = filterImportant;
+        this.specialMode = specialMode;
 
         this.fragments = new MainFragment[getCount()];
     }
@@ -37,7 +39,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         LocalDate fragmentDate = date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek());
 
-        MainFragment fragment = MainFragment.newInstance(studentInformation, fragmentDate, filterImportant);
+        MainFragment fragment = MainFragment.newInstance(studentInformation, fragmentDate, filterImportant, specialMode);
         fragments[position] = fragment;
         return fragment;
     }
