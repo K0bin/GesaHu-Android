@@ -35,7 +35,7 @@ public final class AboutLibs {
                 .withVersionShown(true)
                 .withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
                 .withActivityTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme)
-                .withLibraries("AppCompat", "MaterialDesignIcons", "ACRA", "OkHttp", "Retrofit")
+                .withLibraries("AppCompat", "MaterialDesignIcons")
                 .withAboutSpecial3(context.getString(R.string.special3))
                 .withAboutSpecial2(context.getString(R.string.special2))
                 .withAboutSpecial2Description(context.getString(R.string.special2_description))

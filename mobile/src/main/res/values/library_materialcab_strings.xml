@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="define_materialcab"></string>
+	<!-- Author section -->
+	<string name="library_materialcab_author">Aidan Follestad</string>
+	<string name="library_materialcab_authorWebsite">http://aidanfollestad.com/</string>
+	<!-- Library section -->
+	<string name="library_materialcab_libraryName">MaterialCab</string>
+	<string name="library_materialcab_libraryDescription">A simple library for Android, which replaces the stock contextual action bar to allow more customization.</string>
+	<string name="library_materialcab_libraryWebsite">https://github.com/afollestad/material-cab</string>
+	<string name="library_materialcab_libraryVersion">0.1.8</string>
+	<!-- OpenSource section -->
+	<string name="library_materialcab_isOpenSource">true</string>
+	<string name="library_materialcab_repositoryLink"></string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_materialcab_classPath">com.afollestad.materialcab.MaterialCab</string>
+	<!-- License section -->
+	<string name="library_materialcab_licenseId">apache_2_0</string>
+	<!-- Custom variables section -->
+</resources>

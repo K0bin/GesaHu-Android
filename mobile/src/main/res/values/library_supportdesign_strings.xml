@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="define_SupportDesign">year;owner</string>
+	<string name="library_SupportDesign_author">AOSP</string>
+	<string name="library_SupportDesign_authorWebsite">https://source.android.com/</string>
+	<string name="library_SupportDesign_libraryName">Design Support Library</string>
+    <string name="library_SupportDesign_libraryDescription">This library includes support for material design user interface components such as the floating action button, navigation drawers and more.
+    </string>
+	<string name="library_SupportDesign_libraryWebsite">https://developer.android.com/tools/support-library/features.html#design</string>
+	<string name="library_SupportDesign_licenseId">apache_2_0</string>
+	<string name="library_SupportDesign_isOpenSource">false</string>
+	<string name="library_SupportDesign_repositoryLink"></string>
+	<!-- Custom variables section -->
+	<string name="library_SupportDesign_owner">AOSP</string>
+	<string name="library_SupportDesign_year">2016</string>
+	<string name="library_SupportDesign_classPath">android.support.design.widget.AppBarLayout</string>
+</resources>

@@ -261,7 +261,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
     @Override
     public void onResponse(retrofit2.Call<SubstitutesList> call, Response<SubstitutesList> response) {
-
         isLoading = false;
 
         if(getActivity() == null)

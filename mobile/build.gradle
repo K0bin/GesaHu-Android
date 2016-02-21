@@ -7,7 +7,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3290
+        versionCode 3295
         versionName "3.3alpha"
         multiDexEnabled false
     }

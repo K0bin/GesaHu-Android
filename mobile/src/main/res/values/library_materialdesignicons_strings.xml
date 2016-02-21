@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-	<string name="define_int_materialdesignicons"></string>
+	<string name="define_materialdesignicons"></string>
 	<!-- Author section -->
 	<string name="library_materialdesignicons_author">Google</string>
 	<string name="library_materialdesignicons_authorWebsite">http://google.com</string>

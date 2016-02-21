@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             if(extras.containsKey(EXTRA_WIDGET) && extras.getBoolean(EXTRA_WIDGET)) {
                 canGoBack = true;
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
 
-            toolbar.setContentInsetsRelative((int) getResources().getDimension(R.dimen.default_content_inset), toolbar.getContentInsetEnd());
+                toolbar.setContentInsetsRelative((int) getResources().getDimension(R.dimen.default_content_inset), toolbar.getContentInsetEnd());
+            }
         }
         else
             date = SchoolWeek.next();
