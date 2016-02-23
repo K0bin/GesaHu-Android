@@ -53,6 +53,7 @@ import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
     private boolean darkTheme;
     private boolean filterImportant;
+    private boolean sortImportant;
     private boolean specialMode;
 
     private boolean canGoBack = false;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_DARK, false);
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+        sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
         boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, studentInformation, filterImportant, specialMode);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, studentInformation, filterImportant, sortImportant, specialMode);
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);

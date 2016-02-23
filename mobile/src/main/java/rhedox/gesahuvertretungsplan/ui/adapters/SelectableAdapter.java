@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.viewHolders;
+package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 

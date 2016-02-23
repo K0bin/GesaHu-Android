@@ -1,7 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -12,23 +11,14 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAdView;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeContentAd;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
-import rhedox.gesahuvertretungsplan.ui.viewHolders.ContentAdViewHolder;
-import rhedox.gesahuvertretungsplan.ui.viewHolders.InstallAppAdViewHolder;
-import rhedox.gesahuvertretungsplan.ui.viewHolders.NativeAdViewHolder;
-import rhedox.gesahuvertretungsplan.ui.viewHolders.SelectableAdapter;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 
 /**
@@ -97,12 +87,21 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         return ITEM_TYPE_SUBSTITUTE;
     }
 
-    public void setList(@Nullable List<Substitute> list) {
+    public void setList(@Nullable List<Substitute> list, boolean filterImportant, boolean sortImportant) {
+        if(filterImportant && sortImportant) {
+            Log.e("Adapter", "Can't both filter and sort!");
+            return;
+        }
+
         if(list == null || list.size() == 0)
             clear();
         else {
             int count = getItemCount();
-            this.list = new ArrayList<Substitute>(list);
+
+            if(sortImportant)
+                this.list = Collections.unmodifiableList(SubstitutesList.sort(list));
+            else if (filterImportant)
+                this.list = Collections.unmodifiableList(SubstitutesList.filterImportant(list));
 
             if(count != list.size()) {
                 if (count > list.size())

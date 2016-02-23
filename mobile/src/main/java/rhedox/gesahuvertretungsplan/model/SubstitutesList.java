@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.model;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.util.SortedList;
 
 import org.joda.time.LocalDate;
 
@@ -48,8 +49,13 @@ public class SubstitutesList {
         return announcement != null && !TextUtils.isEmpty(announcement) && !"keine".equals(announcement);
     }
 
-    public SubstitutesList filterImportant() {
-        return new SubstitutesList(SubstitutesList.filterImportant(substitutes), announcement, date);
+    public static List<Substitute> sort(@Nullable List<Substitute> substitutes) {
+        if(substitutes == null)
+            return null;
+
+        List<Substitute> sortedList = new ArrayList<Substitute>(substitutes);
+        Collections.sort(sortedList);
+        return sortedList;
     }
 
     public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes) {

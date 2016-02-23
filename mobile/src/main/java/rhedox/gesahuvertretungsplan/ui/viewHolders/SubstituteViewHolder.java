@@ -20,7 +20,7 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
+import rhedox.gesahuvertretungsplan.ui.adapters.SelectableAdapter;
 
 /**
  * Created by Robin on 21.11.2015.

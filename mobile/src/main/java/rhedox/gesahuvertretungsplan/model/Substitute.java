@@ -4,11 +4,15 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import rhedox.gesahuvertretungsplan.R;
+import java.text.ParseException;
 
-public class Substitute {
+import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
+
+public class Substitute implements Comparable<Substitute> {
     private final String lesson, subject, teacher, replacementTeacher, room, hint;
     private final boolean isImportant;
+    private int startingLesson;
 
     public Substitute(String lesson, String subject, String teacher, String replacementTeacher, String room, String hint, @Nullable StudentInformation information) {
         this.lesson = lesson.trim();
@@ -24,6 +28,19 @@ public class Substitute {
             isImportant = _class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass());
         } else
             isImportant = false;
+
+        if(!TextUtils.isEmpty(lesson)) {
+            String[] lessonParts = lesson.split("-");
+            if(lessonParts.length > 0) {
+
+                try {
+                    startingLesson = Integer.parseInt(lessonParts[0], 10);
+                }
+                catch(NumberFormatException e) {
+                    startingLesson = -1;
+                }
+            }
+        }
     }
 
     public String getLesson() {
@@ -50,11 +67,47 @@ public class Substitute {
         return hint;
     }
 
+    public int getStartingLesson() {
+        return startingLesson;
+    }
+
     public boolean getIsImportant() {
         return isImportant;
     }
 
     public static Substitute makeEmptyListSubstitute(@NonNull Context context) {
         return new Substitute("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", null);
+    }
+
+    @Override
+    public int compareTo(Substitute another) {
+        if(another == null)
+            return -1;
+
+        if(getIsImportant()) {
+            if (!another.getIsImportant())
+                return -1;
+            else {
+                if(getStartingLesson() < another.getStartingLesson())
+                    return -1;
+                else if(getStartingLesson() == another.getStartingLesson())
+                    return 0;
+                else if(getStartingLesson() > another.getStartingLesson())
+                    return 1;
+            }
+        } else {
+            if (another.getIsImportant())
+                return 1;
+            else {
+                if(getStartingLesson() < another.getStartingLesson())
+                    return -1;
+                else if(getStartingLesson() == another.getStartingLesson())
+                    return 0;
+                else if(getStartingLesson() > another.getStartingLesson())
+                    return 1;
+            }
+        }
+
+        return 1;
     }
 }

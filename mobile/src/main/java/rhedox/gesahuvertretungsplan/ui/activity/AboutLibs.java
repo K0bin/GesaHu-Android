@@ -84,7 +84,9 @@ public final class AboutLibs {
                                 if (prefs == null) {
                                     prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                 }
-                                boolean special = (goenns / 15) % 2 != 0;
+                                boolean goennung = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
+
+                                boolean special = (goenns / 15) % 2 != 0 && !goennung;
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putBoolean(PreferenceFragment.PREF_SPECIAL_MODE, special);
                                 editor.apply();

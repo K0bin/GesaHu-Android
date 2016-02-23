@@ -27,11 +27,11 @@ import com.squareup.leakcanary.RefWatcher;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.ButterKnife;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -39,6 +39,7 @@ import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
 import rhedox.gesahuvertretungsplan.net.NetworkChecker;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
@@ -58,11 +59,13 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @NonNull private StudentInformation studentInformation;
     private boolean filterImportant = false;
+    private boolean sortImportant = false;
     private boolean specialMode = false;
 
     public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
     public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
-    public static final String ARGUMENT_IMPORTANT = "ARGUMENT_IMPORTANT";
+    public static final String ARGUMENT_FILTER = "ARGUMENT_FILTER";
+    public static final String ARGUMENT_SORT = "ARGUMENT_SORT";
     public static final String ARGUMENT_SPECIAL_MODE = "ARGUMENT_SPECIAL_MODE";
     public static final String TAG ="MAIN_FRAGMENT";
 
@@ -92,7 +95,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(arguments != null) {
             studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
             date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
-            filterImportant = arguments.getBoolean(ARGUMENT_IMPORTANT, false);
+            filterImportant = arguments.getBoolean(ARGUMENT_FILTER, false);
+            sortImportant = arguments.getBoolean(ARGUMENT_SORT, false);
             specialMode = arguments.getBoolean(ARGUMENT_SPECIAL_MODE, false);
         } else {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -100,6 +104,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
             studentInformation = new StudentInformation(infoYear, infoClass);
             filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+            sortImportant = prefs.getBoolean(ARGUMENT_SORT, false);
             specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
             date = SchoolWeek.next();
@@ -145,7 +150,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         adapter = new SubstitutesAdapter(this.getActivity());
         if(substitutesList != null) {
             if(substitutesList.hasSubstitutes())
-                adapter.setList(substitutesList.getSubstitutes());
+                adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
             else
                 showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
         } else
@@ -271,17 +276,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             return;
         }
 
-        if(!filterImportant || response.body() == null)
-            this.substitutesList = response.body();
-        else
-            this.substitutesList = response.body().filterImportant();
+        substitutesList = response.body();
 
         //Display UI
         if (substitutesList == null || !substitutesList.hasSubstitutes()) {
             showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
         } else {
             if (adapter != null)
-                adapter.setList(substitutesList.getSubstitutes());
+                adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
 
             hideError();
         }
@@ -394,19 +396,20 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return adapter;
     }
 
-    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant, boolean specialMode) {
+    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant, boolean sortImportant, boolean specialMode) {
         Bundle arguments = new Bundle();
         arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
         arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
-        arguments.putBoolean(ARGUMENT_IMPORTANT, filterImportant);
+        arguments.putBoolean(ARGUMENT_FILTER, filterImportant);
         arguments.putBoolean(ARGUMENT_SPECIAL_MODE,  specialMode);
+        arguments.putBoolean(ARGUMENT_SORT, sortImportant);
         MainFragment fragment = new MainFragment();
         fragment.setArguments(arguments);
 
         return fragment;
     }
     public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean specialMode) {
-        return MainFragment.newInstance(information, date, false, specialMode);
+        return MainFragment.newInstance(information, date, false, false, specialMode);
     }
 
     public interface MaterialActivity {
