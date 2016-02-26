@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="GesahuTheme" parent="GesahuBase">
+		<item name="circleColor">@color/circle</item>
+		<item name="circleTextColor">@android:color/white</item>
+
+		<item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+
+		<item name="android:windowBackground">@color/windowBackgroundLight</item>
+
+		<item name="about_libraries_card">#FFFFFFFF</item>
+
+		<item name="selectedColor">@color/selected_light</item>
+		<item name="activatedColor">@color/activated_light</item>
+
+		<item name="textPrimary">#ff212121</item>
+		<item name="textSecondary">#ff757575</item>
+		<item name="ad_background">#FFF5F5F5</item>
+	</style>
+</resources>

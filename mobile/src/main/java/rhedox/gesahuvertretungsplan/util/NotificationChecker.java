@@ -41,7 +41,8 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
     @NonNull private GesahuiApi gesahui;
 
-    public static final int REQUEST_CODE_BASE = 25;
+    public static final int REQUEST_CODE_BASE = 64;
+    private int lesson = -1;
 
     public NotificationChecker(Context context) {
         this.context = context.getApplicationContext(); //Prevent Activity leaking!
@@ -57,9 +58,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         //Color is used for the notifications
         color = prefs.getInt(PreferenceFragment.PREF_COLOR, ContextCompat.getColor(context, R.color.colorDefaultAccent));
 
-        //Init retro fit for pulling the data
-        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-
+        //Init retrofit for pulling the data
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
                 .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), information))
@@ -67,6 +66,11 @@ public class NotificationChecker implements Callback<SubstitutesList> {
                 .build();
 
         gesahui = retrofit.create(GesahuiApi.class);
+    }
+
+    public NotificationChecker(Context context, int lesson) {
+        this(context);
+        this.lesson = lesson;
     }
 
     public void load() {
@@ -95,7 +99,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         int count = 0;
         for (int i = 0; i < substitutes.size(); i++) {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            if (substitutes.get(i).getIsImportant()) {
+            if (substitutes.get(i).getIsImportant() && (lesson == -1 || lesson == substitutes.get(i).getStartingLesson())) {
                 String notificationText = SubstituteShareHelper.makeShareText(null, substitutes.get(i), context);
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);

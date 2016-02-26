@@ -9,7 +9,8 @@
 	<android.support.design.widget.AppBarLayout
 		android:layout_width="match_parent"
 		android:layout_height="300dp"
-		android:fitsSystemWindows="true">
+		android:fitsSystemWindows="true"
+		android:background="@android:color/transparent">
 		<android.support.design.widget.CollapsingToolbarLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
@@ -41,6 +42,12 @@
 				app:layout_collapseMode="pin"
 				android:id="@id/toolbar"/>
 		</android.support.design.widget.CollapsingToolbarLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="4dp"
+			android:background="@drawable/toolbar_shadow"
+			android:visibility="?attr/toolbarShadowCompat"/>
 	</android.support.design.widget.AppBarLayout>
 
 	<android.support.v4.view.ViewPager
@@ -53,7 +60,7 @@
 	<android.support.design.widget.FloatingActionButton
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:src="@drawable/ic_arrow_forward_white_24dp"
+		app:srcCompat="@drawable/ic_forward"
 		app:fabSize="normal"
 		android:layout_gravity="bottom|right"
 		app:layout_anchorGravity="bottom|right|end"

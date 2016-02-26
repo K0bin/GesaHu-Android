@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.squareup.leakcanary.RefWatcher;
+import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -32,6 +34,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -55,7 +59,8 @@ import tr.xip.errorview.ErrorView;
 public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Callback<SubstitutesList>, ErrorView.RetryListener {
     private SubstitutesAdapter adapter;
     @Bind(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
-    @Bind(R.id.recylcler) RecyclerView recyclerView;
+    @Bind(R.id.recycler) RecyclerView recyclerView;
+    //@Bind(R.id.dragScrollBar) DragScrollBar dragScrollBar;
 
     @NonNull private StudentInformation studentInformation;
     private boolean filterImportant = false;
@@ -110,13 +115,17 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             date = SchoolWeek.next();
         }
 
-        //DEBUG
-        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+        //Debug
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if(BuildConfig.DEBUG) {
+            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS));
+        }
+        OkHttpClient client = builder.build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
                 .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity(), specialMode), studentInformation))
-        //        .client(client)
+                .client(client)
                 .build();
 
         gesahui = retrofit.create(GesahuiApi.class);
@@ -149,9 +158,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
         if(substitutesList != null) {
+            int count = 0;
             if(substitutesList.hasSubstitutes())
-                adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
-            else
+                count = adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
+            if(count <= 0)
                 showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
         } else
             onRefresh();
@@ -184,6 +194,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onResume() {
         super.onResume();
 
+        //if(dragScrollBar != null && refreshLayout.getVisibility() == View.VISIBLE)
+        //    dragScrollBar.addIndicator(new CustomIndicator(getActivity()), true);
+
+
         if(isLoading && refreshLayout != null && refreshLayout.isEnabled() && refreshLayout.getVisibility() == View.VISIBLE)
             refreshLayout.setRefreshing(true);
         else if(substitutesList == null)
@@ -191,7 +205,16 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        //if(dragScrollBar != null)
+        //    dragScrollBar.removeIndicator();
+    }
+
+    @Override
     public void onDestroyView() {
+
         ButterKnife.unbind(this);
 
         //Remove all view references to prevent leaking
@@ -207,6 +230,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         errorViewRefresh = null;
         errorImage = null;
         noneImage = null;
+        //dragScrollBar = null;
 
         super.onDestroyView();
     }
@@ -278,15 +302,15 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         substitutesList = response.body();
 
-        //Display UI
-        if (substitutesList == null || !substitutesList.hasSubstitutes()) {
-            showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
-        } else {
-            if (adapter != null)
-                adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
-
-            hideError();
+        int count = 0;
+        if (substitutesList != null && adapter != null) {
+            count = adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
         }
+
+        if(count > 0)
+            hideError();
+        else
+            showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
 
         //Update the floating action button
         if (activity != null && getUserVisibleHint())

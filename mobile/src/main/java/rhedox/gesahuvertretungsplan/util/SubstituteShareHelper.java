@@ -31,7 +31,7 @@ public final class SubstituteShareHelper {
         share.setAction(Intent.ACTION_SEND);
         share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text) + " " + text);
         share.setType("text/plain");
-        return share;
+        return Intent.createChooser(share, context.getString(R.string.share));
     }
 
     public static PendingIntent makePendingShareIntent(@Nullable LocalDate date,  Substitute substitute, Context context) {

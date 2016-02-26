@@ -4,7 +4,7 @@
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 		<item name="colorAccent">@color/colorDefaultAccent</item>
-		<item name="toolbarShadowCompat">0</item>
+		<item name="toolbarShadowCompat">2</item>
 
 		<item name="circleImportantColor">?attr/colorAccent</item>
 		<item name="circleImportantTextColor">@android:color/white</item>

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DimenRes;
@@ -20,6 +21,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +32,7 @@ import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -51,7 +54,6 @@ import rhedox.gesahuvertretungsplan.util.SubstituteShareHelper;
 import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
-    private boolean darkTheme;
     private boolean filterImportant;
     private boolean sortImportant;
     private boolean specialMode;
@@ -85,9 +87,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = prefs.getBoolean(PreferenceFragment.PREF_DARK, false);
+
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
@@ -95,18 +99,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
         StudentInformation studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
 
-        //Theming
-        this.setTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme);
-
         TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
         int color = typedArray.getColor(0, 0xFFFFFFFF);
         typedArray.recycle();
 
-        super.onCreate(savedInstanceState);
+        //Initialize UI
+        setTheme(R.style.GesahuTheme);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
 
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
@@ -138,9 +138,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription();
 
-        cab = new MaterialCab(this, R.id.cab_stub);
-        cab.setMenu(R.menu.menu_cab_main);
-        cab.setTitleRes(R.string.main_cab_title);
+
+        if (savedInstanceState != null) {
+            // Restore the CAB state, save a reference to cab.
+            cab = MaterialCab.restoreState(savedInstanceState, this, this);
+        } else {
+            cab = new MaterialCab(this, R.id.cab_stub);
+            cab.setMenu(R.menu.menu_cab_main);
+            cab.setTitleRes(R.string.main_cab_title);
+        }
     }
 
     private void setupViewPager(LocalDate date, StudentInformation studentInformation, @ColorInt int indicatorColor, boolean filterImportant)
@@ -256,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 break;
 
             case R.id.action_about:
-                AboutLibs.start(this, darkTheme);
+                AboutLibs.start(this);
                 break;
 
             case android.R.id.home:
@@ -283,6 +289,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             floatingActionButton.setOnClickListener(null);
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        if (cab != null) {
+            // If the CAB isn't null, save it's state for restoration in onCreate()
+            cab.saveState(outState);
+        }
     }
 
     @Override
@@ -376,12 +391,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         switch(item.getItemId()) {
             case R.id.action_share:
                     LocalDate date;
-                    if(currentFragment != null && currentFragment.getSubstitutesList() != null)
+                    if(currentFragment.getSubstitutesList() != null)
                         date = currentFragment.getSubstitutesList().getDate();
                     else
                         date = null;
 
-                    startActivity(Intent.createChooser(SubstituteShareHelper.makeShareIntent(date, substitute, this), getString(R.string.share)));
+                    startActivity(SubstituteShareHelper.makeShareIntent(date, substitute, this));
                 return true;
         }
 

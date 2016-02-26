@@ -32,34 +32,19 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             android.R.attr.listDivider
     };
 
-    public static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
-
     private Drawable divider;
-
-    private int orientation;
 
     private int height;
 
-    public DividerItemDecoration(Context context, int orientation) {
+    public DividerItemDecoration(Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         divider = a.getDrawable(0);
         a.recycle();
 
-        setOrientation(orientation);
-
         height = divider.getIntrinsicHeight();
-        //height = (int)context.getResources().getDimension(R.dimen.dividerHeight);
-        //height = 1;
 
         if(height <= 0)
             height = 1;
-    }
-
-    public void setOrientation(int orientation) {
-        if (orientation != VERTICAL_LIST) {
-            throw new IllegalArgumentException("invalid orientation");
-        }
-        this.orientation = orientation;
     }
 
     @Override

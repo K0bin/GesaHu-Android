@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.ICustomAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +27,7 @@ import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 /**
  * Created by Robin on 28.10.2014.
  */
-public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> {
+public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> implements ICustomAdapter {
     private List<Substitute> list;
 
     @ColorInt private int circleColorImportant;
@@ -42,7 +45,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     public SubstitutesAdapter(@NonNull Activity context) {
         this.list = new ArrayList<Substitute>(0);
 
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleHighlightedColor, R.attr.circleTextColor, R.attr.circleHighlightedTextColor, R.attr.activatedColor});
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.activatedColor});
         textColor = typedArray.getColor(2, 0);
         highlightedTextColor = typedArray.getColor(3, 0);
         circleColorImportant= typedArray.getColor(1, 0);
@@ -87,14 +90,16 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         return ITEM_TYPE_SUBSTITUTE;
     }
 
-    public void setList(@Nullable List<Substitute> list, boolean filterImportant, boolean sortImportant) {
+    public int setList(@Nullable List<Substitute> list, boolean filterImportant, boolean sortImportant) {
         if(filterImportant && sortImportant) {
             Log.e("Adapter", "Can't both filter and sort!");
-            return;
+            return 0;
         }
 
-        if(list == null || list.size() == 0)
+        if(list == null || list.size() == 0) {
             clear();
+            return 0;
+        }
         else {
             int count = getItemCount();
 
@@ -102,6 +107,8 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
                 this.list = Collections.unmodifiableList(SubstitutesList.sort(list));
             else if (filterImportant)
                 this.list = Collections.unmodifiableList(SubstitutesList.filterImportant(list));
+            else
+                this.list = list;
 
             if(count != list.size()) {
                 if (count > list.size())
@@ -114,6 +121,8 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
             if(selected >= list.size())
                 clearSelection(false);
+
+            return this.list.size();
         }
     }
     public void clear() {
@@ -164,5 +173,13 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         if(list == null || selected == -1) return null;
 
         return list.get(selected);
+    }
+
+    @Override
+    public String getCustomStringForElement(int element) {
+        if(list == null || list.size() <= element || list.get(element) == null)
+            return null;
+
+        return list.get(element).getLesson();
     }
 }

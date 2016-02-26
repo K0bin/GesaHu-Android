@@ -44,6 +44,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.GesahuTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
@@ -106,11 +107,11 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     public void onPageSelected(int position) {
 
         if(position == pagerAdapter.getCount() - 2)
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_check_white_24dp));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_check));
         else if(position == pagerAdapter.getCount() - 1)
             nextPage(null);
         else
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_forward_white_24dp));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_forward));
     }
 
     @Override

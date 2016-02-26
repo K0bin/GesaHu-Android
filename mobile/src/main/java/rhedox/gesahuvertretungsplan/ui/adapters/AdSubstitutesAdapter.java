@@ -57,7 +57,7 @@ public class AdSubstitutesAdapter extends SelectableAdapter<Substitute, Recycler
     public AdSubstitutesAdapter(@NonNull Activity context) {
         this.list = new ArrayList(0);
 
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleHighlightedColor, R.attr.circleTextColor, R.attr.circleHighlightedTextColor, R.attr.activatedColor});
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.activatedColor});
         textColor = typedArray.getColor(2, 0);
         highlightedTextColor = typedArray.getColor(3, 0);
         circleColorImportant= typedArray.getColor(1, 0);

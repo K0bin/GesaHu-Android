@@ -24,7 +24,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 public final class AboutLibs {
     private AboutLibs() {}
 
-    public static void start(final Context context, boolean darkTheme) {
+    public static void start(final Context context) {
         new LibsBuilder()
                 .withFields(R.string.class.getFields())
                 .withAboutAppName(context.getResources().getString(R.string.app_name))
@@ -33,8 +33,8 @@ public final class AboutLibs {
                 .withAboutVersionShown(true)
                 .withAboutDescription(Html.fromHtml(context.getString(R.string.about_text)).toString())
                 .withVersionShown(true)
-                .withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                .withActivityTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme)
+                //.withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                .withActivityTheme(R.style.GesahuTheme)
                 .withLibraries("AppCompat", "MaterialDesignIcons")
                 .withAboutSpecial3(context.getString(R.string.special3))
                 .withAboutSpecial2(context.getString(R.string.special2))

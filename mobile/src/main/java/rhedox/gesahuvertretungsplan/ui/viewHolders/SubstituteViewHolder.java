@@ -89,13 +89,14 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setSelected(boolean selected) {
-        if(view != null)
+        if(view != null) {
             view.setActivated(selected);
 
-        if(!selected)
-            view.setBackgroundColor(0x0);
-        else
-            view.setBackgroundColor(activatedBackgroundColor);
+            if (!selected)
+                view.setBackgroundColor(0x0);
+            else
+                view.setBackgroundColor(activatedBackgroundColor);
+        }
     }
 
     @OnClick(R.id.rootFrame)

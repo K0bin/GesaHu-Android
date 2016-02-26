@@ -33,26 +33,33 @@
 
     <android.support.v7.preference.PreferenceCategory
         android:title="Benachrichtigungen">
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="pref_notification"
+        <android.support.v7.preference.ListPreference
+            android:key="pref_notification_type"
             android:title="Benachrichtigen"
-            android:summary="Täglich bei Vertretungsstunden benachrichtigen"
-            android:defaultValue="true" />
+            android:dialogTitle="Wie möchtest du benachrichtigt werden?"
+            android:summary="Bei Vertretungsstunden benachrichtigen"
+            android:entries="@array/notification_types_array"
+            android:entryValues="@array/notification_types_values"
+            android:defaultValue="daily" />
+
         <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
             android:key="pref_notification_time_new"
             android:title="Abrufzeit"
-            android:summary="Zeit der Benachrichtigungen"
-            android:defaultValue="0"
-            android:dependency="pref_notification" />
+            android:summary="Zeit der Benachrichtigung für die ersten Stunde oder für den ganzen Tag"
+            android:defaultValue="0" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
         android:title="Aussehen">
-        <android.support.v7.preference.CheckBoxPreference
-            android:key="pref_dark"
-            android:title="Dark Theme"
+
+        <android.support.v7.preference.ListPreference
+            android:key="pref_dark_type"
+            android:title="Nachtmodus"
+            android:dialogTitle="Wann möchtest du dunkle Farben verwenden?"
             android:summary="Dunkle Farben verwenden"
-            android:defaultValue="false" />
+            android:entries="@array/dark_theme_array"
+            android:entryValues="@array/dark_theme_values"
+            android:defaultValue="default" />
 
         <android.support.v7.preference.CheckBoxPreference
             android:key="pref_widget_dark"
@@ -65,5 +72,6 @@
             android:title="Weißer Tab Indikator"
             android:summary="Linie unter dem aktiven Tab weiß färben"
             android:defaultValue="false" />
+
     </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

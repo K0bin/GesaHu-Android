@@ -22,13 +22,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean darkTheme = prefs.getBoolean("pref_dark", false);
+        super.onCreate(savedInstanceState);
 
         //Theming
-        this.setTheme(darkTheme ? R.style.GesahuThemeDark : R.style.GesahuTheme);
-
-        super.onCreate(savedInstanceState);
+        this.setTheme(R.style.GesahuTheme);
         setContentView(R.layout.activity_settings);
 
         ButterKnife.bind(this);

@@ -23,12 +23,11 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean notification = prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION, true);
+            String mode = prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, null);
             LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
 
-            if(notification) {
-                AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour());
-            }
+            if(!"none".equals(mode))
+                AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour(), "daily".equals(mode));
         }
     }
 

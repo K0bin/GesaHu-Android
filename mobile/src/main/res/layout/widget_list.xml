@@ -20,6 +20,11 @@
 		android:textSize="20sp"
 		android:fontFamily="sans-serif-medium" />
 
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="4dp"
+		android:background="@drawable/toolbar_shadow"/>
+
 	<ListView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"

@@ -40,4 +40,28 @@
         <item>f</item>
     </string-array>
 
+    <string-array name="notification_types_array">
+        <item>Keine</item>
+        <item>Täglich</item>
+        <item>Für jede Stunde</item>
+    </string-array>
+    <string-array name="notification_types_values">
+        <item>none</item>
+        <item>daily</item>
+        <item>per_lesson</item>
+    </string-array>
+
+    <string-array name="dark_theme_array">
+		<item>Systemstandard</item>
+        <item>Nie</item>
+        <item>Immer</item>
+        <item>Auto</item>
+    </string-array>
+    <string-array name="dark_theme_values">
+		<item>default</item>
+        <item>never</item>
+        <item>always</item>
+        <item>auto</item>
+    </string-array>
+
 </resources>

@@ -13,6 +13,12 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:elevation="4dp"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/toolbar_shadow"
+        android:visibility="?attr/toolbarShadowCompat"/>
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:orientation="vertical"

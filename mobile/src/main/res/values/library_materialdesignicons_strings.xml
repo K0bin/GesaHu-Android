@@ -8,7 +8,7 @@
 	<string name="library_materialdesignicons_libraryName">Material design icons</string>
 	<string name="library_materialdesignicons_libraryDescription">Material design themed icons for Android or web projects</string>
 	<string name="library_materialdesignicons_libraryWebsite">https://www.google.com/design/spec/style/icons.html</string>
-	<string name="library_materialdesignicons_libraryVersion">2.0.0</string>
+	<string name="library_materialdesignicons_libraryVersion">2.2.0</string>
 	<!-- OpenSource section -->
 	<string name="library_materialdesignicons_isOpenSource">true</string>
 	<string name="library_materialdesignicons_repositoryLink">https://github.com/google/material-design-icons</string>

@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/appbarLayout"
         android:transitionName="appbar"
-        android:elevation="4dp">
+        android:elevation="4dp"
+		android:background="@android:color/transparent">
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:id="@+id/toolbar"
-            android:background="?attr/colorPrimary"
+			android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="?attr/toolbarPopupTheme"
             android:transitionName="toolbar" />
@@ -28,18 +29,25 @@
             <ViewStub
 				android:id="@+id/cab_stub"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
+                android:layout_height="?attr/actionBarSize"
+				android:background="?attr/colorPrimary"/>
         </FrameLayout>
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:id="@+id/tabLayout"
             app:tabMode="scrollable"
             app:tabGravity="fill"
+			android:background="?attr/colorPrimary"
             app:tabContentStart="16dp"
             app:tabIndicatorColor="?attr/tabIndicatorColor"/>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="4dp"
+			android:background="@drawable/toolbar_shadow"
+			android:visibility="?attr/toolbarShadowCompat"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
@@ -51,7 +59,7 @@
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_announcement"
+        app:srcCompat="@drawable/ic_announcement"
         app:fabSize="normal"
         android:layout_gravity="bottom|right"
         app:layout_anchorGravity="bottom|right|end"
