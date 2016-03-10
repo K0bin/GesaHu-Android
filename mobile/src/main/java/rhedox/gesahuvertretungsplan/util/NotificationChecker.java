@@ -42,6 +42,9 @@ public class NotificationChecker implements Callback<SubstitutesList> {
     @NonNull private GesahuiApi gesahui;
 
     public static final int REQUEST_CODE_BASE = 64;
+
+    public static final String GROUP_KEY = "gesahuvp";
+
     private int lesson = -1;
 
     public NotificationChecker(Context context) {
@@ -118,6 +121,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
                 builder.setContentText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour) + ".");
                 builder.setContentInfo(substitutes.get(i).getLesson());
                 builder.setContentIntent(launchPending);
+                builder.setGroup(NotificationChecker.GROUP_KEY);
 
                 //Only relevant for JELLY_BEAN and higher
                 PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(LocalDate.now(), substitutes.get(i), context);
@@ -127,7 +131,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
                 //Only relevant for LOLLIPOP and higher
                 builder.setCategory(NotificationCompat.CATEGORY_EVENT);
-                builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+                builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                 builder.setColor(color);
 
