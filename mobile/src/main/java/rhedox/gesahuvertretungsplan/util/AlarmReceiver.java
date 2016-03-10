@@ -10,6 +10,7 @@ import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.DurationFieldType;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -26,6 +27,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.d("Alarm", "Alarm received!");
 
         int lesson = intent.getIntExtra(EXTRA_LESSON, -1);
+
+        if(DateTime.now().getDayOfWeek() == DateTimeConstants.SATURDAY || DateTime.now().getDayOfWeek() == DateTimeConstants.SUNDAY)
+            lesson = -1;
 
         NotificationChecker checker = new NotificationChecker(context, lesson);
         checker.load();

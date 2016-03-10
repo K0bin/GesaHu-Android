@@ -171,7 +171,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(isLoading)
             refreshLayout.setRefreshing(true);
 
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity());
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -194,8 +194,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onResume() {
         super.onResume();
 
-        //if(dragScrollBar != null && refreshLayout.getVisibility() == View.VISIBLE)
-        //    dragScrollBar.addIndicator(new CustomIndicator(getActivity()), true);
+        /*if(dragScrollBar != null && refreshLayout.getVisibility() == View.VISIBLE) {
+            dragScrollBar.addIndicator(new CustomIndicator(getActivity()), true);
+
+            dragScrollBar.invalidate();
+        }*/
 
 
         if(isLoading && refreshLayout != null && refreshLayout.isEnabled() && refreshLayout.getVisibility() == View.VISIBLE)
@@ -333,15 +336,16 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             if(getUserVisibleHint()) {
                 if (activity != null)
                     activity.setFabVisibility(false);
-            }
-            else
-                //Fragment is not visible, show snackbar
+            } else if(activity.getCoordinatorLayout() != null)
+                //Fragment is not empty, keep previous entries and show snackbar
                 Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
         }
         else {
             hideError();
-            //Fragment is not empty, keep previous entries and show snackbar
-            Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+
+            if(activity.getCoordinatorLayout() != null)
+                //Fragment is not empty, keep previous entries and show snackbar
+                Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
         }
     }
 

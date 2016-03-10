@@ -389,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             return false;
 
         switch(item.getItemId()) {
+
             case R.id.action_share:
                     LocalDate date;
                     if(currentFragment.getSubstitutesList() != null)
@@ -405,8 +406,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     public boolean onCabFinished(MaterialCab cab) {
-        if(currentFragment != null && currentFragment.getAdapter() != null)
+        if(currentFragment != null && currentFragment.getAdapter() != null) {
             currentFragment.getAdapter().clearSelection(true);
+            setTabInset(false);
+            if(currentFragment != null && currentFragment.getSubstitutesList() != null)
+                setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
+        }
 
         return true;
     }

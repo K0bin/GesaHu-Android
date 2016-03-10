@@ -61,6 +61,9 @@
 	<string name="feature_notify">GesaHu VP für Android kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast.</string>
     <string name="feature_notify2">Dadurch bist du bei Freistunden immer informiert!</string>+
 
+    <string name="widget_counter_name">Gesahu VP Zähler</string>
+    <string name="widget_list_name">Gesahu VP Liste</string>
+
     <string name="error_title">Uups.</string>
 
     <string name="share_error">Keine Sharing-Apps installiert!</string>

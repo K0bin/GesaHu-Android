@@ -36,6 +36,8 @@ public class App extends Application {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
         else if("never".equals(darkThemeString))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
         //Debug
         if(BuildConfig.DEBUG) {
@@ -53,6 +55,5 @@ public class App extends Application {
     }
 }
 
-//https://code.google.com/p/android/issues/detail?id=184887
 //https://code.google.com/p/android/issues/detail?id=77712
 //https://code.google.com/p/android/issues/detail?id=183783

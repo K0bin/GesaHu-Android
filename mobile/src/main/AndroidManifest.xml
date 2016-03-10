@@ -65,7 +65,7 @@
         </receiver>
 
         <!-- List Widget -->
-        <receiver android:name=".provider.ListWidgetProvider" >
+        <receiver android:name=".provider.ListWidgetProvider" android:label="@string/widget_list_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -76,13 +76,13 @@
         </receiver>
 
         <service
-            android:name=".util.widget.ListFactoryService"
+            android:name=".util.appwidget.ListFactoryService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" >
         </service>
 
         <!-- Counter Widget -->
-        <receiver android:name=".provider.CounterWidgetProvider" >
+        <receiver android:name=".provider.CounterWidgetProvider" android:label="@string/widget_counter_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -92,7 +92,7 @@
                 android:resource="@xml/counter_widget_info" />
         </receiver>
 
-        <service android:name=".util.widget.CounterWidgetService"
+        <service android:name=".util.appwidget.CounterWidgetService"
                  android:exported="false"
                  android:permission="android.permission.BIND_REMOTEVIEWS" />
 

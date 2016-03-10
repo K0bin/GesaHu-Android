@@ -112,7 +112,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                 text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                 String[] teachers = text.split(",");
                                 for (String _teacher : teachers) {
-                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
+                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text) && !"---".equals(_teacher)) {
 
                                         //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
                                         if (!TextUtils.isEmpty(teacher)) {
@@ -128,7 +128,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                 text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                 String[] substituteTeachers = text.split(",");
                                 for (String _teacher : substituteTeachers) {
-                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text)) {
+                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text) && !"---".equals(_teacher)) {
 
                                         //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
                                         if (!TextUtils.isEmpty(substituteTeacher)) {
@@ -142,11 +142,13 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                 break;
 
                             case 4:
-                                room += text + " ";
+                                if(!"---".equals(text))
+                                    room += text + " ";
                                 break;
 
                             case 5:
-                                hint += text + " ";
+                                if(!"---".equals(text))
+                                    hint += text + " ";
                                 break;
                         }
                     }

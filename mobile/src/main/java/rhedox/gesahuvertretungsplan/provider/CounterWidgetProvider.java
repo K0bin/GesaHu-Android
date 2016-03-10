@@ -16,7 +16,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.widget.CounterWidgetService;
+import rhedox.gesahuvertretungsplan.util.appwidget.CounterWidgetService;
 
 /**
  * Created by Robin on 20.07.2015.

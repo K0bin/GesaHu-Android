@@ -43,7 +43,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getListView().addItemDecoration(new PreferencesDividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        getListView().addItemDecoration(new PreferencesDividerItemDecoration(getActivity()));
 
         int margin = (int)getContext().getResources().getDimension(R.dimen.small_margin);
         int marginBottom = (int)getContext().getResources().getDimension(R.dimen.list_fab_bottom);
