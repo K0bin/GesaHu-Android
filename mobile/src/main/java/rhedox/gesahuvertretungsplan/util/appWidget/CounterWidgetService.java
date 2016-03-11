@@ -64,7 +64,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
 
     @Override
     public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
-        if(response == null || !response.isSuccess() || response.body() == null)
+        if(response == null || !response.isSuccessful() || response.body() == null)
             return;
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());

@@ -21,7 +21,8 @@
 			app:layout_scrollFlags="scroll|exitUntilCollapsed"
 			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 			android:id="@+id/collapsingToolbar"
-			android:fitsSystemWindows="true">
+			android:fitsSystemWindows="true"
+			android:background="?attr/colorPrimary">
 
 			<ImageView
 				android:layout_width="match_parent"
@@ -42,12 +43,6 @@
 				app:layout_collapseMode="pin"
 				android:id="@id/toolbar"/>
 		</android.support.design.widget.CollapsingToolbarLayout>
-
-		<View
-			android:layout_width="match_parent"
-			android:layout_height="4dp"
-			android:background="@drawable/toolbar_shadow"
-			android:visibility="?attr/toolbarShadowCompat"/>
 	</android.support.design.widget.AppBarLayout>
 
 	<android.support.v4.view.ViewPager

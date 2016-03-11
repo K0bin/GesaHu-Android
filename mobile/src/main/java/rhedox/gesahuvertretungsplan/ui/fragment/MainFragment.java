@@ -298,7 +298,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(getActivity() == null)
             return;
 
-        if(!response.isSuccess()) {
+        if(!response.isSuccessful()) {
             onFailure(call, new NullPointerException());
             return;
         }

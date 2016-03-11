@@ -36,7 +36,6 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.substituteTeacher)  AppCompatTextView substituteTeacher;
     @Bind(R.id.room)  AppCompatTextView room;
     @Bind(R.id.hint)  AppCompatTextView hint;
-    @Bind(R.id.backgroundFrame)  FrameLayout backgroundFrame;
 
     @BindDrawable(R.drawable.circle) Drawable circleHighlightedBackground;
     @BindDrawable(R.drawable.circle)  Drawable circleBackground;
@@ -99,6 +98,8 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+
+    @SuppressWarnings("unused")
     @OnClick(R.id.rootFrame)
     public void Click(View view) {
         if(adapter != null && adapter.get() != null) {
@@ -110,13 +111,6 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
                 adapter.get().setSelected(this);
             }
         }
-    }
-
-    @OnTouch(R.id.rootFrame)
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        backgroundFrame.onTouchEvent(motionEvent);
-
-        return view.onTouchEvent(motionEvent);
     }
 
     public void destroy() {

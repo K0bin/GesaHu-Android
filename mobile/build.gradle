@@ -7,7 +7,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3297
+        versionCode 3298
         versionName "3.3alpha"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -37,7 +37,7 @@ dependencies {
     compile 'com.android.support:preference-v14:23.+'
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
     compile 'net.danlew:android.joda:2.9.+'
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.+'
     compile 'com.squareup.okhttp3:okhttp:+'
     compile ('com.afollestad:material-cab:0.1.9@aar') {

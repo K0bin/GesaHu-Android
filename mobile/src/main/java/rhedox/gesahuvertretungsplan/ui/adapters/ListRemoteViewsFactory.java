@@ -139,7 +139,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
-        if(response == null || !response.isSuccess())
+        if(response == null || !response.isSuccessful())
             return;
 
         if(response.body() != null)

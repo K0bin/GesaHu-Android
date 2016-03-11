@@ -29,6 +29,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rhedox.gesahuvertretungsplan.App;
+import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
@@ -81,11 +82,15 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                viewPager.endFakeDrag();
+                if(viewPager.isFakeDragging())
+                    viewPager.endFakeDrag();
             }
 
             @Override
             public void onAnimationCancel(Animator animator) {
+                if(viewPager.isFakeDragging())
+                    viewPager.endFakeDrag();
+
                 viewPager.setCurrentItem(0);
             }
 
@@ -153,7 +158,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
             refWatcher.watch(pagerAdapter);
     }
 
-    class PagerHintMovement{
+    class PagerHintMovement {
 
         float goal;
         float progress;
@@ -169,13 +174,16 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         public void setProgress(float progress) {
             this.progress = progress;
 
-            if(viewPager != null && viewPager.isFakeDragging()){
-                Log.d("ViewPager Hint", "Animation: Updating fake drag with value=" + goal * progress + "px");
-                //try {
-                    viewPager.fakeDragBy(goal * progress);
-                //} catch (NullPointerException e) {
+            if(viewPager != null && viewPager.isFakeDragging()) {
 
-                //}
+                if(BuildConfig.DEBUG)
+                    Log.d("ViewPager Hint", "Animation: Updating fake drag with value=" + goal * progress + "px");
+
+                try {
+                    viewPager.fakeDragBy(goal * progress);
+                } catch (NullPointerException e) {
+
+                }
             }
 
         }

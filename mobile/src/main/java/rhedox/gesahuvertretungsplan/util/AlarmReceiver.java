@@ -18,7 +18,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public static final int REQUEST_CODE_BASE = 14;
 
     private static final int[] hours = new int[]{8,9,10,11,12,13,14,15,16};
-    private static final int[] minutes = new int[]{45,35,35,25,30,15,45,30,30};
+    private static final int[] minutes = new int[]{45,35,25,25,30,15,45,30,30};
 
     public static final String EXTRA_LESSON = "extra_lesson";
 

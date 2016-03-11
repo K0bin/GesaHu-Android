@@ -5,15 +5,9 @@
     android:minHeight="@dimen/tileHeight"
     android:orientation="horizontal"
     android:id="@+id/rootFrame"
+    android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
 	android:padding="0dp">
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-	android:minHeight="@dimen/tileHeight"
-	android:id="@+id/backgroundFrame"
-	android:background="?attr/selectableItemBackground"
-	android:layout_margin="0dp">
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="@dimen/tileAvatarSize"
         android:layout_height="@dimen/tileAvatarSize"
@@ -142,5 +136,4 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
     </LinearLayout>
-</FrameLayout>
 </FrameLayout>

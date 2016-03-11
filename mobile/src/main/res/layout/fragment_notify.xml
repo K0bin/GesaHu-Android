@@ -42,6 +42,7 @@
 			<ImageView
 				android:layout_width="48dp"
 				android:layout_height="48dp"
+				android:scaleType="centerInside"
 				app:srcCompat="@drawable/ic_bell"/>
 		</android.support.v7.widget.CardView>
 
@@ -57,6 +58,7 @@
 			<ImageView
 				android:layout_width="48dp"
 				android:layout_height="48dp"
+				android:scaleType="centerInside"
 				app:srcCompat="@drawable/ic_time"/>
 		</android.support.v7.widget.CardView>
 		</android.support.v7.widget.LinearLayoutCompat>
