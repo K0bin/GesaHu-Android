@@ -11,9 +11,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.turingtechnologies.materialscrollbar.CustomIndicator;
-import com.turingtechnologies.materialscrollbar.ICustomAdapter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +24,7 @@ import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 /**
  * Created by Robin on 28.10.2014.
  */
-public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> implements ICustomAdapter {
+public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> {
     private List<Substitute> list;
 
     @ColorInt private int circleColorImportant;
@@ -171,13 +168,5 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         if(list == null || selected == -1) return null;
 
         return list.get(selected);
-    }
-
-    @Override
-    public String getCustomStringForElement(int element) {
-        if(list == null || list.size() <= element || list.get(element) == null)
-            return null;
-
-        return list.get(element).getLesson();
     }
 }

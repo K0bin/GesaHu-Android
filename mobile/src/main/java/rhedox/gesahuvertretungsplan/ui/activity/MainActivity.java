@@ -3,7 +3,6 @@ package rhedox.gesahuvertretungsplan.ui.activity;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.DatePickerDialog;
-import android.content.ActivityNotFoundException;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -21,7 +20,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
@@ -29,10 +27,8 @@ import android.content.Intent;
 import android.view.View;
 //import android.widget.DatePicker;
 import android.widget.DatePicker;
-import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -80,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     //Store Date of Monday of current week
     private LocalDate date;
+    private boolean pickerTriggered = false;
 
     private MainFragment currentFragment;
 
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(extras != null && extras.containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
 
-            if(extras.containsKey(EXTRA_WIDGET) && extras.getBoolean(EXTRA_WIDGET)) {
+            if(!extras.containsKey(EXTRA_WIDGET) || !extras.getBoolean(EXTRA_WIDGET)) {
                 canGoBack = true;
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -160,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(indicatorColor);
-        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE))
+        if(canGoBack)
             TabLayoutHelper.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
 
         viewPager.setCurrentItem(pair.second);
@@ -228,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         switch(item.getItemId()) {
             case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
+                Intent intent = new Intent(this, PreferenceActivity.class);
                 startActivity(intent);
                 break;
 
@@ -239,24 +236,28 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 else
                     date = LocalDate.now();
 
+                pickerTriggered = false;
                 DatePickerFragment.newInstance(date, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                        LocalDate date = SchoolWeek.nextDate(new LocalDate(year, monthOfYear + 1, dayOfMonth));
+                        if(!pickerTriggered) {
+                            LocalDate date = SchoolWeek.nextDate(new LocalDate(year, monthOfYear + 1, dayOfMonth));
 
-                        if(date.getWeekOfWeekyear() != MainActivity.this.date.getWeekOfWeekyear()) {
-                            //Launch a new activity with that week
-                            Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
-                            intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        } else {
-                            //Same week => just switch to day-tab
-                            int index = date.getDayOfWeek() - DateTimeConstants.MONDAY;
-                            int dayIndex = Math.max(0, Math.min(index, 5));
-                            viewPager.setCurrentItem(dayIndex);
+                            if(date.getWeekOfWeekyear() != MainActivity.this.date.getWeekOfWeekyear()) {
+                                //Launch a new activity with that week
+                                Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                                intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } else {
+                                //Same week => just switch to day-tab
+                                int index = date.getDayOfWeek() - DateTimeConstants.MONDAY;
+                                int dayIndex = Math.max(0, Math.min(index, 5));
+                                viewPager.setCurrentItem(dayIndex);
+                            }
+
+                            pickerTriggered = true;
                         }
-
                     }
                 }).show(getSupportFragmentManager(), DatePickerFragment.TAG);
                 break;
@@ -333,9 +334,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     @Override
-    public void setFabVisibility(boolean visible) {
+    public void setFabVisibility(boolean isVisible) {
         if(floatingActionButton != null) {
-            if(visible) {
+            if(isVisible) {
                 floatingActionButton.setEnabled(true);
                 floatingActionButton.show();
             } else {
@@ -357,15 +358,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     @Override
-    public void setAppBarExpanded(boolean expanded) {
+    public void setAppBarExpanded(boolean isExpanded) {
         if(appBarLayout != null)
-            appBarLayout.setExpanded(expanded);
+            appBarLayout.setExpanded(isExpanded);
     }
 
     @Override
-    public void setCabVisibility(boolean visible) {
+    public void setCabVisibility(boolean isVisible) {
         if(cab != null) {
-            if (visible) {
+            if (isVisible) {
                 setAppBarExpanded(true);
                 cab.start(this);
                 setTabInset(true);
@@ -397,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     else
                         date = null;
 
-                    startActivity(SubstituteShareHelper.makeShareIntent(date, substitute, this));
+                    startActivity(SubstituteShareHelper.makeShareIntent(this, date, substitute));
                 return true;
         }
 

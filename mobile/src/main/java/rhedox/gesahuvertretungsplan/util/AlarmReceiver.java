@@ -6,12 +6,16 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.IntDef;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DurationFieldType;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public static final int REQUEST_CODE = 0;
@@ -22,54 +26,57 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     public static final String EXTRA_LESSON = "extra_lesson";
 
+    public static final int NONE = 0;
+    public static final int DAILY = 1;
+    public static final int PER_LESSON = 2;
+    public static final int BOTH = 3;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {DAILY, PER_LESSON, BOTH}, flag = true)
+    public @interface NotificationFrequency {}
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("Alarm", "Alarm received!");
 
         int lesson = intent.getIntExtra(EXTRA_LESSON, -1);
 
-        if(DateTime.now().getDayOfWeek() == DateTimeConstants.SATURDAY || DateTime.now().getDayOfWeek() == DateTimeConstants.SUNDAY)
-            lesson = -1;
+        if(lesson != -1 && (DateTime.now().getDayOfWeek() == DateTimeConstants.SATURDAY || DateTime.now().getDayOfWeek() == DateTimeConstants.SUNDAY)) {
+            if(lesson == 1)
+                lesson = -1;
+            else
+                return;
+        }
 
         NotificationChecker checker = new NotificationChecker(context, lesson);
         checker.load();
     }
 
     @RequiresPermission(Manifest.permission.SET_ALARM)
-    public static void create(Context context, int hour, int minute) {
+    public static void create(Context context, int firstHour, int firstMinute, @NotificationFrequency int frequency) {
+        if(frequency == NONE)
+            return;
 
         DateTime time = DateTime.now();
 
-        if(hour < time.getHourOfDay() || (hour == time.getHourOfDay() && minute < time.getMinuteOfHour()))
+        if (firstHour < time.getHourOfDay() || (firstHour == time.getHourOfDay() && firstMinute < time.getMinuteOfHour()))
             time = time.withFieldAdded(DurationFieldType.days(), 1);
 
-        DateTime alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), hour, minute, 0, 0);
-        scheduleAlarm(context, alarm, REQUEST_CODE, -1);
-    }
-
-    @RequiresPermission(Manifest.permission.SET_ALARM)
-    public static void create(Context context, int firstHour, int firstMinute, boolean daily) {
-
-        if(daily)
-        create(context, firstHour, firstMinute);
-        else {
-            DateTime time = DateTime.now();
-
-            if(firstHour < time.getHourOfDay() || (firstHour == time.getHourOfDay() && firstMinute < time.getMinuteOfHour()))
-                time = time.withFieldAdded(DurationFieldType.days(), 1);
-
-            DateTime alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), firstHour, firstMinute, 0, 0);
+        DateTime alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), firstHour, firstMinute, 0, 0);
+        if((frequency & DAILY) == DAILY)
+            scheduleAlarm(context, alarm, REQUEST_CODE, -1);
+        else
             scheduleAlarm(context, alarm, REQUEST_CODE, 1);
 
-            for(int i = 0; i < hours.length; i++) {
-                time = DateTime.now();
 
-                if(hours[i] < time.getHourOfDay() || (hours[i] == time.getHourOfDay() && minutes[i] < time.getMinuteOfHour()))
-                    time = time.withFieldAdded(DurationFieldType.days(), 1);
+        for (int i = 0; i < hours.length; i++) {
+            time = DateTime.now();
 
-                alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), hours[i], minutes[i], 0, 0);
-                scheduleAlarm(context, alarm, REQUEST_CODE_BASE + i, i + 2);
-            }
+            if (hours[i] < time.getHourOfDay() || (hours[i] == time.getHourOfDay() && minutes[i] < time.getMinuteOfHour()))
+                time = time.withFieldAdded(DurationFieldType.days(), 1);
+
+            alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), hours[i], minutes[i], 0, 0);
+            scheduleAlarm(context, alarm, REQUEST_CODE_BASE + i, i + 2);
         }
     }
 

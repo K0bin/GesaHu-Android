@@ -44,11 +44,13 @@
         <item>Keine</item>
         <item>Täglich</item>
         <item>Für jede Stunde</item>
+        <item>Für jede Stunde mit täglicher Zusammenfassung</item>
     </string-array>
     <string-array name="notification_types_values">
         <item>none</item>
         <item>daily</item>
         <item>per_lesson</item>
+        <item>both</item>
     </string-array>
 
     <string-array name="dark_theme_array">

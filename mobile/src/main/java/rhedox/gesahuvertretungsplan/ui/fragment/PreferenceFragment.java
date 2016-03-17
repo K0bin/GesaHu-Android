@@ -1,13 +1,19 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 
 import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.LocalTime;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
@@ -43,8 +49,6 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //getListView().addItemDecoration(new PreferencesDividerItemDecoration(getActivity()));
-
         int margin = (int)getContext().getResources().getDimension(R.dimen.small_margin);
         int marginBottom = (int)getContext().getResources().getDimension(R.dimen.list_fab_bottom);
         getListView().setPadding(margin, 0, margin, getActivity() instanceof WelcomeActivity ? marginBottom : margin);
@@ -57,8 +61,17 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
         String mode = prefs.getString(PREF_NOTIFICATION_MODE, null);
+
         if(!"none".equals(mode)) {
-            AlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), "daily".equals(mode));
+            @AlarmReceiver.NotificationFrequency int notificationFrequency;
+            if("per_lesson".equals(mode))
+                notificationFrequency = AlarmReceiver.PER_LESSON;
+            else if("both".equals(mode))
+                notificationFrequency = AlarmReceiver.BOTH;
+            else
+                notificationFrequency = AlarmReceiver.DAILY;
+
+            AlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
             BootReceiver.create(getContext());
         }
         else {
@@ -66,6 +79,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
             BootReceiver.cancel(getContext());
         }
 
+        PreferenceFragment.applyDarkTheme(prefs);
     }
 
     @Override
@@ -76,6 +90,21 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         RefWatcher refWatcher = App.getRefWatcher(getActivity());
         if(refWatcher != null)
             refWatcher.watch(this);
+    }
+
+    public static void applyDarkTheme(SharedPreferences prefs) {
+        if(prefs == null)
+            return;
+
+        String darkTheme = prefs.getString(PREF_DARK_TYPE, null);
+        if("always".equals(darkTheme))
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        else if("auto".equals(darkTheme))
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        else if("never".equals(darkTheme))
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 
     public static PreferenceFragment newInstance() {

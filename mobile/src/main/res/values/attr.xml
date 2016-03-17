@@ -5,7 +5,7 @@
         <attr name="lesson" format="string" />
         <attr name="subjectName" format="string" />
         <attr name="regularTeacher" format="string" />
-        <attr name="replacementTeacher" format="string" />
+        <attr name="substituteTeacher" format="string" />
         <attr name="room" format="string" />
     </declare-styleable>
 

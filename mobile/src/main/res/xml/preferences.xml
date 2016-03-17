@@ -44,8 +44,8 @@
 
         <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
             android:key="pref_notification_time_new"
-            android:title="Abrufzeit"
-            android:summary="Zeit der Benachrichtigung für die ersten Stunde oder für den ganzen Tag"
+            android:title="Benachrichtigungszeit"
+            android:summary="Zeit der Benachrichtigung"
             android:defaultValue="0" />
     </android.support.v7.preference.PreferenceCategory>
 

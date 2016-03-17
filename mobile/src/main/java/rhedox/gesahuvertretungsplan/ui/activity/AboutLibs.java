@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
@@ -33,7 +34,7 @@ public final class AboutLibs {
                 .withAboutVersionShown(true)
                 .withAboutDescription(Html.fromHtml(context.getString(R.string.about_text)).toString())
                 .withVersionShown(true)
-                //.withActivityStyle(darkTheme ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                .withActivityStyle(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
                 .withActivityTheme(R.style.GesahuTheme)
                 .withLibraries("AppCompat", "MaterialDesignIcons")
                 .withAboutSpecial3(context.getString(R.string.special3))

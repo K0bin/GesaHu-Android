@@ -26,8 +26,17 @@ public class BootReceiver extends BroadcastReceiver {
             String mode = prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, null);
             LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
 
-            if(!"none".equals(mode))
-                AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour(), "daily".equals(mode));
+            if(!"none".equals(mode)) {
+                @AlarmReceiver.NotificationFrequency int notificationFrequency;
+                if("per_lesson".equals(mode))
+                    notificationFrequency = AlarmReceiver.PER_LESSON;
+                else if("both".equals(mode))
+                    notificationFrequency = AlarmReceiver.BOTH;
+                else
+                    notificationFrequency = AlarmReceiver.DAILY;
+
+                AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
+            }
         }
     }
 

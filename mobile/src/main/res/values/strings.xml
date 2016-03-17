@@ -14,10 +14,20 @@
     <string name="hours">Stunden</string>
     <string name="lesson">Vertretungsstunde</string>
     <string name="lessons">Vertretungsstunden</string>
-    <string name="substitute">Vertretung</string>
-    <string name="notification_text">Vertretung in der</string>
-    <string name="share_text">Wir haben </string>
+
+    <string name="substitute">Vertretungsstunde</string>
+    <string name="roomchange">Raumänderung</string>
+    <string name="dropped">Freistunde</string>
+	<string name="test">Klausur</string>
+
+    <string name="notification_summary" formatted="false">%s in der %s. Stunde</string>
+
     <string name="share">Teilen</string>
+	<string name="share_dropped" formatted="false">Wir haben %s %s. %s frei!</string>
+	<string name="share_room_change" formatted="false">Wir haben %s %s. %s in Raum %s.</string>
+	<string name="share_subsitute" formatted="false">Wir haben %s %s. %s bei %s in Raum %s.</string>
+	<string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
+
 	<string name="main_cab_title">Teile eine Stunde!</string>
 	<string name="failed">Da hat etwas nicht funktioniert!</string>
     <string name="today">heute</string>
@@ -59,7 +69,7 @@
 	<string name="feature_design">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys angepasstem Design an.</string>
 	<string name="feature_highlight">Die App kann außerdem für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
 	<string name="feature_notify">GesaHu VP für Android kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast.</string>
-    <string name="feature_notify2">Dadurch bist du bei Freistunden immer informiert!</string>+
+    <string name="feature_notify2">Dadurch bist du bei Freistunden immer informiert!</string>
 
     <string name="widget_counter_name">Gesahu VP Zähler</string>
     <string name="widget_list_name">Gesahu VP Liste</string>
@@ -71,7 +81,7 @@
     <string name="special1">Gesahui</string>
 
     <string name="special2">Erwähnungen</string>
-    <string name="special2_description">Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>
+    <string name="special2_description">Danke an Kenneth Wolfram für die Idee zu den Benachrichtigungen&lt;br>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>
 
     <string name="special3">Gönnen!</string>
     <string name="special3_tap">Du hast es dir %d Mal gegönnt.</string>

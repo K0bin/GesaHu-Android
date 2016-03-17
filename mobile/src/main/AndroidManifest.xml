@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.SettingsActivity"
+            android:name=".ui.activity.PreferenceActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".ui.activity.MainActivity" >
             <meta-data
@@ -36,6 +36,11 @@
             android:name=".ui.activity.WelcomeActivity"
             android:label="@string/title_activity_welcome" >
         </activity>
+
+        <service
+            android:name="org.acra.sender.SenderService"
+            android:exported="false"
+            android:process=":acra" />
 
         <service
             android:name=".util.DashClockExtension"

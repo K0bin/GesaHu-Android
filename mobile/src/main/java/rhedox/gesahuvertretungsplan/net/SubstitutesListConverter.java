@@ -77,7 +77,8 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                         switch (i) {
                             case 0: {
                                 if (!text.equals(lesson) && !TextUtils.isEmpty(subject)) {
-                                    substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
+                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), studentInformation);
+                                    substitutes.add(substitute);
 
                                     subject = "";
                                     teacher = "";
@@ -92,7 +93,8 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
                             case 1: {
                                 if (!TextUtils.isEmpty(subject)) {
-                                    substitutes.add(new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation));
+                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), studentInformation);
+                                    substitutes.add(substitute);
 
                                     teacher = "";
                                     substituteTeacher = "";
@@ -156,7 +158,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
             }
 
             if (!TextUtils.isEmpty(subject)) {
-                Substitute substitute = new Substitute(lesson, subject, teacher, substituteTeacher, room, hint, studentInformation);
+                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), studentInformation);
                 substitutes.add(substitute);
             }
 
@@ -175,17 +177,13 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
         if(!hinweise.hasText())
             return null;
 
-        String[] strings = hinweise.text().split("<br>");
+        String[] strings = hinweise.text().split(" ");
         if(strings.length < 3)
             return null;
 
         String date = strings[2];
-        String[] dateParts = date.split(",");
 
-        if(dateParts.length < 2)
-            return null;
-
-        return LocalDate.parse(dateParts[1].trim(), DateTimeFormat.forPattern("dd.MM.YYYY"));
+        return LocalDate.parse(date, DateTimeFormat.forPattern("dd.MM.YYYY"));
     }
 
     private String readAnnouncement(Document document) {

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.viewHolders;
+/*package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
@@ -19,7 +19,7 @@ import rhedox.gesahuvertretungsplan.R;
 
 /**
  * Created by Robin on 21.11.2015.
- */
+ *
 
 
 public class ContentAdViewHolder extends NativeAdViewHolder{
@@ -65,4 +65,4 @@ public class ContentAdViewHolder extends NativeAdViewHolder{
     public void destroy() {
         ButterKnife.unbind(this);
     }
-}
+}*/

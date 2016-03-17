@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.viewHolders;
+/*package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,7 +9,7 @@ import com.google.android.gms.ads.formats.NativeAdView;
 
 /**
  * Created by Robin on 11.12.2015.
- */
+ *
 public abstract class NativeAdViewHolder extends RecyclerView.ViewHolder {
     private NativeAdView adView;
     private NativeAd ad;
@@ -35,4 +35,4 @@ public abstract class NativeAdViewHolder extends RecyclerView.ViewHolder {
     protected NativeAdView getAdView() {
         return adView;
     }
-}
+}*/

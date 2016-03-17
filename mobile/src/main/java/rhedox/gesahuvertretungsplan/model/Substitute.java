@@ -1,24 +1,36 @@
 package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.text.ParseException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 public class Substitute implements Comparable<Substitute> {
-    private final String lesson, subject, teacher, replacementTeacher, room, hint;
+    public static final int KIND_SUBSTITUTE = 0;
+    public static final int KIND_DROPPED = 1;
+    public static final int KIND_ROOM_CHANGE = 2;
+    public static final int KIND_TEST = 3;
+
+    @IntDef({KIND_SUBSTITUTE, KIND_DROPPED, KIND_ROOM_CHANGE, KIND_TEST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface SubstituteKind {}
+
+    private final String lesson, subject, teacher, substituteTeacher, room, hint;
     private final boolean isImportant;
     private int startingLesson;
+    private final @SubstituteKind int kind;
 
-    public Substitute(String lesson, String subject, String teacher, String replacementTeacher, String room, String hint, @Nullable StudentInformation information) {
+    public Substitute(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, @Nullable StudentInformation information) {
         this.lesson = lesson.trim();
         this.subject = subject.trim();
         this.teacher = teacher.trim();
-        this.replacementTeacher = replacementTeacher.trim();
+        this.substituteTeacher = substituteTeacher.trim();
         this.room = room.trim();
         this.hint = hint.trim();
 
@@ -41,6 +53,17 @@ public class Substitute implements Comparable<Substitute> {
                 }
             }
         }
+
+        String lowerSubstitute = substituteTeacher.toLowerCase();
+        String lowerHint = hint.toLowerCase();
+        if("eigv. lernen".equals(lowerSubstitute) || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt") || lowerHint.contains("frei"))
+            kind = KIND_DROPPED;
+        else if(("".equals(substituteTeacher) || substituteTeacher.equals(teacher)) && lowerHint.equals("raumänderung"))
+            kind = KIND_ROOM_CHANGE;
+        else if(lowerHint.contains("klausur"))
+            kind = KIND_TEST;
+        else
+            kind = KIND_SUBSTITUTE;
     }
 
     public String getLesson() {
@@ -56,7 +79,7 @@ public class Substitute implements Comparable<Substitute> {
     }
 
     public String getSubstituteTeacher() {
-        return replacementTeacher;
+        return substituteTeacher;
     }
 
     public String getRoom() {
@@ -73,6 +96,10 @@ public class Substitute implements Comparable<Substitute> {
 
     public boolean getIsImportant() {
         return isImportant;
+    }
+
+    public int getKind() {
+        return kind;
     }
 
     public static Substitute makeEmptyListSubstitute(@NonNull Context context) {

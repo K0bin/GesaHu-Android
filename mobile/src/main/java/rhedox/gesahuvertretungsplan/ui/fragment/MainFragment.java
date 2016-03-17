@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -14,6 +15,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,12 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.squareup.leakcanary.RefWatcher;
-import com.turingtechnologies.materialscrollbar.CustomIndicator;
-import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import butterknife.Bind;
@@ -60,18 +63,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private SubstitutesAdapter adapter;
     @Bind(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
     @Bind(R.id.recycler) RecyclerView recyclerView;
-    //@Bind(R.id.dragScrollBar) DragScrollBar dragScrollBar;
 
-    @NonNull private StudentInformation studentInformation;
     private boolean filterImportant = false;
     private boolean sortImportant = false;
-    private boolean specialMode = false;
 
-    public static final String ARGUMENT_STUDENT_INFORMATION = "ARGUMENT_STUDENT_INFORMATION";
     public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
-    public static final String ARGUMENT_FILTER = "ARGUMENT_FILTER";
-    public static final String ARGUMENT_SORT = "ARGUMENT_SORT";
-    public static final String ARGUMENT_SPECIAL_MODE = "ARGUMENT_SPECIAL_MODE";
     public static final String TAG ="MAIN_FRAGMENT";
 
     private LocalDate date;
@@ -95,31 +91,27 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
+        //Get Preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
+        String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
+        StudentInformation studentInformation = new StudentInformation(infoYear, infoClass);
+        filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+        sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
+        boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
+
         //Get Arguments
         Bundle arguments = getArguments();
-        if(arguments != null) {
-            studentInformation = arguments.getParcelable(ARGUMENT_STUDENT_INFORMATION);
+        if(arguments != null)
             date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
-            filterImportant = arguments.getBoolean(ARGUMENT_FILTER, false);
-            sortImportant = arguments.getBoolean(ARGUMENT_SORT, false);
-            specialMode = arguments.getBoolean(ARGUMENT_SPECIAL_MODE, false);
-        } else {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-            String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
-            String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
-            studentInformation = new StudentInformation(infoYear, infoClass);
-            filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
-            sortImportant = prefs.getBoolean(ARGUMENT_SORT, false);
-            specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
-
+        else
             date = SchoolWeek.next();
-        }
 
-        //Debug
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if(BuildConfig.DEBUG) {
+
+        if(BuildConfig.DEBUG)
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS));
-        }
+
         OkHttpClient client = builder.build();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -194,13 +186,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onResume() {
         super.onResume();
 
-        /*if(dragScrollBar != null && refreshLayout.getVisibility() == View.VISIBLE) {
-            dragScrollBar.addIndicator(new CustomIndicator(getActivity()), true);
-
-            dragScrollBar.invalidate();
-        }*/
-
-
         if(isLoading && refreshLayout != null && refreshLayout.isEnabled() && refreshLayout.getVisibility() == View.VISIBLE)
             refreshLayout.setRefreshing(true);
         else if(substitutesList == null)
@@ -210,9 +195,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onPause() {
         super.onPause();
-
-        //if(dragScrollBar != null)
-        //    dragScrollBar.removeIndicator();
     }
 
     @Override
@@ -233,7 +215,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         errorViewRefresh = null;
         errorImage = null;
         noneImage = null;
-        //dragScrollBar = null;
 
         super.onDestroyView();
     }
@@ -424,28 +405,21 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return adapter;
     }
 
-    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean filterImportant, boolean sortImportant, boolean specialMode) {
+    public static MainFragment newInstance(LocalDate date) {
         Bundle arguments = new Bundle();
-        arguments.putParcelable(ARGUMENT_STUDENT_INFORMATION, information);
         arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
-        arguments.putBoolean(ARGUMENT_FILTER, filterImportant);
-        arguments.putBoolean(ARGUMENT_SPECIAL_MODE,  specialMode);
-        arguments.putBoolean(ARGUMENT_SORT, sortImportant);
         MainFragment fragment = new MainFragment();
         fragment.setArguments(arguments);
 
         return fragment;
     }
-    public static MainFragment newInstance(StudentInformation information, LocalDate date, boolean specialMode) {
-        return MainFragment.newInstance(information, date, false, false, specialMode);
-    }
 
     public interface MaterialActivity {
         FloatingActionButton getFloatingActionButton();
-        void setFabVisibility(boolean visible);
+        void setFabVisibility(boolean isVisible);
         AppBarLayout getAppBarLayout();
         CoordinatorLayout getCoordinatorLayout();
-        void setAppBarExpanded(boolean expanded);
-        void setCabVisibility(boolean visibility);
+        void setAppBarExpanded(boolean isExpanded);
+        void setCabVisibility(boolean isVisible);
     }
 }

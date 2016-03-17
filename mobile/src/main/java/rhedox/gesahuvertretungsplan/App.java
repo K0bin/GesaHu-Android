@@ -12,12 +12,19 @@ import com.squareup.leakcanary.RefWatcher;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
+
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
  * Created by Robin on 29.06.2015.
  */
 
+@ReportsCrashes(
+        formUri = "https://collector.tracepot.com/84f365ea"
+)
 public class App extends Application {
     private RefWatcher refWatcher;
 
@@ -28,25 +35,26 @@ public class App extends Application {
         refWatcher = LeakCanary.install(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String darkThemeString = prefs.getString(PreferenceFragment.PREF_DARK_TYPE, "default");
-
-        if("always".equals(darkThemeString))
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        else if("auto".equals(darkThemeString))
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-        else if("never".equals(darkThemeString))
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        PreferenceFragment.applyDarkTheme(prefs);
 
         //Debug
         if(BuildConfig.DEBUG) {
             StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
                     .detectAll()
+                    .penaltyLog()
+                    .setClassInstanceLimit(MainActivity.class, 12)
                     .penaltyDeath()
                     .build();
             StrictMode.setVmPolicy(policy);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        if(!BuildConfig.DEBUG)
+            ACRA.init(this);
     }
 
     public static RefWatcher getRefWatcher(Context context) {

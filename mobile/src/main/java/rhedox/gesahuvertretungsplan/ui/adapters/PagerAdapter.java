@@ -41,7 +41,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         LocalDate fragmentDate = date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek());
 
-        MainFragment fragment = MainFragment.newInstance(studentInformation, fragmentDate, filterImportant, sortImportant, specialMode);
+        MainFragment fragment = MainFragment.newInstance(fragmentDate);
         fragments[position] = fragment;
         return fragment;
     }

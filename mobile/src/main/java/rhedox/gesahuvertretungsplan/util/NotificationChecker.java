@@ -103,7 +103,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         for (int i = 0; i < substitutes.size(); i++) {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (substitutes.get(i).getIsImportant() && (lesson == -1 || lesson == substitutes.get(i).getStartingLesson())) {
-                String notificationText = SubstituteShareHelper.makeShareText(null, substitutes.get(i), context);
+                String notificationText = SubstituteShareHelper.makeNotificationText(context, substitutes.get(i));
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
@@ -113,18 +113,38 @@ public class NotificationChecker implements Callback<SubstitutesList> {
                 NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
                 bigTextStyle.bigText(notificationText);
 
-                bigTextStyle.setBigContentTitle(context.getString(R.string.substitute));
-                bigTextStyle.setSummaryText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour) + ".");
+                String title = "";
+
+                switch(substitutes.get(i).getKind()) {
+                    case Substitute.KIND_SUBSTITUTE:
+                        title = context.getString(R.string.substitute);
+                        break;
+
+                    case Substitute.KIND_ROOM_CHANGE:
+                        title = context.getString(R.string.roomchange);
+                        break;
+
+                    case Substitute.KIND_DROPPED:
+                        title = context.getString(R.string.dropped);
+                        break;
+
+                    case Substitute.KIND_TEST:
+                        title = context.getString(R.string.test);
+                        break;
+                }
+                bigTextStyle.setBigContentTitle(title);
+
+                bigTextStyle.setSummaryText(String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLesson()));
                 builder.setStyle(bigTextStyle);
                 builder.setSmallIcon(R.drawable.ic_notification);
-                builder.setContentTitle(context.getString(R.string.substitute));
-                builder.setContentText(context.getString(R.string.notification_text) + " " + substitutes.get(i).getLesson() + " " + context.getString(R.string.hour) + ".");
+                builder.setContentTitle(title);
+                builder.setContentText(String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLesson()));
                 builder.setContentInfo(substitutes.get(i).getLesson());
                 builder.setContentIntent(launchPending);
                 builder.setGroup(NotificationChecker.GROUP_KEY);
 
                 //Only relevant for JELLY_BEAN and higher
-                PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(LocalDate.now(), substitutes.get(i), context);
+                PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(context, LocalDate.now(), substitutes.get(i));
                 NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
                 builder.addAction(action);
 

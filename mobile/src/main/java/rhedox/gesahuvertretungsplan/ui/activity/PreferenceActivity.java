@@ -14,10 +14,11 @@ import android.view.MenuItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
-public class SettingsActivity extends AppCompatActivity {
+public class PreferenceActivity extends AppCompatActivity {
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Override
@@ -55,21 +56,14 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if(BuildConfig.DEBUG)
+            System.gc();
+
         ButterKnife.unbind(this);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent TargetActivity in AndroidManifest.xml.
-
-        if(item.getItemId() == android.R.id.home) {
-            this.onBackPressed();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void onBackPressed() {
+        onSupportNavigateUp();
     }
-
 }

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.adapters;
+/*package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,13 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAdView;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeContentAd;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +27,7 @@ import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 
 /**
  * Created by Robin on 28.10.2014.
- */
+ *
 public class AdSubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> {
     private List list;
 
@@ -241,4 +234,4 @@ public class AdSubstitutesAdapter extends SelectableAdapter<Substitute, Recycler
 
         return (Substitute) list.get(selected);
     }
-}
+}*/
