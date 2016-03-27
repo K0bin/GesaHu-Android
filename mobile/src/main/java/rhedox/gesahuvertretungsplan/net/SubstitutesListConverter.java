@@ -71,7 +71,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                     if (!TextUtils.isEmpty(text)) {
                         switch (i) {
                             case 0: {
-                                if (!text.equals(lesson) && !TextUtils.isEmpty(subject)) {
+                                if (!text.equals(lesson) && !TextUtils.isEmpty(subject) && !TextUtils.isEmpty(lesson)) {
                                     Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
                                     substitutes.add(substitute);
 
@@ -109,7 +109,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                 text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                 String[] teachers = text.split(",");
                                 for (String _teacher : teachers) {
-                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text) && !"---".equals(_teacher)) {
+                                    if (!TextUtils.isEmpty(_teacher) && !"---".equals(_teacher)) {
 
                                         //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
                                         if (!TextUtils.isEmpty(teacher)) {
@@ -125,7 +125,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                 text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                 String[] substituteTeachers = text.split(",");
                                 for (String _teacher : substituteTeachers) {
-                                    if (!TextUtils.isEmpty(_teacher) && !TextUtils.isEmpty(text) && !"---".equals(_teacher)) {
+                                    if (!TextUtils.isEmpty(_teacher) && !"---".equals(_teacher)) {
 
                                         //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
                                         if (!TextUtils.isEmpty(substituteTeacher)) {
