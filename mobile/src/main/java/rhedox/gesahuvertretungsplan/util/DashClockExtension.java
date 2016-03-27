@@ -19,7 +19,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
 import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
@@ -42,7 +42,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
         boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
-        StudentInformation information = new StudentInformation(schoolYear, schoolClass);
+        Student information = new Student(schoolYear, schoolClass);
 
         //Init retro fit for pulling the data
         //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();

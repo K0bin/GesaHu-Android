@@ -9,14 +9,14 @@ import org.joda.time.LocalDate;
 
 import java.util.Locale;
 
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 
 /**
  * Created by Robin on 29.08.2015.
  */
 public class PagerAdapter extends FragmentPagerAdapter {
-    private StudentInformation studentInformation;
+    private Student student;
     private LocalDate date;
 
     private boolean filterImportant;
@@ -25,11 +25,11 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     private Fragment[] fragments;
 
-    public PagerAdapter(FragmentManager manager, LocalDate date, StudentInformation information, boolean filterImportant, boolean sortImportant, boolean specialMode) {
+    public PagerAdapter(FragmentManager manager, LocalDate date, Student information, boolean filterImportant, boolean sortImportant, boolean specialMode) {
         super(manager);
 
         this.date = date;
-        this.studentInformation = information;
+        this.student = information;
         this.filterImportant = filterImportant;
         this.sortImportant = sortImportant;
         this.specialMode = specialMode;

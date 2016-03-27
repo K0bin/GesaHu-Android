@@ -8,16 +8,16 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
 /**
  * Created by Robin on 03.05.2015.
  */
-public class StudentInformation implements Parcelable {
+public class Student implements Parcelable {
     private final String schoolYear;
     private final String schoolClass;
 
-    public StudentInformation(String schoolYear, String schoolClass) {
+    public Student(String schoolYear, String schoolClass) {
         this.schoolYear = schoolYear;
         this.schoolClass = schoolClass;
     }
 
-    private StudentInformation(Parcel parcel) {
+    private Student(Parcel parcel) {
         if(parcel!= null) {
             this.schoolYear = parcel.readString();
             this.schoolClass = parcel.readString();
@@ -50,16 +50,16 @@ public class StudentInformation implements Parcelable {
         dest.writeString(schoolClass);
     }
 
-    public static final Parcelable.Creator<StudentInformation> CREATOR = new Parcelable.Creator<StudentInformation>() {
+    public static final Parcelable.Creator<Student> CREATOR = new Parcelable.Creator<Student>() {
 
         @Override
-        public StudentInformation createFromParcel(Parcel source) {
-            return new StudentInformation(source);
+        public Student createFromParcel(Parcel source) {
+            return new Student(source);
         }
 
         @Override
-        public StudentInformation[] newArray(int size) {
-            return new StudentInformation[size];
+        public Student[] newArray(int size) {
+            return new Student[size];
         }
     };
 }

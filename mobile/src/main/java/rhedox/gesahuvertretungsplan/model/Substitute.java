@@ -26,7 +26,7 @@ public class Substitute implements Comparable<Substitute> {
     private int startingLesson;
     private final @SubstituteKind int kind;
 
-    public Substitute(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, @Nullable StudentInformation information) {
+    public Substitute(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, @Nullable Student information) {
         this.lesson = lesson.trim();
         this.subject = subject.trim();
         this.teacher = teacher.trim();
@@ -44,7 +44,6 @@ public class Substitute implements Comparable<Substitute> {
         if(!TextUtils.isEmpty(lesson)) {
             String[] lessonParts = lesson.split("-");
             if(lessonParts.length > 0) {
-
                 try {
                     startingLesson = Integer.parseInt(lessonParts[0], 10);
                 }

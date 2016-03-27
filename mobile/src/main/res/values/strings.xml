@@ -55,7 +55,7 @@
     <string name="positive_button">Festlegen</string>
     <string name="negative_button">Abbrechen</string>
 
-    <string name="about_text">Zeigt den &lt;b>GesaHu Vertretungsplan&lt;/b> in einem für Smartphones optimierten Layout an.&lt;br>Entwickelt von Robin Kertels&lt;br>Feedback von Felix Bastian</string>
+    <string name="about_text">Zeigt den &lt;b>GesaHu Vertretungsplan&lt;/b> in einem für Smartphones optimierten Layout an.&lt;br>Entwickelt von Robin Kertels&lt;br>mit Feedback von Felix Bastian</string>
 
     <string name="logo_content_description">Icon</string>
 	<string name="title_activity_welcome">Willkommen</string>

@@ -5,8 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,8 +13,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,10 +26,6 @@ import com.squareup.leakcanary.RefWatcher;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.BindDrawable;
 import butterknife.ButterKnife;
@@ -45,8 +37,7 @@ import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
-import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
 import rhedox.gesahuvertretungsplan.net.NetworkChecker;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
@@ -95,7 +86,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
         String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
-        StudentInformation studentInformation = new StudentInformation(infoYear, infoClass);
+        Student student = new Student(infoYear, infoClass);
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
         boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
@@ -116,7 +107,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity(), specialMode), studentInformation))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity(), specialMode), student))
                 .client(client)
                 .build();
 
@@ -254,9 +245,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 call.enqueue(this);
 
                 isLoading = true;
-            } else {
+            } else
                 onFailure(null, new Exception(getString(R.string.error_no_connection)));
-            }
         }
     }
 

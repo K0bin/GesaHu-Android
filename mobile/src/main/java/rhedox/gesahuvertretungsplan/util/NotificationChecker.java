@@ -23,7 +23,7 @@ import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
@@ -50,13 +50,13 @@ public class NotificationChecker implements Callback<SubstitutesList> {
     public NotificationChecker(Context context) {
         this.context = context.getApplicationContext(); //Prevent Activity leaking!
 
-        //Load stundent information for matching lessons
+        //Load student for matching lessons
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
         boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
-        StudentInformation information = new StudentInformation(schoolYear, schoolClass);
+        Student student = new Student(schoolYear, schoolClass);
 
         //Color is used for the notifications
         color = prefs.getInt(PreferenceFragment.PREF_COLOR, ContextCompat.getColor(context, R.color.colorDefaultAccent));
@@ -64,7 +64,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         //Init retrofit for pulling the data
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), information))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), student))
                 //.client(client)
                 .build();
 
@@ -99,10 +99,14 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         if(substitutes == null)
             return;
 
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        notificationManager.cancelAll();
+
         int count = 0;
         for (int i = 0; i < substitutes.size(); i++) {
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (substitutes.get(i).getIsImportant() && (lesson == -1 || lesson == substitutes.get(i).getStartingLesson())) {
+
                 String notificationText = SubstituteShareHelper.makeNotificationText(context, substitutes.get(i));
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);

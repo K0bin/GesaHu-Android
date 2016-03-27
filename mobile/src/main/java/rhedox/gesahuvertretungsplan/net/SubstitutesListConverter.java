@@ -3,39 +3,34 @@ package rhedox.gesahuvertretungsplan.net;
 /**
  * Created by Robin on 17.02.2016.
  */
-import android.util.Log;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
-import retrofit2.*;
 import retrofit2.Converter;
-import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 public class SubstitutesListConverter implements Converter<ResponseBody, SubstitutesList> {
 
-    private StudentInformation studentInformation;
+    private Student student;
     private ShortNameResolver shortNameResolver;
 
-    public SubstitutesListConverter(ShortNameResolver resolver, StudentInformation studentInformation)
+    public SubstitutesListConverter(ShortNameResolver resolver, Student student)
     {
-        this.studentInformation = studentInformation;
+        this.student = student;
         this.shortNameResolver = resolver;
     }
 
@@ -77,7 +72,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                         switch (i) {
                             case 0: {
                                 if (!text.equals(lesson) && !TextUtils.isEmpty(subject)) {
-                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), studentInformation);
+                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
                                     substitutes.add(substitute);
 
                                     subject = "";
@@ -93,7 +88,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
                             case 1: {
                                 if (!TextUtils.isEmpty(subject)) {
-                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), studentInformation);
+                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
                                     substitutes.add(substitute);
 
                                     teacher = "";
@@ -158,7 +153,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
             }
 
             if (!TextUtils.isEmpty(subject)) {
-                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), studentInformation);
+                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
                 substitutes.add(substitute);
             }
 

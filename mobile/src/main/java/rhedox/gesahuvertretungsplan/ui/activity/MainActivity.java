@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter;
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
         boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
-        StudentInformation studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
+        Student student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
 
         TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
         int color = typedArray.getColor(0, 0xFFFFFFFF);
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         else
             date = SchoolWeek.next();
 
-        setupViewPager(date, studentInformation, whiteIndicator ? 0xFFFFFFFF : color, filterImportant);
+        setupViewPager(date, student, whiteIndicator ? 0xFFFFFFFF : color, filterImportant);
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription();
@@ -146,11 +146,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
-    private void setupViewPager(LocalDate date, StudentInformation studentInformation, @ColorInt int indicatorColor, boolean filterImportant)
+    private void setupViewPager(LocalDate date, Student student, @ColorInt int indicatorColor, boolean filterImportant)
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, studentInformation, filterImportant, sortImportant, specialMode);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, student, filterImportant, sortImportant, specialMode);
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);

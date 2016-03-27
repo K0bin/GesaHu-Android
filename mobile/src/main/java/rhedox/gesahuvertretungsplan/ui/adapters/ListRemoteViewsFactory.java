@@ -20,7 +20,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.StudentInformation;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
@@ -38,7 +38,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private Context context;
     private int appWidgetId;
     private LocalDate date;
-    private StudentInformation studentInformation;
+    private Student student;
 
     private boolean darkTheme;
     private boolean specialMode;
@@ -52,14 +52,14 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
-        studentInformation = new StudentInformation(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
+        student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
     }
 
     @Override
     public void onCreate() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), studentInformation))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), student))
                 .build();
 
         GesahuiApi gesahui = retrofit.create(GesahuiApi.class);
