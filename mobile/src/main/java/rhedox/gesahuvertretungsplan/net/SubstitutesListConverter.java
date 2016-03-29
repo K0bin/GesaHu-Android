@@ -105,7 +105,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                             }
                             break;
 
-                            case 2:
+                            case 2: {
                                 text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                 String[] teachers = text.split(",");
                                 for (String _teacher : teachers) {
@@ -119,9 +119,10 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                         teacher += shortNameResolver.resolveTeacher(_teacher.trim());
                                     }
                                 }
-                                break;
+                            }
+                            break;
 
-                            case 3:
+                            case 3: {
                                 text = text.replaceAll(", |; |,+|;+|" + System.getProperty("line.separator"), ",");
                                 String[] substituteTeachers = text.split(",");
                                 for (String _teacher : substituteTeachers) {
@@ -136,7 +137,8 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                     }
 
                                 }
-                                break;
+                            }
+                            break;
 
                             case 4:
                                 if(!"---".equals(text))
@@ -168,11 +170,11 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
     }
 
     private LocalDate readDate(Document document) {
-        Elements hinweise = document.select("body>div>center>div>div>center>table[id=\"AutoNumber1\"]>tbody>tr>td>p>font[size=\"4\"][face=\"Arial\"]");
-        if(!hinweise.hasText())
+        Elements dateElement = document.select("body>div>center>div>div>center>table[id=\"AutoNumber1\"]>tbody>tr>td>p>font[size=\"4\"][face=\"Arial\"]");
+        if(!dateElement.hasText())
             return null;
 
-        String[] strings = hinweise.text().split(" ");
+        String[] strings = dateElement.text().split(" ");
         if(strings.length < 3)
             return null;
 
@@ -182,9 +184,9 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
     }
 
     private String readAnnouncement(Document document) {
-        Elements hinweise = document.select("body>div>center>div>p>b>font[size=\"2\"][face=\"Arial\"]");
-        if(hinweise.hasText())
-            return hinweise.text();
+        Elements announcementElement = document.select("body>div>center>div>p>b>font[size=\"2\"][face=\"Arial\"]");
+        if(announcementElement.hasText())
+            return announcementElement.text();
 
         return "";
     }

@@ -114,26 +114,20 @@ public class Substitute implements Comparable<Substitute> {
             if (!another.getIsImportant())
                 return -1;
             else {
-                if(getStartingLesson() < another.getStartingLesson())
-                    return -1;
-                else if(getStartingLesson() == another.getStartingLesson())
-                    return 0;
-                else if(getStartingLesson() > another.getStartingLesson())
-                    return 1;
+                if (getStartingLesson() - another.getStartingLesson() == 0)
+                    return getLesson().length() - another.getLesson().length();
+
+                return getStartingLesson() - another.getStartingLesson();
             }
         } else {
             if (another.getIsImportant())
                 return 1;
             else {
-                if(getStartingLesson() < another.getStartingLesson())
-                    return -1;
-                else if(getStartingLesson() == another.getStartingLesson())
-                    return 0;
-                else if(getStartingLesson() > another.getStartingLesson())
-                    return 1;
+                if (getStartingLesson() - another.getStartingLesson() == 0)
+                    return getLesson().length() - another.getLesson().length();
+
+                return getStartingLesson() - another.getStartingLesson();
             }
         }
-
-        return 1;
     }
 }
