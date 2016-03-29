@@ -17,4 +17,4 @@ Verwendete Libraries:
 * [MaterialCab](https://github.com/afollestad/material-cab)
 * [AboutLibraries](https://github.com/mikepenz/AboutLibraries)
 
-[![Play Store badge](https://play.google.com/intl/en_us/badges/images/generic/de-play-badge.png)](https://play.google.com/store/apps/details?id=rhedox.gesahuvertretungsplan)
+<a href="https://play.google.com/store/apps/details?id=rhedox.gesahuvertretungsplan"><img alt="Play Store badge" src="https://play.google.com/intl/en_us/badges/images/generic/de-play-badge.png" width="185"></img></a>
