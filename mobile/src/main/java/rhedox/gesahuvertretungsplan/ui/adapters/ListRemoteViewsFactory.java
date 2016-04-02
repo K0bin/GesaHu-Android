@@ -34,6 +34,7 @@ import rhedox.gesahuvertretungsplan.util.appwidget.ListFactoryService;
  */
 public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Callback<SubstitutesList> {
     private List<Substitute> substitutes;
+    private SubstitutesList list;
 
     private Context context;
     private int appWidgetId;
@@ -78,43 +79,62 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public int getCount() {
-        return substitutes != null ? substitutes.size() : 0;
+        if(substitutes == null || list == null)
+            return 0;
+
+        if(!list.hasSubstitutes())
+            return 1;
+        else
+            return substitutes.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-
-        if(substitutes == null || substitutes.size() <= position)
+        if (list == null)
             return null;
-        else {
-            Substitute substitute = substitutes.get(position);
 
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_substitute);
-            remoteViews.setTextViewText(R.id.lesson, substitute.getLesson());
-            remoteViews.setTextViewText(R.id.subject, substitute.getSubject());
-            remoteViews.setTextViewText(R.id.teacher, substitute.getTeacher());
-            remoteViews.setTextViewText(R.id.substituteTeacher, substitute.getSubstituteTeacher());
-            remoteViews.setTextViewText(R.id.hint, substitute.getHint());
-            remoteViews.setTextViewText(R.id.room, substitute.getRoom());
-
-            remoteViews.setTextColor(R.id.lesson, 0xFFFFFFFF);
-
-            if(darkTheme) {
+        if (position == 0 && !list.hasSubstitutes()) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_empty);
+            if (darkTheme) {
                 remoteViews.setTextColor(R.id.subject, 0xFFFFFFFF);
-                remoteViews.setTextColor(R.id.teacher, 0xFFFFFFFF);
-                remoteViews.setTextColor(R.id.substituteTeacher, 0xFFFFFFFF);
                 remoteViews.setTextColor(R.id.hint, 0xFFFFFFFF);
-                remoteViews.setTextColor(R.id.room, 0xFFFFFFFF);
             } else {
                 remoteViews.setTextColor(R.id.subject, 0xFF000000);
-                remoteViews.setTextColor(R.id.teacher, 0xFF000000);
-                remoteViews.setTextColor(R.id.substituteTeacher, 0xFF000000);
                 remoteViews.setTextColor(R.id.hint, 0xFF000000);
-                remoteViews.setTextColor(R.id.room, 0xFF000000);
             }
-
             return remoteViews;
         }
+
+        if (substitutes == null || substitutes.size() <= position)
+            return null;
+
+        Substitute substitute = substitutes.get(position);
+
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_substitute);
+        remoteViews.setTextViewText(R.id.lesson, substitute.getLesson());
+        remoteViews.setTextViewText(R.id.subject, substitute.getSubject());
+        remoteViews.setTextViewText(R.id.teacher, substitute.getTeacher());
+        remoteViews.setTextViewText(R.id.substituteTeacher, substitute.getSubstituteTeacher());
+        remoteViews.setTextViewText(R.id.hint, substitute.getHint());
+        remoteViews.setTextViewText(R.id.room, substitute.getRoom());
+
+        remoteViews.setTextColor(R.id.lesson, 0xFFFFFFFF);
+
+        if (darkTheme) {
+            remoteViews.setTextColor(R.id.subject, 0xFFFFFFFF);
+            remoteViews.setTextColor(R.id.teacher, 0xFFFFFFFF);
+            remoteViews.setTextColor(R.id.substituteTeacher, 0xFFFFFFFF);
+            remoteViews.setTextColor(R.id.hint, 0xFFFFFFFF);
+            remoteViews.setTextColor(R.id.room, 0xFFFFFFFF);
+        } else {
+            remoteViews.setTextColor(R.id.subject, 0xFF000000);
+            remoteViews.setTextColor(R.id.teacher, 0xFF000000);
+            remoteViews.setTextColor(R.id.substituteTeacher, 0xFF000000);
+            remoteViews.setTextColor(R.id.hint, 0xFF000000);
+            remoteViews.setTextColor(R.id.room, 0xFF000000);
+        }
+
+        return remoteViews;
     }
 
     @Override
@@ -142,8 +162,10 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         if(response == null || !response.isSuccessful())
             return;
 
-        if(response.body() != null)
-            this.substitutes = SubstitutesList.filterImportant(response.body().getSubstitutes());
+        this.list = response.body();
+
+        if(list != null)
+            this.substitutes = SubstitutesList.filterImportant(list.getSubstitutes());
         else
             this.substitutes = null;
 

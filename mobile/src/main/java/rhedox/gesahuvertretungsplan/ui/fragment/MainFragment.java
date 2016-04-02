@@ -303,13 +303,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(substitutesList == null) {
             showError(getString(R.string.error), getString(R.string.oops), errorImage);
 
-            //Update the floating action button
-            if(getUserVisibleHint()) {
-                if (activity != null)
+            if (activity != null) {
+                //Update the floating action button
+                if (getUserVisibleHint())
                     activity.setFabVisibility(false);
-            } else if(activity.getCoordinatorLayout() != null)
-                //Fragment is not empty, keep previous entries and show snackbar
-                Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+                 else if (activity.getCoordinatorLayout() != null)
+                    //Fragment is not empty, keep previous entries and show snackbar
+                    Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+            }
         }
         else {
             hideError();
