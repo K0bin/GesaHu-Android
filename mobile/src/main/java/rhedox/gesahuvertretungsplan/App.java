@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.PreferenceManager;
 
+import com.frogermcs.androiddevmetrics.AndroidDevMetrics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -46,6 +47,8 @@ public class App extends Application {
                     .penaltyDeath()
                     .build();
             StrictMode.setVmPolicy(policy);
+
+            AndroidDevMetrics.initWith(this);
         }
     }
 

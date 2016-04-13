@@ -64,6 +64,7 @@ public class CounterWidgetProvider extends AppWidgetProvider {
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+        intent.putExtra(MainActivity.EXTRA_WIDGET, true);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.widget_frame, pendingIntent);
 

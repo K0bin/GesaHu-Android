@@ -85,7 +85,7 @@ public final class SubstituteShareHelper {
         text += System.getProperty("line.separator");
 
         if(!TextUtils.isEmpty(substitute.getHint()))
-            text += context.getString(R.string.hint)+": "+ substitute.getHint()+"; ";
+            text += context.getString(R.string.hint)+": "+ substitute.getHint();
 
         return text;
     }

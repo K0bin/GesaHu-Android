@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.frogermcs.androiddevmetrics'
 
 android {
     compileSdkVersion 23
@@ -10,7 +11,7 @@ android {
         versionCode 3303
         versionName "3.3"
         multiDexEnabled false
-        //vectorDrawables.useSupportLibrary = true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -26,10 +27,10 @@ android {
     productFlavors {
     }
 
-    // Flag to tell aapt to keep the attribute ids around
+    /? Flag to tell aapt to keep the attribute ids around
     aaptOptions {
         additionalParameters "--no-version-vectors"
-    }
+    }*/
 }
 
 dependencies {

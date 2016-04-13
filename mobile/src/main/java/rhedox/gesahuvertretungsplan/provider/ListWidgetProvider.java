@@ -44,6 +44,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
             Intent onClickIntent = new Intent(context, MainActivity.class);
             onClickIntent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            onClickIntent.putExtra(MainActivity.EXTRA_WIDGET, true);
             PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 
