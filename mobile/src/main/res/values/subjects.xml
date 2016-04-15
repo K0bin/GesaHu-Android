@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="subjects_m">Mathematik</string>
@@ -44,7 +44,12 @@
     <string name="subjects_vert">Vertretungsreserve</string>
     <string name="subjects_d_lrs">Deutsch-LRS</string>
     <string name="subjects_ch_lk">Chemie LK</string>
+    <string name="subjects_ku_lk">Kunst LK</string>
     <string name="subjects_swi">Schwimmen</string>
     <string name="subjects_int">Integration</string>
+    <string name="subjects_media">Mediathek</string>
+    <string name="subjects_gap">Trainingsraum</string>
+    <string name="subjects_lmb">Lehrmittelbücherei</string>
+    <string name="subjects_kudamu">Musische Fächer</string>
 
 </resources>
