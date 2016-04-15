@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.util;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
@@ -69,15 +70,44 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         if(substitutes == null)
             return;
 
-        int count = SubstitutesList.countImportant(substitutes);
+        List<Substitute> important = SubstitutesList.filterImportant(substitutes);
+        int count = important.size();
+
+        String body = "";
+        for(Substitute substitute : important) {
+            String title = "";
+
+            switch(substitute.getKind()) {
+                case Substitute.KIND_SUBSTITUTE:
+                    title = getString(R.string.substitute);
+                    break;
+
+                case Substitute.KIND_ROOM_CHANGE:
+                    title = getString(R.string.roomchange);
+                    break;
+
+                case Substitute.KIND_DROPPED:
+                    title = getString(R.string.dropped);
+                    break;
+
+                case Substitute.KIND_TEST:
+                    title = getString(R.string.test);
+                    break;
+            }
+
+            if(!"".equals(body))
+                body += System.getProperty("line.separator");
+
+            body += String.format(getString(R.string.notification_summary), title, substitute.getLesson());
+        }
 
         if (count > 0) {
             publishUpdate(new ExtensionData()
                     .visible(true)
                     .icon(R.drawable.ic_notification)
-                    .status(count + " " + getString(R.string.hours))
+                    .status(count + " " + getString(R.string.lessons))
                     .expandedTitle(getString(R.string.app_name))
-                    .expandedBody(count + " " + getString(R.string.lessons))
+                    .expandedBody(body)
                     .clickIntent(new Intent(this, MainActivity.class)));
         }
         else
