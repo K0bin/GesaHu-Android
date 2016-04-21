@@ -118,6 +118,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Nullable
     @Override
+    @SuppressWarnings("ResourceType")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //RefreshLayout color scheme
         TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});

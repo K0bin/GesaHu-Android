@@ -82,16 +82,18 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                if(viewPager.isFakeDragging())
+                if(viewPager != null && viewPager.isFakeDragging())
                     viewPager.endFakeDrag();
             }
 
             @Override
             public void onAnimationCancel(Animator animator) {
-                if(viewPager.isFakeDragging())
-                    viewPager.endFakeDrag();
+                if(viewPager != null) {
+                    if(viewPager.isFakeDragging())
+                        viewPager.endFakeDrag();
 
-                viewPager.setCurrentItem(0);
+                    viewPager.setCurrentItem(0);
+                }
             }
 
             @Override
@@ -126,10 +128,13 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     @OnClick(R.id.fab)
     public void nextPage(View view) {
+        if(viewPager != null && viewPager.isFakeDragging())
+            viewPager.endFakeDrag();
+
         if(animator != null)
             animator.cancel();
 
-        if(viewPager.getCurrentItem() < pagerAdapter.getCount() - 2)
+        if(viewPager != null && viewPager.getCurrentItem() < pagerAdapter.getCount() - 2)
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         else {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

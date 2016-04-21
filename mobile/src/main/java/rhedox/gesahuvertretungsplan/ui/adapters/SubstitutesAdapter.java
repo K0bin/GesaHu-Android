@@ -39,6 +39,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
 
+    @SuppressWarnings("ResourceType")
     public SubstitutesAdapter(@NonNull Activity context) {
         this.list = new ArrayList<Substitute>(0);
 
@@ -107,16 +108,16 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
             else
                 this.list = list;
 
-            if(count != list.size()) {
-                if (count > list.size())
-                    notifyItemRangeRemoved(Math.max(list.size() - 1, 0), count - list.size());
+            if(count != this.list.size()) {
+                if (count > this.list.size())
+                    notifyItemRangeRemoved(Math.max(this.list.size() - 1, 0), count - this.list.size());
                 else
-                    notifyItemRangeInserted(Math.max(count - 1, 0), list.size() - count);
+                    notifyItemRangeInserted(Math.max(count - 1, 0), this.list.size() - count);
             }
 
-            notifyItemRangeChanged(0, Math.min(list.size(), count));
+            notifyItemRangeChanged(0, Math.min(this.list.size(), count));
 
-            if(selected >= list.size())
+            if(selected >= this.list.size())
                 clearSelection(false);
 
             return this.list.size();
