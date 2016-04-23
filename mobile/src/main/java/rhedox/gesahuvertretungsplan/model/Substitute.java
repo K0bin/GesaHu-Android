@@ -5,6 +5,8 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.jsoup.helper.StringUtil;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -57,7 +59,7 @@ public class Substitute implements Comparable<Substitute> {
         String lowerHint = hint.toLowerCase();
         if("eigv. lernen".equals(lowerSubstitute) || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt") || lowerHint.contains("frei"))
             kind = KIND_DROPPED;
-        else if(("".equals(substituteTeacher) || substituteTeacher.equals(teacher)) && lowerHint.equals("raumänderung"))
+        else if((TextUtils.isEmpty(substituteTeacher) || substituteTeacher.equals(teacher)) && "raumänderung".equals(lowerHint))
             kind = KIND_ROOM_CHANGE;
         else if(lowerHint.contains("klausur"))
             kind = KIND_TEST;
@@ -114,8 +116,12 @@ public class Substitute implements Comparable<Substitute> {
             if (!another.getIsImportant())
                 return -1;
             else {
-                if (getStartingLesson() - another.getStartingLesson() == 0)
-                    return getLesson().length() - another.getLesson().length();
+                if (getStartingLesson() - another.getStartingLesson() == 0) {
+                    if (getLesson().length() - another.getLesson().length() == 0)
+                        return getSubject().compareTo(another.getSubject());
+                    else
+                        return getLesson().length() - another.getLesson().length();
+                }
 
                 return getStartingLesson() - another.getStartingLesson();
             }
@@ -123,8 +129,12 @@ public class Substitute implements Comparable<Substitute> {
             if (another.getIsImportant())
                 return 1;
             else {
-                if (getStartingLesson() - another.getStartingLesson() == 0)
-                    return getLesson().length() - another.getLesson().length();
+                if (getStartingLesson() - another.getStartingLesson() == 0) {
+                    if (getLesson().length() - another.getLesson().length() == 0)
+                        return getSubject().compareTo(another.getSubject());
+                    else
+                        return getLesson().length() - another.getLesson().length();
+                }
 
                 return getStartingLesson() - another.getStartingLesson();
             }
