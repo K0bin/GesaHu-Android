@@ -37,7 +37,7 @@ public class Substitute implements Comparable<Substitute> {
         String[] classes = subject.split(" ");
         if(classes.length > 0 && information != null && !information.getIsEmpty()) {
             String _class = classes[classes.length - 1];
-            isImportant = _class.contains(information.getSchoolYear()) && _class.contains(information.getSchoolClass());
+            isImportant = (_class.contains(information.getSchoolYear()) || ("13".equals(information.getSchoolYear()) && "abi".equals(_class.toLowerCase()))) && _class.contains(information.getSchoolClass());
         } else
             isImportant = false;
 

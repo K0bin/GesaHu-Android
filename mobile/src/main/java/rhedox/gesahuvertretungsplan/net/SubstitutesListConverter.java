@@ -57,10 +57,10 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
             String lesson = "";
             String subject = "";
-            String teacher = "";
-            String substituteTeacher = "";
-            String room = "";
-            String hint = "";
+            StringBuilder teacher = new StringBuilder();
+            StringBuilder substituteTeacher = new StringBuilder();
+            StringBuilder room = new StringBuilder();
+            StringBuilder hint = new StringBuilder();
             for (Element row : rows) {
                 Elements cells = row.getElementsByTag("td");
                 for (int i = 0; i < cells.size(); i++) {
@@ -72,14 +72,14 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                         switch (i) {
                             case 0: {
                                 if (!text.equals(lesson) && !TextUtils.isEmpty(subject) && !TextUtils.isEmpty(lesson)) {
-                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
+                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
                                     substitutes.add(substitute);
 
                                     subject = "";
-                                    teacher = "";
-                                    substituteTeacher = "";
-                                    room = "";
-                                    hint = "";
+                                    teacher.delete(0, teacher.length());
+                                    substituteTeacher.delete(0, substituteTeacher.length());
+                                    room.delete(0, room.length());
+                                    hint.delete(0, hint.length());
                                 }
 
                                 lesson = text.replaceAll(" ", "");
@@ -88,13 +88,14 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
                             case 1: {
                                 if (!TextUtils.isEmpty(subject)) {
-                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
+                                    Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
                                     substitutes.add(substitute);
 
-                                    teacher = "";
-                                    substituteTeacher = "";
-                                    room = "";
-                                    hint = "";
+                                    subject = "";
+                                    teacher.delete(0, teacher.length());
+                                    substituteTeacher.delete(0, substituteTeacher.length());
+                                    room.delete(0, room.length());
+                                    hint.delete(0, hint.length());
                                 }
 
                                 String[] parts = text.split(" ");
@@ -112,11 +113,10 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                     if (!TextUtils.isEmpty(_teacher) && !"---".equals(_teacher)) {
 
                                         //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
-                                        if (!TextUtils.isEmpty(teacher)) {
-                                            teacher += "; ";
-                                        }
+                                        if (!TextUtils.isEmpty(teacher.toString()))
+                                            teacher.append("; ");
 
-                                        teacher += shortNameResolver.resolveTeacher(_teacher.trim());
+                                        teacher.append(shortNameResolver.resolveTeacher(_teacher.trim()));
                                     }
                                 }
                             }
@@ -129,25 +129,23 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                     if (!TextUtils.isEmpty(_teacher) && !"---".equals(_teacher)) {
 
                                         //Semikolon einfügen, wenn schon Lehrer hinzugefügt wurden
-                                        if (!TextUtils.isEmpty(substituteTeacher)) {
-                                            substituteTeacher += "; ";
-                                        }
+                                        if (!TextUtils.isEmpty(substituteTeacher.toString()))
+                                            substituteTeacher.append("; ");
 
-                                        substituteTeacher += shortNameResolver.resolveTeacher(_teacher.trim());
+                                        substituteTeacher.append(shortNameResolver.resolveTeacher(_teacher.trim()));
                                     }
-
                                 }
                             }
                             break;
 
                             case 4:
-                                if(!"---".equals(text))
-                                    room += text + " ";
+                                if(!"---".equals(text.toString()))
+                                    room.append(text + " ");
                                 break;
 
                             case 5:
-                                if(!"---".equals(text))
-                                    hint += text + " ";
+                                if(!"---".equals(text.toString()))
+                                    hint.append(text + " ");
                                 break;
                         }
                     }
@@ -155,7 +153,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
             }
 
             if (!TextUtils.isEmpty(subject)) {
-                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.trim(), substituteTeacher.trim(), room.trim(), hint.trim(), student);
+                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
                 substitutes.add(substitute);
             }
 
