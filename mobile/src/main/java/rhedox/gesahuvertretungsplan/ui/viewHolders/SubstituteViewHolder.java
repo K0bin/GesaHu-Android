@@ -13,11 +13,12 @@ import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
 
-import butterknife.Bind;
 import butterknife.BindDrawable;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
+import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.ui.adapters.SelectableAdapter;
@@ -30,12 +31,13 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SelectableAdapter;
 public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     private View view;
 
-    @Bind(R.id.lesson) AppCompatTextView lesson;
-    @Bind(R.id.subject) AppCompatTextView subject;
-    @Bind(R.id.teacher)  AppCompatTextView teacher;
-    @Bind(R.id.substituteTeacher)  AppCompatTextView substituteTeacher;
-    @Bind(R.id.room)  AppCompatTextView room;
-    @Bind(R.id.hint)  AppCompatTextView hint;
+    @BindView(R.id.lesson) AppCompatTextView lesson;
+    @BindView(R.id.subject) AppCompatTextView subject;
+    @BindView(R.id.teacher)  AppCompatTextView teacher;
+    @BindView(R.id.substituteTeacher)  AppCompatTextView substituteTeacher;
+    @BindView(R.id.room)  AppCompatTextView room;
+    @BindView(R.id.hint)  AppCompatTextView hint;
+    private Unbinder unbinder;
 
     @BindDrawable(R.drawable.circle) Drawable circleHighlightedBackground;
     @BindDrawable(R.drawable.circle)  Drawable circleBackground;
@@ -44,13 +46,14 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 
     @ColorInt private int activatedBackgroundColor;
 
+    //Prevent memory leak that could be the result of keeping an adapter reference
     private WeakReference<SelectableAdapter<Substitute, RecyclerView.ViewHolder>> adapter;
 
     public SubstituteViewHolder(ViewGroup view, SelectableAdapter<Substitute, RecyclerView.ViewHolder> adapter, @ColorInt int circleColor, @ColorInt int circleHighlightedColor, @ColorInt int textColor, @ColorInt int highlightedTextColor, @ColorInt int activatedBackgroundColor) {
         super(view);
 
         this.view = view;
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         view.setClickable(true);
 
@@ -104,16 +107,14 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     public void Click(View view) {
         if(adapter != null && adapter.get() != null) {
             if (adapter.get().getSelectedIndex() == getAdapterPosition()) {
-                setSelected(false);
                 adapter.get().clearSelection(false);
             } else {
-                setSelected(true);
                 adapter.get().setSelected(this);
             }
         }
     }
 
     public void destroy() {
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 }

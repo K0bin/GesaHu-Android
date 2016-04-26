@@ -143,6 +143,8 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         selected = viewHolder.getAdapterPosition();
         selectedViewHolder = (SubstituteViewHolder)viewHolder;
 
+        selectedViewHolder.setSelected(true);
+
         if(activity != null)
             activity.setCabVisibility(true);
     }

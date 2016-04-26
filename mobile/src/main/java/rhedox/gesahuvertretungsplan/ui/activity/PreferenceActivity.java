@@ -12,14 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 public class PreferenceActivity extends AppCompatActivity {
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +31,7 @@ public class PreferenceActivity extends AppCompatActivity {
         this.setTheme(R.style.GesahuTheme);
         setContentView(R.layout.activity_settings);
 
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
@@ -59,7 +61,7 @@ public class PreferenceActivity extends AppCompatActivity {
         if(BuildConfig.DEBUG)
             System.gc();
 
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

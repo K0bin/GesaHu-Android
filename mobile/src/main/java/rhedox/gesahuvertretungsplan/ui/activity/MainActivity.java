@@ -34,9 +34,10 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Student;
@@ -50,24 +51,24 @@ import rhedox.gesahuvertretungsplan.util.SubstituteShareHelper;
 import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
-    private boolean filterImportant;
     private boolean sortImportant;
     private boolean specialMode;
 
     private boolean canGoBack = false;
 
-    @Bind(R.id.coordinator) CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.coordinator) CoordinatorLayout coordinatorLayout;
 
     private PagerAdapter pagerAdapter;
 
-    @Bind(R.id.fab) FloatingActionButton floatingActionButton;
+    @BindView(R.id.fab) FloatingActionButton floatingActionButton;
 
-    @Bind(R.id.appbarLayout) AppBarLayout appBarLayout;
+    @BindView(R.id.appbarLayout) AppBarLayout appBarLayout;
     private AppBarLayout.OnOffsetChangedListener appBarLayoutOffsetListener;
-    @Bind(R.id.viewPager) ViewPager viewPager;
-    @Bind(R.id.tabLayout) TabLayout tabLayout;
+    @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.tabLayout) TabLayout tabLayout;
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    private Unbinder unbinder;
 
     private int appBarLayoutOffset = 0;
 
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+        boolean filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //Initialize UI
         setTheme(R.style.GesahuTheme);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     protected void onDestroy() {
-        ButterKnife.unbind(this);
+        unbinder.unbind();
 
         pagerAdapter.destroy();
         if(appBarLayout != null)

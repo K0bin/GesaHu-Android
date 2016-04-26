@@ -5,8 +5,10 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Debug;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.FloatingActionButton;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
@@ -23,11 +25,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
 
+import com.squareup.haha.perflib.StackTrace;
 import com.squareup.leakcanary.RefWatcher;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
@@ -37,9 +41,10 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     private PagerAdapter pagerAdapter;
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.viewPager) ViewPager viewPager;
-    @Bind(R.id.fab) FloatingActionButton floatingActionButton;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.fab) FloatingActionButton floatingActionButton;
+    private Unbinder unbinder;
 
     private ObjectAnimator animator;
 
@@ -49,7 +54,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
@@ -114,11 +119,11 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     public void onPageSelected(int position) {
 
         if(position == pagerAdapter.getCount() - 2)
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_check));
+            floatingActionButton.setImageResource(R.drawable.ic_check);
         else if(position == pagerAdapter.getCount() - 1)
             nextPage(null);
         else
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_forward));
+            floatingActionButton.setImageResource(R.drawable.ic_forward);
     }
 
     @Override
@@ -128,11 +133,16 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
     @OnClick(R.id.fab)
     public void nextPage(View view) {
-        if(viewPager != null && viewPager.isFakeDragging())
-            viewPager.endFakeDrag();
+        try {
+            if (viewPager != null && viewPager.isFakeDragging())
+                viewPager.endFakeDrag();
 
-        if(animator != null)
-            animator.cancel();
+            if (animator != null)
+                animator.cancel();
+        }
+        catch(NullPointerException e) {
+            Log.e("Workaround", String.format("Android bug workaround in nextPage, Exception: %s",e.getMessage()));
+        }
 
         if(viewPager != null && viewPager.getCurrentItem() < pagerAdapter.getCount() - 2)
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
@@ -155,7 +165,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
         if(animator != null)
             animator.cancel();
 
-        ButterKnife.unbind(this);
+        unbinder.unbind();
 
         //LeakCanary
         RefWatcher refWatcher = App.getRefWatcher(this);

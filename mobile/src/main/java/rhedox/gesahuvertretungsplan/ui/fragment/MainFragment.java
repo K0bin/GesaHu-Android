@@ -26,9 +26,10 @@ import com.squareup.leakcanary.RefWatcher;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.BindDrawable;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
@@ -52,8 +53,9 @@ import tr.xip.errorview.ErrorView;
  */
 public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Callback<SubstitutesList>, ErrorView.RetryListener {
     private SubstitutesAdapter adapter;
-    @Bind(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
-    @Bind(R.id.recycler) RecyclerView recyclerView;
+    @BindView(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
+    @BindView(R.id.recycler) RecyclerView recyclerView;
+    private Unbinder unbinder;
 
     private boolean filterImportant = false;
     private boolean sortImportant = false;
@@ -67,9 +69,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private GesahuiApi gesahui;
     private retrofit2.Call<SubstitutesList> call;
 
-    @Bind(R.id.error_view) ErrorView errorView;
-    @Bind(R.id.error_view_scroll) NestedScrollView errorViewScroll;
-    @Bind(R.id.error_view_swipe) SwipeRefreshLayoutFix errorViewRefresh;
+    @BindView(R.id.error_view) ErrorView errorView;
+    @BindView(R.id.error_view_scroll) NestedScrollView errorViewScroll;
+    @BindView(R.id.error_view_swipe) SwipeRefreshLayoutFix errorViewRefresh;
     @BindDrawable(R.drawable.error_view_cloud) Drawable errorImage;
     @BindDrawable(R.drawable.no_substitutes) Drawable noneImage;
 
@@ -127,7 +129,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         typedArray.recycle();
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         //RefreshLayout
         refreshLayout.setOnRefreshListener(this);
@@ -192,7 +194,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onDestroyView() {
 
-        ButterKnife.unbind(this);
+        unbinder.unbind();
 
         //Remove all view references to prevent leaking
         refreshLayout = null;

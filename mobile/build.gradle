@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.frogermcs.androiddevmetrics'
+apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 23
@@ -54,7 +55,8 @@ dependencies {
     }
     compile 'com.github.xiprox.errorview:library:2.+'
     compile 'org.jsoup:jsoup:1.8.+'
-    compile 'com.jakewharton:butterknife:7.0.+'
+    compile 'com.jakewharton:butterknife:8.0.0'
+    apt 'com.jakewharton:butterknife-compiler:8.0.0'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     //compile 'com.google.android.gms:play-services-ads:8.+'
