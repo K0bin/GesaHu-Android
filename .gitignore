@@ -45,3 +45,5 @@ _sandbox
 mobile/manifest-merger-release-report.txt
 
 Volley/
+
+sync.ffs_lock
