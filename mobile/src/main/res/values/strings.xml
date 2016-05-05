@@ -19,6 +19,7 @@
     <string name="roomchange">Raumänderung</string>
     <string name="dropped">Freistunde</string>
 	<string name="test">Klausur</string>
+	<string name="regular">Regulärer Unterricht</string>
 
     <string name="notification_summary" formatted="false">%s in der %s. Stunde</string>
 
@@ -27,6 +28,7 @@
 	<string name="share_room_change" formatted="false">Wir haben %s %s. %s in Raum %s.</string>
 	<string name="share_subsitute" formatted="false">Wir haben %s %s. %s bei %s in Raum %s.</string>
 	<string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
+	<string name="share_regular" formatted="false">%s %s %s findet statt.</string>
 
 	<string name="main_cab_title">Teile eine Stunde!</string>
 	<string name="failed">Da hat etwas nicht funktioniert!</string>
@@ -81,7 +83,8 @@
     <string name="special1">Gesahui</string>
 
     <string name="special2">Erwähnungen</string>
-    <string name="special2_description">Danke an Kenneth Wolfram für die Idee zu den Benachrichtigungen&lt;br>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>
+    <!-- <string name="special2_description">Danke an Kenneth Wolfram für die Idee zu den Benachrichtigungen&lt;br>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>-->
+    <string name="special2_description">Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>
 
     <string name="special3">Gönnen!</string>
     <string name="special3_tap">Du hast es dir %d Mal gegönnt.</string>

@@ -107,7 +107,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
         for (int i = 0; i < substitutes.size(); i++) {
             if (substitutes.get(i).getIsImportant() && (lesson == -1 || lesson == substitutes.get(i).getStartingLesson())) {
 
-                String notificationText = SubstituteShareHelper.makeNotificationText(context, substitutes.get(i));
+                String notificationText = SubstituteFormatter.makeNotificationText(context, substitutes.get(i));
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
@@ -117,25 +117,8 @@ public class NotificationChecker implements Callback<SubstitutesList> {
                 NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
                 bigTextStyle.bigText(notificationText);
 
-                String title = "";
+                String title = SubstituteFormatter.makeSubstituteKindText(context, substitutes.get(i).getKind());
 
-                switch(substitutes.get(i).getKind()) {
-                    case Substitute.KIND_SUBSTITUTE:
-                        title = context.getString(R.string.substitute);
-                        break;
-
-                    case Substitute.KIND_ROOM_CHANGE:
-                        title = context.getString(R.string.roomchange);
-                        break;
-
-                    case Substitute.KIND_DROPPED:
-                        title = context.getString(R.string.dropped);
-                        break;
-
-                    case Substitute.KIND_TEST:
-                        title = context.getString(R.string.test);
-                        break;
-                }
                 bigTextStyle.setBigContentTitle(title);
 
                 bigTextStyle.setSummaryText(String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLesson()));

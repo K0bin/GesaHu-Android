@@ -18,8 +18,9 @@ public class Substitute implements Comparable<Substitute> {
     public static final int KIND_DROPPED = 1;
     public static final int KIND_ROOM_CHANGE = 2;
     public static final int KIND_TEST = 3;
+    public static final int KIND_REGULAR = 4;
 
-    @IntDef({KIND_SUBSTITUTE, KIND_DROPPED, KIND_ROOM_CHANGE, KIND_TEST})
+    @IntDef({KIND_SUBSTITUTE, KIND_DROPPED, KIND_ROOM_CHANGE, KIND_TEST, KIND_REGULAR})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SubstituteKind {}
 
@@ -63,6 +64,8 @@ public class Substitute implements Comparable<Substitute> {
             kind = KIND_ROOM_CHANGE;
         else if(lowerHint.contains("klausur"))
             kind = KIND_TEST;
+        else if(lowerHint.contains("findet statt"))
+            kind = KIND_REGULAR;
         else
             kind = KIND_SUBSTITUTE;
     }
@@ -99,7 +102,7 @@ public class Substitute implements Comparable<Substitute> {
         return isImportant;
     }
 
-    public int getKind() {
+    public @SubstituteKind int getKind() {
         return kind;
     }
 

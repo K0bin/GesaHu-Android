@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
 
-import com.squareup.haha.perflib.StackTrace;
 import com.squareup.leakcanary.RefWatcher;
 
 import butterknife.BindView;
