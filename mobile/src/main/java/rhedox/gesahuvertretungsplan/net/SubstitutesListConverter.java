@@ -91,7 +91,6 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                     Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
                                     substitutes.add(substitute);
 
-                                    subject = "";
                                     teacher.delete(0, teacher.length());
                                     substituteTeacher.delete(0, substituteTeacher.length());
                                     room.delete(0, room.length());

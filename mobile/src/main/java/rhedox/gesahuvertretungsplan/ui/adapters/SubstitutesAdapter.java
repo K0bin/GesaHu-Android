@@ -1,16 +1,24 @@
 package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.support.annotation.ColorInt;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +45,14 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
     @Nullable private MainFragment.MaterialActivity activity;
 
+    private static final int ITEM_TYPE_NONE = -1;
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
+    private static final int ITEM_TYPE_CONTENT_AD = 1;
+    private static final int ITEM_TYPE_INSTALL_AD = 2;
+    private static final int ITEM_TYPE_EMPTY_VIEW = 3;
+    @IntDef({ITEM_TYPE_NONE, ITEM_TYPE_SUBSTITUTE, ITEM_TYPE_CONTENT_AD, ITEM_TYPE_INSTALL_AD, ITEM_TYPE_EMPTY_VIEW})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ItemType {}
 
     @SuppressWarnings("ResourceType")
     public SubstitutesAdapter(@NonNull Activity context) {
@@ -71,8 +86,14 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        FrameLayout view = (FrameLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_substitute, viewGroup, false);
-        return new SubstituteViewHolder(view, this, circleColor, circleColorImportant, textColor, highlightedTextColor, activatedBackgroundColor);
+        switch (viewType) {
+            case ITEM_TYPE_SUBSTITUTE: {
+                ViewGroup view = (ViewGroup) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_substitute, viewGroup, false);
+
+                return new SubstituteViewHolder(view, this, circleColor, circleColorImportant, textColor, highlightedTextColor, activatedBackgroundColor);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -81,9 +102,9 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public @ItemType int getItemViewType(int position) {
         if(list == null || list.size() <= position)
-            return -1;
+            return ITEM_TYPE_NONE;
 
         return ITEM_TYPE_SUBSTITUTE;
     }

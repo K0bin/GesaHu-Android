@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.frogermcs.androiddevmetrics'
 apply plugin: 'android-apt'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion 23
@@ -9,8 +10,8 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3305
-        versionName "3.3.2"
+        versionCode 3307
+        versionName "3.4"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
     }
