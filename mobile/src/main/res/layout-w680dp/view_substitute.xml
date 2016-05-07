@@ -10,6 +10,7 @@
 	<android.support.v7.widget.AppCompatTextView
 		android:layout_width="@dimen/tileAvatarSize"
 		android:layout_height="@dimen/tileAvatarSize"
+		android:layout_gravity="center_vertical"
 		android:id="@+id/lesson"
 		android:textColor="?android:attr/textColorPrimaryInverse"
 		android:text="2-10"

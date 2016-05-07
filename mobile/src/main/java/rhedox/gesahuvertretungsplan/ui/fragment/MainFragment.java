@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,8 +24,10 @@ import com.squareup.leakcanary.RefWatcher;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.util.Collections;
+import java.util.List;
+
 import butterknife.BindView;
-import butterknife.BindDrawable;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import okhttp3.OkHttpClient;
@@ -39,6 +39,7 @@ import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
+import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.net.GesahuiApi;
 import rhedox.gesahuvertretungsplan.net.NetworkChecker;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
@@ -68,12 +69,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private boolean isLoading = false;
     private GesahuiApi gesahui;
     private retrofit2.Call<SubstitutesList> call;
-
-    @BindView(R.id.error_view) ErrorView errorView;
-    @BindView(R.id.error_view_scroll) NestedScrollView errorViewScroll;
-    @BindView(R.id.error_view_swipe) SwipeRefreshLayoutFix errorViewRefresh;
-    @BindDrawable(R.drawable.error_view_cloud) Drawable errorImage;
-    @BindDrawable(R.drawable.no_substitutes) Drawable noneImage;
 
     private MaterialActivity activity;
 
@@ -143,14 +138,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
-        if(substitutesList != null) {
-            int count = 0;
-            if(substitutesList.hasSubstitutes())
-                count = adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
-            if(count <= 0)
-                showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
-        } else
+        if(substitutesList != null)
+            populateList();
+        else
             onRefresh();
+
         recyclerView.setAdapter(adapter);
 
         //RefreshLayout immediate refresh bug workaround
@@ -160,15 +152,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity());
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        errorView.setVisibility(View.GONE);
-        errorView.setOnRetryListener(this);
-
-        errorViewScroll.setVisibility(View.GONE);
-        errorViewRefresh.setOnRefreshListener(this);
-        errorViewRefresh.setVisibility(View.GONE);
-        errorViewRefresh.setColorSchemeColors(accentColor);
-        errorViewRefresh.setProgressBackgroundColorSchemeColor(cardColor);
 
         if(getActivity() instanceof MaterialActivity)
             activity = (MaterialActivity) getActivity();
@@ -180,7 +163,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onResume() {
         super.onResume();
 
-        if(isLoading && refreshLayout != null && refreshLayout.isEnabled() && refreshLayout.getVisibility() == View.VISIBLE)
+        if(isLoading && refreshLayout != null && refreshLayout.isEnabled())
             refreshLayout.setRefreshing(true);
         else if(substitutesList == null)
             onRefresh();
@@ -200,16 +183,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout = null;
         recyclerView = null;
         adapter = null;
-        errorView = null;
         activity = null;
-        errorImage = null;
-        noneImage = null;
-        errorViewScroll = null;
-        errorView = null;
-        errorViewRefresh = null;
-        errorImage = null;
-        noneImage = null;
-
         super.onDestroyView();
     }
 
@@ -265,29 +239,43 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             refreshLayout.setEnabled(isEnabled);
         }
     }
+
+    private void populateList() {
+        if (substitutesList != null && adapter != null) {
+
+            if(sortImportant && filterImportant)
+                Log.e("List","Can't both filter and sort at the same time.");
+
+            List<Substitute> substitutes;
+            if(sortImportant)
+                substitutes = Collections.unmodifiableList(SubstitutesList.sort(substitutesList.getSubstitutes()));
+            else if (filterImportant)
+                substitutes = Collections.unmodifiableList(SubstitutesList.filterImportant(substitutesList.getSubstitutes()));
+            else
+                substitutes = substitutesList.getSubstitutes();
+
+            adapter.showList(substitutes);
+            recyclerView.scrollToPosition(0);
+        }
+    }
+
+
     @Override
     public void onResponse(retrofit2.Call<SubstitutesList> call, Response<SubstitutesList> response) {
         isLoading = false;
+
+        clearRefreshViews();
 
         if(getActivity() == null)
             return;
 
         if(!response.isSuccessful()) {
-            onFailure(call, new NullPointerException());
+            onFailure(call, new Exception(response.errorBody().toString()));
             return;
         }
 
         substitutesList = response.body();
-
-        int count = 0;
-        if (substitutesList != null && adapter != null) {
-            count = adapter.setList(substitutesList.getSubstitutes(), filterImportant, sortImportant);
-        }
-
-        if(count > 0)
-            hideError();
-        else
-            showError(getString(R.string.no_substitutes_hint), getString(R.string.no_substitutes), noneImage);
+        populateList();
 
         //Update the floating action button
         if (activity != null && getUserVisibleHint())
@@ -300,11 +288,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         isLoading = false;
         Log.e("net-error", "Message: "+t.getMessage());
 
+        clearRefreshViews();
+        if(adapter != null)
+            adapter.showError();
+
         if(getActivity() == null)
             return;
 
         if(substitutesList == null) {
-            showError(getString(R.string.error), getString(R.string.oops), errorImage);
 
             if (activity != null) {
                 //Update the floating action button
@@ -314,67 +305,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     //Fragment is not empty, keep previous entries and show snackbar
                     Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
             }
-        }
-        else {
-            hideError();
-
+        } else {
             if(activity.getCoordinatorLayout() != null)
                 //Fragment is not empty, keep previous entries and show snackbar
                 Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
-        }
-    }
-
-    //Hide the error ui
-    private void hideError() {
-        clearRefreshViews();
-
-        if(errorViewScroll != null) {
-            errorViewScroll.setVisibility(View.GONE);
-            errorViewScroll.setEnabled(false);
-        }
-        if(errorViewRefresh != null) {
-            errorViewRefresh.setRefreshing(false);
-            errorViewRefresh.clearAnimation();
-            errorViewRefresh.setVisibility(View.GONE);
-            errorViewRefresh.setEnabled(false);
-        }
-        if(errorView != null) {
-            errorView.setVisibility(View.GONE);
-            errorView.setEnabled(false);
-        }
-        if(recyclerView != null) {
-            recyclerView.setEnabled(true);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
-    }
-    //Show the error ui
-    private void showError(String errorMessage, String title, Drawable image) {
-        clearRefreshViews();
-
-        if(recyclerView != null) {
-            recyclerView.setEnabled(false);
-            recyclerView.setVisibility(View.GONE);
-        }
-        if(activity != null)
-            activity.setAppBarExpanded(true);
-
-        if(errorViewScroll != null) {
-            errorViewScroll.setEnabled(true);
-            errorViewScroll.setVisibility(View.VISIBLE);
-        }
-        if(errorViewRefresh != null) {
-            errorViewRefresh.setRefreshing(false);
-            errorViewRefresh.clearAnimation();
-            errorViewRefresh.setEnabled(true);
-            errorViewRefresh.setVisibility(View.VISIBLE);
-        }
-
-        if(errorView != null) {
-            errorView.setEnabled(true);
-            errorView.setVisibility(View.VISIBLE);
-            errorView.setSubtitle(errorMessage);
-            errorView.setTitle(title);
-            errorView.setImage(image);
         }
     }
 
@@ -383,15 +317,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             refreshLayout.setRefreshing(false);
             refreshLayout.clearAnimation();
         }
-        if (errorViewRefresh != null) {
-            errorViewRefresh.setRefreshing(false);
-            errorViewRefresh.clearAnimation();
-        }
     }
 
     @Override
     public void onRetry() {
-        hideError();
         onRefresh();
     }
 

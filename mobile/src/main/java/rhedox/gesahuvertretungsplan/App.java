@@ -44,7 +44,7 @@ public class App extends Application {
                     .detectAll()
                     .penaltyLog()
                     .setClassInstanceLimit(MainActivity.class, 12)
-                    .penaltyDeath()
+                    .penaltyLog()
                     .build();
             StrictMode.setVmPolicy(policy);
 

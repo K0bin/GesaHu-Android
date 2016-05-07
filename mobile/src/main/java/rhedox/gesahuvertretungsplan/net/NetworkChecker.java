@@ -14,8 +14,9 @@ public class NetworkChecker {
     private NetworkChecker() {}
 
     // Check network connection
-    public static boolean isNetworkConnected(@NonNull Context context){
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
+    public static boolean isNetworkConnected(@NonNull Context context) {
+        //using an activity context results in a memory leak
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }

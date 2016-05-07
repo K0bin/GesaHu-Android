@@ -19,4 +19,6 @@
 	<dimen name="default_content_inset_small">16dp</dimen>
 
     <dimen name="list_fab_bottom">72dp</dimen>
+
+    <dimen name="errorView_margin_top">32dp</dimen>
 </resources>

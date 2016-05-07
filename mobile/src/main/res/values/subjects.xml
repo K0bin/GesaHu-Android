@@ -45,6 +45,7 @@
     <string name="subjects_d_lrs">Deutsch-LRS</string>
     <string name="subjects_ch_lk">Chemie LK</string>
     <string name="subjects_ku_lk">Kunst LK</string>
+    <string name="subjects_bio_lk1">Biologie LK</string>
     <string name="subjects_swi">Schwimmen</string>
     <string name="subjects_int">Integration</string>
     <string name="subjects_media">Mediathek</string>
