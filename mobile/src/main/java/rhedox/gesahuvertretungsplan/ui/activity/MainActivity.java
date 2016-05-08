@@ -300,12 +300,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        if (cab != null) {
-            // If the CAB isn't null, save it's state for restoration in onCreate()
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // If the CAB isn't null, save it's state for restoration in onCreate()
+        if (cab != null)
             cab.saveState(outState);
-        }
     }
 
     @Override
