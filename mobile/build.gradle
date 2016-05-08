@@ -10,7 +10,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3307
+        versionCode 3308
         versionName "3.4"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -56,8 +56,8 @@ dependencies {
     }
     compile 'com.github.xiprox.errorview:library:2.+'
     compile 'org.jsoup:jsoup:1.8.+'
-    compile 'com.jakewharton:butterknife:8.0.0'
-    apt 'com.jakewharton:butterknife-compiler:8.0.0'
+    compile 'com.jakewharton:butterknife:8.+'
+    apt 'com.jakewharton:butterknife-compiler:8.+'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     //compile 'com.google.android.gms:play-services-ads:8.+'

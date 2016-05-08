@@ -92,12 +92,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
         boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
-        Student student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
 
         TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
         int color = typedArray.getColor(0, 0xFFFFFFFF);
