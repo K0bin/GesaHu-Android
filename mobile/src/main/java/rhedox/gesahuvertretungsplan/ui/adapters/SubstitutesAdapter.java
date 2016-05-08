@@ -256,7 +256,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         selectedViewHolder = null;
 
         if(activity != null && !cabFinished)
-                activity.setCabVisibility(false);
+            activity.setCabVisibility(false);
     }
 
     @Override

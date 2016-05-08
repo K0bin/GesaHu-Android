@@ -117,6 +117,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     @SuppressWarnings("ResourceType")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        if(getActivity() instanceof MaterialActivity)
+            activity = (MaterialActivity) getActivity();
+
         //RefreshLayout color scheme
         TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});
         int accentColor = typedArray.getColor(0, 0xff000000);
@@ -138,9 +142,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
-        if(substitutesList != null)
+        if(substitutesList != null) {
+            if (activity != null && getUserVisibleHint())
+                activity.setFabVisibility(substitutesList != null && substitutesList.hasAnnouncement());
+
             populateList();
-        else
+        } else
             onRefresh();
 
         recyclerView.setAdapter(adapter);
@@ -152,9 +159,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity());
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        if(getActivity() instanceof MaterialActivity)
-            activity = (MaterialActivity) getActivity();
 
         return view;
     }

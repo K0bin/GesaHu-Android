@@ -9,6 +9,7 @@ import org.joda.time.LocalDate;
 
 import java.util.Locale;
 
+import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 
@@ -16,23 +17,14 @@ import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
  * Created by Robin on 29.08.2015.
  */
 public class PagerAdapter extends FragmentPagerAdapter {
-    private Student student;
     private LocalDate date;
 
-    private boolean filterImportant;
-    private boolean sortImportant;
-    private boolean specialMode;
+    private MainFragment[] fragments;
 
-    private Fragment[] fragments;
-
-    public PagerAdapter(FragmentManager manager, LocalDate date, Student information, boolean filterImportant, boolean sortImportant, boolean specialMode) {
+    public PagerAdapter(FragmentManager manager, LocalDate date) {
         super(manager);
 
         this.date = date;
-        this.student = information;
-        this.filterImportant = filterImportant;
-        this.sortImportant = sortImportant;
-        this.specialMode = specialMode;
 
         this.fragments = new MainFragment[getCount()];
     }
@@ -56,7 +48,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         return date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek()).toString("EEE dd.MM.yy", Locale.GERMANY);
     }
 
-    public String getFragmentTag(int viewPagerId, int fragmentPosition) {
+    public static String makeFragmentName(int viewPagerId, int fragmentPosition) {
         return "android:switcher:" + viewPagerId + ":" + fragmentPosition;
     }
 
@@ -67,13 +59,22 @@ public class PagerAdapter extends FragmentPagerAdapter {
         this.fragments = null;
     }
 
-    public MainFragment getFragment(int position) {
+    public MainFragment getFragment(FragmentManager manager, int position) {
         if(position < 0 || position >= fragments.length)
             throw new IllegalArgumentException("position");
 
-        if(fragments[position] instanceof MainFragment)
-            return (MainFragment)fragments[position];
-        else
-            return null;
+        MainFragment mainFragment = fragments[position];
+        if(mainFragment != null)
+            return mainFragment;
+        else {
+            Fragment fragment = manager.findFragmentByTag(makeFragmentName(R.id.viewPager, position));
+            if(fragment != null && fragment instanceof MainFragment) {
+                mainFragment = (MainFragment)fragment;
+                fragments[position] = mainFragment;
+                return  mainFragment;
+            }
+            else
+                return null;
+        }
     }
 }

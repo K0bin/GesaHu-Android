@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
+        //Use AppBarLayout with SwipeRefreshLayout
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         };
         appBarLayout.addOnOffsetChangedListener(appBarLayoutOffsetListener);
 
+        //Add back button and tab bar inset
         Bundle extras = getIntent().getExtras();
         if(extras != null && extras.containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
@@ -133,11 +135,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         else
             date = SchoolWeek.next();
 
-        setupViewPager(date, student, whiteIndicator ? 0xFFFFFFFF : color, filterImportant);
+        setupViewPager(date, whiteIndicator ? 0xFFFFFFFF : color, savedInstanceState != null);
 
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription();
-
 
         if (savedInstanceState != null) {
             // Restore the CAB state, save a reference to cab.
@@ -149,11 +150,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
-    private void setupViewPager(LocalDate date, Student student, @ColorInt int indicatorColor, boolean filterImportant)
+    private void setupViewPager(LocalDate date, @ColorInt int indicatorColor, boolean isRestored)
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first, student, filterImportant, sortImportant, specialMode);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first);
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
@@ -164,10 +165,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             TabLayoutHelper.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
 
         viewPager.setCurrentItem(pair.second);
+
+        //shitty workaround for calling onPageSelected on first page
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                onPageSelected(pair.second);
+                if(viewPager.getCurrentItem() == 0)
+                    onPageSelected(pair.second);
             }
         });
     }
@@ -272,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             case android.R.id.home:
                 if(canGoBack)
                     this.onBackPressed();
-                    return true;
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -309,9 +313,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(pagerAdapter == null || floatingActionButton == null)
             return;
 
-        currentFragment = pagerAdapter.getFragment(position);
+        setCabVisibility(false);
+        currentFragment = pagerAdapter.getFragment(getSupportFragmentManager(), position);
         if(currentFragment != null && currentFragment.getSubstitutesList() != null) {
-            setCabVisibility(false);
             setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
             currentFragment.setSwipeToRefreshEnabled(appBarLayoutOffset == 0);
 
@@ -323,7 +327,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
         else
             setFabVisibility(false);
-
     }
 
     public void setTabInset(boolean wide) {
