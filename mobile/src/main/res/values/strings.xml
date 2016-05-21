@@ -68,7 +68,7 @@
 
 	<string name="hello_world">Hello world!</string>
 
-	<string name="feature_design">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys angepasstem Design an.</string>
+	<string name="feature_design">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys oder Tablets angepasstem Design an.</string>
 	<string name="feature_highlight">Die App kann außerdem für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
 	<string name="feature_notify">GesaHu VP für Android kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast.</string>
     <string name="feature_notify2">Dadurch bist du bei Freistunden immer informiert!</string>

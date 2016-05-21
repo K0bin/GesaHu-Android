@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan;
+package rhedox.gesahuvertretungsplan.test.applicationTests;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

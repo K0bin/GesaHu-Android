@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
-    private void setupViewPager(LocalDate date, @ColorInt int indicatorColor, boolean isRestored)
+    private void setupViewPager(LocalDate date, @ColorInt int indicatorColor, final boolean isRestored)
     {
         final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
 
@@ -162,14 +162,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(canGoBack)
             TabLayoutHelper.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
 
-        viewPager.setCurrentItem(pair.second);
+        if(!isRestored)
+            viewPager.setCurrentItem(pair.second);
 
         //shitty workaround for calling onPageSelected on first page
+        //WHY DO YOU DO THIS ANDROID? WHY?!
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                if(viewPager.getCurrentItem() == 0)
-                    onPageSelected(pair.second);
+                if (viewPager.getCurrentItem() == 0)
+                    onPageSelected(viewPager.getCurrentItem());
             }
         });
     }

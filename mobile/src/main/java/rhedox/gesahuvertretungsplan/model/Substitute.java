@@ -48,7 +48,7 @@ public class Substitute implements Comparable<Substitute> {
             String[] lessonParts = lesson.split("-");
             if(lessonParts.length > 0) {
                 try {
-                    startingLesson = Integer.parseInt(lessonParts[0], 10);
+                    startingLesson = Integer.parseInt(lessonParts[0].trim(), 10);
                 }
                 catch(NumberFormatException e) {
                     startingLesson = -1;
