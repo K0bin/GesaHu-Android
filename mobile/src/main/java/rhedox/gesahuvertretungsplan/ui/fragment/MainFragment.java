@@ -56,6 +56,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private SubstitutesAdapter adapter;
     @BindView(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
     @BindView(R.id.recycler) RecyclerView recyclerView;
+    private Snackbar snackbar;
     private Unbinder unbinder;
 
     private boolean filterImportant = false;
@@ -160,6 +161,13 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        snackbar = Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG).setAction(R.string.retry, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
+            }
+        });
+
         return view;
     }
 
@@ -175,6 +183,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onPause() {
+
+        clearRefreshViews();
+
         super.onPause();
     }
 
@@ -183,7 +194,13 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         unbinder.unbind();
 
+        clearRefreshViews();
+
         //Remove all view references to prevent leaking
+        if (snackbar != null && snackbar.isShown())
+            snackbar.dismiss();
+        snackbar = null;
+
         refreshLayout = null;
         recyclerView = null;
         adapter = null;
@@ -237,10 +254,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
         if(refreshLayout != null) {
-            if(!isEnabled)
-                refreshLayout.setRefreshing(false);
+            /*if(!isEnabled)
+                refreshLayout.setRefreshing(false);*/
 
-            refreshLayout.setEnabled(isEnabled);
+            refreshLayout.setEnabled(isEnabled || refreshLayout.isRefreshing());
         }
     }
 
@@ -290,29 +307,20 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onFailure(retrofit2.Call<SubstitutesList> call, Throwable t) {
 
         isLoading = false;
-        Log.e("net-error", "Message: "+t.getMessage());
+        Log.e("net-error", "Message: " + t.getMessage());
 
         clearRefreshViews();
-        if(adapter != null)
-            adapter.showError();
 
-        if(getActivity() == null)
-            return;
+        if (activity != null && getUserVisibleHint())
+            activity.setFabVisibility(false);
 
-        if(substitutesList == null) {
-
-            if (activity != null) {
-                //Update the floating action button
-                if (getUserVisibleHint())
-                    activity.setFabVisibility(false);
-                 else if (activity.getCoordinatorLayout() != null)
-                    //Fragment is not empty, keep previous entries and show snackbar
-                    Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
-            }
+        if (substitutesList == null) {
+            if (adapter != null)
+                adapter.showError();
         } else {
-            if(activity.getCoordinatorLayout() != null)
+            if (getUserVisibleHint())
                 //Fragment is not empty, keep previous entries and show snackbar
-                Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG);
+                snackbar.show();
         }
     }
 

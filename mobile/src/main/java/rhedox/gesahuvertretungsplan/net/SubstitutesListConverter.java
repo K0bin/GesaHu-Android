@@ -162,9 +162,6 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
             substitutes.add(substitute);
         }
 
-        if (substitutes.isEmpty() && TextUtils.isEmpty(announcement) && (date == null || date.equals(new LocalDate())))
-            return null;
-
         return new SubstitutesList(substitutes, announcement, date);
     }
 

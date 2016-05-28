@@ -219,6 +219,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
             int count = getItemCount();
             notifyItemRangeRemoved(0, count);
         }
+        notifyItemInserted(0);
 
         //Set error
         error = ERROR_EMPTY;
@@ -227,6 +228,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     public void showError() {
         this.clear();
         this.error = ERROR_CONNECTION;
+        notifyItemChanged(0);
     }
 
 
