@@ -34,6 +34,10 @@ import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 import tr.xip.errorview.ErrorView;
 
 /**
+ * SubstitutesAdapter
+ * Manages the views that are expected to be displayed by the RecyclerView
+ * Also handles the selection of list entries
+ *
  * Created by Robin on 28.10.2014.
  */
 public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> {
@@ -49,6 +53,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
     @Nullable private MainFragment.MaterialActivity activity;
 
+	//#enumsmatter
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
     private static final int ITEM_TYPE_CONTENT_AD = 1;
     private static final int ITEM_TYPE_INSTALL_AD = 2;
@@ -57,6 +62,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     @Retention(RetentionPolicy.SOURCE)
     public @interface ItemType {}
 
+	//#enumsmatter
     private static final int ERROR_NONE = 0;
     private static final int ERROR_EMPTY = 1;
     private static final int ERROR_CONNECTION = 2;
@@ -147,6 +153,8 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
             case ITEM_TYPE_EMPTY_VIEW:
                 ErrorView view = new ErrorView(viewGroup.getContext());
+	            if(activity != null && activity.getVisibleFragment() != null)
+                    view.setOnRetryListener(activity.getVisibleFragment());
 
                 //Set width & margin
                 RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -178,7 +186,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     }
 
     /*
-    * @param list The
+    * @param list The list of substitutes to display. If it's null, the RecyclerView will be cleared
      */
     public void showList(@Nullable List<Substitute> list) {
         if(list == null || list.size() == 0) {
@@ -201,7 +209,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
             //Update the selection
             if(selected >= this.list.size())
-                clearSelection(false);
+                clearSelection();
 
             //Show or hide error view
             if(this.list.size() > 0)
@@ -211,7 +219,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         }
     }
     public void clear() {
-        clearSelection(false);
+        clearSelection();
         list = Collections.emptyList();
 
         //Notify recyclerview about changes
@@ -246,19 +254,22 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         selectedViewHolder.setSelected(true);
 
         if(activity != null)
-            activity.setCabVisibility(true);
+            activity.updateUI();
     }
 
     @Override
-    public void clearSelection(boolean cabFinished) {
+    public void clearSelection() {
+        if(selected == -1 && selectedViewHolder == null)
+            return;
+
         if(selectedViewHolder != null)
             selectedViewHolder.setSelected(false);
 
         selected = -1;
         selectedViewHolder = null;
 
-        if(activity != null && !cabFinished)
-            activity.setCabVisibility(false);
+        if(activity != null)
+            activity.updateUI();
     }
 
     @Override

@@ -107,7 +107,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     public void Click(View view) {
         if(adapter != null && adapter.get() != null) {
             if (adapter.get().getSelectedIndex() == getAdapterPosition()) {
-                adapter.get().clearSelection(false);
+                adapter.get().clearSelection();
             } else {
                 adapter.get().setSelected(this);
             }

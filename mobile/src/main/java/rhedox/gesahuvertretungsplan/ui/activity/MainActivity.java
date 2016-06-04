@@ -2,14 +2,12 @@ package rhedox.gesahuvertretungsplan.ui.activity;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
-import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DimenRes;
@@ -18,7 +16,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
-import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -27,8 +24,6 @@ import android.support.v7.widget.Toolbar;
 import android.content.Intent;
 import android.view.View;
 //import android.widget.DatePicker;
-import android.view.ViewConfiguration;
-import android.widget.DatePicker;
 
 import com.afollestad.materialcab.MaterialCab;
 
@@ -42,7 +37,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter;
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
@@ -72,14 +66,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @BindView(R.id.toolbar) Toolbar toolbar;
     private Unbinder unbinder;
 
-    private int appBarLayoutOffset = 0;
-
     public static final String EXTRA_DATE ="date";
     public static final String EXTRA_WIDGET ="widget";
 
     //Store Date of Monday of current week
     private LocalDate date;
-    private boolean pickerTriggered = false;
 
     private MainFragment currentFragment;
 
@@ -111,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                MainActivity.this.appBarLayoutOffset = verticalOffset;
                 if(currentFragment != null)
                     currentFragment.setSwipeToRefreshEnabled(verticalOffset == 0);
             }
@@ -170,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                if (viewPager.getCurrentItem() == 0)
+                if (viewPager.getCurrentItem() == 0 || currentFragment == null)
                     onPageSelected(viewPager.getCurrentItem());
             }
         });
@@ -237,36 +227,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 break;
 
             case R.id.action_load:
-                LocalDate date;
-                if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().getDate() != null)
-                    date = currentFragment.getSubstitutesList().getDate();
+                LocalDate pickerDate;
+                if(currentFragment != null && currentFragment.getDate() != null)
+                    pickerDate = currentFragment.getDate();
+                else if(this.date != null)
+                    pickerDate = this.date;
                 else
-                    date = LocalDate.now();
+                    pickerDate = LocalDate.now();
 
-                pickerTriggered = false;
-                DatePickerFragment.newInstance(date, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                        if(!pickerTriggered) {
-                            LocalDate date = SchoolWeek.nextDate(new LocalDate(year, monthOfYear + 1, dayOfMonth));
-
-                            if(date.getWeekOfWeekyear() != MainActivity.this.date.getWeekOfWeekyear()) {
-                                //Launch a new activity with that week
-                                Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
-                                intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            } else {
-                                //Same week => just switch to day-tab
-                                int index = date.getDayOfWeek() - DateTimeConstants.MONDAY;
-                                int dayIndex = Math.max(0, Math.min(index, 5));
-                                viewPager.setCurrentItem(dayIndex);
-                            }
-
-                            pickerTriggered = true;
-                        }
-                    }
-                }).show(getSupportFragmentManager(), DatePickerFragment.TAG);
+                DatePickerFragment.newInstance(pickerDate).show(getSupportFragmentManager(), DatePickerFragment.TAG);
                 break;
 
             case R.id.action_about:
@@ -313,35 +282,58 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(pagerAdapter == null || floatingActionButton == null)
             return;
 
-        setCabVisibility(false);
         currentFragment = pagerAdapter.getFragment(getSupportFragmentManager(), position);
-        if(currentFragment != null && currentFragment.getSubstitutesList() != null) {
-            setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
-            currentFragment.setSwipeToRefreshEnabled(appBarLayoutOffset == 0);
 
-            if(!currentFragment.getSubstitutesList().hasSubstitutes())
-                setAppBarExpanded(true);
+        if(currentFragment != null)
+            currentFragment.onDisplay();
 
-            if(currentFragment.getAdapter() != null)
-                currentFragment.getAdapter().clearSelection(true);
+        updateUI();
+    }
+
+
+    //Called when the displayed substitutes of the visible fragment change or a substitute gets selected
+    public void updateUI() {
+        updateFabVisibility();
+        updateCabVisibility();
+        updateTabInset();
+
+        //Expand app bar when there are no substitutes
+        if(currentFragment != null && (currentFragment.getSubstitutesList() == null || !currentFragment.getSubstitutesList().hasSubstitutes()))
+            expandAppBar();
+    }
+
+    //Shows a specific date
+    public void showDate(LocalDate date) {
+        if(date.getWeekOfWeekyear() != this.date.getWeekOfWeekyear()) {
+            //Launch a new activity with that week
+            Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            //Same week => just switch to day-tab
+            int index = date.getDayOfWeek() - DateTimeConstants.MONDAY;
+            int dayIndex = Math.max(0, Math.min(index, 5));
+            if(viewPager != null)
+                viewPager.setCurrentItem(dayIndex);
         }
-        else
-            setFabVisibility(false);
     }
 
-    public void setTabInset(boolean wide) {
-        @DimenRes int res = (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_DATE)) || wide ? R.dimen.default_content_inset : R.dimen.default_content_inset_small;
-        TabLayoutHelper.setContentInsetStart(tabLayout, (int) getResources().getDimension(res));
-    }
 
     @Override
-    public FloatingActionButton getFloatingActionButton() {
-        return floatingActionButton;
+    public CoordinatorLayout getCoordinatorLayout() {
+        return coordinatorLayout;
     }
 
-    @Override
-    public void setFabVisibility(boolean isVisible) {
+
+    private void updateFabVisibility() {
         if(floatingActionButton != null) {
+            boolean isVisible = false;
+
+            //Show fab only if there is an announcement and no substitute is selected
+            if(currentFragment != null)
+                isVisible = currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement() && (currentFragment.getAdapter() == null || currentFragment.getAdapter().getSelectedIndex() == -1);
+
             if(isVisible) {
                 floatingActionButton.setEnabled(true);
                 floatingActionButton.show();
@@ -350,40 +342,36 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 floatingActionButton.setEnabled(false);
             }
         }
-
     }
-
-    @Override
-    public AppBarLayout getAppBarLayout() {
-        return appBarLayout;
-    }
-
-    @Override
-    public CoordinatorLayout getCoordinatorLayout() {
-        return coordinatorLayout;
-    }
-
-    @Override
-    public void setAppBarExpanded(boolean isExpanded) {
-        if(appBarLayout != null)
-            appBarLayout.setExpanded(isExpanded);
-    }
-
-    @Override
-    public void setCabVisibility(boolean isVisible) {
+    private void updateCabVisibility() {
         if(cab != null) {
-            if (isVisible) {
-                setAppBarExpanded(true);
-                cab.start(this);
-                setTabInset(true);
-                setFabVisibility(false);
+
+            //Show cab if a substitute is selected and it's not visible yet (pls no stackoverflow)
+            if(currentFragment != null && currentFragment.getAdapter() != null && currentFragment.getAdapter().getSelectedIndex() != -1) {
+                if(!cab.isActive()) {
+                    cab.start(this);
+                    expandAppBar();
+                }
+
             } else {
-                cab.finish();
-                setTabInset(false);
-                if(currentFragment != null && currentFragment.getSubstitutesList() != null)
-                    setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
+                if(cab.isActive())
+                    cab.finish();
             }
         }
+    }
+    private void updateTabInset() {
+        //Inset the tabs if we can go back or a substitute is selected (back button is visible)
+        @DimenRes int res = cab != null && cab.isActive() || canGoBack ? R.dimen.default_content_inset : R.dimen.default_content_inset_small;
+        TabLayoutHelper.setContentInsetStart(tabLayout, (int) getResources().getDimension(res));
+
+    }
+    private void expandAppBar() {
+        if(appBarLayout != null)
+            appBarLayout.setExpanded(true, true);
+    }
+
+    public MainFragment getVisibleFragment() {
+        return currentFragment;
     }
 
     @Override
@@ -413,12 +401,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     public boolean onCabFinished(MaterialCab cab) {
-        if(currentFragment != null && currentFragment.getAdapter() != null) {
-            currentFragment.getAdapter().clearSelection(true);
-            setTabInset(false);
-            if(currentFragment != null && currentFragment.getSubstitutesList() != null)
-                setFabVisibility(currentFragment.getSubstitutesList().hasAnnouncement());
-        }
+        if(currentFragment != null && currentFragment.getAdapter() != null)
+            currentFragment.getAdapter().clearSelection();
 
         return true;
     }

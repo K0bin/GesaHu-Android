@@ -1,7 +1,9 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -10,6 +12,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -105,13 +108,23 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity(), specialMode), student))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity().getApplicationContext(), specialMode), student))
                 .client(client)
                 .build();
 
         gesahui = retrofit.create(GesahuiApi.class);
 
-        load(date);
+        ConnectivityManager connMgr;
+        if(getActivity() != null) {
+            connMgr = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            if(!ConnectivityManagerCompat.isActiveNetworkMetered(connMgr))
+                load(date);
+            else {
+                //CHECK DATA SAVER
+                //Requires N API
+            }
+        }
     }
 
     @Nullable
@@ -144,12 +157,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //RecyclerView Adapter
         adapter = new SubstitutesAdapter(this.getActivity());
         if(substitutesList != null) {
-            if (activity != null && getUserVisibleHint())
-                activity.setFabVisibility(substitutesList != null && substitutesList.hasAnnouncement());
+
+            if(activity != null)
+                activity.updateUI();
 
             populateList();
-        } else
-            onRefresh();
+        }
 
         recyclerView.setAdapter(adapter);
 
@@ -177,7 +190,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if(isLoading && refreshLayout != null && refreshLayout.isEnabled())
             refreshLayout.setRefreshing(true);
-        else if(substitutesList == null)
+        else if(substitutesList == null && getUserVisibleHint())
             onRefresh();
     }
 
@@ -204,7 +217,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout = null;
         recyclerView = null;
         adapter = null;
-        activity = null;
+        //activity = null;
         super.onDestroyView();
     }
 
@@ -231,7 +244,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void load(LocalDate date) {
         if(date != null && !isLoading) {
 
-            if(NetworkChecker.isNetworkConnected(getActivity())) {
+            if(NetworkChecker.isNetworkConnected(getActivity().getApplicationContext())) {
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
 
@@ -254,8 +267,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
         if(refreshLayout != null) {
-            /*if(!isEnabled)
-                refreshLayout.setRefreshing(false);*/
 
             refreshLayout.setEnabled(isEnabled || refreshLayout.isRefreshing());
         }
@@ -287,9 +298,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         clearRefreshViews();
 
-        if(getActivity() == null)
-            return;
-
         if(!response.isSuccessful()) {
             onFailure(call, new Exception(response.errorBody().toString()));
             return;
@@ -299,8 +307,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         populateList();
 
         //Update the floating action button
-        if (activity != null && getUserVisibleHint())
-            activity.setFabVisibility(substitutesList != null && substitutesList.hasAnnouncement());
+        if(activity != null)
+            activity.updateUI();
     }
 
     @Override
@@ -311,8 +319,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         clearRefreshViews();
 
-        if (activity != null && getUserVisibleHint())
-            activity.setFabVisibility(false);
+
+        if(activity != null)
+            activity.updateUI();
 
         if (substitutesList == null) {
             if (adapter != null)
@@ -322,6 +331,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 //Fragment is not empty, keep previous entries and show snackbar
                 snackbar.show();
         }
+    }
+
+    public void onDisplay() {
+        if(substitutesList == null)
+            onRefresh();
     }
 
     private void clearRefreshViews() {
@@ -340,6 +354,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return adapter;
     }
 
+    public LocalDate getDate() { return date; }
+
     public static MainFragment newInstance(LocalDate date) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
@@ -350,11 +366,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public interface MaterialActivity {
-        FloatingActionButton getFloatingActionButton();
-        void setFabVisibility(boolean isVisible);
-        AppBarLayout getAppBarLayout();
+        void updateUI();
+
         CoordinatorLayout getCoordinatorLayout();
-        void setAppBarExpanded(boolean isExpanded);
-        void setCabVisibility(boolean isVisible);
+        MainFragment getVisibleFragment();
+
     }
 }

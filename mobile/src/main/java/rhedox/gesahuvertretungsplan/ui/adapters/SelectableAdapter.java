@@ -10,7 +10,7 @@ import rhedox.gesahuvertretungsplan.model.Substitute;
 public abstract class SelectableAdapter<T,VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     public abstract void setSelected(RecyclerView.ViewHolder viewHolder);
-    public abstract void clearSelection(boolean cabFinished);
+    public abstract void clearSelection();
     public abstract int getSelectedIndex();
     public abstract T getSelected();
 }
