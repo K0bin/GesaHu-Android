@@ -222,15 +222,15 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         clearSelection();
         list = Collections.emptyList();
 
+        //Set error
+        error = ERROR_EMPTY;
+
         //Notify recyclerview about changes
         if(getItemCount() > 1) {
             int count = getItemCount();
             notifyItemRangeRemoved(0, count);
         }
         notifyItemInserted(0);
-
-        //Set error
-        error = ERROR_EMPTY;
     }
 
     public void showError() {
