@@ -53,7 +53,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     }
 
     public void destroy() {
-        for(int i = 0; i<this.fragments.length;i++)
+        for(int i = 0; i<this.fragments.length; i++)
             this.fragments[i] = null;
 
         this.fragments = null;

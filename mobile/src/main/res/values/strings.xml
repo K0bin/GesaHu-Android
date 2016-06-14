@@ -22,6 +22,11 @@
 	<string name="regular">Regulärer Unterricht</string>
 
     <string name="notification_summary" formatted="false">%s in der %s. Stunde</string>
+    <string name="notification_summary_day_hint">Vertretungsstunden für den ganzen Tag</string>
+    <string name="notification_summary_day">Tagesübersicht</string>
+    <string name="notification_summary_lesson">Stundenübersicht</string>
+    <string name="notification_summary_lesson_hint">Vertretungsstunden für die nächste Stunde</string>
+    <string name="inbox_style">+%s weitere</string>
 
     <string name="share">Teilen</string>
 	<string name="share_dropped" formatted="false">Wir haben %s %s. %s frei!</string>

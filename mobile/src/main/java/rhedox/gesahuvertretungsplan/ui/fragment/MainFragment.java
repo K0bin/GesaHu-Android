@@ -99,6 +99,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         else
             date = SchoolWeek.next();
 
+	    //Init Retrofit
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         if(BuildConfig.DEBUG)
@@ -114,6 +115,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         gesahui = retrofit.create(GesahuiApi.class);
 
+	    //Load data if user is on WIFI
         ConnectivityManager connMgr;
         if(getActivity() != null) {
             connMgr = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -132,56 +134,57 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @SuppressWarnings("ResourceType")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if(getActivity() instanceof MaterialActivity)
-            activity = (MaterialActivity) getActivity();
+	    if(getActivity() instanceof MaterialActivity)
+		    activity = (MaterialActivity) getActivity();
 
-        //RefreshLayout color scheme
-        TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});
-        int accentColor = typedArray.getColor(0, 0xff000000);
-        int cardColor = typedArray.getColor(1, 0xff000000);
-        typedArray.recycle();
+	    //RefreshLayout color scheme
+	    TypedArray typedArray = getActivity().getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent, R.attr.about_libraries_card});
+	    int accentColor = typedArray.getColor(0, 0xff000000);
+	    int cardColor = typedArray.getColor(1, 0xff000000);
+	    typedArray.recycle();
 
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-        unbinder = ButterKnife.bind(this, view);
+	    View view = inflater.inflate(R.layout.fragment_main, container, false);
+	    unbinder = ButterKnife.bind(this, view);
 
-        //RefreshLayout
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setColorSchemeColors(accentColor);
-        refreshLayout.setProgressBackgroundColorSchemeColor(cardColor);
+	    //RefreshLayout
+	    refreshLayout.setOnRefreshListener(this);
+	    refreshLayout.setColorSchemeColors(accentColor);
+	    refreshLayout.setProgressBackgroundColorSchemeColor(cardColor);
 
-        //RecyclerView
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
-        recyclerView.setLayoutManager(manager);
+	    //RecyclerView
+	    recyclerView.setHasFixedSize(true);
+	    RecyclerView.LayoutManager manager = new LinearLayoutManager(this.getActivity());
+	    recyclerView.setLayoutManager(manager);
+	    RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity());
+	    recyclerView.addItemDecoration(itemDecoration);
+	    recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //RecyclerView Adapter
-        adapter = new SubstitutesAdapter(this.getActivity());
-        if(substitutesList != null) {
+	    //RecyclerView Adapter
+	    //Try to display retained data on newly created view
+	    adapter = new SubstitutesAdapter(this.getActivity());
+	    if(substitutesList != null) {
 
-            if(activity != null)
-                activity.updateUI();
+		    if(activity != null)
+			    activity.updateUI();
 
-            populateList();
-        }
+		    populateList();
+	    }
 
-        recyclerView.setAdapter(adapter);
+	    recyclerView.setAdapter(adapter);
 
-        //RefreshLayout immediate refresh bug workaround
-        if(isLoading)
-            refreshLayout.setRefreshing(true);
+	    //Show the refresh indicator if the view got recreated while it's still loading
+	    if(isLoading)
+		    refreshLayout.setRefreshing(true);
 
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this.getActivity());
-        recyclerView.addItemDecoration(itemDecoration);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+	    //Create the snackbar that's used to display errors when there's still items on screen
+	    snackbar = Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG).setAction(R.string.retry, new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    onRefresh();
+		    }
+	    });
 
-        snackbar = Snackbar.make(activity.getCoordinatorLayout(), getString(R.string.oops), Snackbar.LENGTH_LONG).setAction(R.string.retry, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onRefresh();
-            }
-        });
-
-        return view;
+	    return view;
     }
 
     @Override
@@ -261,10 +264,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+	@Nullable
     public SubstitutesList getSubstitutesList() {
         return substitutesList;
     }
 
+	//Activity will call this depending on the AppBars state to prevent them from blocking each other
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
         if(refreshLayout != null) {
 
@@ -272,6 +277,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+	//Display the loaded list
     private void populateList() {
         if (substitutesList != null && adapter != null) {
 
@@ -333,11 +339,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+	//The fragment just got scrolled to
     public void onDisplay() {
         if(substitutesList == null)
             onRefresh();
     }
 
+	//Prevent the SwipeRefreshLayout from keeping this fragments views on screen even if they should be destroyed.
+	//shitty Android bugs
     private void clearRefreshViews() {
         if (refreshLayout != null) {
             refreshLayout.setRefreshing(false);

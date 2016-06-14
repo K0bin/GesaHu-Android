@@ -105,7 +105,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
             publishUpdate(new ExtensionData()
                     .visible(true)
                     .icon(R.drawable.ic_notification)
-                    .status(count + " " + getString(R.string.lessons))
+                    .status(Integer.toString(count))
                     .expandedTitle(getString(R.string.app_name))
                     .expandedBody(body)
                     .clickIntent(new Intent(this, MainActivity.class)));
