@@ -4,13 +4,13 @@ apply plugin: 'android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 24
+    buildToolsVersion '24.0.0'
     defaultConfig {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 3314
+        targetSdkVersion 24
+        versionCode 3315
         versionName "3.5"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -44,12 +44,12 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:preference-v7:23.4.0'
-    compile 'com.android.support:preference-v14:23.4.0'
+    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:preference-v7:24.0.0'
+    compile 'com.android.support:preference-v14:24.0.0'
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
     compile 'net.danlew:android.joda:2.9.3'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
@@ -72,7 +72,7 @@ dependencies {
 
 
 
-    androidTestCompile 'com.android.support:support-annotations:23.4.0'
+    androidTestCompile 'com.android.support:support-annotations:24.0.0'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'

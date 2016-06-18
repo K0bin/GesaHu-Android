@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -122,10 +123,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
             if(!ConnectivityManagerCompat.isActiveNetworkMetered(connMgr))
                 load(date);
-            else {
-                //CHECK DATA SAVER
-                //Requires N API
-            }
         }
     }
 
