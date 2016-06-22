@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -49,6 +51,7 @@ import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
     private boolean sortImportant;
     private boolean specialMode;
+	private boolean isAmoledBlackEnabled;
 
     private boolean canGoBack = false;
 
@@ -86,7 +89,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
         specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
-        boolean whiteIndicator = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
+        boolean isWhiteIndicatorEnabled = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
+        isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
 
         TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
         int color = typedArray.getColor(0, 0xFFFFFFFF);
@@ -97,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
+        if(isAmoledBlackEnabled)
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 
         //Use AppBarLayout with SwipeRefreshLayout
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
@@ -123,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         else
             date = SchoolWeek.next();
 
-        setupViewPager(date, whiteIndicator ? 0xFFFFFFFF : color, savedInstanceState != null);
+        setupViewPager(date, isWhiteIndicatorEnabled ? 0xFFFFFFFF : color, savedInstanceState != null);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription();
@@ -239,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 break;
 
             case R.id.action_about:
-                AboutLibs.start(this);
+                AboutLibs.start(this, isAmoledBlackEnabled);
                 break;
 
             case android.R.id.home:

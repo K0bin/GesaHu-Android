@@ -39,6 +39,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_NOTIFICATION_MODE = "pref_notification_mode";
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
     public static final String PREF_SPECIAL_MODE = "pref_special_mode";
+    public static final String PREF_AMOLED = "pref_amoled";
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {

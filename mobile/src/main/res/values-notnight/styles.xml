@@ -17,4 +17,8 @@
 		<item name="textSecondary">#ff757575</item>
 		<item name="ad_background">#FFF5F5F5</item>
 	</style>
+
+
+	<style name="GesahuThemeAmoled" parent="GesahuTheme">
+	</style>
 </resources>

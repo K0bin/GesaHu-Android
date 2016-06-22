@@ -62,6 +62,12 @@
             android:defaultValue="default" />
 
         <android.support.v7.preference.CheckBoxPreference
+            android:key="pref_amoled"
+            android:title="AMOLED Schwarz"
+            android:summary="Schwarz statt grau verwenden, um Energie zu sparen"
+            android:defaultValue="false" />
+
+        <android.support.v7.preference.CheckBoxPreference
             android:key="pref_widget_dark"
             android:title="Widget Dark Theme"
             android:summary="Dunkle Farben in den Widgets verwenden"

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,9 +29,17 @@ public class PreferenceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
+
         //Theming
-        this.setTheme(R.style.GesahuTheme);
+	    if(isAmoledBlackEnabled)
+		    this.setTheme(R.style.GesahuThemeAmoled);
+	    else
+            this.setTheme(R.style.GesahuTheme);
+
         setContentView(R.layout.activity_settings);
+
 
         unbinder = ButterKnife.bind(this);
 
