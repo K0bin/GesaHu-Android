@@ -226,6 +226,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         error = ERROR_EMPTY;
 
         //Notify recyclerview about changes
+        if(getItemCount() > 0) {
             int count = getItemCount();
             notifyItemRangeRemoved(0, count);
         }
