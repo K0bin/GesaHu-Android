@@ -97,7 +97,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         typedArray.recycle();
 
         //Initialize UI
-        setTheme(R.style.GesahuTheme);
+        if(isAmoledBlackEnabled)
+            this.setTheme(R.style.GesahuThemeAmoled);
+        else
+            this.setTheme(R.style.GesahuTheme);
+
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
