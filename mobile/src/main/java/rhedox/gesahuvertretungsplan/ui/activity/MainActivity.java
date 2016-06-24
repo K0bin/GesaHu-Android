@@ -102,9 +102,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        if(isAmoledBlackEnabled)
-            getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-
         //Use AppBarLayout with SwipeRefreshLayout
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
             @Override
