@@ -42,11 +42,18 @@
             android:entryValues="@array/notification_types_values"
             android:defaultValue="daily" />
 
+        <android.support.v7.preference.CheckBoxPreference
+            android:key="pref_notification_summary"
+            android:title="Tägliche Benachrichtigungen zusammenfassen"
+            android:summary="Nutzt für die tägliche Übersicht nur eine einzige Benachrichtigung"
+            android:defaultValue="true" />
+
         <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
             android:key="pref_notification_time_new"
             android:title="Benachrichtigungszeit"
             android:summary="Zeit der Benachrichtigung"
             android:defaultValue="0" />
+
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory

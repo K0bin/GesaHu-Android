@@ -10,7 +10,6 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 3317
         versionName "3.5"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -21,8 +20,13 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+        }
+        debug {
+            shrinkResources false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
         }
     }
@@ -58,7 +62,7 @@ dependencies {
     compile('com.afollestad:material-cab:+@aar') {
         transitive = true
     }
-    compile('com.mikepenz:aboutlibraries:5.+@aar') {
+    compile('com.mikepenz:aboutlibraries:5.6.8@aar') {
         transitive = true
     }
     compile 'com.github.xiprox.errorview:library:2.+'
@@ -83,5 +87,9 @@ dependencies {
     testCompile 'com.google.guava:guava:19.0'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     testCompile 'org.mockito:mockito-core:2.+'
+    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
+    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.5'
+    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.5'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
 
 }

@@ -44,7 +44,7 @@
         <item>Keine</item>
         <item>Täglich</item>
         <item>Für jede Stunde</item>
-        <item>Für jede Stunde mit täglicher Zusammenfassung</item>
+        <item>Für jede Stunde mit täglicher Übersicht</item>
     </string-array>
     <string-array name="notification_types_values">
         <item>none</item>

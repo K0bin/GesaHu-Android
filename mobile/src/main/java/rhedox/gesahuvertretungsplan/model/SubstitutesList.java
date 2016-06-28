@@ -50,7 +50,7 @@ public class SubstitutesList {
     }
 
     public static List<Substitute> sort(@Nullable List<Substitute> substitutes) {
-        if(substitutes == null)
+        if (substitutes == null)
             return null;
 
         List<Substitute> sortedList = new ArrayList<Substitute>(substitutes);
@@ -58,28 +58,64 @@ public class SubstitutesList {
         return sortedList;
     }
 
-    public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes) {
-        if(substitutes == null)
+	public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes) {
+		return filterImportant(substitutes, false);
+	}
+
+
+		public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes, boolean removeDoubles) {
+        if (substitutes == null)
             return null;
 
         List<Substitute> list = new ArrayList<Substitute>();
-        for(Substitute substitute : substitutes) {
-            if(substitute.getIsImportant())
-                list.add(substitute);
+        for (Substitute substitute : substitutes) {
+	        if(substitute == null || !substitute.getIsImportant())
+		        continue;
+
+	        boolean isAlreadyInList = false;
+	        for (Substitute listSub : list) {
+		        if (substitute.equals(listSub))
+			        isAlreadyInList = true;
+	        }
+
+	        if (!isAlreadyInList)
+		        list.add(substitute);
         }
 
         return list;
     }
 
     public static int countImportant(@Nullable List<Substitute> substitutes) {
-        if(substitutes == null)
+        if (substitutes == null)
             return 0;
 
         int counter = 0;
-        for(Substitute substitute : substitutes) {
-            if(substitute.getIsImportant())
+        for (Substitute substitute : substitutes) {
+            if (substitute.getIsImportant())
                 counter++;
         }
         return counter;
+    }
+
+    public static List<Substitute> removeDoubles(@Nullable List<Substitute> substitutes) {
+        if (substitutes == null)
+            return null;
+
+        List<Substitute> list = new ArrayList<Substitute>(substitutes.size());
+
+        for (Substitute substitute : substitutes) {
+            boolean isAlreadyInList = false;
+
+            if (substitute != null) {
+                for (Substitute listSub : list) {
+                    if (substitute.equals(listSub))
+                        isAlreadyInList = true;
+                }
+            }
+
+            if (!isAlreadyInList)
+                list.add(substitute);
+        }
+        return list;
     }
 }

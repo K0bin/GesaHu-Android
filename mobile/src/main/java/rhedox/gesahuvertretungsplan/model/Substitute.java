@@ -110,6 +110,16 @@ public class Substitute implements Comparable<Substitute> {
         return new Substitute("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", null);
     }
 
+	public boolean equals(Substitute another) {
+		return another != null &&
+				((lesson == null && another.lesson == null) || (lesson != null && lesson.equals(another.lesson))) &&
+				((subject == null && another.subject == null) || (subject != null && subject.equals(another.subject))) &&
+				((teacher == null && another.teacher == null) || (teacher != null && teacher.equals(another.teacher))) &&
+				((substituteTeacher == null && another.substituteTeacher == null) || (substituteTeacher != null && another.substituteTeacher.equals(substituteTeacher))) &&
+				((room == null && another.room == null) || (room != null && room.equals(another.room))) &&
+				((hint == null && another.hint == null) || (hint != null && hint.equals(another.hint)));
+	}
+
     @Override
     public int compareTo(Substitute another) {
         if(another == null)

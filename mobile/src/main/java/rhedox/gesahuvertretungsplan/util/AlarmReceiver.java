@@ -89,9 +89,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         intent.putExtra(EXTRA_LESSON, lesson);
         PendingIntent pending = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (manager != null) {
+        if (manager != null)
             manager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending);
-        }
     }
 
     public static void cancel(Context context) {

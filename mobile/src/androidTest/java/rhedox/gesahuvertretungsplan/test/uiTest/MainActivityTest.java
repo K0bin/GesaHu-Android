@@ -25,7 +25,6 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
  * Created by Robin on 21.05.2016.
  */
 
-@LargeTest
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
