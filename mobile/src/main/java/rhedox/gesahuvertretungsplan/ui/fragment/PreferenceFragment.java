@@ -66,19 +66,22 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
 
         if(!"none".equals(mode)) {
             @AlarmReceiver.NotificationFrequency int notificationFrequency;
-            if("per_lesson".equals(mode))
-                notificationFrequency = AlarmReceiver.PER_LESSON;
-            else if("both".equals(mode))
+            if("per_lesson".equals(mode)) {
+	            AlarmReceiver.cancelDaily(getContext());
+	            notificationFrequency = AlarmReceiver.PER_LESSON;
+            } else if("both".equals(mode))
                 notificationFrequency = AlarmReceiver.BOTH;
-            else
-                notificationFrequency = AlarmReceiver.DAILY;
+            else {
+	            AlarmReceiver.cancelLesson(getContext());
+	            notificationFrequency = AlarmReceiver.DAILY;
+            }
 
             AlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
             BootReceiver.create(getContext());
-        }
-        else {
-            AlarmReceiver.cancel(getContext());
-            BootReceiver.cancel(getContext());
+        } else {
+	        AlarmReceiver.cancelDaily(getContext());
+	        AlarmReceiver.cancelLesson(getContext());
+	        BootReceiver.cancel(getContext());
         }
 
         PreferenceFragment.applyDarkTheme(prefs);

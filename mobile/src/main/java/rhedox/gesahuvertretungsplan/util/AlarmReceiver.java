@@ -29,7 +29,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public static final int NONE = 0;
     public static final int DAILY = 1;
     public static final int PER_LESSON = 2;
-    public static final int BOTH = 3;
+    public static final int BOTH = DAILY | PER_LESSON;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {DAILY, PER_LESSON, BOTH}, flag = true)
@@ -69,14 +69,16 @@ public class AlarmReceiver extends BroadcastReceiver {
             scheduleAlarm(context, alarm, REQUEST_CODE, 1);
 
 
-        for (int i = 0; i < hours.length; i++) {
-            time = DateTime.now();
+        if((frequency & PER_LESSON) == PER_LESSON) {
+            for (int i = 0; i < hours.length; i++) {
+                time = DateTime.now();
 
-            if (hours[i] < time.getHourOfDay() || (hours[i] == time.getHourOfDay() && minutes[i] < time.getMinuteOfHour()))
-                time = time.withFieldAdded(DurationFieldType.days(), 1);
+                if (hours[i] < time.getHourOfDay() || (hours[i] == time.getHourOfDay() && minutes[i] < time.getMinuteOfHour()))
+                    time = time.withFieldAdded(DurationFieldType.days(), 1);
 
-            alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), hours[i], minutes[i], 0, 0);
-            scheduleAlarm(context, alarm, REQUEST_CODE_BASE + i, i + 2);
+                alarm = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(), hours[i], minutes[i], 0, 0);
+                scheduleAlarm(context, alarm, REQUEST_CODE_BASE + i, i + 2);
+            }
         }
     }
 
@@ -93,17 +95,25 @@ public class AlarmReceiver extends BroadcastReceiver {
             manager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending);
     }
 
-    public static void cancel(Context context) {
-        PendingIntent[] intents = new PendingIntent[10];
-        intents[0] = PendingIntent.getBroadcast(context, REQUEST_CODE, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
-        for(int i = 0; i < hours.length; i++) {
-            intents[i+1] = PendingIntent.getBroadcast(context, REQUEST_CODE_BASE + i, new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
-        }
+    public static void cancelDaily(Context context) {
+	    AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+	    if(manager == null)
+		    return;
 
-        AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        if(manager!=null) {
-            for(PendingIntent intent : intents)
-                manager.cancel(intent);
-        }
+	    PendingIntent intent = PendingIntent.getBroadcast(context, REQUEST_CODE, new Intent(), PendingIntent.FLAG_NO_CREATE);
+	    if(intent != null)
+	        manager.cancel(intent);
+    }
+
+	public static void cancelLesson(Context context) {
+		AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+		if(manager == null)
+			return;
+
+		for (int i = 0; i < hours.length; i++) {
+			PendingIntent intent = PendingIntent.getBroadcast(context, REQUEST_CODE_BASE + i, new Intent(), PendingIntent.FLAG_NO_CREATE);
+			if(intent != null)
+				manager.cancel(intent);
+		}
     }
 }

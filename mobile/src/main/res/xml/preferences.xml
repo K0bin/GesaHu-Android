@@ -34,7 +34,7 @@
     <android.support.v7.preference.PreferenceCategory
         android:title="Benachrichtigungen">
         <android.support.v7.preference.ListPreference
-            android:key="pref_notification_type"
+            android:key="pref_notification_mode"
             android:title="Benachrichtigen"
             android:dialogTitle="Wie möchtest du benachrichtigt werden?"
             android:summary="Bei Vertretungsstunden benachrichtigen"
