@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import org.joda.time.LocalDate;
 
@@ -96,6 +97,8 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 	public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
 		isLoading = false;
 
+		Log.d("Notification", "ReceivedBroadcast");
+
 		if(response == null || response.body() == null)
 			return;
 
@@ -157,8 +160,8 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 					builder.setColor(color);
 
 					notificationManager.notify(i, builder.build());
-					count++;
 				}
+				count++;
 			}
 		}
 
