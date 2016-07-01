@@ -32,7 +32,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
  */
 public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements Callback<SubstitutesList> {
 
-    @NonNull private GesahuiApi gesahui;
+    private GesahuiApi gesahui;
 
     @Override
     protected void onUpdateData(int reason) {
