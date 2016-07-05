@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -319,6 +320,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         isLoading = false;
         Log.e("net-error", "Message: " + t.getMessage());
+
+	    /*PROGUARD DEBUGGING
+	    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(t.getMessage());
+        builder.setTitle(t.toString());
+        builder.create().show();*/
 
         clearRefreshViews();
 
