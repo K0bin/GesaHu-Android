@@ -78,6 +78,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private MaterialActivity activity;
 
+	public static final String STATE_KEY_SUBSTITUTE_LIST = "substitutelsit";
+
     public MainFragment() {}
 
     @Override
@@ -166,6 +168,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 			    activity.updateUI();
 
 		    populateList();
+	    } else if(savedInstanceState != null) {
+		    substitutesList = savedInstanceState.getParcelable(STATE_KEY_SUBSTITUTE_LIST);
 	    }
 
 	    recyclerView.setAdapter(adapter);
@@ -235,6 +239,15 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             refWatcher.watch(this);
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(substitutesList != null) {
+            outState.putParcelable(STATE_KEY_SUBSTITUTE_LIST, outState);
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override

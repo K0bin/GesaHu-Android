@@ -1,6 +1,8 @@
 package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
-public class Substitute implements Comparable<Substitute> {
+public class Substitute implements Comparable<Substitute>, Parcelable {
     public static final int KIND_SUBSTITUTE = 0;
     public static final int KIND_DROPPED = 1;
     public static final int KIND_ROOM_CHANGE = 2;
@@ -69,6 +71,41 @@ public class Substitute implements Comparable<Substitute> {
         else
             kind = KIND_SUBSTITUTE;
     }
+
+	private Substitute(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, boolean isImportant) {
+		this.lesson = lesson;
+		this.subject = subject;
+		this.teacher = teacher;
+		this.substituteTeacher = substituteTeacher;
+		this.room = room;
+		this.hint = hint;
+		this.isImportant = isImportant;
+
+		if(!TextUtils.isEmpty(lesson)) {
+			String[] lessonParts = lesson.split("-");
+			if(lessonParts.length > 0) {
+				try {
+					startingLesson = Integer.parseInt(lessonParts[0].trim(), 10);
+				}
+				catch(NumberFormatException e) {
+					startingLesson = -1;
+				}
+			}
+		}
+
+		String lowerSubstitute = substituteTeacher.toLowerCase();
+		String lowerHint = hint.toLowerCase();
+		if("eigv. lernen".equals(lowerSubstitute) || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt") || lowerHint.contains("frei"))
+			kind = KIND_DROPPED;
+		else if((TextUtils.isEmpty(substituteTeacher) || substituteTeacher.equals(teacher)) && "raumänderung".equals(lowerHint))
+			kind = KIND_ROOM_CHANGE;
+		else if(lowerHint.contains("klausur"))
+			kind = KIND_TEST;
+		else if(lowerHint.contains("findet statt"))
+			kind = KIND_REGULAR;
+		else
+			kind = KIND_SUBSTITUTE;
+	}
 
     public String getLesson() {
         return lesson;
@@ -153,4 +190,46 @@ public class Substitute implements Comparable<Substitute> {
             }
         }
     }
+
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+	    dest.writeString(lesson);
+	    dest.writeString(subject);
+	    dest.writeString(teacher);
+	    dest.writeString(substituteTeacher);
+	    dest.writeString(room);
+	    dest.writeString(hint);
+	    dest.writeByte((byte)(isImportant ? 1 : 0));
+    }
+
+    public static final Parcelable.Creator<Substitute> CREATOR =
+            new Parcelable.Creator<Substitute>(){
+
+                @Override
+                public Substitute createFromParcel(Parcel source) {
+	                String lesson = source.readString();
+	                String subject = source.readString();
+	                String teacher = source.readString();
+	                String substitute = source.readString();
+	                String room = source.readString();
+	                String hint = source.readString();
+
+	                byte isImportantByte = source.readByte();
+	                boolean isImportant = isImportantByte == 1;
+
+                    return new Substitute(lesson, subject, teacher, substitute, room, hint, isImportant);
+                }
+
+                @Override
+                public Substitute[] newArray(int size) {
+                    return new Substitute[size];
+                }
+            };
 }

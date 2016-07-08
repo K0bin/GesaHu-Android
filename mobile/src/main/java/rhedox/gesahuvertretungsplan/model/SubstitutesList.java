@@ -1,10 +1,13 @@
 package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.util.SortedList;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
 /**
  * Created by Robin on 10.07.2015.
  */
-public class SubstitutesList {
+public class SubstitutesList implements Parcelable {
     private LocalDate date;
     private List<Substitute> substitutes;
     private String announcement;
@@ -29,7 +32,7 @@ public class SubstitutesList {
         this.date = date;
     }
 
-    public LocalDate getDate() {
+	public LocalDate getDate() {
         return date;
     }
 
@@ -63,7 +66,7 @@ public class SubstitutesList {
 	}
 
 
-		public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes, boolean removeDoubles) {
+    public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes, boolean removeDoubles) {
         if (substitutes == null)
             return null;
 
@@ -118,4 +121,32 @@ public class SubstitutesList {
         }
         return list;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+	    parcel.writeDouble(date.toDateTimeAtCurrentTime().getMillis());
+	    parcel.writeString(announcement);
+        parcel.writeTypedList(this.substitutes);
+    }
+
+	public static final Creator<SubstitutesList> CREATOR = new Creator<SubstitutesList>() {
+		@Override
+		public SubstitutesList createFromParcel(Parcel in) {
+			LocalDate date = new DateTime(in.readLong()).toLocalDate();
+			String announcement = in.readString();
+			List<Substitute> substitutes = in.createTypedArrayList(Substitute.CREATOR);
+
+			return new SubstitutesList(substitutes, announcement, date);
+		}
+
+		@Override
+		public SubstitutesList[] newArray(int size) {
+			return new SubstitutesList[size];
+		}
+	};
 }
