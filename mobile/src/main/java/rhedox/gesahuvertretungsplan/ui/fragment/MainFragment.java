@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.DateTime;
@@ -50,6 +51,7 @@ import rhedox.gesahuvertretungsplan.net.NetworkChecker;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 import rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix;
 import tr.xip.errorview.ErrorView;
@@ -333,6 +335,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         isLoading = false;
         Log.e("net-error", "Message: " + t.getMessage());
+
+	    FirebaseCrash.log("RetrofitFailure: "+t.getMessage());
+	    FirebaseCrash.report(t);
 
 	    /*PROGUARD DEBUGGING
 	    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

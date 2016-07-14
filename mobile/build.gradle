@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.frogermcs.androiddevmetrics'
 apply plugin: 'android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 24
@@ -10,7 +11,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 3323
+        versionCode 3325
         versionName "3.5"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -72,8 +73,8 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.0.+'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    compile 'com.google.firebase:firebase-crash:+'
     //compile 'com.google.android.gms:play-services-ads:8.+'
-    compile 'ch.acra:acra:4.+'
 
 
 
@@ -92,5 +93,4 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.5'
     testCompile 'org.powermock:powermock-module-junit4-rule:1.6.5'
     testCompile 'org.powermock:powermock-module-junit4:1.6.5'
-
 }

@@ -47,3 +47,5 @@ mobile/manifest-merger-release-report.txt
 Volley/
 
 sync.ffs_lock
+
+mobile/google-services.json

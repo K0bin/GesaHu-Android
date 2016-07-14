@@ -2,12 +2,11 @@ package rhedox.gesahuvertretungsplan.ui.activity;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,14 +19,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v7.widget.Toolbar;
-import android.content.Intent;
 import android.view.View;
-//import android.widget.DatePicker;
 
 import com.afollestad.materialcab.MaterialCab;
+
+import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -47,6 +46,8 @@ import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareHelper;
 import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
+
+//import android.widget.DatePicker;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
     private boolean sortImportant;
@@ -79,9 +80,20 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private MaterialCab cab;
 
+    private static boolean isInitialized = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        if(!isInitialized) {
+	        JodaTimeAndroid.init(getApplication());
+
+	        SharedPreferences prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+	        PreferenceFragment.applyDarkTheme(prefs);
+
+	        isInitialized = true;
+        }
+
+	    super.onCreate(savedInstanceState);
 
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
