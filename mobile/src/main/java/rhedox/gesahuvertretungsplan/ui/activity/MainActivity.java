@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -36,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private MaterialCab cab;
 
     private static boolean isInitialized = false;
+	private FirebaseAnalytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +92,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	        SharedPreferences prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 	        PreferenceFragment.applyDarkTheme(prefs);
-
-	        isInitialized = true;
         }
 
 	    super.onCreate(savedInstanceState);
+
+	    analytics = FirebaseAnalytics.getInstance(this);
 
         //Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -113,6 +116,21 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             this.setTheme(R.style.GesahuThemeAmoled);
         else
             this.setTheme(R.style.GesahuTheme);
+
+	    if(!isInitialized) {
+
+		    if(App.ANALYTICS_ENABLED) {
+			    analytics.setUserProperty("Amoled", isAmoledBlackEnabled ? "true" : "false");
+			    analytics.setUserProperty("DarkTheme", prefs.getString(PreferenceFragment.PREF_DARK_TYPE, "NONE"));
+			    analytics.setUserProperty("NotificationTime", new DateTime(prefs.getLong(PreferenceFragment.PREF_NOTIFICATION_TIME, 0L)).toLocalTime().toString());
+			    analytics.setUserProperty("NotificationType", prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, "NONE"));
+			    analytics.setUserProperty("NotificationSummary", prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION_MODE, false) ? "true" : "false");
+			    analytics.setUserProperty("StudentYear", prefs.getString(PreferenceFragment.PREF_YEAR, ""));
+			    analytics.setUserProperty("StudentClass", prefs.getString(PreferenceFragment.PREF_CLASS, ""));
+		    }
+
+		    isInitialized = true;
+	    }
 
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);

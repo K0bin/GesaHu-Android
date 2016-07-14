@@ -16,6 +16,8 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 public class App extends Application {
 	private RefWatcher refWatcher;
 
+	public static final boolean ANALYTICS_ENABLED = true;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();

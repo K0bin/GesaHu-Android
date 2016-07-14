@@ -41,7 +41,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
         boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
-        Student student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, "5"), prefs.getString(PreferenceFragment.PREF_CLASS, "a"));
+        Student student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, ""), prefs.getString(PreferenceFragment.PREF_CLASS, ""));
 
         date = new DateTime(intent.getLongExtra(EXTRA_DATE, 0l)).toLocalDate();
 
