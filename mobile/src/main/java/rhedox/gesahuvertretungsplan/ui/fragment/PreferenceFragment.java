@@ -35,7 +35,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_FILTER ="pref_filter";
     public static final String PREF_SORT ="pref_sort";
     public static final String PREF_WHITE_TAB_INDICATOR ="pref_white_tab_indicator";
-    public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_new";
+    public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_long";
     public static final String PREF_NOTIFICATION_MODE = "pref_notification_mode";
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
     public static final String PREF_SPECIAL_MODE = "pref_special_mode";
@@ -61,7 +61,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         super.onDestroyView();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
+        LocalTime time = LocalTime.fromMillisOfDay(prefs.getLong(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
         String mode = prefs.getString(PREF_NOTIFICATION_MODE, null);
 
         if(!"none".equals(mode)) {

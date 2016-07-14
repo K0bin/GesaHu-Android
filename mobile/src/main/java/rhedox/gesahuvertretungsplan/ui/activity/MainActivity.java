@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	    if(!isInitialized) {
 
-		    if(App.ANALYTICS_ENABLED) {
+		    if(App.ANALYTICS) {
 			    analytics.setUserProperty("Amoled", isAmoledBlackEnabled ? "true" : "false");
 			    analytics.setUserProperty("DarkTheme", prefs.getString(PreferenceFragment.PREF_DARK_TYPE, "NONE"));
 			    analytics.setUserProperty("NotificationTime", new DateTime(prefs.getLong(PreferenceFragment.PREF_NOTIFICATION_TIME, 0L)).toLocalTime().toString());
@@ -127,6 +127,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 			    analytics.setUserProperty("NotificationSummary", prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION_MODE, false) ? "true" : "false");
 			    analytics.setUserProperty("StudentYear", prefs.getString(PreferenceFragment.PREF_YEAR, ""));
 			    analytics.setUserProperty("StudentClass", prefs.getString(PreferenceFragment.PREF_CLASS, ""));
+			    analytics.setUserProperty("SubstitutesOnTop", prefs.getBoolean(PreferenceFragment.PREF_SORT, false) ? "true" : "false");
+			    analytics.setUserProperty("RelevantSubstitutesOnly", prefs.getBoolean(PreferenceFragment.PREF_FILTER, false) ? "true" : "false");
+			    analytics.setUserProperty("Platform", "Android");
 		    }
 
 		    isInitialized = true;
@@ -424,6 +427,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         switch(item.getItemId()) {
 
             case R.id.action_share:
+	            if(App.ANALYTICS) {
+		            Bundle bundle = new Bundle();
+		            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "text/plain");
+		            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "ShareSubstitute");
+		            analytics.logEvent(FirebaseAnalytics.Event.SHARE, bundle);
+	            }
+
                     LocalDate date;
                     if(currentFragment.getSubstitutesList() != null)
                         date = currentFragment.getSubstitutesList().getDate();
