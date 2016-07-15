@@ -246,7 +246,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if(substitutesList != null) {
-            outState.putParcelable(STATE_KEY_SUBSTITUTE_LIST, outState);
+            outState.putParcelable(STATE_KEY_SUBSTITUTE_LIST, substitutesList);
         }
 
         super.onSaveInstanceState(outState);
