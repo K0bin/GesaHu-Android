@@ -29,7 +29,7 @@ public class TimePreference extends android.support.v7.preference.DialogPreferen
 
         this.time = time;
 
-        persistLong(time.getMillisOfDay());
+        persistInt(time.getMillisOfDay());
 
         final boolean isBlocking = shouldDisableDependents();
         if (isBlocking != wasBlocking)

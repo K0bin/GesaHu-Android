@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -16,7 +18,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.appwidget.CounterWidgetService;
+import rhedox.gesahuvertretungsplan.service.CounterWidgetService;
 
 /**
  * Created by Robin on 20.07.2015.
@@ -28,11 +30,12 @@ public class CounterWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+        boolean amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
 
         LocalDate date = SchoolWeek.next();
 
         for(int appWidgetId : appWidgetIds) {
-            RemoteViews remoteViews = makeAppWidget(context, darkTheme, date, -1);
+            RemoteViews remoteViews = makeAppWidget(context, darkTheme, amoled, date, -1);
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
 
@@ -44,11 +47,12 @@ public class CounterWidgetProvider extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
-    public static RemoteViews makeAppWidget(Context context, boolean darkTheme, LocalDate date, int substituteCount) {
+    public static RemoteViews makeAppWidget(Context context, boolean darkTheme, boolean amoled, LocalDate date, int substituteCount) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_counter);
 
         if(darkTheme) {
-            remoteViews.setInt(R.id.counter, "setBackgroundResource", R.drawable.widget_card_dark);
+            @DrawableRes int backgroundResource = amoled ? R.drawable.widget_card_black : R.drawable.widget_card_dark;
+            remoteViews.setInt(R.id.counter, "setBackgroundResource", backgroundResource);
             remoteViews.setTextColor(R.id.counter, 0xFFFFFFFF);
         }
         else {

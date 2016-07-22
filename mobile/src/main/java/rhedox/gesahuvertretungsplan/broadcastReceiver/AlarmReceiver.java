@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util;
+package rhedox.gesahuvertretungsplan.broadcastReceiver;
 
 import android.Manifest;
 import android.app.AlarmManager;
@@ -16,6 +16,8 @@ import org.joda.time.DurationFieldType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import rhedox.gesahuvertretungsplan.util.NotificationChecker;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public static final int REQUEST_CODE = 0;

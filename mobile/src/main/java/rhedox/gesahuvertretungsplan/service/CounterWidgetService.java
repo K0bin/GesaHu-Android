@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util.appwidget;
+package rhedox.gesahuvertretungsplan.service;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -26,8 +26,9 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 /**
  * Created by Robin on 23.07.2015.
  */
-public class CounterWidgetService extends Service implements Callback<SubstitutesList> /*implements Response.Listener<SubstitutesList>, Response.ErrorListener */{
+public class CounterWidgetService extends Service implements Callback<SubstitutesList> {
     private boolean darkTheme;
+    private boolean amoled;
 
     private int[] allWidgetIds;
     private LocalDate date;
@@ -40,6 +41,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+        amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
         boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
         Student student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, ""), prefs.getString(PreferenceFragment.PREF_CLASS, ""));
 
@@ -70,7 +72,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 
         for(int appWidgetId : allWidgetIds) {
-            RemoteViews remoteViews = CounterWidgetProvider.makeAppWidget(getApplicationContext(), darkTheme, date, SubstitutesList.countImportant(response.body().getSubstitutes()));
+            RemoteViews remoteViews = CounterWidgetProvider.makeAppWidget(getApplicationContext(), darkTheme, amoled, date, SubstitutesList.countImportant(response.body().getSubstitutes()));
 
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }

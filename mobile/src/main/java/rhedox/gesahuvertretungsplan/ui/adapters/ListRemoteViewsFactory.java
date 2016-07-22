@@ -27,7 +27,7 @@ import rhedox.gesahuvertretungsplan.net.GesahuiApi;
 import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.appwidget.ListFactoryService;
+import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 
 /**
  * Created by Robin on 22.07.2015.

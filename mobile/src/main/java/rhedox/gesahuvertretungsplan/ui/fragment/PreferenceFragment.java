@@ -1,10 +1,8 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 
@@ -12,16 +10,11 @@ import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.LocalTime;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
-import rhedox.gesahuvertretungsplan.ui.PreferencesDividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity;
-import rhedox.gesahuvertretungsplan.util.AlarmReceiver;
-import rhedox.gesahuvertretungsplan.util.BootReceiver;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.AlarmReceiver;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.BootReceiver;
 
 /**
  * Created by Robin on 18.10.2014.
@@ -61,7 +54,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         super.onDestroyView();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        LocalTime time = LocalTime.fromMillisOfDay(prefs.getLong(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
+        LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
         String mode = prefs.getString(PREF_NOTIFICATION_MODE, null);
 
         if(!"none".equals(mode)) {

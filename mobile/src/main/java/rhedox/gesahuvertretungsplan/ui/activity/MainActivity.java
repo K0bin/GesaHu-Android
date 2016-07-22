@@ -32,6 +32,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		    if(App.ANALYTICS) {
 			    analytics.setUserProperty("Amoled", isAmoledBlackEnabled ? "true" : "false");
 			    analytics.setUserProperty("DarkTheme", prefs.getString(PreferenceFragment.PREF_DARK_TYPE, "NONE"));
-			    analytics.setUserProperty("NotificationTime", new DateTime(prefs.getLong(PreferenceFragment.PREF_NOTIFICATION_TIME, 0L)).toLocalTime().toString());
+			    analytics.setUserProperty("NotificationTime", LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0)).toString());
 			    analytics.setUserProperty("NotificationType", prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, "NONE"));
 			    analytics.setUserProperty("NotificationSummary", prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION_SUMMARY, false) ? "true" : "false");
 			    analytics.setUserProperty("StudentYear", prefs.getString(PreferenceFragment.PREF_YEAR, ""));

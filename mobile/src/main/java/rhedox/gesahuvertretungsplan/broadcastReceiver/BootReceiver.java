@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util;
+package rhedox.gesahuvertretungsplan.broadcastReceiver;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -24,7 +24,7 @@ public class BootReceiver extends BroadcastReceiver {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String mode = prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, null);
-            LocalTime time = LocalTime.fromMillisOfDay(prefs.getLong(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
+            LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
 
             if(!"none".equals(mode)) {
                 @AlarmReceiver.NotificationFrequency int notificationFrequency;

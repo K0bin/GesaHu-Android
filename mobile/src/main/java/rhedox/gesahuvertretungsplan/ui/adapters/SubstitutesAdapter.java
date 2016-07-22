@@ -1,33 +1,25 @@
 package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.app.Activity;
-import android.content.res.Configuration;
+import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.net.NetworkChecker;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
@@ -52,6 +44,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     @Nullable private SubstituteViewHolder selectedViewHolder;
 
     @Nullable private MainFragment.MaterialActivity activity;
+	private Context context;
 
 	//#enumsmatter
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
@@ -66,13 +59,15 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     private static final int ERROR_NONE = 0;
     private static final int ERROR_EMPTY = 1;
     private static final int ERROR_CONNECTION = 2;
-    @IntDef({ERROR_NONE, ERROR_EMPTY, ERROR_CONNECTION})
+    private static final int ERROR_UNKNOWN = 3;
+    @IntDef({ERROR_NONE, ERROR_EMPTY, ERROR_UNKNOWN, ERROR_CONNECTION})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Error {}
 
     private @Error int error = ERROR_NONE;
     private ErrorView.Config emptyConfig;
     private ErrorView.Config errorConfig;
+    private ErrorView.Config connectionConfig;
 
     @SuppressWarnings("ResourceType")
     public SubstitutesAdapter(@NonNull Activity context) {
@@ -110,6 +105,18 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
                 .retryText(errorRetryText)
                 .build();
 
+	    connectionConfig = ErrorView.Config.create()
+			    .title(context.getString(R.string.error))
+			    .titleColor(errorTitleColor)
+			    .image(R.drawable.error_view_cloud)
+			    .subtitle(context.getString(R.string.error_no_connection))
+			    .subtitleColor(errorMessageColor)
+			    .retryTextColor(errorRetryColor)
+			    .retryText(errorRetryText)
+			    .build();
+
+	    this.context = context;
+
         if(context instanceof MainFragment.MaterialActivity)
             activity = (MainFragment.MaterialActivity)context;
     }
@@ -133,10 +140,12 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
             case ITEM_TYPE_EMPTY_VIEW:
                 ErrorViewHolder errorViewHolder = (ErrorViewHolder) viewHolder;
 
-                if(error == ERROR_CONNECTION)
+                if(error == ERROR_UNKNOWN)
                     errorViewHolder.setConfig(errorConfig);
                 else if(error == ERROR_EMPTY)
                     errorViewHolder.setConfig(emptyConfig);
+                else if(error == ERROR_CONNECTION)
+	                errorViewHolder.setConfig(connectionConfig);
 
                 break;
         }
@@ -235,7 +244,12 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
     public void showError() {
         this.clear();
-        this.error = ERROR_CONNECTION;
+
+	    if(NetworkChecker.isNetworkConnected(context))
+		    this.error = ERROR_UNKNOWN;
+	    else
+		    this.error = ERROR_CONNECTION;
+
         notifyItemChanged(0);
     }
 

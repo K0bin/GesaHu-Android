@@ -67,8 +67,8 @@
                 android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
         </service>
 
-        <receiver android:name=".util.AlarmReceiver" />
-        <receiver android:name=".util.BootReceiver" >
+        <receiver android:name=".broadcastReceiver.AlarmReceiver" />
+        <receiver android:name=".broadcastReceiver.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -86,7 +86,7 @@
         </receiver>
 
         <service
-            android:name=".util.appwidget.ListFactoryService"
+            android:name=".service.ListFactoryService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" >
         </service>
@@ -102,7 +102,7 @@
                 android:resource="@xml/counter_widget_info" />
         </receiver>
 
-        <service android:name=".util.appwidget.CounterWidgetService"
+        <service android:name=".service.CounterWidgetService"
                  android:exported="false"
                  android:permission="android.permission.BIND_REMOTEVIEWS" />
 

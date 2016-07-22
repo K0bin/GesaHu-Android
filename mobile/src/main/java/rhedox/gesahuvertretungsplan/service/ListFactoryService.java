@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util.appwidget;
+package rhedox.gesahuvertretungsplan.service;
 
 import android.content.Intent;
 

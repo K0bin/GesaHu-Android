@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
@@ -17,7 +18,7 @@ import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.appwidget.ListFactoryService;
+import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 
 /**
  * Created by Robin on 20.07.2015.
@@ -37,9 +38,19 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+            boolean amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list);
-            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", ContextCompat.getColor(context, darkTheme ? R.color.windowBackgroundDark : R.color.windowBackgroundLight));
+
+            @ColorInt int color;
+            if(!darkTheme)
+                color = ContextCompat.getColor(context, R.color.windowBackgroundLight);
+            else if(amoled)
+                color = 0xFF000000;
+            else
+                color = ContextCompat.getColor(context, R.color.windowBackgroundDark);
+
+            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
             Intent onClickIntent = new Intent(context, MainActivity.class);

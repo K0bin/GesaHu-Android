@@ -357,7 +357,13 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         } else {
             if (getUserVisibleHint())
                 //Fragment is not empty, keep previous entries and show snackbar
-                snackbar.show();
+
+            if(NetworkChecker.isNetworkConnected(getActivity().getApplicationContext()))
+	            snackbar.setText(R.string.oops);
+	        else
+	            snackbar.setText(R.string.error_no_connection);
+
+            snackbar.show();
         }
     }
 
