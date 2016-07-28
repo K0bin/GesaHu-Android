@@ -38,20 +38,6 @@
 		android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
 		/>
 
-	<android.support.v7.widget.AppCompatTextView
-		android:layout_width="0dp"
-		android:layout_weight="0.25"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:text="P 07-113"
-		android:id="@+id/room"
-		android:layout_marginRight="8dp"
-		android:layout_marginLeft="8dp"
-		android:textColor="?android:attr/textColorHint"
-		android:fontFamily="sans-serif-condensed"
-		android:ellipsize="end"
-		android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
-
 
 	<android.support.v7.widget.AppCompatTextView
 		android:layout_width="0dp"
@@ -80,6 +66,20 @@
 		android:ellipsize="end"
 		android:textAppearance="@style/TextAppearance.AppCompat.Body1"
 		android:minWidth="64dp"/>
+
+	<android.support.v7.widget.AppCompatTextView
+		android:layout_width="0dp"
+		android:layout_weight="0.25"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:text="P 07-113"
+		android:id="@+id/room"
+		android:layout_marginRight="8dp"
+		android:layout_marginLeft="8dp"
+		android:textColor="?android:attr/textColorHint"
+		android:fontFamily="sans-serif-condensed"
+		android:ellipsize="end"
+		android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
 
 	<android.support.v7.widget.AppCompatTextView
