@@ -11,7 +11,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 3330
+        versionCode 3332
         versionName "3.6"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true

@@ -16,7 +16,7 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 public class App extends Application {
 	private RefWatcher refWatcher;
 
-	public static final boolean ANALYTICS = !BuildConfig.DEBUG;
+	public static final boolean ANALYTICS = true;
 
 	@Override
 	public void onCreate() {

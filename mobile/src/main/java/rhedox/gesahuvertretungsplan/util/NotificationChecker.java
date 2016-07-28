@@ -174,7 +174,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 		try {
 			ContentValues cv = new ContentValues();
 
-			cv.put("tag", "com.yourpackagename/com.youractivityname");
+			cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity");
 
 			cv.put("count", SubstitutesList.countImportant(substitutes));
 
