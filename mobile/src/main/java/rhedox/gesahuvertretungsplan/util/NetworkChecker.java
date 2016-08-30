@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.net;
+package rhedox.gesahuvertretungsplan.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

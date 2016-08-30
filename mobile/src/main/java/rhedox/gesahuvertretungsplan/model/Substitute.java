@@ -60,7 +60,7 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
 
         String lowerSubstitute = substituteTeacher.toLowerCase();
         String lowerHint = hint.toLowerCase();
-        if("eigv. lernen".equals(lowerSubstitute) || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt") || lowerHint.contains("frei"))
+        if("eigv. lernen".equals(lowerSubstitute) || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt"))
             kind = KIND_DROPPED;
         else if((TextUtils.isEmpty(substituteTeacher) || substituteTeacher.equals(teacher)) && "raumänderung".equals(lowerHint))
             kind = KIND_ROOM_CHANGE;

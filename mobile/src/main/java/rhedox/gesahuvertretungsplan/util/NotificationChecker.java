@@ -17,7 +17,6 @@ import android.util.Log;
 
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -30,8 +29,8 @@ import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.GesahuiApi;
-import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.GesahuiApi;
+import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 

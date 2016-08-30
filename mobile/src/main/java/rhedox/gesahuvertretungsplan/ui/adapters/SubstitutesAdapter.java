@@ -19,7 +19,7 @@ import java.util.List;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.net.NetworkChecker;
+import rhedox.gesahuvertretungsplan.util.NetworkChecker;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;

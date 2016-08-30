@@ -2,46 +2,30 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-
-import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTimeZone;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
-import okio.BufferedSource;
-import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.SubstitutesListConverter;
+import rhedox.gesahuvertretungsplan.model.SubstitutesListConverter;
 
 import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 //import org.mockito.Mock;
 //import org.mockito.runners.MockitoJUnitRunner;

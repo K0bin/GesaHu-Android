@@ -69,8 +69,8 @@ dependencies {
     }
     compile 'com.github.xiprox.errorview:library:2.+'
     compile 'org.jsoup:jsoup:1.9.+'
-    compile 'com.jakewharton:butterknife:8.0.+'
-    apt 'com.jakewharton:butterknife-compiler:8.0.+'
+    compile 'com.jakewharton:butterknife:+'
+    apt 'com.jakewharton:butterknife-compiler:+'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     compile 'com.google.firebase:firebase-crash:+'

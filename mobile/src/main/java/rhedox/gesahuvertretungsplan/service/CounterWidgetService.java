@@ -18,8 +18,8 @@ import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.net.GesahuiApi;
-import rhedox.gesahuvertretungsplan.net.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.GesahuiApi;
+import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.CounterWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 

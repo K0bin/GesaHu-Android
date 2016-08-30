@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.net;
+package rhedox.gesahuvertretungsplan.model;
 
 import org.joda.time.LocalDate;
 

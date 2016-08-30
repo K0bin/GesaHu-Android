@@ -26,8 +26,7 @@ public class App extends Application {
 		if(BuildConfig.DEBUG) {
 			StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
 					.detectAll()
-					.penaltyLog()
-					.setClassInstanceLimit(MainActivity.class, 12)
+					.setClassInstanceLimit(MainActivity.class, 5)
 					.penaltyLog()
 					.build();
 			StrictMode.setVmPolicy(policy);
