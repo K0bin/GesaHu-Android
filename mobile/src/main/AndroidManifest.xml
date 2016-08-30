@@ -43,11 +43,6 @@
         </activity>
 
         <service
-            android:name="org.acra.sender.SenderService"
-            android:exported="false"
-            android:process=":acra" />
-
-        <service
             android:name=".util.DashClockExtension"
             android:icon="@drawable/ic_notification"
             android:label="Gesahu Vertretungsplan"

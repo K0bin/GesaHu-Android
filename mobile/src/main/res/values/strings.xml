@@ -73,10 +73,12 @@
 
 	<string name="hello_world">Hello world!</string>
 
-	<string name="feature_design">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys oder Tablets angepasstem Design an.</string>
-	<string name="feature_highlight">Die App kann außerdem für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
-	<string name="feature_notify">GesaHu VP für Android kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast.</string>
-    <string name="feature_notify2">Dadurch bist du bei Freistunden immer informiert!</string>
+    <string name="feature_design">Mobile-freundliches Design</string>
+	<string name="feature_design_description">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys oder Tablets angepasstem Design an.</string>
+	<string name="feature_highlight">Relevante Stunden</string>
+	<string name="feature_highlight_description">Die App kann für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
+	<string name="feature_notify">Benachrichtigungen</string>
+	<string name="feature_notify_description">Die App kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
 
     <string name="widget_counter_name">Gesahu VP Zähler</string>
     <string name="widget_list_name">Gesahu VP Liste</string>
@@ -95,5 +97,8 @@
     <string name="special3_tap">Du hast es dir %d Mal gegönnt.</string>
     <string name="special_mode_activated">Gönnermodus aktiviert!</string>
     <string name="special_mode_deactivated">Gönnermodus deaktiviert!</string>
+
+    <string name="school_class">Schulklasse</string>
+    <string name="school_year">Schuljahr</string>
 
 </resources>

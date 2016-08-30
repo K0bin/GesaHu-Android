@@ -67,7 +67,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/feature_notify2"
+
 			android:layout_marginTop="32dp"/>
 	</android.support.v7.widget.LinearLayoutCompat>
 

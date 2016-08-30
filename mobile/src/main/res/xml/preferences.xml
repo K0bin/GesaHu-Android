@@ -28,7 +28,7 @@
             android:title="Relevante Stunden nach oben"
             android:summary="Zeigt die Vertretungsstunden, die die eingestellte Klasse betreffen, oben an"
             android:dependency="pref_filter"
-			android:defaultValue="false"/>
+			android:defaultValue="true"/>
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
@@ -40,7 +40,7 @@
             android:summary="Bei Vertretungsstunden benachrichtigen"
             android:entries="@array/notification_types_array"
             android:entryValues="@array/notification_types_values"
-            android:defaultValue="daily" />
+            android:defaultValue="both" />
 
         <android.support.v7.preference.CheckBoxPreference
             android:key="pref_notification_summary"
