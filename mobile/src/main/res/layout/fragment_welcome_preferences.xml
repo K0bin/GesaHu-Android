@@ -23,52 +23,63 @@
         android:textSize="28sp"
         android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_height="0dp"
         android:layout_weight="5"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/school_year_spinner_label"
-            android:text="@string/school_year"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:layout_marginEnd="64dp"
-            android:layout_marginRight="48dp"/>
+            android:orientation="horizontal">
 
-        <Spinner
-            android:layout_width="88dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/school_year_spinner_label"
+                android:text="@string/school_year"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:layout_marginEnd="64dp"
+                android:layout_marginRight="48dp" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:spinnerMode="dropdown"
+                android:dropDownWidth="88dp"
+                android:dropDownVerticalOffset="-128dp"
+                android:contentDescription="@string/school_year"
+                android:id="@+id/school_year_spinner" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/school_year"
-            android:id="@+id/school_year_spinner"
-            android:layout_toEndOf="@id/school_year_spinner_label"
-            android:layout_toRightOf="@id/school_year_spinner_label"
-            android:layout_alignBaseline="@id/school_year_spinner_label">
-        </Spinner>
+            android:orientation="horizontal"
+            android:layout_marginTop="32dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/school_class_spinner_label"
-            android:text="@string/school_class"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:layout_marginEnd="64dp"
-            android:layout_marginRight="48dp"
-            android:layout_marginTop="32dp"
-            android:layout_below="@id/school_year_spinner_label"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/school_class_spinner_label"
+                android:text="@string/school_class"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:layout_marginEnd="64dp"
+                android:layout_marginRight="48dp" />
 
-        <Spinner
-            android:layout_width="88dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/school_class"
-            android:id="@+id/school_class_spinner"
-            android:layout_toEndOf="@id/school_class_spinner_label"
-            android:layout_toRightOf="@id/school_class_spinner_label"
-            android:layout_alignBaseline="@id/school_class_spinner_label"
-            android:layout_below="@id/school_year_spinner_label"/>
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:spinnerMode="dropdown"
+                android:dropDownWidth="88dp"
+                android:dropDownVerticalOffset="-128dp"
+                android:contentDescription="@string/school_class"
+                android:id="@+id/school_class_spinner" />
 
-    </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 </LinearLayout>

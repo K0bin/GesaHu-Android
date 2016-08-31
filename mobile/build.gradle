@@ -6,13 +6,13 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '24.0.1'
+    buildToolsVersion '24.0.2'
     defaultConfig {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 3332
-        versionName "3.6"
+        versionCode 3401
+        versionName "3.7"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
         jackOptions {

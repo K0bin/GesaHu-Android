@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import rhedox.gesahuvertretungsplan.R;
@@ -40,11 +43,12 @@ public class WelcomePreferenceFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_welcome_preferences, container, false);
 		yearSpinner = (Spinner)view.findViewById(R.id.school_year_spinner);
 		classSpinner =  (Spinner)view.findViewById(R.id.school_class_spinner);
-		ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.years_array, android.R.layout.simple_dropdown_item_1line);
+		ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.years_array, android.R.layout.simple_spinner_item);
+		yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		yearSpinner.setAdapter(yearAdapter);
-		ArrayAdapter<CharSequence> classAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.classes_array, android.R.layout.simple_dropdown_item_1line);
+		ArrayAdapter<CharSequence> classAdapter = ArrayAdapter.createFromResource(this.getContext(), R.array.classes_array, android.R.layout.simple_spinner_item);
+		classAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		classSpinner.setAdapter(classAdapter);
-
 		return view;
 	}
 
