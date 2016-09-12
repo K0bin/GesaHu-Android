@@ -26,6 +26,7 @@ import com.squareup.leakcanary.RefWatcher;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -96,7 +97,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //Get Arguments
         Bundle arguments = getArguments();
         if(arguments != null)
-            date = new DateTime(arguments.getLong(ARGUMENT_DATE,0l)).toLocalDate();
+            date = new DateTime(arguments.getLong(ARGUMENT_DATE, 0L)).toLocalDate();
         else
             date = SchoolWeek.next();
 
@@ -268,7 +269,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 isLoading = true;
             } else
-                onFailure(null, new Exception(getString(R.string.error_no_connection)));
+                onFailure(null, new IOException(getString(R.string.error_no_connection)));
         }
     }
 
@@ -277,7 +278,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return substitutesList;
     }
 
-	//Activity will call this depending on the AppBars state to prevent them from blocking each other
+	/**
+	 * Enable or disable the SwipeToRefreshLayout
+	 * (Intended to be called by the activity depending on the app bars state to prevent them
+	 * from blocking each other)
+	 * @param isEnabled Whether the SwipeRefreshLayout is enabled or not
+	 */
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
         if(refreshLayout != null) {
 
@@ -285,7 +291,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
-	//Display the loaded list
+	/**
+	 * Display the loaded list
+	 */
     private void populateList() {
         if (substitutesList != null && adapter != null) {
 
@@ -331,8 +339,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         isLoading = false;
         Log.e("net-error", "Message: " + t.getMessage());
 
-	    FirebaseCrash.log("RetrofitFailure: "+t.getMessage());
-	    FirebaseCrash.report(t);
+	    //FirebaseCrash.log("RetrofitFailure: "+t.getMessage());
+	    //FirebaseCrash.report(t);
 
 	    /*PROGUARD DEBUGGING
 	    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -350,26 +358,32 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             if (adapter != null)
                 adapter.showError();
         } else {
-            if (getUserVisibleHint())
-                //Fragment is not empty, keep previous entries and show snackbar
+            if (getUserVisibleHint() && snackbar != null && getActivity() != null) {
+	            //Fragment is not empty, keep previous entries and show snackbar
 
-            if(NetworkChecker.isNetworkConnected(getActivity().getApplicationContext()))
-	            snackbar.setText(R.string.oops);
-	        else
-	            snackbar.setText(R.string.error_no_connection);
+	            if (NetworkChecker.isNetworkConnected(getActivity().getApplicationContext()))
+		            snackbar.setText(R.string.oops);
+	            else
+		            snackbar.setText(R.string.error_no_connection);
 
-            snackbar.show();
+	            snackbar.show();
+            }
         }
     }
 
-	//The fragment just got scrolled to
+	/**
+	 * Called when the fragment just became visible on the ViewPager
+	 */
     public void onDisplay() {
         if(substitutesList == null)
             onRefresh();
     }
 
-	//Prevent the SwipeRefreshLayout from keeping this fragments views on screen even if they should be destroyed.
-	//shitty Android bugs
+	/**
+	 * Prevent the SwipeRefreshLayout from keeping this fragments views on screen even if
+	 * they should be destroyed.
+	 * Workaround for shitty Android bugs
+	 */
     private void clearRefreshViews() {
         if (refreshLayout != null) {
             refreshLayout.setRefreshing(false);
@@ -398,6 +412,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public interface MaterialActivity {
+        /**
+         * Update visibility of activity level ui views such as the Snackbar, the floating action button or the contextual action bar
+         */
         void updateUI();
 
         CoordinatorLayout getCoordinatorLayout();

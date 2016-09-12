@@ -52,6 +52,12 @@ public class SubstitutesList implements Parcelable {
         return announcement != null && !TextUtils.isEmpty(announcement) && !"keine".equals(announcement);
     }
 
+
+	/**
+	 * Sorts the list so that relevant entries are on top
+	 * @param substitutes the list of substitutes
+	 * @return a new sorted list
+	 */
     public static List<Substitute> sort(@Nullable List<Substitute> substitutes) {
         if (substitutes == null)
             return null;
@@ -61,11 +67,22 @@ public class SubstitutesList implements Parcelable {
         return sortedList;
     }
 
+	/**
+	 * Removes all non-relevant substitutes
+	 * @param substitutes the list of substitutes
+	 * @return a new list where each entry is relevant
+	 */
 	public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes) {
 		return filterImportant(substitutes, false);
 	}
 
 
+	/**
+	 * Removes all non-relevant substitutes
+	 * @param substitutes the list of substitutes
+	 * @param removeDoubles whether or not it should also remove redundant entries
+	 * @return a new list where each entry is relevant
+	 */
     public static List<Substitute> filterImportant(@Nullable List<Substitute> substitutes, boolean removeDoubles) {
         if (substitutes == null)
             return null;
@@ -76,9 +93,11 @@ public class SubstitutesList implements Parcelable {
 		        continue;
 
 	        boolean isAlreadyInList = false;
-	        for (Substitute listSub : list) {
-		        if (substitute.equals(listSub))
-			        isAlreadyInList = true;
+	        if(removeDoubles) {
+		        for (Substitute listSub : list) {
+			        if (substitute.equals(listSub))
+				        isAlreadyInList = true;
+		        }
 	        }
 
 	        if (!isAlreadyInList)
@@ -88,6 +107,11 @@ public class SubstitutesList implements Parcelable {
         return list;
     }
 
+	/**
+	 * Counts the amount of relevant substitutes on the given list
+	 * @param substitutes the list of substitutes
+	 * @return the amount of relevant substitutes
+	 */
     public static int countImportant(@Nullable List<Substitute> substitutes) {
         if (substitutes == null)
             return 0;
@@ -100,6 +124,11 @@ public class SubstitutesList implements Parcelable {
         return counter;
     }
 
+	/**
+	 * Removes redundant entries
+	 * @param substitutes the list of substitutes
+	 * @return a new list of substitutes where each entry is unique
+	 */
     public static List<Substitute> removeDoubles(@Nullable List<Substitute> substitutes) {
         if (substitutes == null)
             return null;
@@ -129,7 +158,14 @@ public class SubstitutesList implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-	    parcel.writeDouble(date.toDateTimeAtCurrentTime().getMillis());
+	    if(parcel == null)
+		    return;
+
+	    if(date != null)
+	        parcel.writeDouble(date.toDateTimeAtCurrentTime().getMillis());
+	    else
+	        parcel.writeDouble(0);
+
 	    parcel.writeString(announcement);
         parcel.writeTypedList(this.substitutes);
     }
@@ -137,7 +173,14 @@ public class SubstitutesList implements Parcelable {
 	public static final Creator<SubstitutesList> CREATOR = new Creator<SubstitutesList>() {
 		@Override
 		public SubstitutesList createFromParcel(Parcel in) {
-			LocalDate date = new DateTime(in.readLong()).toLocalDate();
+			double d = in.readLong();
+
+			LocalDate date;
+			if(d != 0)
+				date = new DateTime(in.readLong()).toLocalDate();
+			else
+				date = null;
+
 			String announcement = in.readString();
 			List<Substitute> substitutes = in.createTypedArrayList(Substitute.CREATOR);
 

@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                if (viewPager.getCurrentItem() == 0 || currentFragment == null)
+                if (viewPager != null && viewPager.getCurrentItem() == 0 || currentFragment == null)
                     onPageSelected(viewPager.getCurrentItem());
             }
         });

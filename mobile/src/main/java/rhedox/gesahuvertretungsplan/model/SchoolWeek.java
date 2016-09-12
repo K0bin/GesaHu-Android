@@ -11,6 +11,11 @@ import org.joda.time.LocalDate;
 public final class SchoolWeek {
     private SchoolWeek() {}
 
+	/**
+     * Finds the next monday
+     * @param date the date
+     * @return next monday relative to the given day
+     */
     public static LocalDate nextDate(LocalDate date){
         if(date.getDayOfWeek() == DateTimeConstants.SUNDAY)
             return date.withFieldAdded(DurationFieldType.days(), 1);
@@ -20,6 +25,12 @@ public final class SchoolWeek {
         return date;
     }
 
+	/**
+	 * Finds the next school day
+	 * Skips weekends and adds a day if it's later than 18:00
+	 * @param dateTime the date and time
+	 * @return next school day relative to the given date time
+	 */
     public static LocalDate next(DateTime dateTime){
         LocalDate date = dateTime.toLocalDate();
         if(dateTime.getHourOfDay() > 18)
@@ -28,6 +39,11 @@ public final class SchoolWeek {
             return SchoolWeek.nextDate(date);
     }
 
+	/**
+	 * Finds the next school day
+	 * Skips weekends and adds a day if it's later than 18:00
+	 * @return next school day
+	 */
     public static LocalDate next() {
         return next(DateTime.now());
     }

@@ -51,7 +51,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
         body = body.replaceAll("\\s+", " ");
         Document document = Jsoup.parse(body);
-        date = readDate(document);
+	    date = readDate(document);
         announcement = readAnnouncement(document);
 
         Elements tables = document.getElementsByTag("table");
@@ -145,12 +145,12 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
                         case 4:
                             if (!"---".equals(text.toString()))
-                                room.append(text + " ");
+                                room.append(text).append(" ");
                             break;
 
                         case 5:
                             if (!"---".equals(text.toString()))
-                                hint.append(text + " ");
+                                hint.append(text).append(" ");
                             break;
                     }
                 }
@@ -165,14 +165,19 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
         return new SubstitutesList(substitutes, announcement, date);
     }
 
+	/**
+	 * Read the date from the given substitutes list
+	 * @param document The HTML document
+	 * @return the date of the substitutes that the document contains
+	 */
     private LocalDate readDate(Document document) {
         Elements dateElement = document.select("body>div>center>div>div>center>table[id=\"AutoNumber1\"]>tbody>tr>td>p>font[size=\"4\"][face=\"Arial\"]");
         if(!dateElement.hasText())
-            return null;
+            throw new RuntimeException("Can't find date on web page");
 
         String[] strings = dateElement.text().split(" ");
         if(strings.length < 3)
-            return null;
+            throw new RuntimeException("Can't find date on web page");
 
         String date = strings[2];
 
