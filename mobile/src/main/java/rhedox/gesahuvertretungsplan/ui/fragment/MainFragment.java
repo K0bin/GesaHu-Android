@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -119,7 +120,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 	    //Load data if user is on WIFI
         ConnectivityManager connMgr;
-        if(getActivity() != null) {
+        if(savedInstanceState == null && getActivity() != null) {
             connMgr = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
             if(!ConnectivityManagerCompat.isActiveNetworkMetered(connMgr))
@@ -166,9 +167,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 			    activity.updateUI();
 
 		    populateList();
-	    } else if(savedInstanceState != null) {
+	    } else if(savedInstanceState != null)
 		    substitutesList = savedInstanceState.getParcelable(STATE_KEY_SUBSTITUTE_LIST);
-	    }
 
 	    recyclerView.setAdapter(adapter);
 
@@ -205,7 +205,13 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onPause();
     }
 
-    @Override
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		activity = null;
+	}
+
+	@Override
     public void onDestroyView() {
 
         unbinder.unbind();
@@ -219,6 +225,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         refreshLayout = null;
         recyclerView = null;
+	    activity = null;
         adapter = null;
         //activity = null;
         super.onDestroyView();

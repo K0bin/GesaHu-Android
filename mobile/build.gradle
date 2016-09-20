@@ -11,7 +11,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 3402
+        versionCode 3403
         versionName "3.7"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -43,9 +43,6 @@ android {
     aaptOptions {
         additionalParameters "--no-version-vectors"
     }*/
-    dexOptions {
-        incremental true
-    }
 }
 
 dependencies {

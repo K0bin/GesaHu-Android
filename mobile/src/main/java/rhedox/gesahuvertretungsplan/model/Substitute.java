@@ -224,6 +224,9 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
 	                byte isImportantByte = source.readByte();
 	                boolean isImportant = isImportantByte == 1;
 
+	                if(lesson == null || subject == null || teacher == null || substitute == null || room == null || hint == null)
+		                return null;
+
                     return new Substitute(lesson, subject, teacher, substitute, room, hint, isImportant);
                 }
 
