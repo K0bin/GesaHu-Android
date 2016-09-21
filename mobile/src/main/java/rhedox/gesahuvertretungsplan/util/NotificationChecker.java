@@ -41,7 +41,6 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 	private Context context;
 	private int color;
 	private boolean isLoading = false;
-	private boolean useSummaryNotification;
 
 	@NonNull private GesahuiApi gesahui;
 
@@ -59,7 +58,6 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 		String schoolClass = prefs.getString("pref_class", "a");
 		String schoolYear = prefs.getString("pref_year", "5");
 		boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
-		useSummaryNotification = prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION_SUMMARY, false);
 
 		Student student = new Student(schoolYear, schoolClass);
 
@@ -123,7 +121,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 				String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLesson());
 				titles[count] = body;
 
-				if(lesson != -1 || !useSummaryNotification) {
+				if(lesson != -1) {
 					NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
 					//Open app on click on notification
@@ -184,10 +182,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
 	private Notification makeSummaryNotification(int lesson, int notificationCount, LocalDate date, String[] notificationLines) {
 
-		if(notificationCount <= 0 || notificationLines == null || notificationLines.length == 0)
-			return null;
-
-		if((Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) && (lesson != -1 || !useSummaryNotification))
+		if(notificationCount <= 1 || notificationLines == null || notificationLines.length == 0)
 			return null;
 
 		//This summary notification, denoted by setGroupSummary(true), is the only notification that appears on Marshmallow and lower devices and should (you guessed it) summarize all of the individual notifications.

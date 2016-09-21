@@ -42,14 +42,8 @@
             android:entryValues="@array/notification_types_values"
             android:defaultValue="both" />
 
-        <android.support.v7.preference.CheckBoxPreference
-            android:key="pref_notification_summary"
-            android:title="Tägliche Benachrichtigungen zusammenfassen"
-            android:summary="Nutzt für die tägliche Übersicht nur eine einzige Benachrichtigung"
-            android:defaultValue="true" />
-
         <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
-            android:key="pref_notification_time_new"
+            android:key="pref_notification_time_long"
             android:title="Benachrichtigungszeit"
             android:summary="Zeit der Benachrichtigung"
             android:defaultValue="25200000" />
@@ -84,7 +78,7 @@
             android:key="pref_white_tab_indicator"
             android:title="Weißer Tab Indikator"
             android:summary="Linie unter dem aktiven Tab weiß färben"
-            android:defaultValue="false" />
+            android:defaultValue="true" />
 
     </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

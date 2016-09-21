@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 			    analytics.setUserProperty("DarkTheme", prefs.getString(PreferenceFragment.PREF_DARK_TYPE, "NONE"));
 			    analytics.setUserProperty("NotificationTime", LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0)).toString());
 			    analytics.setUserProperty("NotificationType", prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, "NONE"));
-			    analytics.setUserProperty("NotificationSummary", prefs.getBoolean(PreferenceFragment.PREF_NOTIFICATION_SUMMARY, false) ? "true" : "false");
 			    analytics.setUserProperty("StudentYear", prefs.getString(PreferenceFragment.PREF_YEAR, ""));
 			    analytics.setUserProperty("StudentClass", prefs.getString(PreferenceFragment.PREF_CLASS, ""));
 			    analytics.setUserProperty("SubstitutesOnTop", prefs.getBoolean(PreferenceFragment.PREF_SORT, false) ? "true" : "false");
