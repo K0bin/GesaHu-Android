@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -21,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.DateTime;
@@ -45,7 +43,7 @@ import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.GesahuiApi;
-import rhedox.gesahuvertretungsplan.util.NetworkChecker;
+import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
@@ -263,7 +261,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void load(LocalDate date) {
         if(date != null && !isLoading) {
 
-            if(NetworkChecker.isNetworkConnected(getActivity().getApplicationContext())) {
+            if(NetworkUtils.isNetworkConnected(getActivity().getApplicationContext())) {
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
 
@@ -368,7 +366,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             if (getUserVisibleHint() && snackbar != null && getActivity() != null) {
 	            //Fragment is not empty, keep previous entries and show snackbar
 
-	            if (NetworkChecker.isNetworkConnected(getActivity().getApplicationContext()))
+	            if (NetworkUtils.isNetworkConnected(getActivity().getApplicationContext()))
 		            snackbar.setText(R.string.oops);
 	            else
 		            snackbar.setText(R.string.error_no_connection);

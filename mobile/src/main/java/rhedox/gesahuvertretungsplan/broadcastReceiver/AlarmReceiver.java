@@ -17,7 +17,7 @@ import org.joda.time.DurationFieldType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import rhedox.gesahuvertretungsplan.util.NotificationChecker;
+import rhedox.gesahuvertretungsplan.model.Notifier;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public static final int REQUEST_CODE = 0;
@@ -50,7 +50,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 return;
         }
 
-        NotificationChecker checker = new NotificationChecker(context, lesson);
+        Notifier checker = new Notifier(context, lesson);
         checker.load();
     }
 

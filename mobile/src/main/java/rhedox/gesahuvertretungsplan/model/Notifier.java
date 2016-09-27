@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util;
+package rhedox.gesahuvertretungsplan.model;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -24,20 +23,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.GesahuiApi;
-import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
+import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 
 /**
  * Created by Robin on 07.09.2015.
  */
-public class NotificationChecker implements Callback<SubstitutesList> {
+public class Notifier implements Callback<SubstitutesList> {
 	private Context context;
 	private int color;
 	private boolean isLoading = false;
@@ -50,7 +43,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
 	private int lesson = -1;
 
-	public NotificationChecker(Context context) {
+	public Notifier(Context context) {
 		this.context = context.getApplicationContext(); //Prevent Activity leaking!
 
 		//Load student for matching lessons
@@ -74,7 +67,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 		gesahui = retrofit.create(GesahuiApi.class);
 	}
 
-	public NotificationChecker(Context context, int lesson) {
+	public Notifier(Context context, int lesson) {
 		this(context);
 		this.lesson = lesson;
 	}
@@ -121,43 +114,40 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 				String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLesson());
 				titles[count] = body;
 
-				if(lesson != -1) {
-					NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+				//Open app on click on notification
+				Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
+				if (response.body().getDate() != null)
+					launchIntent.putExtra(MainActivity.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
+				PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				builder.setContentIntent(launchPending);
 
-					//Open app on click on notification
-					Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
-					if (response.body().getDate() != null)
-						launchIntent.putExtra(MainActivity.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
-					PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-					builder.setContentIntent(launchPending);
+				//Expanded style
+				NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+				bigTextStyle.bigText(notificationText);
+				bigTextStyle.setBigContentTitle(title);
+				bigTextStyle.setSummaryText(body);
+				builder.setStyle(bigTextStyle);
 
-					//Expanded style
-					NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-					bigTextStyle.bigText(notificationText);
-					bigTextStyle.setBigContentTitle(title);
-					bigTextStyle.setSummaryText(body);
-					builder.setStyle(bigTextStyle);
+				//Normal notification
+				builder.setSmallIcon(R.drawable.ic_notification);
+				builder.setContentTitle(title);
+				builder.setContentText(body);
+				builder.setContentInfo(substitutes.get(i).getLesson());
+				builder.setGroup(Notifier.GROUP_KEY);
 
-					//Normal notification
-					builder.setSmallIcon(R.drawable.ic_notification);
-					builder.setContentTitle(title);
-					builder.setContentText(body);
-					builder.setContentInfo(substitutes.get(i).getLesson());
-					builder.setGroup(NotificationChecker.GROUP_KEY);
+				//Only relevant for JELLY_BEAN and higher
+				PendingIntent pending = SubstituteShareUtils.makePendingShareIntent(context, LocalDate.now(), substitutes.get(i));
+				NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
+				builder.addAction(action);
 
-					//Only relevant for JELLY_BEAN and higher
-					PendingIntent pending = SubstituteShareHelper.makePendingShareIntent(context, LocalDate.now(), substitutes.get(i));
-					NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
-					builder.addAction(action);
+				//Only relevant for LOLLIPOP and higher
+				builder.setCategory(NotificationCompat.CATEGORY_EVENT);
+				builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+				builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+				builder.setColor(color);
 
-					//Only relevant for LOLLIPOP and higher
-					builder.setCategory(NotificationCompat.CATEGORY_EVENT);
-					builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-					builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-					builder.setColor(color);
-
-					notificationManager.notify(i, builder.build());
-				}
+				notificationManager.notify(i, builder.build());
 				count++;
 			}
 		}
@@ -233,7 +223,7 @@ public class NotificationChecker implements Callback<SubstitutesList> {
 
 		//N + Wear summary
 		builder.setGroupSummary(true);
-		builder.setGroup(NotificationChecker.GROUP_KEY);
+		builder.setGroup(Notifier.GROUP_KEY);
 
 		return builder.build();
 	}

@@ -43,7 +43,7 @@
         </activity>
 
         <service
-            android:name=".util.DashClockExtension"
+            android:name=".broadcastReceiver.DashClockExtension"
             android:icon="@drawable/ic_notification"
             android:label="Gesahu Vertretungsplan"
             android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util;
+package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
  * Created by Robin on 05.05.2016.
@@ -83,20 +84,20 @@ public class SubstituteFormatter {
         String text = substitute.getSubject();
 
         if(!TextUtils.isEmpty(substitute.getRoom()))
-            text += "; "+context.getString(R.string.room)+": "+substitute.getRoom();
+            text += "; " + context.getString(R.string.room) + ": " + substitute.getRoom();
 
-        text += System.getProperty("line.separator");
-
-        if(!TextUtils.isEmpty(substitute.getTeacher()))
-            text += context.getString(R.string.teacher)+": "+ substitute.getTeacher()+"; ";
+        if(!TextUtils.isEmpty(substitute.getTeacher())) {
+            text += System.getProperty("line.separator");
+            text += context.getString(R.string.teacher) + ": " + substitute.getTeacher() + "; ";
+        }
 
         if(!TextUtils.isEmpty(substitute.getSubstituteTeacher()))
             text += context.getString(R.string.substitute_teacher)+": "+ substitute.getSubstituteTeacher();
 
-        text += System.getProperty("line.separator");
-
-        if(!TextUtils.isEmpty(substitute.getHint()))
-            text += context.getString(R.string.hint)+": "+ substitute.getHint();
+        if(!TextUtils.isEmpty(substitute.getHint())) {
+            text += System.getProperty("line.separator");
+            text += context.getString(R.string.hint) + ": " + substitute.getHint();
+        }
 
         return text;
     }

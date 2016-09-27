@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.util;
+package rhedox.gesahuvertretungsplan.broadcastReceiver;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 /**
  * Created by Robin on 10.10.2015.
  */
-public final class TabLayoutHelper {
-    private TabLayoutHelper() {}
+public final class TabLayoutUtils {
+    private TabLayoutUtils() {}
 
     public static void setContentInsetStart(TabLayout tabLayout, int value) {
         if(tabLayout == null)

@@ -19,7 +19,7 @@ import java.util.List;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.util.NetworkChecker;
+import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
@@ -245,7 +245,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     public void showError() {
         this.clear();
 
-	    if(NetworkChecker.isNetworkConnected(context))
+	    if(NetworkUtils.isNetworkConnected(context))
 		    this.error = ERROR_UNKNOWN;
 	    else
 		    this.error = ERROR_CONNECTION;

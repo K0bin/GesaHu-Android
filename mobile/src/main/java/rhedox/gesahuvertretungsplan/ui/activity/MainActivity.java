@@ -47,8 +47,8 @@ import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.SubstituteShareHelper;
-import rhedox.gesahuvertretungsplan.util.TabLayoutHelper;
+import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
+import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
 
 //import android.widget.DatePicker;
 
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(indicatorColor);
         if(canGoBack)
-            TabLayoutHelper.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
+            TabLayoutUtils.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
 
         if(!isRestored)
             viewPager.setCurrentItem(pair.second);
@@ -403,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private void updateTabInset() {
         //Inset the tabs if we can go back or a substitute is selected (back button is visible)
         @DimenRes int res = cab != null && cab.isActive() || canGoBack ? R.dimen.default_content_inset : R.dimen.default_content_inset_small;
-        TabLayoutHelper.setContentInsetStart(tabLayout, (int) getResources().getDimension(res));
+        TabLayoutUtils.setContentInsetStart(tabLayout, (int) getResources().getDimension(res));
 
     }
     private void expandAppBar() {
@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     else
                         date = null;
 
-                    startActivity(SubstituteShareHelper.makeShareIntent(this, date, substitute));
+                    startActivity(SubstituteShareUtils.makeShareIntent(this, date, substitute));
                 return true;
         }
 

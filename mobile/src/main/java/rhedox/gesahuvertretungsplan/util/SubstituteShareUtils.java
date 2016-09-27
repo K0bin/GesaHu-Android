@@ -7,19 +7,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter;
 
 /**
  * Created by Robin on 09.10.2015.
  */
-public final class SubstituteShareHelper {
+public final class SubstituteShareUtils {
     public static final int REQUEST_CODE = 2;
 
-    private SubstituteShareHelper() {}
+    private SubstituteShareUtils() {}
 
     public static Intent makeShareIntent(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute substitute) {
         String text = SubstituteFormatter.makeShareText(context, date, substitute);

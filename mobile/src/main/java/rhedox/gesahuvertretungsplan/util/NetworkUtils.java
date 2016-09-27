@@ -9,9 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 /**
  * Created by Robin on 18.02.2016.
  */
-public class NetworkChecker {
+public class NetworkUtils {
 
-    private NetworkChecker() {}
+    private NetworkUtils() {}
 
     // Check network connection
     public static boolean isNetworkConnected(@NonNull Context context) {
