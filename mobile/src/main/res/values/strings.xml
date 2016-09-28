@@ -15,6 +15,11 @@
     <string name="lesson">Vertretungsstunde</string>
     <string name="lessons">Vertretungsstunden</string>
 
+    <string name="drawer_open">Menü anzeigen</string>
+    <string name="drawer_close">Menü verstecken</string>
+    <string name="drawer_substitutes">Vertretungsplan</string>
+    <string name="drawer_boards">Boards</string>
+
     <string name="substitute">Vertretungsstunde</string>
     <string name="roomchange">Raumänderung</string>
     <string name="dropped">Freistunde</string>

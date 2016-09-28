@@ -25,9 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.fastaccess.datetimepicker.DatePickerFragmentDialog;
-import com.fastaccess.datetimepicker.DateTimeBuilder;
-import com.fastaccess.datetimepicker.callback.DatePickerCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -55,7 +52,7 @@ import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
 
 //import android.widget.DatePicker;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity, DatePickerCallback {
+public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
     private boolean sortImportant;
     private boolean specialMode;
 	private boolean isAmoledBlackEnabled;
@@ -86,41 +83,23 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private MaterialCab cab;
 
-    private static boolean isInitialized = false;
-	private FirebaseAnalytics analytics;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(!isInitialized) {
-	        JodaTimeAndroid.init(getApplication());
-
-	        SharedPreferences prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-	        PreferenceFragment.applyDarkTheme(prefs);
-        }
-
 	    super.onCreate(savedInstanceState);
 
-	    analytics = FirebaseAnalytics.getInstance(this);
+	    //Preferences
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //Preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	    sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
+	    specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
-        sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
-        specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
+	    boolean isWhiteIndicatorEnabled = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
 
-        boolean isWhiteIndicatorEnabled = prefs.getBoolean(PreferenceFragment.PREF_WHITE_TAB_INDICATOR, false);
-        isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
+	    TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
+	    int color = typedArray.getColor(0, 0xFFFFFFFF);
+	    typedArray.recycle();
 
-        TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{R.attr.colorAccent});
-        int color = typedArray.getColor(0, 0xFFFFFFFF);
-        typedArray.recycle();
-
-        //Initialize UI
-        if(isAmoledBlackEnabled)
-            this.setTheme(R.style.GesahuThemeAmoled);
-        else
-            this.setTheme(R.style.GesahuTheme);
-
+	    /*
 	    if(!isInitialized) {
 
 		    if(App.ANALYTICS) {
@@ -136,11 +115,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		    }
 
 		    isInitialized = true;
-	    }
+	    }*/
 
-        setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
+	    setContentView(R.layout.activity_main);
 
         //Use AppBarLayout with SwipeRefreshLayout
         appBarLayoutOffsetListener = new AppBarLayout.OnOffsetChangedListener() {
@@ -263,6 +240,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent TargetActivity in AndroidManifest.xml.
+	    if(super.onOptionsItemSelected(item))
+		    return true;
 
         switch(item.getItemId()) {
             case R.id.action_settings:
@@ -279,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 else
                     pickerDate = LocalDate.now();
 
-                DatePickerFragmentDialog.newInstance().show(getSupportFragmentManager(), "Datepicker");
+                DatePickerFragment.newInstance(pickerDate).show(getSupportFragmentManager(), "Datepicker");
                 break;
 
             case R.id.action_about:
@@ -287,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 break;
 
             case android.R.id.home:
-                if(canGoBack)
+	            if(canGoBack)
                     this.onBackPressed();
                 return true;
         }
@@ -434,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		            Bundle bundle = new Bundle();
 		            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "text/plain");
 		            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "ShareSubstitute");
-		            analytics.logEvent(FirebaseAnalytics.Event.SHARE, bundle);
+		            getAnalytics().logEvent(FirebaseAnalytics.Event.SHARE, bundle);
 	            }
 
                     LocalDate date;
@@ -457,12 +436,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         return true;
     }
-
-	@Override
-	public void onDateSet(long date) {
-		LocalDate _date = SchoolWeek.nextDate(new DateTime(date).toLocalDate());
-		showDate(_date);
-	}
 
 //region Unused interface methods
     @Override
