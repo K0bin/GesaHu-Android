@@ -35,7 +35,7 @@ public class Notifier implements Callback<SubstitutesList> {
 	private int color;
 	private boolean isLoading = false;
 
-	@NonNull private GesahuiApi gesahui;
+	@NonNull private GesaHuiHtml gesahui;
 
 	public static final int REQUEST_CODE_BASE = 64;
 
@@ -64,7 +64,7 @@ public class Notifier implements Callback<SubstitutesList> {
 				//.client(client)
 				.build();
 
-		gesahui = retrofit.create(GesahuiApi.class);
+		gesahui = retrofit.create(GesaHuiHtml.class);
 	}
 
 	public Notifier(Context context, int lesson) {

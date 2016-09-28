@@ -23,7 +23,7 @@ import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.GesahuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
@@ -63,7 +63,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
                 .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), student))
                 .build();
 
-        GesahuiApi gesahui = retrofit.create(GesahuiApi.class);
+        GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);
         Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
         call.enqueue(this);
     }

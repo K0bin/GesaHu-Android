@@ -20,7 +20,7 @@ import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.GesahuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
@@ -30,7 +30,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
  */
 public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements Callback<SubstitutesList> {
 
-    private GesahuiApi gesahui;
+    private GesaHuiHtml gesahui;
 
     @Override
     protected void onUpdateData(int reason) {
@@ -52,7 +52,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
                         //.client(client)
                 .build();
 
-        gesahui = retrofit.create(GesahuiApi.class);
+        gesahui = retrofit.create(GesaHuiHtml.class);
 
         Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
         call.enqueue(this);

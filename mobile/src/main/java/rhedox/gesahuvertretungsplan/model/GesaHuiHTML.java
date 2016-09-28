@@ -9,7 +9,7 @@ import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 /**
  * Created by Robin on 17.02.2016.
  */
-public interface GesahuiApi {
+public interface GesaHuiHtml {
     @GET("/home/view.php")
     Call<SubstitutesList> getSubstitutesList(@Query("y") int year, @Query("m") int month, @Query("d") int day);
 }

@@ -18,7 +18,7 @@ import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.GesahuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.CounterWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
@@ -52,7 +52,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
                 .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext(), specialMode), student))
                 .build();
 
-        GesahuiApi gesahui = retrofit.create(GesahuiApi.class);
+        GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);
         Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
         call.enqueue(this);
 

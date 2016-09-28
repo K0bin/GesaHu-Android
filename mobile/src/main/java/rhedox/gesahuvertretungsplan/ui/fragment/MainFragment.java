@@ -42,7 +42,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.GesahuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
@@ -70,7 +70,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private LocalDate date;
     @Nullable private SubstitutesList substitutesList;
     private boolean isLoading = false;
-    private GesahuiApi gesahui;
+    private GesaHuiHtml gesahui;
     private retrofit2.Call<SubstitutesList> call;
 
     private MaterialActivity activity;
@@ -114,7 +114,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 .client(client)
                 .build();
 
-        gesahui = retrofit.create(GesahuiApi.class);
+        gesahui = retrofit.create(GesaHuiHtml.class);
 
 	    //Load data if user is on WIFI
         ConnectivityManager connMgr;

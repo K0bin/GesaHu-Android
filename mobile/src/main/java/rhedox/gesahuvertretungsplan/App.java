@@ -27,13 +27,32 @@ public class App extends Application {
 			StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
 					.detectAll()
 					.setClassInstanceLimit(MainActivity.class, 5)
-					.penaltyLog()
+					.penaltyDeath()
 					.build();
 			StrictMode.setVmPolicy(policy);
+
+			StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder()
+					.detectAll()
+					.penaltyDialog()
+					.build();
+			StrictMode.setThreadPolicy(threadPolicy);
 
 			AndroidDevMetrics.initWith(this);
 
 			refWatcher = LeakCanary.install(this);
+		} else {
+			StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
+					.detectAll()
+					.setClassInstanceLimit(MainActivity.class, 5)
+					.penaltyLog()
+					.build();
+			StrictMode.setVmPolicy(policy);
+
+			StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder()
+					.detectAll()
+					.penaltyLog()
+					.build();
+			StrictMode.setThreadPolicy(threadPolicy);
 		}
 	}
 
