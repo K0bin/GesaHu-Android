@@ -25,6 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.fastaccess.datetimepicker.DatePickerFragmentDialog;
+import com.fastaccess.datetimepicker.DateTimeBuilder;
+import com.fastaccess.datetimepicker.callback.DatePickerCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -52,7 +55,7 @@ import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
 
 //import android.widget.DatePicker;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity, DatePickerCallback {
     private boolean sortImportant;
     private boolean specialMode;
 	private boolean isAmoledBlackEnabled;
@@ -276,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 else
                     pickerDate = LocalDate.now();
 
-                DatePickerFragment.newInstance(pickerDate).show(getSupportFragmentManager(), DatePickerFragment.TAG);
+                DatePickerFragmentDialog.newInstance().show(getSupportFragmentManager(), "Datepicker");
                 break;
 
             case R.id.action_about:
@@ -454,6 +457,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         return true;
     }
+
+	@Override
+	public void onDateSet(long date) {
+		LocalDate _date = SchoolWeek.nextDate(new DateTime(date).toLocalDate());
+		showDate(_date);
+	}
 
 //region Unused interface methods
     @Override

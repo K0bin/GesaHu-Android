@@ -1,25 +1,25 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
-
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.lang.ref.WeakReference;
-
-import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
-public class DatePickerFragment extends DialogFragment {
-    private DatePickerDialog.OnDateSetListener listener;
+public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+    private LocalDate date;
+	private MainActivity mainActivity;
+	private boolean isPickerDone = false;
 
     public static final String TAG ="DatePickerFragment";
+    public static final String KEY_DATE ="date";
     public static final String ARGUMENT_DATE = "ArgumentDate";
 
     @Override
@@ -27,49 +27,64 @@ public class DatePickerFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
+    @Override @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LocalDate date;
-        if(getArguments() != null && getArguments().containsKey(ARGUMENT_DATE))
+	    if(savedInstanceState != null && savedInstanceState.containsKey(KEY_DATE))
+		    date = new DateTime(savedInstanceState.getLong(KEY_DATE)).toLocalDate();
+	    else if(getArguments() != null && getArguments().containsKey(ARGUMENT_DATE))
             date = new DateTime(getArguments().getLong(ARGUMENT_DATE)).toLocalDate();
         else
             date = LocalDate.now();
 
-        listener = new Listener(getActivity());
-
-        return new DatePickerDialog(getActivity(), listener, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
+	    isPickerDone = false;
+        return new DatePickerDialog(getActivity(), this, date.getYear(), date.getMonthOfYear()-1, date.getDayOfMonth());
     }
 
-    public static DatePickerFragment newInstance(LocalDate date)
-    {
-        Bundle bundle = new Bundle();
-        bundle.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        DatePickerFragment fragment = new DatePickerFragment();
-        fragment.setArguments(bundle);
-
-        return fragment;
+	    if(context instanceof MainActivity)
+		    mainActivity = (MainActivity)context;
     }
 
-    public static class Listener implements DatePickerDialog.OnDateSetListener {
-        private boolean isPickerDone;
-        private WeakReference<MainActivity> activity;
+    @Override
+    public void onDetach() {
+        super.onDetach();
 
-        public Listener(Activity activity) {
-            if(activity instanceof MainActivity)
-                this.activity = new WeakReference<MainActivity>((MainActivity)activity);
-        }
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            if(!isPickerDone) {
-                LocalDate _date = SchoolWeek.nextDate(new LocalDate(year, monthOfYear + 1, dayOfMonth));
-                if(activity != null && activity.get() != null)
-                    activity.get().showDate(_date);
-
-                isPickerDone = true;
-            }
-        }
+	    mainActivity = null;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+	    if(date != null)
+            outState.putLong(KEY_DATE, date.toDateTimeAtStartOfDay().getMillis());
+    }
+
+	@Override
+	public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+		if(!isPickerDone) {
+			date = new LocalDate(year, month + 1, dayOfMonth);
+
+			if(mainActivity != null)
+				mainActivity.showDate(date);
+
+			isPickerDone = true;
+		}
+
+		dismiss();
+	}
+
+	public static DatePickerFragment newInstance(LocalDate date)
+	{
+		Bundle bundle = new Bundle();
+		bundle.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
+
+		DatePickerFragment fragment = new DatePickerFragment();
+		fragment.setArguments(bundle);
+
+		return fragment;
+	}
 }
 

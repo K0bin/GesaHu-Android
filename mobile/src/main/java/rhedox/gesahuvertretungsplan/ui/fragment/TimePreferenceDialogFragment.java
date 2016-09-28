@@ -9,6 +9,7 @@ import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.widget.TimePicker;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
@@ -19,17 +20,30 @@ import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat implements TimePickerDialog.OnTimeSetListener {
     //Double set workaround
     private boolean isAlreadyPicked = false;
+    private LocalTime time;
+
+	public static final String KEY_TIME ="time";
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         isAlreadyPicked = false;
-        LocalTime time = getTimePreference().getTime();
+	    if(savedInstanceState != null && savedInstanceState.containsKey(KEY_TIME))
+		    time = LocalTime.fromMillisOfDay(savedInstanceState.getLong(KEY_TIME));
+	    else
+            time = getTimePreference().getTime();
 
         return new TimePickerDialog(getContext(), this, time.getHourOfDay(), time.getMinuteOfHour(), true);
     }
 
-    @Override
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if(time != null)
+			outState.putLong(KEY_TIME, time.getMillisOfDay());
+	}
+
+	@Override
     public void onDialogClosed(boolean b) {
     }
 
@@ -42,9 +56,8 @@ public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
 
             if (preference.callChangeListener(value))
                 preference.setTime(value);
-
-            this.dismiss();
         }
+        this.dismiss();
         isAlreadyPicked = true;
     }
 

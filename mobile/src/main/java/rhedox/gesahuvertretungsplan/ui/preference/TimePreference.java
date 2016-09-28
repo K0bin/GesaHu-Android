@@ -51,7 +51,7 @@ public class TimePreference extends android.support.v7.preference.DialogPreferen
         if(defaultValue != null && defaultValue instanceof LocalTime)
             localTime = (LocalTime)defaultValue;
 
-        setTime(restorePersistedValue ? LocalTime.fromMillisOfDay(getPersistedInt(localTime != null? localTime.getMillisOfDay() : 0)) : localTime);
+        setTime(restorePersistedValue ? LocalTime.fromMillisOfDay(getPersistedInt(localTime != null ? localTime.getMillisOfDay() : 0)) : localTime);
     }
 
 
