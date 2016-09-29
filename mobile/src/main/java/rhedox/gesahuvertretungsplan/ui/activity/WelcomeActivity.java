@@ -15,6 +15,7 @@ import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.ui.fragment.LoginFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.WelcomePreferenceFragment;
 
@@ -28,7 +29,10 @@ public class WelcomeActivity extends AppIntro {
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_design), getString(R.string.feature_design_description), R.drawable.ic_phone, ContextCompat.getColor(this, R.color.intro_slide_1)));
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_highlight), getString(R.string.feature_highlight_description), R.drawable.ic_relevant, ContextCompat.getColor(this, R.color.intro_slide_2)));
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_notify), getString(R.string.feature_notify_description), R.drawable.ic_bell, ContextCompat.getColor(this, R.color.intro_slide_3)));
-		addSlide(WelcomePreferenceFragment.newInstance());
+		//addSlide(WelcomePreferenceFragment.newInstance());
+		addSlide(LoginFragment.newInstance());
+
+		this.showSkipButton(false);
 
 		setBarColor(Color.parseColor("#1c000000"));
 		setSeparatorColor(Color.parseColor("#1c000000"));

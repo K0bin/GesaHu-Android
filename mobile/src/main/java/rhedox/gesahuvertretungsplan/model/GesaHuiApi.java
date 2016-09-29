@@ -12,5 +12,8 @@ import retrofit2.http.Query;
 
 public interface GesaHuiApi {
 	@GET("/home/mobil/appscripts/getboards.php")
-	Call<List<Board>> boards(@Query("username") String username, @Query("pw") String password);
+	Call<Boards> boards(@Query("username") String username, @Query("pw") String password);
+
+	@GET("/home/mobil/appscripts/getvplan.php")
+	Call<SubstitutesList> substitutes(@Query("d") int day, @Query("m") int month, @Query("y") int year);
 }

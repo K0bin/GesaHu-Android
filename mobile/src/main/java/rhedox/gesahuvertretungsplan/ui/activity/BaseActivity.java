@@ -26,7 +26,7 @@ import butterknife.Unbinder;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.Board;
+import rhedox.gesahuvertretungsplan.model.Boards.Board;
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
@@ -77,7 +77,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unbinder.unbind();
+		if(unbinder != null)
+			unbinder.unbind();
 	}
 
 	protected FirebaseAnalytics getAnalytics() {

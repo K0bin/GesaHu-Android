@@ -71,7 +71,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @BindView(R.id.tabLayout) TabLayout tabLayout;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    private Unbinder unbinder;
 
     public static final String EXTRA_DATE ="date";
     public static final String EXTRA_WIDGET ="widget";
@@ -276,7 +275,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     protected void onDestroy() {
-        unbinder.unbind();
 
         pagerAdapter.destroy();
         if(appBarLayout != null)

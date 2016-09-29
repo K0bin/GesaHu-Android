@@ -20,6 +20,12 @@
     <string name="drawer_substitutes">Vertretungsplan</string>
     <string name="drawer_boards">Boards</string>
 
+    <string name="login">Einloggen</string>
+    <string name="login_username_hint">Benutzername</string>
+    <string name="login_username_empty">Nutzername darf nicht leer sein</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_password_empty">Password darf nicht leer sein</string>
+
     <string name="substitute">Vertretungsstunde</string>
     <string name="roomchange">Raumänderung</string>
     <string name="dropped">Freistunde</string>
