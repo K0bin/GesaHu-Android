@@ -25,9 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.fastaccess.datetimepicker.DatePickerFragmentDialog;
-import com.fastaccess.datetimepicker.DateTimeBuilder;
-import com.fastaccess.datetimepicker.callback.DatePickerCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -55,7 +52,7 @@ import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
 
 //import android.widget.DatePicker;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity, DatePickerCallback {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
     private boolean sortImportant;
     private boolean specialMode;
 	private boolean isAmoledBlackEnabled;
@@ -204,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                if (viewPager != null && viewPager.getCurrentItem() == 0 || currentFragment == null)
+                if (viewPager != null && (viewPager.getCurrentItem() == 0 || currentFragment == null))
                     onPageSelected(viewPager.getCurrentItem());
             }
         });
@@ -279,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 else
                     pickerDate = LocalDate.now();
 
-                DatePickerFragmentDialog.newInstance().show(getSupportFragmentManager(), "Datepicker");
+                DatePickerFragment.newInstance(pickerDate).show(getSupportFragmentManager(), "Datepicker");
                 break;
 
             case R.id.action_about:
@@ -457,12 +454,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         return true;
     }
-
-	@Override
-	public void onDateSet(long date) {
-		LocalDate _date = SchoolWeek.nextDate(new DateTime(date).toLocalDate());
-		showDate(_date);
-	}
 
 //region Unused interface methods
     @Override
