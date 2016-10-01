@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model;
+package rhedox.gesahuvertretungsplan.model.old;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -13,6 +13,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 public class Substitute_old implements Comparable<Substitute_old>, Parcelable {

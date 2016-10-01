@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model;
+package rhedox.gesahuvertretungsplan.model.old;
 
 import android.os.Parcel;
 import android.os.Parcelable;

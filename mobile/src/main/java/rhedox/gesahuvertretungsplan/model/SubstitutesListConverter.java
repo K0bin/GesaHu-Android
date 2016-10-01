@@ -17,6 +17,8 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
+import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 public class SubstitutesListConverter implements Converter<ResponseBody, SubstitutesList_old> {

@@ -23,6 +23,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;

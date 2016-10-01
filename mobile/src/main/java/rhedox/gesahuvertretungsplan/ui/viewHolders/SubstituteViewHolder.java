@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -18,7 +17,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.Substitute_old;
 import rhedox.gesahuvertretungsplan.ui.adapters.SelectableAdapter;
 
 /**

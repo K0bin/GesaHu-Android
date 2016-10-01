@@ -12,5 +12,8 @@ interface GesaHuiApi {
     fun boards(@Query("username") username: String, @Query("pw") password: String): Call<Boards>
 
     @GET("/home/mobil/appscripts/getvplan.php")
+    fun substitutes(@Query("day") date: QueryDate, @Query("klasse") klasse: String): Call<SubstitutesList>
+
+    @GET("/home/mobil/appscripts/getvplan.php")
     fun substitutes(@Query("day") date: QueryDate): Call<SubstitutesList>
 }

@@ -9,6 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**

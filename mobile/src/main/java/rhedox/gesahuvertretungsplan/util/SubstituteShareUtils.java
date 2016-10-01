@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import org.joda.time.LocalDate;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter;
 
 /**

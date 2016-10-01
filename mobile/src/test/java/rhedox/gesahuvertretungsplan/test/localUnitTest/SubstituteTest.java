@@ -3,7 +3,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest;
 import org.junit.Test;
 
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

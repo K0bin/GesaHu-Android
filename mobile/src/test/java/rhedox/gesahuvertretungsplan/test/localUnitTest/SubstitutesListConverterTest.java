@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList_old;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverter;
 
 import org.junit.Test;

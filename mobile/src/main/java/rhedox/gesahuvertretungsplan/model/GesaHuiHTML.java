@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.model;
 
 import retrofit2.*;
 import retrofit2.http.*;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
 
 /**
  * Created by Robin on 17.02.2016.
