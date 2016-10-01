@@ -18,7 +18,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,17 +26,12 @@ import android.view.View;
 import com.afollestad.materialcab.MaterialCab;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import net.danlew.android.joda.JodaTimeAndroid;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
@@ -47,8 +41,8 @@ import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
+import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 //import android.widget.DatePicker;
 
@@ -210,7 +204,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @SuppressWarnings("unused")
     @OnClick(R.id.fab)
     public void showAnnouncement(View view) {
-        if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement())
+        if(currentFragment != null && currentFragment.getSubstitutesList() != null && TextUtils.isEmpty(currentFragment.getSubstitutesList().getAnnouncement()))
             AnnouncementFragment.newInstance(currentFragment.getSubstitutesList().getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
     }
 
@@ -319,7 +313,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         updateTabInset();
 
         //Expand app bar when there are no substitutes
-        if(currentFragment != null && (currentFragment.getSubstitutesList() == null || !currentFragment.getSubstitutesList().hasSubstitutes()))
+        if(currentFragment != null && (currentFragment.getSubstitutesList() == null || !currentFragment.getSubstitutesList().getHasSubstitutes()))
             expandAppBar();
     }
 
@@ -353,7 +347,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
             //Show fab only if there is an announcement and no substitute is selected
             if(currentFragment != null)
-                isVisible = currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement() && (currentFragment.getAdapter() == null || currentFragment.getAdapter().getSelectedIndex() == -1);
+                isVisible = currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().getHasAnnouncement() && (currentFragment.getAdapter() == null || currentFragment.getAdapter().getSelectedIndex() == -1);
 
             if(isVisible) {
                 floatingActionButton.setEnabled(true);
@@ -415,12 +409,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 	            }
 
                     LocalDate date;
-                    if(currentFragment.getSubstitutesList() != null)
+                    /*if(currentFragment.getSubstitutesList() != null)
                         date = currentFragment.getSubstitutesList().getDate();
-                    else
+                    else*/
                         date = null;
 
-                    startActivity(SubstituteShareUtils.makeShareIntent(this, date, substitute));
+                    //startActivity(SubstituteShareUtils.makeShareIntent(this, date, substitute));
                 return true;
         }
 

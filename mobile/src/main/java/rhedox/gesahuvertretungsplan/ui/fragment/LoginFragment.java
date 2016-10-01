@@ -1,25 +1,16 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import com.github.paolorotolo.appintro.ISlidePolicy;
 import com.squareup.moshi.Moshi;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +27,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Boards;
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuiApi_old;
 import rhedox.gesahuvertretungsplan.util.Md5Util;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
@@ -62,7 +53,7 @@ public class LoginFragment extends Fragment implements ISlidePolicy, Callback<Bo
 	private Unbinder unbinder;
 
 	private boolean isLoginSuccessful = false;
-	private GesaHuiApi gesaHui;
+	private GesaHuiApi_old gesaHui;
 	private Call<Boards> call;
 
 	@Override
@@ -88,7 +79,7 @@ public class LoginFragment extends Fragment implements ISlidePolicy, Callback<Bo
 				.client(client)
 				.build();
 
-		gesaHui = retrofit.create(GesaHuiApi.class);
+		gesaHui = retrofit.create(GesaHuiApi_old.class);
 	}
 
 	@Nullable
@@ -132,7 +123,8 @@ public class LoginFragment extends Fragment implements ISlidePolicy, Callback<Bo
 
 	@Override
 	public boolean isPolicyRespected() {
-		return isLoginSuccessful;
+		//return isLoginSuccessful;
+		return true;
 	}
 
 	@Override

@@ -21,12 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.squareup.leakcanary.RefWatcher;
+import com.squareup.moshi.Moshi;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,15 +37,16 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 import rhedox.gesahuvertretungsplan.*;
+import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.json.VertretungsplanAdapter;
+import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 import rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix;
@@ -70,7 +71,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private LocalDate date;
     @Nullable private SubstitutesList substitutesList;
     private boolean isLoading = false;
-    private GesaHuiHtml gesahui;
+    private GesaHuiApi gesahui;
     private retrofit2.Call<SubstitutesList> call;
 
     private MaterialActivity activity;
@@ -108,13 +109,17 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         OkHttpClient client = builder.build();
 
+	    Moshi moshi = new Moshi.Builder()
+			    .add(new VertretungsplanAdapter())
+			    .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getActivity().getApplicationContext(), specialMode), student))
+		        .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .build();
 
-        gesahui = retrofit.create(GesaHuiHtml.class);
+        gesahui = retrofit.create(GesaHuiApi.class);
 
 	    //Load data if user is on WIFI
         ConnectivityManager connMgr;
@@ -247,7 +252,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if(substitutesList != null) {
-            outState.putParcelable(STATE_KEY_SUBSTITUTE_LIST, substitutesList);
+            //outState.putParcelable(STATE_KEY_SUBSTITUTE_LIST, substitutesList);
         }
 
         super.onSaveInstanceState(outState);
@@ -268,7 +273,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 //Store date for refreshing
                 this.date = date;
 
-                call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+                call = gesahui.substitutes(new QueryDate(date));
 
                 call.enqueue(this);
 
@@ -306,11 +311,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 Log.e("List","Can't both filter and sort at the same time.");
 
             List<Substitute> substitutes;
+	        /*
             if(sortImportant)
                 substitutes = Collections.unmodifiableList(SubstitutesList.sort(substitutesList.getSubstitutes()));
             else if (filterImportant)
                 substitutes = Collections.unmodifiableList(SubstitutesList.filterImportant(substitutesList.getSubstitutes()));
-            else
+            else*/
                 substitutes = substitutesList.getSubstitutes();
 
             adapter.showList(substitutes);

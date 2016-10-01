@@ -6,10 +6,8 @@ import android.support.annotation.ColorInt;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
 
@@ -17,10 +15,10 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTouch;
 import butterknife.Unbinder;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.Substitute_old;
 import rhedox.gesahuvertretungsplan.ui.adapters.SelectableAdapter;
 
 /**
@@ -73,12 +71,12 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     public void setSubstitute(Substitute substitute) {
         if(substitute != null) {
             lesson.setText(substitute.getLesson());
-            subject.setText(substitute.getSubject());
+            subject.setText(substitute.getTitle());
             teacher.setText(substitute.getTeacher());
-            substituteTeacher.setText(substitute.getSubstituteTeacher());
+            substituteTeacher.setText(substitute.getSubstitute());
             room.setText(substitute.getRoom());
             hint.setText(substitute.getHint());
-            if (substitute.getIsImportant()) {
+            /*if (substitute.getIsImportant()) {
                 lesson.setBackground(circleHighlightedBackground);
                 subject.setTypeface(Typeface.DEFAULT_BOLD);
                 lesson.setTextColor(highlightedTextColor);
@@ -86,7 +84,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
                 lesson.setBackground(circleBackground);
                 subject.setTypeface(Typeface.DEFAULT);
                 lesson.setTextColor(textColor);
-            }
+            }*/
         }
     }
 

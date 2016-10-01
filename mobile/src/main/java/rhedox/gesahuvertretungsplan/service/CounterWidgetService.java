@@ -17,7 +17,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.CounterWidgetProvider;
@@ -26,7 +26,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 /**
  * Created by Robin on 23.07.2015.
  */
-public class CounterWidgetService extends Service implements Callback<SubstitutesList> {
+public class CounterWidgetService extends Service implements Callback<SubstitutesList_old> {
     private boolean darkTheme;
     private boolean amoled;
 
@@ -53,7 +53,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
                 .build();
 
         GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);
-        Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
         call.enqueue(this);
 
         return START_REDELIVER_INTENT;
@@ -65,21 +65,21 @@ public class CounterWidgetService extends Service implements Callback<Substitute
     }
 
     @Override
-    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
+    public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
         if(response == null || !response.isSuccessful() || response.body() == null)
             return;
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 
         for(int appWidgetId : allWidgetIds) {
-            RemoteViews remoteViews = CounterWidgetProvider.makeAppWidget(getApplicationContext(), darkTheme, amoled, date, SubstitutesList.countImportant(response.body().getSubstitutes()));
+            RemoteViews remoteViews = CounterWidgetProvider.makeAppWidget(getApplicationContext(), darkTheme, amoled, date, SubstitutesList_old.countImportant(response.body().getSubstitutes()));
 
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
     }
 
     @Override
-    public void onFailure(Call<SubstitutesList> call, Throwable t) {
+    public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
 
     }
 }

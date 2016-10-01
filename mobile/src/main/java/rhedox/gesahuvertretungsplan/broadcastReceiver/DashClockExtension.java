@@ -17,9 +17,9 @@ import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.Substitute_old;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
@@ -28,7 +28,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 /**
  * Created by Robin on 19.04.2015.
  */
-public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements Callback<SubstitutesList> {
+public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements Callback<SubstitutesList_old> {
 
     private GesaHuiHtml gesahui;
 
@@ -54,41 +54,41 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 
         gesahui = retrofit.create(GesaHuiHtml.class);
 
-        Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
         call.enqueue(this);
     }
 
     @Override
-    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
+    public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
 
         if(response == null || response.body() == null)
             return;
 
-        List<Substitute> substitutes = response.body().getSubstitutes();
+        List<Substitute_old> substitutes = response.body().getSubstitutes();
         if(substitutes == null)
             return;
 
-        List<Substitute> important = SubstitutesList.filterImportant(substitutes);
+        List<Substitute_old> important = SubstitutesList_old.filterImportant(substitutes);
         int count = important.size();
 
         String body = "";
-        for(Substitute substitute : important) {
+        for(Substitute_old substitute : important) {
             String title = "";
 
             switch(substitute.getKind()) {
-                case Substitute.KIND_SUBSTITUTE:
+                case Substitute_old.KIND_SUBSTITUTE:
                     title = getString(R.string.substitute);
                     break;
 
-                case Substitute.KIND_ROOM_CHANGE:
+                case Substitute_old.KIND_ROOM_CHANGE:
                     title = getString(R.string.roomchange);
                     break;
 
-                case Substitute.KIND_DROPPED:
+                case Substitute_old.KIND_DROPPED:
                     title = getString(R.string.dropped);
                     break;
 
-                case Substitute.KIND_TEST:
+                case Substitute_old.KIND_TEST:
                     title = getString(R.string.test);
                     break;
             }
@@ -115,7 +115,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     }
 
     @Override
-    public void onFailure(Call<SubstitutesList> call, Throwable t) {
+    public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
 
     }
 }

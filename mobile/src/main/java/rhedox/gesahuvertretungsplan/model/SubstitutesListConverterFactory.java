@@ -22,7 +22,7 @@ public class SubstitutesListConverterFactory extends Converter.Factory {
 
 
     @Override
-    public Converter<ResponseBody, SubstitutesList> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+    public Converter<ResponseBody, SubstitutesList_old> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
         return new SubstitutesListConverter(shortNameResolver, student);
     }
 }

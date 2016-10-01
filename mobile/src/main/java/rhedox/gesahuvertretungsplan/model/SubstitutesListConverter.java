@@ -17,13 +17,9 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
-import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
-public class SubstitutesListConverter implements Converter<ResponseBody, SubstitutesList> {
+public class SubstitutesListConverter implements Converter<ResponseBody, SubstitutesList_old> {
 
     private Student student;
     private ShortNameResolver shortNameResolver;
@@ -35,7 +31,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
     }
 
     @Override
-    public SubstitutesList convert(ResponseBody value) throws IOException {
+    public SubstitutesList_old convert(ResponseBody value) throws IOException {
         try {
             String body = new String(value.bytes(), "windows-1252");
             return convert(body);
@@ -44,8 +40,8 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
         }
     }
 
-    public SubstitutesList convert(String body) {
-        List<Substitute> substitutes = new ArrayList<Substitute>();
+    public SubstitutesList_old convert(String body) {
+        List<Substitute_old> substitutes = new ArrayList<Substitute_old>();
         String announcement;
         LocalDate date;
 
@@ -57,7 +53,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
         Elements tables = document.getElementsByTag("table");
 
         if (tables.size() != 5)
-            return new SubstitutesList(substitutes, announcement, date);
+            return new SubstitutesList_old(substitutes, announcement, date);
 
         Elements rows = tables.get(2).getElementsByTag("tr");
 
@@ -78,7 +74,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                     switch (i) {
                         case 0: {
                             if (!text.equals(lesson) && !TextUtils.isEmpty(subject) && !TextUtils.isEmpty(lesson)) {
-                                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
+                                Substitute_old substitute = new Substitute_old(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
                                 substitutes.add(substitute);
 
                                 subject = "";
@@ -94,7 +90,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
                         case 1: {
                             if (!TextUtils.isEmpty(subject)) {
-                                Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
+                                Substitute_old substitute = new Substitute_old(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
                                 substitutes.add(substitute);
 
                                 teacher.delete(0, teacher.length());
@@ -158,11 +154,11 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
         }
 
         if (!TextUtils.isEmpty(subject)) {
-            Substitute substitute = new Substitute(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
+            Substitute_old substitute = new Substitute_old(lesson.trim(), subject.trim(), teacher.toString().trim(), substituteTeacher.toString().trim(), room.toString().trim(), hint.toString().trim(), student);
             substitutes.add(substitute);
         }
 
-        return new SubstitutesList(substitutes, announcement, date);
+        return new SubstitutesList_old(substitutes, announcement, date);
     }
 
 	/**

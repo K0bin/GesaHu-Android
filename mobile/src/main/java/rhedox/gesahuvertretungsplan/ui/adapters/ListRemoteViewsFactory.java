@@ -21,8 +21,8 @@ import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
@@ -32,9 +32,9 @@ import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 /**
  * Created by Robin on 22.07.2015.
  */
-public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Callback<SubstitutesList> {
-    private List<Substitute> substitutes;
-    private SubstitutesList list;
+public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Callback<SubstitutesList_old> {
+    private List<Substitute_old> substitutes;
+    private SubstitutesList_old list;
 
     private Context context;
     private int appWidgetId;
@@ -64,7 +64,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
                 .build();
 
         GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);
-        Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
         call.enqueue(this);
     }
 
@@ -108,7 +108,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         if (substitutes == null || substitutes.size() <= position)
             return null;
 
-        Substitute substitute = substitutes.get(position);
+        Substitute_old substitute = substitutes.get(position);
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_substitute);
         remoteViews.setTextViewText(R.id.lesson, substitute.getLesson());
@@ -158,14 +158,14 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     }
 
     @Override
-    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
+    public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
         if(response == null || !response.isSuccessful())
             return;
 
         this.list = response.body();
 
         if(list != null)
-            this.substitutes = SubstitutesList.filterImportant(list.getSubstitutes());
+            this.substitutes = SubstitutesList_old.filterImportant(list.getSubstitutes());
         else
             this.substitutes = null;
 
@@ -180,7 +180,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     }
 
     @Override
-    public void onFailure(Call<SubstitutesList> call, Throwable t) {
+    public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
 
     }
 }

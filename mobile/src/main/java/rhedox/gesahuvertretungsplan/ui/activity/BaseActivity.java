@@ -3,20 +3,15 @@ package rhedox.gesahuvertretungsplan.ui.activity;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.ViewStubCompat;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.squareup.moshi.Moshi;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -26,8 +21,7 @@ import butterknife.Unbinder;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.Boards.Board;
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuiApi_old;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
@@ -44,7 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@BindView(R.id.navigation_view) NavigationView navigationView;
 	private Unbinder unbinder;
 
-	private GesaHuiApi gesaHui;
+	private GesaHuiApi_old gesaHui;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 				.addConverterFactory(MoshiConverterFactory.create())
 				.build();
 
-		gesaHui = retrofit.create(GesaHuiApi.class);
+		gesaHui = retrofit.create(GesaHuiApi_old.class);
 
 
 		//navigationView.getMenu().findItem(R.id.boards);

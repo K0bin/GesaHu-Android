@@ -30,7 +30,7 @@ import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 /**
  * Created by Robin on 07.09.2015.
  */
-public class Notifier implements Callback<SubstitutesList> {
+public class Notifier implements Callback<SubstitutesList_old> {
 	private Context context;
 	private int color;
 	private boolean isLoading = false;
@@ -76,7 +76,7 @@ public class Notifier implements Callback<SubstitutesList> {
 		if(!isLoading) {
 
 			LocalDate date = SchoolWeek.next();
-			Call<SubstitutesList> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+			Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
 			call.enqueue(this);
 
 			isLoading = true;
@@ -84,7 +84,7 @@ public class Notifier implements Callback<SubstitutesList> {
 	}
 
 	@Override
-	public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
+	public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
 		isLoading = false;
 
 		Log.d("Notification", "ReceivedBroadcast");
@@ -92,7 +92,7 @@ public class Notifier implements Callback<SubstitutesList> {
 		if(response == null || response.body() == null)
 			return;
 
-		List<Substitute> substitutes = SubstitutesList.filterImportant(response.body().getSubstitutes(), true);
+		List<Substitute_old> substitutes = SubstitutesList_old.filterImportant(response.body().getSubstitutes(), true);
 
 		if(substitutes == null)
 			return;
@@ -163,7 +163,7 @@ public class Notifier implements Callback<SubstitutesList> {
 
 			cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity");
 
-			cv.put("count", SubstitutesList.countImportant(substitutes));
+			cv.put("count", SubstitutesList_old.countImportant(substitutes));
 
 			context.getContentResolver().insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv);
 
@@ -229,7 +229,7 @@ public class Notifier implements Callback<SubstitutesList> {
 	}
 
 	@Override
-	public void onFailure(Call<SubstitutesList> call, Throwable t) {
+	public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
 		isLoading = false;
 	}
 }

@@ -9,7 +9,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
@@ -17,7 +16,7 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
  */
 public class SubstituteFormatter {
 
-    public static String makeShareText(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute substitute) {
+    public static String makeShareText(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute_old substitute) {
         String dateText = "";
 
         if(date != null) {
@@ -42,45 +41,45 @@ public class SubstituteFormatter {
 
 
         switch (substitute.getKind()) {
-            case Substitute.KIND_DROPPED:
+            case Substitute_old.KIND_DROPPED:
                 return String.format(context.getString(R.string.share_dropped), dateText, substitute.getLesson(), substitute.getSubject());
 
-            case Substitute.KIND_ROOM_CHANGE:
+            case Substitute_old.KIND_ROOM_CHANGE:
                 return String.format(context.getString(R.string.share_room_change), dateText, substitute.getLesson(), substitute.getSubject(), substitute.getRoom());
 
-            case Substitute.KIND_TEST:
+            case Substitute_old.KIND_TEST:
                 return String.format(context.getString(R.string.share_test), dateText, substitute.getLesson(), substitute.getSubject(), substitute.getRoom());
 
-            case Substitute.KIND_REGULAR:
+            case Substitute_old.KIND_REGULAR:
                 return String.format(context.getString(R.string.share_regular), substitute.getSubject(), dateText, substitute.getLesson());
 
-            case Substitute.KIND_SUBSTITUTE:
+            case Substitute_old.KIND_SUBSTITUTE:
             default:
                 return String.format(context.getString(R.string.share_subsitute), dateText, substitute.getLesson(), substitute.getSubject(), substitute.getSubstituteTeacher(), substitute.getRoom());
         }
     }
 
-    public static String makeSubstituteKindText(Context context, @Substitute.SubstituteKind int kind) {
+    public static String makeSubstituteKindText(Context context, @Substitute_old.SubstituteKind int kind) {
         switch(kind) {
-            case Substitute.KIND_ROOM_CHANGE:
+            case Substitute_old.KIND_ROOM_CHANGE:
                 return context.getString(R.string.roomchange);
 
-            case Substitute.KIND_DROPPED:
+            case Substitute_old.KIND_DROPPED:
                 return context.getString(R.string.dropped);
 
-            case Substitute.KIND_TEST:
+            case Substitute_old.KIND_TEST:
                 return context.getString(R.string.test);
 
-            case Substitute.KIND_REGULAR:
+            case Substitute_old.KIND_REGULAR:
                 return context.getString(R.string.regular);
 
             default:
-            case Substitute.KIND_SUBSTITUTE:
+            case Substitute_old.KIND_SUBSTITUTE:
                 return context.getString(R.string.substitute);
         }
     }
 
-    public static String makeNotificationText(Context context, Substitute substitute) {
+    public static String makeNotificationText(Context context, Substitute_old substitute) {
         String text = substitute.getSubject();
 
         if(!TextUtils.isEmpty(substitute.getRoom()))

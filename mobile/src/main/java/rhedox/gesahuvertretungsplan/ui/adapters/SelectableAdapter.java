@@ -2,8 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 
-import rhedox.gesahuvertretungsplan.model.Substitute;
-
 /**
  * Created by Robin on 27.12.2015.
  */

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.frogermcs.androiddevmetrics'
 apply plugin: 'android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
@@ -43,6 +44,9 @@ android {
     aaptOptions {
         additionalParameters "--no-version-vectors"
     }*/
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
@@ -92,4 +96,8 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.5'
     testCompile 'org.powermock:powermock-module-junit4-rule:1.6.5'
     testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

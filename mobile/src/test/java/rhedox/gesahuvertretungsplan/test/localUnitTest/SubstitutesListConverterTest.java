@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.model.SubstitutesListConverter;
 
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class SubstitutesListConverterTest {
             body = "";
         }
 
-        SubstitutesList list = converter.convert(body);
+        SubstitutesList_old list = converter.convert(body);
         assertTrue(list.hasSubstitutes());
         assertTrue(!list.hasAnnouncement());
         assertEquals("Subject name resolving", "Biologie 11c", list.getSubstitutes().get(14).getSubject());

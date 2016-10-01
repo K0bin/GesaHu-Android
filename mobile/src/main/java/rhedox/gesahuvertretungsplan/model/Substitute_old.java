@@ -7,7 +7,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.jsoup.helper.StringUtil;
+import com.squareup.moshi.FromJson;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
-public class Substitute implements Comparable<Substitute>, Parcelable {
+public class Substitute_old implements Comparable<Substitute_old>, Parcelable {
     public static final int KIND_SUBSTITUTE = 0;
     public static final int KIND_DROPPED = 1;
     public static final int KIND_ROOM_CHANGE = 2;
@@ -31,7 +31,7 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
     private int startingLesson;
     private final @SubstituteKind int kind;
 
-    public Substitute(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, @Nullable Student information) {
+    public Substitute_old(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, @Nullable Student information) {
         this.lesson = lesson.trim();
         this.subject = subject.trim();
         this.teacher = teacher.trim();
@@ -72,7 +72,7 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
             kind = KIND_SUBSTITUTE;
     }
 
-	private Substitute(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, boolean isImportant) {
+	private Substitute_old(@NonNull String lesson, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint, boolean isImportant) {
 		this.lesson = lesson;
 		this.subject = subject;
 		this.teacher = teacher;
@@ -91,6 +91,36 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
 					startingLesson = -1;
 				}
 			}
+		}
+
+		String lowerSubstitute = substituteTeacher.toLowerCase();
+		String lowerHint = hint.toLowerCase();
+		if("eigv. lernen".equals(lowerSubstitute) || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt") || lowerHint.contains("frei"))
+			kind = KIND_DROPPED;
+		else if((TextUtils.isEmpty(substituteTeacher) || substituteTeacher.equals(teacher)) && "raumänderung".equals(lowerHint))
+			kind = KIND_ROOM_CHANGE;
+		else if(lowerHint.contains("klausur"))
+			kind = KIND_TEST;
+		else if(lowerHint.contains("findet statt"))
+			kind = KIND_REGULAR;
+		else
+			kind = KIND_SUBSTITUTE;
+	}
+
+	public Substitute_old(@NonNull String startingLesson, @NonNull String endLesson, @NonNull String _class, @NonNull String subject, @NonNull String teacher, @NonNull String substituteTeacher, @NonNull String room, @NonNull String hint) {
+		this.lesson = startingLesson + "-" + endLesson;
+		this.subject = _class + " " +subject;
+		this.teacher = teacher;
+		this.substituteTeacher = substituteTeacher;
+		this.hint = hint;
+		this.room = room;
+		this.isImportant = true;
+
+		try {
+			this.startingLesson = Integer.parseInt(startingLesson.trim(), 10);
+		}
+		catch(NumberFormatException e) {
+			this.startingLesson = -1;
 		}
 
 		String lowerSubstitute = substituteTeacher.toLowerCase();
@@ -143,11 +173,11 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
         return kind;
     }
 
-    public static Substitute makeEmptyListSubstitute(@NonNull Context context) {
-        return new Substitute("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", null);
+    public static Substitute_old makeEmptyListSubstitute(@NonNull Context context) {
+        return new Substitute_old("1-10", context.getString(R.string.no_substitutes), context.getString(R.string.no_substitutes_hint), "", "", "", null);
     }
 
-	public boolean equals(Substitute another) {
+	public boolean equals(Substitute_old another) {
 		return another != null &&
 				((lesson == null && another.lesson == null) || (lesson != null && lesson.equals(another.lesson))) &&
 				((subject == null && another.subject == null) || (subject != null && subject.equals(another.subject))) &&
@@ -158,7 +188,7 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
 	}
 
     @Override
-    public int compareTo(Substitute another) {
+    public int compareTo(Substitute_old another) {
         if(another == null)
             return -1;
 
@@ -209,11 +239,11 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
 	    dest.writeByte((byte)(isImportant ? 1 : 0));
     }
 
-    public static final Parcelable.Creator<Substitute> CREATOR =
-            new Parcelable.Creator<Substitute>(){
+    public static final Parcelable.Creator<Substitute_old> CREATOR =
+            new Parcelable.Creator<Substitute_old>(){
 
                 @Override
-                public Substitute createFromParcel(Parcel source) {
+                public Substitute_old createFromParcel(Parcel source) {
 	                String lesson = source.readString();
 	                String subject = source.readString();
 	                String teacher = source.readString();
@@ -227,12 +257,18 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
 	                if(lesson == null || subject == null || teacher == null || substitute == null || room == null || hint == null)
 		                return null;
 
-                    return new Substitute(lesson, subject, teacher, substitute, room, hint, isImportant);
+                    return new Substitute_old(lesson, subject, teacher, substitute, room, hint, isImportant);
                 }
 
                 @Override
-                public Substitute[] newArray(int size) {
-                    return new Substitute[size];
+                public Substitute_old[] newArray(int size) {
+                    return new Substitute_old[size];
                 }
-            };
+    };
+
+	public static class Adapter {
+		@FromJson public Substitute_old fromJson(String stundeAnfang, String stundeEnde, String fach, String klasse, String lehrer, String vertretungslehrer, String raum, String hinweis) {
+			return new Substitute_old(stundeAnfang, stundeEnde, klasse, fach, lehrer, vertretungslehrer, raum, hinweis);
+		}
+	}
 }
