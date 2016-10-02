@@ -52,6 +52,8 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
         body = body.replaceAll("\\s+", " ");
         Document document = Jsoup.parse(body);
 	    date = readDate(document);
+	    if(date == null)
+		    date = new LocalDate();
         announcement = readAnnouncement(document);
 
         Elements tables = document.getElementsByTag("table");

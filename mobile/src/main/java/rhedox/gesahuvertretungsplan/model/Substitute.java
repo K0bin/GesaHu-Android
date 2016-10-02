@@ -26,6 +26,7 @@ public class Substitute implements Comparable<Substitute>, Parcelable {
     @Retention(RetentionPolicy.SOURCE)
     public @interface SubstituteKind {}
 
+	@NonNull
     private final String lesson, subject, teacher, substituteTeacher, room, hint;
     private final boolean isImportant;
     private int startingLesson;

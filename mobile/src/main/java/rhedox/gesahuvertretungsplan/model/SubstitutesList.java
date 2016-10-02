@@ -26,7 +26,7 @@ public class SubstitutesList implements Parcelable {
     private List<Substitute> substitutes;
     private String announcement;
 
-    public SubstitutesList(@Nullable List<Substitute> substitutes, @Nullable String announcement, @NonNull LocalDate date) {
+    public SubstitutesList(@NonNull List<Substitute> substitutes, @NonNull String announcement, @NonNull LocalDate date) {
         this.substitutes = substitutes;
         this.announcement = announcement;
         this.date = date;
@@ -161,12 +161,8 @@ public class SubstitutesList implements Parcelable {
 	    if(parcel == null)
 		    return;
 
-	    if(date != null)
-	        parcel.writeDouble(date.toDateTimeAtCurrentTime().getMillis());
-	    else
-	        parcel.writeDouble(0);
-
-	    parcel.writeString(announcement);
+        parcel.writeDouble(date.toDateTimeAtCurrentTime().getMillis());
+        parcel.writeString(announcement);
         parcel.writeTypedList(this.substitutes);
     }
 
@@ -179,7 +175,7 @@ public class SubstitutesList implements Parcelable {
 			if(d != 0)
 				date = new DateTime(in.readLong()).toLocalDate();
 			else
-				date = null;
+				date = new LocalDate();
 
 			String announcement = in.readString();
 			List<Substitute> substitutes = in.createTypedArrayList(Substitute.CREATOR);

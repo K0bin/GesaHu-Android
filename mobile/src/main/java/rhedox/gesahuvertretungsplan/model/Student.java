@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
@@ -9,10 +10,10 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
  * Created by Robin on 03.05.2015.
  */
 public class Student implements Parcelable {
-    private final String schoolYear;
-    private final String schoolClass;
+    @NonNull private final String schoolYear;
+    @NonNull private final String schoolClass;
 
-    public Student(String schoolYear, String schoolClass) {
+    public Student(@NonNull String schoolYear, @NonNull String schoolClass) {
         this.schoolYear = schoolYear;
         this.schoolClass = schoolClass;
     }
@@ -27,10 +28,12 @@ public class Student implements Parcelable {
         }
     }
 
+    @NonNull
     public String getSchoolYear() {
         return schoolYear;
     }
 
+    @NonNull
     public String getSchoolClass() {
         return schoolClass;
     }
