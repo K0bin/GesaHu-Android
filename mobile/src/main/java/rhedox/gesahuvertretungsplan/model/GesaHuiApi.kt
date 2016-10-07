@@ -12,7 +12,10 @@ interface GesaHuiApi {
     fun boards(@Query("username") username: String, @Query("pw") password: String): Call<Boards>
 
     @GET("/home/mobil/appscripts/getvplan.php")
-    fun substitutes(@Query("day") date: QueryDate, @Query("klasse") klasse: String): Call<SubstitutesList>
+    fun substitutesForStudent(@Query("day") date: QueryDate, @Query("klasse") _class: String): Call<SubstitutesList>
+
+    @GET("/home/mobil/appscripts/getvplan.php")
+    fun substitutesForTeacher(@Query("day") date: QueryDate, @Query("kuerzel") teacher: String): Call<SubstitutesList>
 
     @GET("/home/mobil/appscripts/getvplan.php")
     fun substitutes(@Query("day") date: QueryDate): Call<SubstitutesList>

@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
+
 /**
  * Created by Robin on 03.05.2015.
  */

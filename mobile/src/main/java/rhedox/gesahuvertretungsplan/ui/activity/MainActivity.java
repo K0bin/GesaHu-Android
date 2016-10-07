@@ -42,7 +42,6 @@ import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
-import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 //import android.widget.DatePicker;
 
@@ -204,7 +203,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @SuppressWarnings("unused")
     @OnClick(R.id.fab)
     public void showAnnouncement(View view) {
-        if(currentFragment != null && currentFragment.getSubstitutesList() != null && TextUtils.isEmpty(currentFragment.getSubstitutesList().getAnnouncement()))
+        if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().getHasAnnouncement())
             AnnouncementFragment.newInstance(currentFragment.getSubstitutesList().getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
     }
 

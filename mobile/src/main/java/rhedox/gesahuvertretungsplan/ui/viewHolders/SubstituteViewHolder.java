@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -74,7 +75,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
             substituteTeacher.setText(substitute.getSubstitute());
             room.setText(substitute.getRoom());
             hint.setText(substitute.getHint());
-            /*if (substitute.getIsImportant()) {
+            if (substitute.isRelevant()) {
                 lesson.setBackground(circleHighlightedBackground);
                 subject.setTypeface(Typeface.DEFAULT_BOLD);
                 lesson.setTextColor(highlightedTextColor);
@@ -82,7 +83,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
                 lesson.setBackground(circleBackground);
                 subject.setTypeface(Typeface.DEFAULT);
                 lesson.setTextColor(textColor);
-            }*/
+            }
         }
     }
 

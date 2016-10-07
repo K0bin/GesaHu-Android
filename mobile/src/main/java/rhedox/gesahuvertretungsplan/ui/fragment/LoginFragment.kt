@@ -27,7 +27,6 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Boards
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi
 import rhedox.gesahuvertretungsplan.util.Md5Util
-import rhedox.gesahuvertretungsplan.util.TextUtils
 import rhedox.gesahuvertretungsplan.util.bindView
 
 /**
@@ -84,12 +83,12 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<Boards> {
         }
         login.setOnClickListener {
             var areFieldsEmpty = false
-            if (password.text == null || TextUtils.isEmpty(password.text.toString())) {
+            if (password.text == null || password.text.toString().isNullOrBlank()) {
                 passwordLayout.error = getString(R.string.login_password_empty)
                 passwordLayout.isErrorEnabled = true
                 areFieldsEmpty = true
             }
-            if (username.text == null || TextUtils.isEmpty(username.text.toString())) {
+            if (username.text == null || username.text.toString().isNullOrBlank()) {
                 usernameLayout.error = getString(R.string.login_username_empty)
                 usernameLayout.isErrorEnabled = true
                 areFieldsEmpty = true
