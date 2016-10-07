@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private Unbinder unbinder;
 
     public static final String EXTRA_DATE ="date";
-    public static final String EXTRA_WIDGET ="widget";
+    public static final String EXTRA_BACK ="back";
 
     //Store Date of Monday of current week
     private LocalDate date;
@@ -154,8 +154,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(extras != null && extras.containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
 
-            if(!extras.containsKey(EXTRA_WIDGET) || !extras.getBoolean(EXTRA_WIDGET)) {
-                canGoBack = true;
+	        canGoBack = extras.containsKey(EXTRA_BACK) && extras.getBoolean(EXTRA_BACK);
+            if(canGoBack) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
                 toolbar.setContentInsetsRelative((int) getResources().getDimension(R.dimen.default_content_inset), toolbar.getContentInsetEnd());
@@ -348,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if(date.getWeekOfWeekyear() != this.date.getWeekOfWeekyear()) {
             //Launch a new activity with that week
             Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+	        intent.putExtra(EXTRA_BACK, true);
             intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
