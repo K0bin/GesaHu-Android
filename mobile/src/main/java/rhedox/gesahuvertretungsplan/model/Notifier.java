@@ -52,7 +52,6 @@ public class Notifier implements Callback<SubstitutesList_old> {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String schoolClass = prefs.getString("pref_class", "a");
 		String schoolYear = prefs.getString("pref_year", "5");
-		boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
 		Student student = new Student(schoolYear, schoolClass);
 
@@ -62,7 +61,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 		//Init retrofit for pulling the data
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl("http://gesahui.de")
-				.addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context, specialMode), student))
+				.addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context), student))
 				//.client(client)
 				.build();
 

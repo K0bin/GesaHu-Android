@@ -40,7 +40,6 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String schoolClass = prefs.getString("pref_class", "a");
         String schoolYear = prefs.getString("pref_year", "5");
-        boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
         Student information = new Student(schoolYear, schoolClass);
 
         //Init retro fit for pulling the data
@@ -48,7 +47,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext(), specialMode), information))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext()), information))
                         //.client(client)
                 .build();
 

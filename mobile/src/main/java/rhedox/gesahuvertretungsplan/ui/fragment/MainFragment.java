@@ -92,7 +92,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         Student student = new Student(infoYear, infoClass);
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
-        boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
 
         //Get Arguments
         Bundle arguments = getArguments();

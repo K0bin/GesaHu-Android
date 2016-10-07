@@ -42,14 +42,13 @@ public class CounterWidgetService extends Service implements Callback<Substitute
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
         amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
-        boolean specialMode = prefs.getBoolean(PreferenceFragment.PREF_SPECIAL_MODE, false);
         Student student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, ""), prefs.getString(PreferenceFragment.PREF_CLASS, ""));
 
         date = new DateTime(intent.getLongExtra(EXTRA_DATE, 0l)).toLocalDate();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext(), specialMode), student))
+                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext()), student))
                 .build();
 
         GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);

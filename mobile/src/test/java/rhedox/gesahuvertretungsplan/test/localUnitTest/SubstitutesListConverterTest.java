@@ -55,7 +55,7 @@ public class SubstitutesListConverterTest {
         //Avoid JodaTime trying to use Android APIs to set the timezone
         DateTimeZone.setProvider(new SimpleProvider());
 
-        SubstitutesListConverter converter = new SubstitutesListConverter(new ShortNameResolver(context, false), new Student("11","c"));
+        SubstitutesListConverter converter = new SubstitutesListConverter(new ShortNameResolver(context), new Student("11","c"));
 
         String directory = System.getProperty("user.dir");
         String body;
