@@ -8,6 +8,8 @@ import com.frogermcs.androiddevmetrics.AndroidDevMetrics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
 /**
@@ -21,6 +23,7 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		JodaTimeAndroid.init(this);
 
 		//Debug
 		if(BuildConfig.DEBUG) {

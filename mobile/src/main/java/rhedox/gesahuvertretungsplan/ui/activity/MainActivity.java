@@ -89,8 +89,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(!isInitialized) {
-	        JodaTimeAndroid.init(getApplication());
-
 	        SharedPreferences prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 	        PreferenceFragment.applyDarkTheme(prefs);
         }
