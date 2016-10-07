@@ -6,8 +6,8 @@ package rhedox.gesahuvertretungsplan.model
 data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: String, val course: String, val teacher: String, val substitute: String, val room: String, val hint: String, val isRelevant: Boolean) : Comparable<Substitute> {
     val kind: Kind;
 
-    val lesson: String
-        get() = lessonBegin.toString() + "-" + lessonEnd.toString();
+    val lessonText: String
+        get() = if(lessonBegin != lessonEnd) lessonBegin.toString() + "-" + lessonEnd.toString() else lessonBegin.toString();
 
     val title: String
         get() = course + " " + subject;

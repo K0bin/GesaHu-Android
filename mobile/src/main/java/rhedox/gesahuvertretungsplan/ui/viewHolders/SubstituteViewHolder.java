@@ -69,7 +69,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 
     public void setSubstitute(Substitute substitute) {
         if(substitute != null) {
-            lesson.setText(substitute.getLesson());
+            lesson.setText(substitute.getLessonText());
             subject.setText(substitute.getTitle());
             teacher.setText(substitute.getTeacher());
             substituteTeacher.setText(substitute.getSubstitute());

@@ -41,7 +41,6 @@ import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.util.TabLayoutUtils;
 
 //import android.widget.DatePicker;
 
@@ -66,7 +65,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @BindView(R.id.toolbar) Toolbar toolbar;
 
     public static final String EXTRA_DATE ="date";
-    public static final String EXTRA_WIDGET ="widget";
+	public static final String EXTRA_BACK = "back";
 
     //Store Date of Monday of current week
     private LocalDate date;
@@ -126,12 +125,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         if(extras != null && extras.containsKey(EXTRA_DATE)) {
             date = new DateTime(getIntent().getExtras().getLong(EXTRA_DATE)).toLocalDate();
 
-            if(!extras.containsKey(EXTRA_WIDGET) || !extras.getBoolean(EXTRA_WIDGET)) {
-                canGoBack = true;
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-                toolbar.setContentInsetsRelative((int) getResources().getDimension(R.dimen.default_content_inset), toolbar.getContentInsetEnd());
-            }
+	        canGoBack = extras.containsKey(EXTRA_BACK) && extras.getBoolean(EXTRA_BACK);
+	        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
         }
         else
             date = SchoolWeek.next();
@@ -162,8 +157,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(indicatorColor);
-        if(canGoBack)
-            TabLayoutUtils.setContentInsetStart(tabLayout, (int)getResources().getDimension(R.dimen.default_content_inset));
 
         if(!isRestored)
             viewPager.setCurrentItem(pair.second);
@@ -309,7 +302,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     public void updateUI() {
         updateFabVisibility();
         updateCabVisibility();
-        updateTabInset();
 
         //Expand app bar when there are no substitutes
         if(currentFragment != null && (currentFragment.getSubstitutesList() == null || !currentFragment.getSubstitutesList().getHasSubstitutes()))
@@ -322,6 +314,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             //Launch a new activity with that week
             Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
             intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+	        intent.putExtra(EXTRA_BACK, true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
@@ -373,12 +366,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             }
         }
     }
-    private void updateTabInset() {
-        //Inset the tabs if we can go back or a substitute is selected (back button is visible)
-        @DimenRes int res = cab != null && cab.isActive() || canGoBack ? R.dimen.default_content_inset : R.dimen.default_content_inset_small;
-        TabLayoutUtils.setContentInsetStart(tabLayout, (int) getResources().getDimension(res));
 
-    }
     private void expandAppBar() {
         if(appBarLayout != null)
             appBarLayout.setExpanded(true, true);

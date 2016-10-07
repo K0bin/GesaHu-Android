@@ -47,7 +47,7 @@
 				app:tabMode="scrollable"
 				app:tabGravity="fill"
 				android:background="?attr/colorPrimary"
-				app:tabContentStart="16dp"
+				app:tabContentStart="72dp"
 				app:tabIndicatorColor="?attr/tabIndicatorColor"/>
 
 			<View
