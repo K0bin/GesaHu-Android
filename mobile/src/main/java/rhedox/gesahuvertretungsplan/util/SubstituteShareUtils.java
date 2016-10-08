@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import org.joda.time.LocalDate;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter;
 
 /**
@@ -20,7 +20,7 @@ public final class SubstituteShareUtils {
 
     private SubstituteShareUtils() {}
 
-    public static Intent makeShareIntent(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute_old substitute) {
+    public static Intent makeShareIntent(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute substitute) {
         String text = SubstituteFormatter.makeShareText(context, date, substitute);
         
         Intent share = new Intent();
@@ -30,7 +30,7 @@ public final class SubstituteShareUtils {
         return Intent.createChooser(share, context.getString(R.string.share));
     }
 
-    public static PendingIntent makePendingShareIntent(Context context, @Nullable LocalDate date, Substitute_old substitute) {
+    public static PendingIntent makePendingShareIntent(Context context, @Nullable LocalDate date, Substitute substitute) {
         return PendingIntent.getActivity(context.getApplicationContext(), REQUEST_CODE, makeShareIntent(context, date, substitute), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

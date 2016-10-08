@@ -13,23 +13,21 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
-import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
+import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
-import rhedox.gesahuvertretungsplan.model.old.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
 /**
  * Created by Robin on 19.04.2015.
  */
-public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements Callback<SubstitutesList_old> {
+public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension implements Callback<SubstitutesList> {
 
-    private GesaHuiHtml gesahui;
+    private GesaHuiApi gesahui;
 
     @Override
     protected void onUpdateData(int reason) {
@@ -42,51 +40,41 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
         Student information = new Student(schoolYear, schoolClass);
 
         //Init retro fit for pulling the data
-        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+        gesahui = GesaHuiApi.Companion.create(getApplicationContext());
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new AbbreviationResolver(getApplicationContext()), information))
-                        //.client(client)
-                .build();
-
-        gesahui = retrofit.create(GesaHuiHtml.class);
-
-        Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
         call.enqueue(this);
     }
 
     @Override
-    public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
+    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
 
         if(response == null || response.body() == null)
             return;
 
-        List<Substitute_old> substitutes = response.body().getSubstitutes();
-        if(substitutes == null)
-            return;
+        List<Substitute> substitutes = response.body().getSubstitutes();
 
-        List<Substitute_old> important = SubstitutesList_old.filterImportant(substitutes);
+        List<Substitute> important = SubstitutesList.filterRelevant(substitutes, true);
         int count = important.size();
 
         String body = "";
-        for(Substitute_old substitute : important) {
+        for(Substitute substitute : important) {
             String title = "";
 
             switch(substitute.getKind()) {
-                case Substitute_old.KIND_SUBSTITUTE:
+                case Substitute:
                     title = getString(R.string.substitute);
                     break;
 
-                case Substitute_old.KIND_ROOM_CHANGE:
+                case RoomChange:
                     title = getString(R.string.roomchange);
                     break;
 
-                case Substitute_old.KIND_DROPPED:
+                case Dropped:
                     title = getString(R.string.dropped);
                     break;
 
-                case Substitute_old.KIND_TEST:
+                case Test:
                     title = getString(R.string.test);
                     break;
             }
@@ -94,7 +82,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
             if(!"".equals(body))
                 body += System.getProperty("line.separator");
 
-            body += String.format(getString(R.string.notification_summary), title, substitute.getLesson());
+            body += String.format(getString(R.string.notification_summary), title, substitute.getLessonText());
         }
 
         if (count > 0) {
@@ -113,7 +101,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     }
 
     @Override
-    public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
+    public void onFailure(Call<SubstitutesList> call, Throwable t) {
 
     }
 }

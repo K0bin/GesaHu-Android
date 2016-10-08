@@ -196,7 +196,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @SuppressWarnings("unused")
     @OnClick(R.id.fab)
     public void showAnnouncement(View view) {
-        if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().getHasAnnouncement())
+        if(currentFragment != null && currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement())
             AnnouncementFragment.newInstance(currentFragment.getSubstitutesList().getAnnouncement()).show(getSupportFragmentManager(), AnnouncementFragment.TAG);
     }
 
@@ -304,7 +304,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         updateCabVisibility();
 
         //Expand app bar when there are no substitutes
-        if(currentFragment != null && (currentFragment.getSubstitutesList() == null || !currentFragment.getSubstitutesList().getHasSubstitutes()))
+        if(currentFragment != null && (currentFragment.getSubstitutesList() == null || !currentFragment.getSubstitutesList().hasSubstitutes()))
             expandAppBar();
     }
 
@@ -339,7 +339,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
             //Show fab only if there is an announcement and no substitute is selected
             if(currentFragment != null)
-                isVisible = currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().getHasAnnouncement() && (currentFragment.getAdapter() == null || currentFragment.getAdapter().getSelectedIndex() == -1);
+                isVisible = currentFragment.getSubstitutesList() != null && currentFragment.getSubstitutesList().hasAnnouncement() && (currentFragment.getAdapter() == null || currentFragment.getAdapter().getSelectedIndex() == -1);
 
             if(isVisible) {
                 floatingActionButton.setEnabled(true);

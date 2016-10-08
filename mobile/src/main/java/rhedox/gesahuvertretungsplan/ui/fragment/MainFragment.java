@@ -102,26 +102,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         else
             date = SchoolWeek.next();
 
-	    //Init Retrofit
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-
-        if(BuildConfig.DEBUG)
-            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-
-	    Gson gson = new GsonBuilder()
-			    .registerTypeAdapter(Substitute.class, new Substitute.Deserializer(this.getContext()))
-	            .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
-			    .create();
-
-        OkHttpClient client = builder.build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://gesahui.de")
-		        .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(client)
-                .build();
-
-        gesahui = retrofit.create(GesaHuiApi.class);
+	    gesahui = GesaHuiApi.Companion.create(this.getContext());
 
 	    //Load data if user is on WIFI
         ConnectivityManager connMgr;

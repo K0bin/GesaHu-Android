@@ -20,11 +20,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
+import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.Student;
-import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
-import rhedox.gesahuvertretungsplan.model.old.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.Substitute;
+import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.service.ListFactoryService;
@@ -32,9 +32,9 @@ import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 /**
  * Created by Robin on 22.07.2015.
  */
-public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Callback<SubstitutesList_old> {
-    private List<Substitute_old> substitutes;
-    private SubstitutesList_old list;
+public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, Callback<SubstitutesList> {
+    private List<Substitute> substitutes;
+    private SubstitutesList list;
 
     private Context context;
     private int appWidgetId;
@@ -56,13 +56,8 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onCreate() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new AbbreviationResolver(context), student))
-                .build();
-
-        GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);
-        Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+        GesaHuiApi gesahui = GesaHuiApi.Companion.create(context);
+        Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
         call.enqueue(this);
     }
 
@@ -106,13 +101,13 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         if (substitutes == null || substitutes.size() <= position)
             return null;
 
-        Substitute_old substitute = substitutes.get(position);
+        Substitute substitute = substitutes.get(position);
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_substitute);
-        remoteViews.setTextViewText(R.id.lesson, substitute.getLesson());
+        remoteViews.setTextViewText(R.id.lesson, substitute.getLessonText());
         remoteViews.setTextViewText(R.id.subject, substitute.getSubject());
         remoteViews.setTextViewText(R.id.teacher, substitute.getTeacher());
-        remoteViews.setTextViewText(R.id.substituteTeacher, substitute.getSubstituteTeacher());
+        remoteViews.setTextViewText(R.id.substituteTeacher, substitute.getSubstitute());
         remoteViews.setTextViewText(R.id.hint, substitute.getHint());
         remoteViews.setTextViewText(R.id.room, substitute.getRoom());
 
@@ -156,14 +151,14 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     }
 
     @Override
-    public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
+    public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
         if(response == null || !response.isSuccessful())
             return;
 
         this.list = response.body();
 
         if(list != null)
-            this.substitutes = SubstitutesList_old.filterImportant(list.getSubstitutes());
+            this.substitutes = SubstitutesList.filterRelevant(list.getSubstitutes(), true);
         else
             this.substitutes = null;
 
@@ -178,7 +173,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     }
 
     @Override
-    public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
+    public void onFailure(Call<SubstitutesList> call, Throwable t) {
 
     }
 }

@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi_old;
+import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
@@ -40,7 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@BindView(R.id.navigation_view) NavigationView navigationView;
 	private Unbinder unbinder;
 
-	private GesaHuiApi_old gesaHui;
+	private GesaHuiApi gesaHui;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 				//.addConverterFactory(MoshiConverterFactory.create())
 				.build();
 
-		gesaHui = retrofit.create(GesaHuiApi_old.class);
+		gesaHui = retrofit.create(GesaHuiApi.class);
 
 
 		//navigationView.getMenu().findItem(R.id.boards);

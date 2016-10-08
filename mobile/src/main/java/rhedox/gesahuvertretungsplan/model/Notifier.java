@@ -21,24 +21,19 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.old.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverterFactory;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 
 /**
  * Created by Robin on 07.09.2015.
  */
-public class Notifier implements Callback<SubstitutesList_old> {
+public class Notifier implements Callback<SubstitutesList> {
 	private Context context;
 	private int color;
 	private boolean isLoading = false;
 
-	@NonNull private GesaHuiHtml gesahui;
+	@NonNull private GesaHuiApi gesahui;
 
 	public static final int REQUEST_CODE_BASE = 64;
 
@@ -59,14 +54,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 		//Color is used for the notifications
 		color = ContextCompat.getColor(context, R.color.colorDefaultAccent);
 
-		//Init retrofit for pulling the data
-		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl("http://gesahui.de")
-				.addConverterFactory(new SubstitutesListConverterFactory(new AbbreviationResolver(context), student))
-				//.client(client)
-				.build();
-
-		gesahui = retrofit.create(GesaHuiHtml.class);
+		gesahui = GesaHuiApi.Companion.create(context);
 	}
 
 	public Notifier(Context context, int lesson) {
@@ -78,7 +66,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 		if(!isLoading) {
 
 			LocalDate date = SchoolWeek.next();
-			Call<SubstitutesList_old> call = gesahui.getSubstitutesList(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+			Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
 			call.enqueue(this);
 
 			isLoading = true;
@@ -86,7 +74,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 	}
 
 	@Override
-	public void onResponse(Call<SubstitutesList_old> call, Response<SubstitutesList_old> response) {
+	public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
 		isLoading = false;
 
 		Log.d("Notification", "ReceivedBroadcast");
@@ -94,7 +82,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 		if(response == null || response.body() == null)
 			return;
 
-		List<Substitute_old> substitutes = SubstitutesList_old.filterImportant(response.body().getSubstitutes(), true);
+		List<Substitute> substitutes = SubstitutesList.filterRelevant(response.body().getSubstitutes(), true);
 
 		if(substitutes == null)
 			return;
@@ -108,12 +96,12 @@ public class Notifier implements Callback<SubstitutesList_old> {
 
 		int count = 0;
 		for (int i = 0; i < substitutes.size(); i++) {
-			if (lesson == -1 || lesson == substitutes.get(i).getStartingLesson()) {
+			if (lesson == -1 || lesson == substitutes.get(i).getLessonBegin()) {
 
 				//Text to display
 				String notificationText = SubstituteFormatter.makeNotificationText(context, substitutes.get(i));
 				String title = SubstituteFormatter.makeSubstituteKindText(context, substitutes.get(i).getKind());
-				String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLesson());
+				String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLessonText());
 				titles[count] = body;
 
 				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -135,7 +123,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 				builder.setSmallIcon(R.drawable.ic_notification);
 				builder.setContentTitle(title);
 				builder.setContentText(body);
-				builder.setContentInfo(substitutes.get(i).getLesson());
+				builder.setContentInfo(substitutes.get(i).getLessonText());
 				builder.setGroup(Notifier.GROUP_KEY);
 
 				//Only relevant for JELLY_BEAN and higher
@@ -165,7 +153,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 
 			cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity");
 
-			cv.put("count", SubstitutesList_old.countImportant(substitutes));
+			cv.put("count", SubstitutesList.countRelevant(substitutes));
 
 			context.getContentResolver().insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv);
 
@@ -231,7 +219,7 @@ public class Notifier implements Callback<SubstitutesList_old> {
 	}
 
 	@Override
-	public void onFailure(Call<SubstitutesList_old> call, Throwable t) {
+	public void onFailure(Call<SubstitutesList> call, Throwable t) {
 		isLoading = false;
 	}
 }
