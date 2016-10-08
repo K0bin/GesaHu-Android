@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.github.paolorotolo.appintro.ISlidePolicy
 import com.pawegio.kandroid.textWatcher
-import com.squareup.moshi.Moshi
 import kotlinx.android.synthetic.main.fragment_login.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -21,7 +20,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Boards
@@ -53,15 +51,15 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<Boards> {
             builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS));
 
         val client = builder.build();
-
+/*
         val moshi = Moshi.Builder()
             .add(Boards.Adapter())
             .add(Boards.Board.Adapter())
-            .build();
+            .build();*/
 
         val retrofit = Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                //.addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .build();
 

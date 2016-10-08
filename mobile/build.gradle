@@ -79,8 +79,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:+'
     compile 'com.github.paolorotolo:appintro:4.1.0'
     //compile 'com.google.android.gms:play-services-ads:8.+'
-    compile 'com.squareup.moshi:moshi:1.+'
-    compile 'com.squareup.retrofit2:converter-moshi:+'
+    compile 'com.squareup.retrofit2:converter-gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.pawegio.kandroid:kandroid:0.6.14@aar'
 

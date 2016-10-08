@@ -1,7 +1,5 @@
 package rhedox.gesahuvertretungsplan.model;
 
-import com.squareup.moshi.FromJson;
-
 import java.util.List;
 
 /**
@@ -29,18 +27,6 @@ public class Boards {
 
 		public String getName() {
 			return name;
-		}
-
-		public static class Adapter {
-			@FromJson Board fromJson(String name) {
-				return new Board(name);
-			}
-		}
-	}
-
-	public static class Adapter {
-		@FromJson Boards fromJson(List<Board> boards) {
-			return new Boards(boards);
 		}
 	}
 }

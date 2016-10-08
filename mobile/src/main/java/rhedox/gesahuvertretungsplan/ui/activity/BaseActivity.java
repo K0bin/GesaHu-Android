@@ -22,7 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi_old;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
@@ -95,7 +94,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl("http://gesahui.de")
-				.addConverterFactory(MoshiConverterFactory.create())
+				//.addConverterFactory(MoshiConverterFactory.create())
 				.build();
 
 		gesaHui = retrofit.create(GesaHuiApi_old.class);

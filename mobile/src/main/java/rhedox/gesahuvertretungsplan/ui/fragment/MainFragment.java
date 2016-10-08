@@ -20,8 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.leakcanary.RefWatcher;
-import com.squareup.moshi.Moshi;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -37,15 +38,15 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.LocalDateDeserializer;
 import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.json.Vertretungsplan;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
@@ -106,15 +107,16 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(BuildConfig.DEBUG)
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
 
-        OkHttpClient client = builder.build();
+	    Gson gson = new GsonBuilder()
+			    .registerTypeAdapter(Substitute.class, new Substitute.Deserializer())
+	            .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+			    .create();
 
-	    Moshi moshi = new Moshi.Builder()
-			    .add(new Vertretungsplan.Adapter())
-			    .build();
+        OkHttpClient client = builder.build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-		        .addConverterFactory(MoshiConverterFactory.create(moshi))
+		        .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build();
 

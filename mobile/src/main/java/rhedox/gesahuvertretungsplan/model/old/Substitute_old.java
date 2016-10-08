@@ -7,8 +7,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.squareup.moshi.FromJson;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -266,10 +264,4 @@ public class Substitute_old implements Comparable<Substitute_old>, Parcelable {
                     return new Substitute_old[size];
                 }
     };
-
-	public static class Adapter {
-		@FromJson public Substitute_old fromJson(String stundeAnfang, String stundeEnde, String fach, String klasse, String lehrer, String vertretungslehrer, String raum, String hinweis) {
-			return new Substitute_old(stundeAnfang, stundeEnde, klasse, fach, lehrer, vertretungslehrer, raum, hinweis);
-		}
-	}
 }

@@ -16,3 +16,7 @@ class QueryDate(date: LocalDate) {
 
     override fun toString(): String = dateString;
 }
+
+fun LocalDate.toQueryDate(): QueryDate {
+    return QueryDate(this);
+}

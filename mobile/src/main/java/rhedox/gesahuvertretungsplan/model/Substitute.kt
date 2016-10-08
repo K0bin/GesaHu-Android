@@ -1,5 +1,11 @@
 package rhedox.gesahuvertretungsplan.model
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import rhedox.gesahuvertretungsplan.util.Html
+import java.lang.reflect.Type
+
 /**
  * Created by robin on 01.10.2016.
  */
@@ -57,5 +63,28 @@ data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: Str
         RoomChange,
         Test,
         Regular
+    }
+
+    class Deserializer : JsonDeserializer<Substitute> {
+        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Substitute {
+            val jsonObject = json.asJsonObject;
+
+            val fach = if(!jsonObject.get("Fach").asString.isNullOrBlank()) Html.decode(jsonObject.get("Fach").asString.trim()) else "";
+            val klasse = if(!jsonObject.get("Klasse").asString.isNullOrBlank()) Html.decode(jsonObject.get("Klasse").asString.trim()) else "";
+            val lehrer = if(!jsonObject.get("Lehrer").asString.isNullOrBlank()) Html.decode(jsonObject.get("Lehrer").asString.trim()) else "";
+            val vertretungslehrer = if(!jsonObject.get("Vertretungslehrer").asString.isNullOrBlank()) Html.decode(jsonObject.get("Vertretungslehrer").asString.trim()) else "";
+            val hinweis = if(!jsonObject.get("Hinweis").asString.isNullOrBlank()) Html.decode(jsonObject.get("Hinweis").asString.trim()) else "";
+            val raum = if(!jsonObject.get("Raum").asString.isNullOrBlank()) Html.decode(jsonObject.get("Raum").asString.trim()) else "";
+            val isRelevant = if (jsonObject.get("relevant").asString.toLowerCase() == "true") true else false;
+
+            //Bindestrich workaround
+            val anfangStr = jsonObject.get("Stundeanfang").asString.replace("-","").trim();
+            val anfang = anfangStr.toInt();
+            val endeStr = jsonObject.get("Stundeende").asString.replace("-","").trim();
+            val ende = endeStr.toInt();
+
+            return Substitute(anfang, ende, fach, klasse, lehrer, vertretungslehrer, raum, hinweis, isRelevant);
+        }
+
     }
 }
