@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model;
+package rhedox.gesahuvertretungsplan.model.old;
 
 import retrofit2.*;
 import retrofit2.http.*;

@@ -16,14 +16,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
-import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.old.GesaHuiHtml;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
  * Created by Robin on 19.04.2015.
@@ -47,7 +46,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext()), information))
+                .addConverterFactory(new SubstitutesListConverterFactory(new AbbreviationResolver(getApplicationContext()), information))
                         //.client(client)
                 .build();
 

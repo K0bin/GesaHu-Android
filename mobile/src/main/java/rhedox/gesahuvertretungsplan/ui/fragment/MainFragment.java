@@ -40,6 +40,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rhedox.gesahuvertretungsplan.*;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
 import rhedox.gesahuvertretungsplan.model.LocalDateDeserializer;
 import rhedox.gesahuvertretungsplan.model.QueryDate;
@@ -108,7 +109,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
 
 	    Gson gson = new GsonBuilder()
-			    .registerTypeAdapter(Substitute.class, new Substitute.Deserializer())
+			    .registerTypeAdapter(Substitute.class, new Substitute.Deserializer(this.getContext()))
 	            .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
 			    .create();
 

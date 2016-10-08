@@ -19,12 +19,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
 import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
-import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.old.GesaHuiHtml;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.service.ListFactoryService;
@@ -58,7 +58,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public void onCreate() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(context), student))
+                .addConverterFactory(new SubstitutesListConverterFactory(new AbbreviationResolver(context), student))
                 .build();
 
         GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);

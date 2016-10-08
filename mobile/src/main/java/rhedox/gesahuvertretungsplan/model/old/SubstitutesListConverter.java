@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model;
+package rhedox.gesahuvertretungsplan.model.old;
 
 /**
  * Created by Robin on 17.02.2016.
@@ -17,19 +17,19 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
-import rhedox.gesahuvertretungsplan.model.old.Substitute_old;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
+import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 public class SubstitutesListConverter implements Converter<ResponseBody, SubstitutesList_old> {
 
     private Student student;
-    private ShortNameResolver shortNameResolver;
+    private AbbreviationResolver abbreviationResolver;
 
-    public SubstitutesListConverter(ShortNameResolver resolver, Student student)
+    public SubstitutesListConverter(AbbreviationResolver resolver, Student student)
     {
         this.student = student;
-        this.shortNameResolver = resolver;
+        this.abbreviationResolver = resolver;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
 
                             String[] parts = text.split(" ");
                             if (parts.length > 1)
-                                text = shortNameResolver.resolveSubject(parts[0]) + " " + parts[1];
+                                text = abbreviationResolver.resolveSubject(parts[0]) + " " + parts[1];
 
                             subject = text;
                         }
@@ -119,7 +119,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                     if (!TextUtils.isEmpty(teacher.toString()))
                                         teacher.append("; ");
 
-                                    teacher.append(shortNameResolver.resolveTeacher(_teacher.trim()));
+                                    teacher.append(abbreviationResolver.resolveTeacher(_teacher.trim()));
                                 }
                             }
                         }
@@ -135,7 +135,7 @@ public class SubstitutesListConverter implements Converter<ResponseBody, Substit
                                     if (!TextUtils.isEmpty(substituteTeacher.toString()))
                                         substituteTeacher.append("; ");
 
-                                    substituteTeacher.append(shortNameResolver.resolveTeacher(_teacher.trim()));
+                                    substituteTeacher.append(abbreviationResolver.resolveTeacher(_teacher.trim()));
                                 }
                             }
                         }

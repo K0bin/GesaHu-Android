@@ -19,10 +19,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
-import rhedox.gesahuvertretungsplan.model.SubstitutesListConverter;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverter;
 
 import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,7 +55,7 @@ public class SubstitutesListConverterTest {
         //Avoid JodaTime trying to use Android APIs to set the timezone
         DateTimeZone.setProvider(new SimpleProvider());
 
-        SubstitutesListConverter converter = new SubstitutesListConverter(new ShortNameResolver(context), new Student("11","c"));
+        SubstitutesListConverter converter = new SubstitutesListConverter(new AbbreviationResolver(context), new Student("11","c"));
 
         String directory = System.getProperty("user.dir");
         String body;

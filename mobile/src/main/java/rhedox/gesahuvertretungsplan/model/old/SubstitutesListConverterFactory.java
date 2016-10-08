@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model;
+package rhedox.gesahuvertretungsplan.model.old;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -6,7 +6,8 @@ import java.lang.reflect.Type;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
-import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
+import rhedox.gesahuvertretungsplan.model.Student;
 
 /**
  * Created by Robin on 17.02.2016.
@@ -14,16 +15,16 @@ import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
 public class SubstitutesListConverterFactory extends Converter.Factory {
 
     private Student student;
-    private ShortNameResolver shortNameResolver;
+    private AbbreviationResolver abbreviationResolver;
 
-    public SubstitutesListConverterFactory(ShortNameResolver resolver, Student student) {
+    public SubstitutesListConverterFactory(AbbreviationResolver resolver, Student student) {
         this.student = student;
-        this.shortNameResolver = resolver;
+        this.abbreviationResolver = resolver;
     }
 
 
     @Override
     public Converter<ResponseBody, SubstitutesList_old> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        return new SubstitutesListConverter(shortNameResolver, student);
+        return new SubstitutesListConverter(abbreviationResolver, student);
     }
 }

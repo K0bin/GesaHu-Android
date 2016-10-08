@@ -15,11 +15,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import rhedox.gesahuvertretungsplan.model.ShortNameResolver;
+import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.old.SubstitutesList_old;
-import rhedox.gesahuvertretungsplan.model.GesaHuiHtml;
-import rhedox.gesahuvertretungsplan.model.SubstitutesListConverterFactory;
+import rhedox.gesahuvertretungsplan.model.old.GesaHuiHtml;
+import rhedox.gesahuvertretungsplan.model.old.SubstitutesListConverterFactory;
 import rhedox.gesahuvertretungsplan.provider.CounterWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
@@ -48,7 +48,7 @@ public class CounterWidgetService extends Service implements Callback<Substitute
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gesahui.de")
-                .addConverterFactory(new SubstitutesListConverterFactory(new ShortNameResolver(getApplicationContext()), student))
+                .addConverterFactory(new SubstitutesListConverterFactory(new AbbreviationResolver(getApplicationContext()), student))
                 .build();
 
         GesaHuiHtml gesahui = retrofit.create(GesaHuiHtml.class);
