@@ -13,7 +13,6 @@ data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: Str
         get() = course + " " + subject;
 
     init {
-
         val lowerSubstitute = substitute.toLowerCase()
         val lowerHint = hint.toLowerCase()
         if (lowerSubstitute == "eigv. lernen" || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt"))

@@ -45,7 +45,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.json.VertretungsplanAdapter;
+import rhedox.gesahuvertretungsplan.model.json.Vertretungsplan;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
@@ -76,7 +76,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private MaterialActivity activity;
 
-	public static final String STATE_KEY_SUBSTITUTE_LIST = "substitutelsit";
+	public static final String STATE_KEY_SUBSTITUTE_LIST = "substitutelist";
 
     public MainFragment() {}
 
@@ -104,12 +104,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         if(BuildConfig.DEBUG)
-            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS));
+            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
 
         OkHttpClient client = builder.build();
 
 	    Moshi moshi = new Moshi.Builder()
-			    .add(new VertretungsplanAdapter())
+			    .add(new Vertretungsplan.Adapter())
 			    .build();
 
         Retrofit retrofit = new Retrofit.Builder()
