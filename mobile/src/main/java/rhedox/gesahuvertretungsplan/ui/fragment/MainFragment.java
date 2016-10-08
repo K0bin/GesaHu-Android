@@ -129,7 +129,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             connMgr = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
             if(!ConnectivityManagerCompat.isActiveNetworkMetered(connMgr))
-                load(date);
+                load();
         }
     }
 
@@ -262,18 +262,15 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        load(date);
+        load();
     }
 
-    public void load(LocalDate date) {
+    public void load() {
         if(date != null && !isLoading) {
 
             if(NetworkUtils.isNetworkConnected(getActivity().getApplicationContext())) {
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
-
-                //Store date for refreshing
-                this.date = date;
 
                 call = gesahui.substitutes(new QueryDate(date));
 
