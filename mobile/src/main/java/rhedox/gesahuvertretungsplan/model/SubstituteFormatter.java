@@ -86,10 +86,11 @@ public class SubstituteFormatter {
         if(!TextUtils.isEmpty(substitute.getRoom()))
             text += "; " + context.getString(R.string.room) + ": " + substitute.getRoom();
 
-        if(!TextUtils.isEmpty(substitute.getTeacher())) {
-            text += System.getProperty("line.separator");
+        if(!TextUtils.isEmpty(substitute.getTeacher()) || !TextUtils.isEmpty(substitute.getSubstituteTeacher()))
             text += context.getString(R.string.teacher) + ": " + substitute.getTeacher() + "; ";
-        }
+
+        if(!TextUtils.isEmpty(substitute.getTeacher()))
+            text += System.getProperty("line.separator");
 
         if(!TextUtils.isEmpty(substitute.getSubstituteTeacher()))
             text += context.getString(R.string.substitute_teacher)+": "+ substitute.getSubstituteTeacher();
