@@ -20,7 +20,10 @@
     <string name="drawer_substitutes">Vertretungsplan</string>
     <string name="drawer_boards">Boards</string>
 
-    <string name="login">Einloggen</string>
+    <string name="login">Anmelden</string>
+    <string name="login_failed">Anmelden fehlgeschlagen</string>
+    <string name="login_403">Falscher Nutzername oder falsches Passwort!</string>
+    <string name="login_required">Du musst dich anmelden, um alle Features der App zu verwenden.</string>
     <string name="login_username_hint">Benutzername</string>
     <string name="login_username_empty">Nutzername darf nicht leer sein</string>
     <string name="login_password_hint">Password</string>

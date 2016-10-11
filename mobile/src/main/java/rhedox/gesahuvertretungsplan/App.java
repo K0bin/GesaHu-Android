@@ -14,6 +14,10 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
  * Created by Robin on 29.06.2015.
  */
 public class App extends Application {
+	public static final String PREFERENCES_LOGIN = "rhedox.gesahuvertretungsplan.login";
+	public static final String PREF_USERNAME = "username";
+	public static final String PREF_PASSWORD = "password";
+
 	private RefWatcher refWatcher;
 
 	public static final boolean ANALYTICS = true;
