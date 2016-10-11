@@ -16,6 +16,7 @@ import android.util.Log;
 
 import org.joda.time.LocalDate;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -28,10 +29,9 @@ import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 /**
  * Created by Robin on 07.09.2015.
  */
-public class Notifier implements Callback<SubstitutesList> {
+public class Notifier {
 	private Context context;
 	private int color;
-	private boolean isLoading = false;
 	private User user;
 
 	@NonNull private GesaHuiApi gesahui;
@@ -58,101 +58,89 @@ public class Notifier implements Callback<SubstitutesList> {
 	}
 
 	public void load() {
-		if(!isLoading) {
-
-			LocalDate date = SchoolWeek.next();
-			Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
-			call.enqueue(this);
-
-			isLoading = true;
-		}
-	}
-
-	@Override
-	public void onResponse(Call<SubstitutesList> call, Response<SubstitutesList> response) {
-		isLoading = false;
-
-		Log.d("Notification", "ReceivedBroadcast");
-
-		if(response == null || response.body() == null)
-			return;
-
-		List<Substitute> substitutes = SubstitutesList.filterRelevant(response.body().getSubstitutes(), true);
-
-		if(substitutes == null)
-			return;
-
-		NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
-		notificationManager.cancelAll();
-
-		//Store titles for summary notification
-		String[] titles = new String[99];
-
-		int count = 0;
-		for (int i = 0; i < substitutes.size(); i++) {
-			if (lesson == -1 || lesson == substitutes.get(i).getLessonBegin()) {
-
-				//Text to display
-				String notificationText = SubstituteFormatter.makeNotificationText(context, substitutes.get(i));
-				String title = SubstituteFormatter.makeSubstituteKindText(context, substitutes.get(i).getKind());
-				String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLessonText());
-				titles[count] = body;
-
-				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-				//Open app on click on notification
-				Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
-				if (response.body().getDate() != null)
-					launchIntent.putExtra(MainActivity.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
-				PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-				builder.setContentIntent(launchPending);
-
-				//Expanded style
-				NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-				bigTextStyle.bigText(notificationText);
-				bigTextStyle.setBigContentTitle(title);
-				bigTextStyle.setSummaryText(body);
-				builder.setStyle(bigTextStyle);
-
-				//Normal notification
-				builder.setSmallIcon(R.drawable.ic_notification);
-				builder.setContentTitle(title);
-				builder.setContentText(body);
-				builder.setContentInfo(substitutes.get(i).getLessonText());
-				builder.setGroup(Notifier.GROUP_KEY);
-
-				//Only relevant for JELLY_BEAN and higher
-				PendingIntent pending = SubstituteShareUtils.makePendingShareIntent(context, LocalDate.now(), substitutes.get(i));
-				NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
-				builder.addAction(action);
-
-				//Only relevant for LOLLIPOP and higher
-				builder.setCategory(NotificationCompat.CATEGORY_EVENT);
-				builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-				builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-				builder.setColor(color);
-
-				notificationManager.notify(i, builder.build());
-				count++;
-			}
-		}
-
-		//Notification group summary
-		Notification summary = makeSummaryNotification(lesson, count, response.body().getDate(), titles);
-		if(summary != null)
-			notificationManager.notify(count+13, summary);
-
-		//TeslaUnread
+		LocalDate date = SchoolWeek.next();
+		Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
 		try {
-			ContentValues cv = new ContentValues();
+			Response<SubstitutesList> response = call.execute();
 
-			cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity");
+			if(response == null || !response.isSuccessful() || response.body() == null)
+				return;
 
-			cv.put("count", SubstitutesList.countRelevant(substitutes));
+			List<Substitute> substitutes = SubstitutesList.filterRelevant(response.body().getSubstitutes(), true);
+			NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-			context.getContentResolver().insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv);
+			notificationManager.cancelAll();
 
-		} catch (IllegalArgumentException ex) { /* TeslaUnread is not installed. */  }
+			//Store titles for summary notification
+			String[] titles = new String[99];
+
+			int count = 0;
+			for (int i = 0; i < substitutes.size(); i++) {
+				if (lesson == -1 || lesson == substitutes.get(i).getLessonBegin()) {
+
+					//Text to display
+					String notificationText = SubstituteFormatter.makeNotificationText(context, substitutes.get(i));
+					String title = SubstituteFormatter.makeSubstituteKindText(context, substitutes.get(i).getKind());
+					String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLessonText());
+					titles[count] = body;
+
+					NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+					//Open app on click on notification
+					Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
+					if (response.body().getDate() != null)
+						launchIntent.putExtra(MainActivity.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
+					PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+					builder.setContentIntent(launchPending);
+
+					//Expanded style
+					NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+					bigTextStyle.bigText(notificationText);
+					bigTextStyle.setBigContentTitle(title);
+					bigTextStyle.setSummaryText(body);
+					builder.setStyle(bigTextStyle);
+
+					//Normal notification
+					builder.setSmallIcon(R.drawable.ic_notification);
+					builder.setContentTitle(title);
+					builder.setContentText(body);
+					builder.setContentInfo(substitutes.get(i).getLessonText());
+					builder.setGroup(Notifier.GROUP_KEY);
+
+					//Only relevant for JELLY_BEAN and higher
+					PendingIntent pending = SubstituteShareUtils.makePendingShareIntent(context, LocalDate.now(), substitutes.get(i));
+					NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_share, context.getString(R.string.share), pending);
+					builder.addAction(action);
+
+					//Only relevant for LOLLIPOP and higher
+					builder.setCategory(NotificationCompat.CATEGORY_EVENT);
+					builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+					builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+					builder.setColor(color);
+
+					notificationManager.notify(i, builder.build());
+					count++;
+				}
+			}
+
+			//Notification group summary
+			Notification summary = makeSummaryNotification(lesson, count, response.body().getDate(), titles);
+			if (summary != null)
+				notificationManager.notify(count + 13, summary);
+
+			//TeslaUnread
+			try {
+				ContentValues cv = new ContentValues();
+
+				cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity");
+
+				cv.put("count", SubstitutesList.countRelevant(substitutes));
+
+				context.getContentResolver().insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv);
+
+			} catch (IllegalArgumentException ex) { /* TeslaUnread is not installed. */ }
+		}
+		catch (IOException e)  { }
+		catch (IllegalArgumentException ie) { /* TeslaUnread is not installed. */ }
 	}
 
 	private Notification makeSummaryNotification(int lesson, int notificationCount, LocalDate date, String[] notificationLines) {
@@ -211,10 +199,5 @@ public class Notifier implements Callback<SubstitutesList> {
 		builder.setGroup(Notifier.GROUP_KEY);
 
 		return builder.build();
-	}
-
-	@Override
-	public void onFailure(Call<SubstitutesList> call, Throwable t) {
-		isLoading = false;
 	}
 }
