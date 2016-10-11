@@ -20,8 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.leakcanary.RefWatcher;
 
 import org.joda.time.DateTime;
@@ -33,21 +31,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rhedox.gesahuvertretungsplan.*;
-import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
-import rhedox.gesahuvertretungsplan.model.LocalDateDeserializer;
 import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.User;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
@@ -63,6 +55,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @BindView(R.id.recycler) RecyclerView recyclerView;
     private Snackbar snackbar;
     private Unbinder unbinder;
+	private User user;
 
     private boolean filterImportant = false;
     private boolean sortImportant = false;
@@ -89,9 +82,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //Get Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String infoClass = prefs.getString(PreferenceFragment.PREF_CLASS, "");
-        String infoYear = prefs.getString(PreferenceFragment.PREF_YEAR, "");
-        Student student = new Student(infoYear, infoClass);
+        user = new User(getContext());
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
 
@@ -253,7 +244,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
 
-                call = gesahui.substitutes(new QueryDate(date));
+                call = gesahui.substitutes(new QueryDate(date), user.getUsername());
 
                 call.enqueue(this);
 

@@ -32,6 +32,7 @@ public class Notifier implements Callback<SubstitutesList> {
 	private Context context;
 	private int color;
 	private boolean isLoading = false;
+	private User user;
 
 	@NonNull private GesaHuiApi gesahui;
 
@@ -43,13 +44,7 @@ public class Notifier implements Callback<SubstitutesList> {
 
 	public Notifier(Context context) {
 		this.context = context.getApplicationContext(); //Prevent Activity leaking!
-
-		//Load student for matching lessons
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String schoolClass = prefs.getString("pref_class", "a");
-		String schoolYear = prefs.getString("pref_year", "5");
-
-		Student student = new Student(schoolYear, schoolClass);
+		user = new User(context);
 
 		//Color is used for the notifications
 		color = ContextCompat.getColor(context, R.color.colorDefaultAccent);
@@ -66,7 +61,7 @@ public class Notifier implements Callback<SubstitutesList> {
 		if(!isLoading) {
 
 			LocalDate date = SchoolWeek.next();
-			Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
+			Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
 			call.enqueue(this);
 
 			isLoading = true;

@@ -1,8 +1,6 @@
 package rhedox.gesahuvertretungsplan.broadcastReceiver;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.google.android.apps.dashclock.api.ExtensionData;
 
@@ -19,7 +17,7 @@ import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.Student;
+import rhedox.gesahuvertretungsplan.model.User;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
 /**
@@ -33,16 +31,12 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     protected void onUpdateData(int reason) {
 
         LocalDate date = SchoolWeek.next();
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String schoolClass = prefs.getString("pref_class", "a");
-        String schoolYear = prefs.getString("pref_year", "5");
-        Student information = new Student(schoolYear, schoolClass);
+        User user = new User(this);
 
         //Init retro fit for pulling the data
-        gesahui = GesaHuiApi.Companion.create(getApplicationContext());
+        gesahui = GesaHuiApi.Companion.create(this);
 
-        Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
+        Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
         call.enqueue(this);
     }
 

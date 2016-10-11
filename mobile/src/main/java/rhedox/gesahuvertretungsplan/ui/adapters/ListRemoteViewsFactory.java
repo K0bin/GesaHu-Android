@@ -17,14 +17,12 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.AbbreviationResolver;
 import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
 import rhedox.gesahuvertretungsplan.model.QueryDate;
-import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.User;
 import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.service.ListFactoryService;
@@ -39,7 +37,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private Context context;
     private int appWidgetId;
     private LocalDate date;
-    private Student student;
+    private User user;
 
     private boolean darkTheme;
 
@@ -51,13 +49,13 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
-        student = new Student(prefs.getString(PreferenceFragment.PREF_YEAR, ""), prefs.getString(PreferenceFragment.PREF_CLASS, ""));
+        user = new User(context);
     }
 
     @Override
     public void onCreate() {
         GesaHuiApi gesahui = GesaHuiApi.Companion.create(context);
-        Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
+        Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
         call.enqueue(this);
     }
 

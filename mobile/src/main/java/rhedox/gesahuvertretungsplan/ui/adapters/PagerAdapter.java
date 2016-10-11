@@ -10,7 +10,6 @@ import org.joda.time.LocalDate;
 import java.util.Locale;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.Student;
 import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 
 /**
