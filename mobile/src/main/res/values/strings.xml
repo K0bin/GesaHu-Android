@@ -20,6 +20,7 @@
     <string name="drawer_substitutes">Vertretungsplan</string>
     <string name="drawer_boards">Boards</string>
 
+    <string name="login_account_name">GesaHui</string>
     <string name="login">Anmelden</string>
     <string name="login_failed">Anmelden fehlgeschlagen</string>
     <string name="login_403">Falscher Nutzername oder falsches Passwort!</string>

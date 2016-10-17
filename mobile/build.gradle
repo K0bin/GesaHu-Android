@@ -82,6 +82,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.pawegio.kandroid:kandroid:0.6.14@aar'
+    compile 'com.google.firebase:firebase-messaging:9.6.1'
 
     androidTestCompile 'com.android.support:support-annotations:24.+'
     androidTestCompile 'com.android.support.test:runner:0.+'

@@ -1,5 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -17,6 +19,7 @@ import android.widget.Toast
 import com.github.paolorotolo.appintro.AppIntroBase
 import com.github.paolorotolo.appintro.ISlideBackgroundColorHolder
 import com.github.paolorotolo.appintro.ISlidePolicy
+import com.pawegio.kandroid.accountManager
 import com.pawegio.kandroid.textWatcher
 import com.squareup.haha.trove.TIntHashingStrategy
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -125,11 +128,8 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
 
             if(isUserLoggedIn) {
                 //Probably totally unsecure
-                val prefs = context.getSharedPreferences(App.PREFERENCES_LOGIN, Context.MODE_PRIVATE);
-                val editor = prefs.edit();
-                editor.putString(App.PREF_USERNAME, username)
-                editor.putString(App.PREF_PASSWORD, password)
-                editor.apply()
+                val account = Account(username, App.ACCOUNT_TYPE);
+                context.accountManager?.addAccountExplicitly(account, password, Bundle());
 
                 usernameEdit.isFocusable = false;
                 usernameEdit.isFocusableInTouchMode = false;
