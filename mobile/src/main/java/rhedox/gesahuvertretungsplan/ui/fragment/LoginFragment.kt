@@ -127,7 +127,6 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
             isUserLoggedIn = response.isSuccessful;
 
             if(isUserLoggedIn) {
-                //Probably totally unsecure
                 val account = Account(username, App.ACCOUNT_TYPE);
                 context.accountManager?.addAccountExplicitly(account, password, Bundle());
 

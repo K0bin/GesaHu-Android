@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.service
+package rhedox.gesahuvertretungsplan.model
 
 import android.accounts.*
 import android.content.Context
@@ -10,7 +10,7 @@ import rhedox.gesahuvertretungsplan.model.GesaHuiApi
  * Created by robin on 12.10.2016.
  */
 
-//Authenticator stub because the authenticator api is designed for OAuth (and pretty much undocumented)
+//Authenticator stub because the authenticator api is designed for OAuth
 class GesaHuiAuthenticator(context: Context) : AbstractAccountAuthenticator(context) {
     override fun getAuthTokenLabel(authTokenType: String?): String {
         throw UnsupportedOperationException("not implemented")

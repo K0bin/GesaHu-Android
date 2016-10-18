@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <account-authenticator
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="k0bin.gesaHui.account"
+    android:accountType="rhedox.gesahuvertretungsplan.gesaHuiAccount"
     android:icon="@mipmap/ic_authenticator"
     android:smallIcon="@mipmap/ic_authenticator"
+    android:userVisible="false"
     android:label="@string/login_account_name"/>

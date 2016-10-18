@@ -17,7 +17,8 @@ public class App extends Application {
 	public static final String PREFERENCES_LOGIN = "rhedox.gesahuvertretungsplan.login";
 	public static final String PREF_USERNAME = "username";
 	public static final String PREF_PASSWORD = "password";
-	public static final String ACCOUNT_TYPE = "rhedox.gesahuvertretungsplan.gesaHuAccount";
+	public static final String ACCOUNT_TYPE = "rhedox.gesahuvertretungsplan.gesaHuiAccount";
+	public static final String DB_NAME = "gesahui";
 
 	private RefWatcher refWatcher;
 
@@ -40,7 +41,7 @@ public class App extends Application {
 					.detectAll()
 					.penaltyDialog()
 					.build();
-			StrictMode.setThreadPolicy(threadPolicy);
+			//StrictMode.setThreadPolicy(threadPolicy);
 
 			AndroidDevMetrics.initWith(this);
 

@@ -23,7 +23,7 @@ import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
 import rhedox.gesahuvertretungsplan.model.User;
-import rhedox.gesahuvertretungsplan.provider.ListWidgetProvider;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.ListWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 

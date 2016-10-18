@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.provider;
+package rhedox.gesahuvertretungsplan.broadcastReceiver;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;

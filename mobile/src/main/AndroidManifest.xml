@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <uses-feature android:name="android.hardware.touchscreen"
@@ -72,7 +74,7 @@
         </receiver>
 
         <!-- List Widget -->
-        <receiver android:name=".provider.ListWidgetProvider" android:label="@string/widget_list_name">
+        <receiver android:name=".broadcastReceiver.ListWidgetProvider" android:label="@string/widget_list_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -86,6 +88,33 @@
             android:name=".service.ListFactoryService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+        <provider
+            android:name=".model.GesaHuiContentProvider"
+            android:authorities="rhedox.gesahuvertretungsplan.model.GesaHuiContentPrivider"
+            android:exported="false"
+            android:syncable="true"/>
+
+        <service
+            android:name=".service.GesaHuAccountService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".service.SyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/sync_adapter" />
         </service>
 
     </application>
