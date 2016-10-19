@@ -1,16 +1,13 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,23 +19,21 @@ import android.view.ViewGroup;
 
 import com.squareup.leakcanary.RefWatcher;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Callback;
 import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.*;
-import rhedox.gesahuvertretungsplan.model.GesaHuApi;
-import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesLoaderHelper;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
@@ -48,7 +43,7 @@ import tr.xip.errorview.ErrorView;
 /**
  * Created by Robin on 30.06.2015.
  */
-public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Callback<SubstitutesList>, ErrorView.RetryListener {
+public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SubstitutesLoaderHelper.Callback, ErrorView.RetryListener {
     private SubstitutesAdapter adapter;
     @BindView(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
     @BindView(R.id.recycler) RecyclerView recyclerView;
@@ -64,12 +59,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private LocalDate date;
     @Nullable private SubstitutesList substitutesList;
     private boolean isLoading = false;
-    private GesaHuApi gesahui;
-    private retrofit2.Call<SubstitutesList> call;
 
     private MaterialActivity activity;
 
 	public static final String STATE_KEY_SUBSTITUTE_LIST = "substitutelist";
+
+	private SubstitutesLoaderHelper callback;
 
     public MainFragment() {}
 
@@ -90,16 +85,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         else
             date = SchoolWeek.next();
 
-	    gesahui = GesaHuApi.Companion.create(this.getContext());
-
-	    //Load data if user is on WIFI
-        ConnectivityManager connMgr;
-        if(savedInstanceState == null && getActivity() != null) {
-            connMgr = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            if(!ConnectivityManagerCompat.isActiveNetworkMetered(connMgr))
-                load();
-        }
+	    callback = new SubstitutesLoaderHelper(getLoaderManager(), getContext(), date, this);
     }
 
     @Nullable
@@ -207,10 +193,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onDestroy() {
-        if(call != null) {
-            call.cancel();
-            call = null;
-        }
 
         //LeakCanary
         RefWatcher refWatcher = App.getRefWatcher(getActivity());
@@ -231,24 +213,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        load();
-    }
-
-    public void load() {
-        if(date != null && !isLoading) {
-
-            if(NetworkUtils.isNetworkConnected(getActivity().getApplicationContext())) {
-                if (refreshLayout != null)
-                    refreshLayout.setRefreshing(true);
-
-                call = gesahui.substitutes(new QueryDate(date));
-
-                call.enqueue(this);
-
-                isLoading = true;
-            } else
-                onFailure(null, new IOException(getString(R.string.error_no_connection)));
-        }
+        //Trigger sync
     }
 
 	@Nullable
@@ -293,7 +258,20 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
 
-    @Override
+	@Override
+	public void onSubstitutesLoaded(@NotNull SubstitutesList substitutesList) {
+		isLoading = false;
+
+		clearRefreshViews();
+
+		this.substitutesList = substitutesList;
+		populateList();
+
+		//Update the floating action button
+		if(activity != null)
+			activity.updateUI();
+	}
+
     public void onResponse(retrofit2.Call<SubstitutesList> call, Response<SubstitutesList> response) {
         isLoading = false;
 
@@ -312,7 +290,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             activity.updateUI();
     }
 
-    @Override
     public void onFailure(retrofit2.Call<SubstitutesList> call, Throwable t) {
 
         isLoading = false;
@@ -390,7 +367,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return fragment;
     }
 
-    public interface MaterialActivity {
+	public interface MaterialActivity {
         /**
          * Update visibility of activity level ui views such as the Snackbar, the floating action button or the contextual action bar
          */

@@ -13,8 +13,8 @@ import org.joda.time.*
 import retrofit2.Call
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstiututeAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
 import java.io.IOError
 import java.io.IOException
 
@@ -90,8 +90,8 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
                 provider.delete(announcementsUri, "date = ${substitutesList.date.toDateTime(LocalTime(0)).millis}", null);
 
                 for (substitute in substitutesList.substitutes) {
-                    provider.insert(substitutesUri, SubstiututeAdapter.toContentValues(substitute, substitutesList.date));
-                    provider.insert(announcementsUri, AnnouncementsAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
+                    provider.insert(substitutesUri, SubstituteAdapter.toContentValues(substitute, substitutesList.date));
+                    provider.insert(announcementsUri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
                 }
             }
         } catch (e: IOException) {
