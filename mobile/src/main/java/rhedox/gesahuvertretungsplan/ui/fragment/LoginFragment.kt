@@ -34,7 +34,7 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi
+import rhedox.gesahuvertretungsplan.model.GesaHuApi
 import rhedox.gesahuvertretungsplan.util.Md5Util
 import rhedox.gesahuvertretungsplan.util.bindView
 
@@ -51,7 +51,7 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
     private var username: String = "";
     private var password: String = "";
 
-    private lateinit var gesaHui: GesaHuiApi;
+    private lateinit var gesaHu: GesaHuApi;
     private var call: Call<List<Board>>? = null;
     private var isUserLoggedIn = false;
 
@@ -63,7 +63,7 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
         super.onCreate(savedInstanceState)
         retainInstance = false;
 
-        gesaHui = GesaHuiApi.create(context);
+        gesaHu = GesaHuApi.create(context);
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -99,7 +99,7 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
                 username = usernameEdit.text.toString()
                 password = Md5Util.Md5(passwordEdit.text.toString())
 
-                call = gesaHui.boards(username, password)
+                call = gesaHu.boards(username, password)
                 call?.enqueue(this)
             }
         }

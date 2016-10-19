@@ -3,15 +3,18 @@ package rhedox.gesahuvertretungsplan.model
 import android.accounts.*
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import com.pawegio.kandroid.accountManager
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi
+import rhedox.gesahuvertretungsplan.App
+import rhedox.gesahuvertretungsplan.model.GesaHuApi
 
 /**
  * Created by robin on 12.10.2016.
  */
 
 //Authenticator stub because the authenticator api is designed for OAuth
-class GesaHuiAuthenticator(context: Context) : AbstractAccountAuthenticator(context) {
+class GesaHuAuthenticator(private val context: Context) : AbstractAccountAuthenticator(context) {
+
     override fun getAuthTokenLabel(authTokenType: String?): String {
         throw UnsupportedOperationException("not implemented")
     }
@@ -37,7 +40,11 @@ class GesaHuiAuthenticator(context: Context) : AbstractAccountAuthenticator(cont
     }
 
     override fun addAccount(response: AccountAuthenticatorResponse?, accountType: String?, authTokenType: String?, requiredFeatures: Array<out String>?, options: Bundle?): Bundle {
-        throw UnsupportedOperationException("not implemented")
+        val accounts = context.accountManager?.getAccountsByType(App.ACCOUNT_TYPE)
+        if (accounts != null && accounts.size > 0) {
+            return Bundle();
+        }
+        return Bundle();
     }
 
 }

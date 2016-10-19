@@ -34,12 +34,11 @@ import butterknife.Unbinder;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.*;
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuApi;
 import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.User;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
@@ -55,7 +54,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @BindView(R.id.recycler) RecyclerView recyclerView;
     private Snackbar snackbar;
     private Unbinder unbinder;
-	private User user;
 
     private boolean filterImportant = false;
     private boolean sortImportant = false;
@@ -66,7 +64,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private LocalDate date;
     @Nullable private SubstitutesList substitutesList;
     private boolean isLoading = false;
-    private GesaHuiApi gesahui;
+    private GesaHuApi gesahui;
     private retrofit2.Call<SubstitutesList> call;
 
     private MaterialActivity activity;
@@ -82,7 +80,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         //Get Preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        user = new User(getContext());
         filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
         sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
 
@@ -93,7 +90,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         else
             date = SchoolWeek.next();
 
-	    gesahui = GesaHuiApi.Companion.create(this.getContext());
+	    gesahui = GesaHuApi.Companion.create(this.getContext());
 
 	    //Load data if user is on WIFI
         ConnectivityManager connMgr;
@@ -244,7 +241,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 if (refreshLayout != null)
                     refreshLayout.setRefreshing(true);
 
-                call = gesahui.substitutes(new QueryDate(date), user.getUsername());
+                call = gesahui.substitutes(new QueryDate(date));
 
                 call.enqueue(this);
 

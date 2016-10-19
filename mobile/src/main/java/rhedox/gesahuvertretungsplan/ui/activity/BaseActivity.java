@@ -10,9 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -23,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuApi;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**
@@ -40,7 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@BindView(R.id.navigation_view) NavigationView navigationView;
 	private Unbinder unbinder;
 
-	private GesaHuiApi gesaHui;
+	private GesaHuApi gesaHui;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 				//.addConverterFactory(MoshiConverterFactory.create())
 				.build();
 
-		gesaHui = retrofit.create(GesaHuiApi.class);
+		gesaHui = retrofit.create(GesaHuApi.class);
 
 
 		//navigationView.getMenu().findItem(R.id.boards);

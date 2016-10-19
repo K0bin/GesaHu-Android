@@ -5,14 +5,11 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import org.joda.time.LocalDate;
 
@@ -20,7 +17,6 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
@@ -32,9 +28,8 @@ import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 public class Notifier {
 	private Context context;
 	private int color;
-	private User user;
 
-	@NonNull private GesaHuiApi gesahui;
+	@NonNull private GesaHuApi gesahui;
 
 	public static final int REQUEST_CODE_BASE = 64;
 
@@ -44,12 +39,11 @@ public class Notifier {
 
 	public Notifier(Context context) {
 		this.context = context.getApplicationContext(); //Prevent Activity leaking!
-		user = new User(context);
 
 		//Color is used for the notifications
 		color = ContextCompat.getColor(context, R.color.colorDefaultAccent);
 
-		gesahui = GesaHuiApi.Companion.create(context);
+		gesahui = GesaHuApi.Companion.create(context);
 	}
 
 	public Notifier(Context context, int lesson) {
@@ -59,7 +53,7 @@ public class Notifier {
 
 	public void load() {
 		LocalDate date = SchoolWeek.next();
-		Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
+		Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
 		try {
 			Response<SubstitutesList> response = call.execute();
 

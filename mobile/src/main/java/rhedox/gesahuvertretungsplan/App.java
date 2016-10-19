@@ -4,9 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.facebook.stetho.Stetho;
 import com.frogermcs.androiddevmetrics.AndroidDevMetrics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+
+import net.danlew.android.joda.JodaTimeAndroid;
 
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
@@ -15,10 +18,7 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
  */
 public class App extends Application {
 	public static final String PREFERENCES_LOGIN = "rhedox.gesahuvertretungsplan.login";
-	public static final String PREF_USERNAME = "username";
-	public static final String PREF_PASSWORD = "password";
-	public static final String ACCOUNT_TYPE = "rhedox.gesahuvertretungsplan.gesaHuiAccount";
-	public static final String DB_NAME = "gesahui";
+	public static final String ACCOUNT_TYPE = "rhedox.gesahuvertretungsplan.gesaHuAccount";
 
 	private RefWatcher refWatcher;
 
@@ -27,6 +27,7 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		JodaTimeAndroid.init(this);
 
 		//Debug
 		if(BuildConfig.DEBUG) {
@@ -44,6 +45,7 @@ public class App extends Application {
 			//StrictMode.setThreadPolicy(threadPolicy);
 
 			AndroidDevMetrics.initWith(this);
+			Stetho.initializeWithDefaults(this);
 
 			refWatcher = LeakCanary.install(this);
 		} else {

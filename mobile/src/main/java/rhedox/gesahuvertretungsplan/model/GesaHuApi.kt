@@ -15,7 +15,7 @@ import rhedox.gesahuvertretungsplan.BuildConfig
 /**
  * Created by robin on 01.10.2016.
  */
-interface GesaHuiApi {
+interface GesaHuApi {
     @GET("/home/mobil/appscripts/getboards.php")
     fun boards(@Query("username") username: String, @Query("pw") password: String): Call<List<Board>>
 
@@ -26,7 +26,7 @@ interface GesaHuiApi {
     fun substitutes(@Query("day") date: QueryDate): Call<SubstitutesList>
 
     companion object {
-        fun create(context: Context): GesaHuiApi {
+        fun create(context: Context): GesaHuApi {
             //Init Retrofit
             val builder = OkHttpClient.Builder()
 
@@ -42,7 +42,7 @@ interface GesaHuiApi {
 
             val retrofit = Retrofit.Builder().baseUrl("http://gesahui.de").addConverterFactory(GsonConverterFactory.create(gson)).client(client).build()
 
-            return retrofit.create(GesaHuiApi::class.java)
+            return retrofit.create(GesaHuApi::class.java)
         }
     }
 }

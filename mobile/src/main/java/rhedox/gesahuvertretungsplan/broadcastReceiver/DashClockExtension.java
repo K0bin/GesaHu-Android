@@ -10,15 +10,13 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.GesaHuiApi;
+import rhedox.gesahuvertretungsplan.model.GesaHuApi;
 import rhedox.gesahuvertretungsplan.model.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.model.User;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
 /**
@@ -26,18 +24,17 @@ import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
  */
 public class DashClockExtension extends com.google.android.apps.dashclock.api.DashClockExtension {
 
-    private GesaHuiApi gesahui;
+    private GesaHuApi gesahui;
 
     @Override
     protected void onUpdateData(int reason) {
 
 	    LocalDate date = SchoolWeek.next();
-	    User user = new User(this);
 
 	    //Init retro fit for pulling the data
-	    gesahui = GesaHuiApi.Companion.create(this);
+	    gesahui = GesaHuApi.Companion.create(this);
 
-	    Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date), user.getUsername());
+	    Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
 
 	    try {
 		    Response<SubstitutesList> response = call.execute();
