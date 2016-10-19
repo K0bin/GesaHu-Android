@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.content.ContentResolver
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -34,7 +35,8 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.util.Md5Util
 import rhedox.gesahuvertretungsplan.util.bindView
 
@@ -123,28 +125,28 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
     }
 
     override fun onResponse(call: Call<List<Board>>, response: Response<List<Board>>) {
-        if(response != null) {
-            isUserLoggedIn = response.isSuccessful;
+        isUserLoggedIn = response.isSuccessful;
 
-            if(isUserLoggedIn) {
-                val account = Account(username, App.ACCOUNT_TYPE);
-                context.accountManager?.addAccountExplicitly(account, password, Bundle());
+        if(isUserLoggedIn) {
+            val account = Account(username, App.ACCOUNT_TYPE);
+            context.accountManager?.addAccountExplicitly(account, password, Bundle());
 
-                usernameEdit.isFocusable = false;
-                usernameEdit.isFocusableInTouchMode = false;
-                passwordEdit.isFocusable = false;
-                passwordEdit.isFocusableInTouchMode = false;
-                usernameEdit.isEnabled = false;
-                passwordEdit.isEnabled = false;
+            ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
 
-                login.isEnabled = false;
-            }
-            else {
-                usernameLayout.error = getString(R.string.login_403);
-                usernameLayout.isErrorEnabled = true;
-                passwordLayout.error = getString(R.string.login_403);
-                passwordLayout.isErrorEnabled = true;
-            }
+            usernameEdit.isFocusable = false;
+            usernameEdit.isFocusableInTouchMode = false;
+            passwordEdit.isFocusable = false;
+            passwordEdit.isFocusableInTouchMode = false;
+            usernameEdit.isEnabled = false;
+            passwordEdit.isEnabled = false;
+
+            login.isEnabled = false;
+        }
+        else {
+            usernameLayout.error = getString(R.string.login_403);
+            usernameLayout.isErrorEnabled = true;
+            passwordLayout.error = getString(R.string.login_403);
+            passwordLayout.isErrorEnabled = true;
         }
     }
 

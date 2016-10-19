@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model
+package rhedox.gesahuvertretungsplan.model.api
 
 import android.content.Context
 import com.google.gson.GsonBuilder
@@ -11,6 +11,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
+import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.api.QueryDate
+import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.api.json.LocalDateDeserializer
+import rhedox.gesahuvertretungsplan.model.api.json.SubstituteDeserializer
 
 /**
  * Created by robin on 01.10.2016.
@@ -34,7 +40,7 @@ interface GesaHuApi {
                 builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
 
             val gson = GsonBuilder()
-                    .registerTypeAdapter(Substitute::class.java, Substitute.Deserializer(context))
+                    .registerTypeAdapter(Substitute::class.java, SubstituteDeserializer(context))
                     .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
                     .create()
 

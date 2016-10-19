@@ -19,6 +19,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.api.GesaHuApi;
+import rhedox.gesahuvertretungsplan.model.api.QueryDate;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 

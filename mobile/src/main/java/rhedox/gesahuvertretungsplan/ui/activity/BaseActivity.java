@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import retrofit2.Retrofit;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.model.GesaHuApi;
+import rhedox.gesahuvertretungsplan.model.api.GesaHuApi;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**

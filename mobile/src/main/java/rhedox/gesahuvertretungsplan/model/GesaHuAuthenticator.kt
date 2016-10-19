@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.pawegio.kandroid.accountManager
 import rhedox.gesahuvertretungsplan.App
-import rhedox.gesahuvertretungsplan.model.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 
 /**
  * Created by robin on 12.10.2016.

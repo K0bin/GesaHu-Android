@@ -12,6 +12,8 @@ import com.pawegio.kandroid.accountManager
 import org.joda.time.*
 import retrofit2.Call
 import rhedox.gesahuvertretungsplan.App
+import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.api.toQueryDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter

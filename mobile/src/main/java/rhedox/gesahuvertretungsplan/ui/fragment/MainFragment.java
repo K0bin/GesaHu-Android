@@ -1,5 +1,9 @@
 package rhedox.gesahuvertretungsplan.ui.fragment;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -65,6 +69,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	public static final String STATE_KEY_SUBSTITUTE_LIST = "substitutelist";
 
 	private SubstitutesLoaderHelper callback;
+	private Account account;
 
     public MainFragment() {}
 
@@ -84,6 +89,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             date = new DateTime(arguments.getLong(ARGUMENT_DATE, 0L)).toLocalDate();
         else
             date = SchoolWeek.next();
+
+		AccountManager accountManager = AccountManager.get(getContext());
+	    Account[] accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE);
+	    if(accounts.length > 0)
+		    account = accounts[0];
 
 	    callback = new SubstitutesLoaderHelper(getLoaderManager(), getContext(), date, this);
     }
@@ -213,7 +223,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        //Trigger sync
+	    if(account != null) {
+		    ContentResolver.requestSync(account, App.ACCOUNT_TYPE, Bundle.EMPTY);
+	    }
     }
 
 	@Nullable
@@ -229,7 +241,6 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	 */
     public void setSwipeToRefreshEnabled(boolean isEnabled) {
         if(refreshLayout != null) {
-
             refreshLayout.setEnabled(isEnabled || refreshLayout.isRefreshing());
         }
     }
