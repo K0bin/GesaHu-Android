@@ -51,7 +51,7 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
     }
 
     fun clearOldSubstitutes(provider: ContentProviderClient) {
-        val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -1);
+        val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -6);
 
         val substitutesUri = Uri.Builder()
                 .scheme("content")

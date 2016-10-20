@@ -1,5 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.adapters;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,7 +12,7 @@ import org.joda.time.LocalDate;
 import java.util.Locale;
 
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment1;
 
 /**
  * Created by Robin on 29.08.2015.
@@ -18,21 +20,21 @@ import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
 public class PagerAdapter extends FragmentPagerAdapter {
     private LocalDate date;
 
-    private MainFragment[] fragments;
+    private MainFragment1[] fragments;
 
     public PagerAdapter(FragmentManager manager, LocalDate date) {
         super(manager);
 
         this.date = date;
 
-        this.fragments = new MainFragment[getCount()];
+        this.fragments = new MainFragment1[getCount()];
     }
 
     @Override
     public Fragment getItem(int position) {
         LocalDate fragmentDate = date.withFieldAdded(DurationFieldType.days(), (position + 1) - date.getDayOfWeek());
 
-        MainFragment fragment = MainFragment.newInstance(fragmentDate);
+        MainFragment1 fragment = MainFragment1.newInstance(fragmentDate);
         fragments[position] = fragment;
         return fragment;
     }
@@ -58,17 +60,18 @@ public class PagerAdapter extends FragmentPagerAdapter {
         this.fragments = null;
     }
 
-    public MainFragment getFragment(FragmentManager manager, int position) {
+    @Nullable
+    public MainFragment1 getFragment(@NonNull FragmentManager manager, int position) {
         if(position < 0 || position >= fragments.length)
             throw new IllegalArgumentException("position");
 
-        MainFragment mainFragment = fragments[position];
+        MainFragment1 mainFragment = fragments[position];
         if(mainFragment != null)
             return mainFragment;
         else {
             Fragment fragment = manager.findFragmentByTag(makeFragmentName(R.id.viewPager, position));
-            if(fragment != null && fragment instanceof MainFragment) {
-                mainFragment = (MainFragment)fragment;
+            if(fragment != null && fragment instanceof MainFragment1) {
+                mainFragment = (MainFragment1)fragment;
                 fragments[position] = mainFragment;
                 return  mainFragment;
             }

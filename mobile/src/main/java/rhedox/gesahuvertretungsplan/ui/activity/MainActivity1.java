@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
-import android.support.annotation.DimenRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -29,6 +28,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,13 +38,13 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter;
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment;
-import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment;
-import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment1;
+import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment1;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 //import android.widget.DatePicker;
 
-public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment.MaterialActivity {
+public class MainActivity1 extends BaseActivity1 implements ViewPager.OnPageChangeListener, MaterialCab.Callback, MainFragment1.MaterialActivity {
     private boolean sortImportant;
     private boolean specialMode;
 	private boolean isAmoledBlackEnabled;
@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     //Store Date of Monday of current week
     private LocalDate date;
 
-    private MainFragment currentFragment;
+    private MainFragment1 currentFragment;
 
     private MaterialCab cab;
 
@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     private void setupViewPager(LocalDate date, @ColorInt int indicatorColor, final boolean isRestored)
     {
-        final Pair<LocalDate, Integer> pair = MainActivity.getDate(date);
+        final Pair<LocalDate, Integer> pair = MainActivity1.getDate(date);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), pair.first);
 
@@ -174,7 +174,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     private static Pair<LocalDate, Integer> getDate(LocalDate date)
     {
-        int index = date.getDayOfWeek() - DateTimeConstants.MONDAY;
+        int index =
+		        - DateTimeConstants.MONDAY;
         date = date.minusDays(index);
         int dayIndex = Math.max(0, Math.min(index, 5));
 
@@ -243,7 +244,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 else
                     pickerDate = LocalDate.now();
 
-                DatePickerFragment.newInstance(pickerDate).show(getSupportFragmentManager(), "Datepicker");
+                DatePickerFragment1.newInstance(pickerDate).show(getSupportFragmentManager(), "Datepicker");
                 break;
 
             case R.id.action_about:
@@ -312,8 +313,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     public void showDate(LocalDate date) {
         if(date.getWeekOfWeekyear() != this.date.getWeekOfWeekyear()) {
             //Launch a new activity with that week
-            Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            Intent intent = new Intent(this.getApplicationContext(), MainActivity1.class);
+            intent.putExtra(MainActivity1.EXTRA_DATE, date.toDateTime(new LocalTime(0)).getMillis());
 	        intent.putExtra(EXTRA_BACK, true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -372,7 +373,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             appBarLayout.setExpanded(true, true);
     }
 
-    public MainFragment getVisibleFragment() {
+    public MainFragment1 getVisibleFragment() {
         return currentFragment;
     }
 

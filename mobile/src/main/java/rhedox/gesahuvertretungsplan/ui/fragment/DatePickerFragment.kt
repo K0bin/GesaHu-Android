@@ -1,0 +1,82 @@
+package rhedox.gesahuvertretungsplan.ui.fragment
+
+import android.app.DatePickerDialog
+import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import android.support.v4.app.DialogFragment
+import android.widget.DatePicker
+import org.joda.time.DateTime
+import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
+
+/**
+ * Created by robin on 20.10.2016.
+ */
+class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
+    private lateinit var date: LocalDate;
+    private var mainActivity: MainActivity1? = null
+    private var isPickerDone = false
+
+    var callback: ((date: LocalDate) -> Unit)? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        if (savedInstanceState != null && savedInstanceState.containsKey(keyDate))
+            date = DateTime(savedInstanceState.getLong(keyDate)).toLocalDate()
+        else if (arguments != null && arguments.containsKey(argumentDate))
+            date = DateTime(arguments.getLong(argumentDate)).toLocalDate()
+        else
+            date = LocalDate.now()
+
+        isPickerDone = false
+        return DatePickerDialog(activity, this, date.year, date.monthOfYear - 1, date.dayOfMonth)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+
+        if (context is MainActivity1)
+            mainActivity = context as MainActivity1?
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        mainActivity = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putLong(keyDate, date.toDateTimeAtStartOfDay().millis)
+    }
+
+    override fun onDateSet(view: DatePicker, year: Int, month: Int, dayOfMonth: Int) {
+        if (!isPickerDone) {
+            this.callback?.invoke(LocalDate(year, month+1, dayOfMonth))
+
+            isPickerDone = true
+        }
+
+        dismiss()
+    }
+
+    companion object {
+        val tag = "DatePickerFragment1"
+        val keyDate = "date"
+        val argumentDate = "ArgumentDate"
+
+        fun newInstance(date: LocalDate): DatePickerFragment {
+            val bundle = Bundle()
+            bundle.putLong(argumentDate, date.toDateTimeAtCurrentTime().millis)
+
+            val fragment = DatePickerFragment()
+            fragment.arguments = bundle
+
+            return fragment
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -17,7 +18,6 @@ import com.github.paolorotolo.appintro.AppIntroFragment;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.LoginFragment;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.ui.fragment.WelcomePreferenceFragment;
 
 public class WelcomeActivity extends AppIntro {
 
@@ -26,6 +26,7 @@ public class WelcomeActivity extends AppIntro {
 		getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 		super.onCreate(savedInstanceState);
 
+		askForPermissions(new String[] {Manifest.permission.GET_ACCOUNTS, Manifest.permission.ACCOUNT_MANAGER}, 1);
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_design), getString(R.string.feature_design_description), R.drawable.ic_phone, ContextCompat.getColor(this, R.color.intro_slide_1)));
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_highlight), getString(R.string.feature_highlight_description), R.drawable.ic_relevant, ContextCompat.getColor(this, R.color.intro_slide_2)));
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_notify), getString(R.string.feature_notify_description), R.drawable.ic_bell, ContextCompat.getColor(this, R.color.intro_slide_3)));
@@ -58,7 +59,7 @@ public class WelcomeActivity extends AppIntro {
 		editor.putBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, true);
 		editor.apply();
 
-		Intent intent = new Intent(this, MainActivity.class);
+		Intent intent = new Intent(this, MainActivity1.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		startActivity(intent);
 

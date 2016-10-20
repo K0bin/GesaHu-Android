@@ -131,6 +131,8 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
             val account = Account(username, App.ACCOUNT_TYPE);
             context.accountManager?.addAccountExplicitly(account, password, Bundle());
 
+            ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 1);
+            ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, true);
             ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
 
             usernameEdit.isFocusable = false;

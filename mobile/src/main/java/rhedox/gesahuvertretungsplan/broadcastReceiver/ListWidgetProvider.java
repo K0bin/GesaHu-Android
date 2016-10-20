@@ -16,7 +16,7 @@ import org.joda.time.LocalDate;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 
@@ -53,8 +53,8 @@ public class ListWidgetProvider extends AppWidgetProvider {
             remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
-            Intent onClickIntent = new Intent(context, MainActivity.class);
-            onClickIntent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+            Intent onClickIntent = new Intent(context, MainActivity1.class);
+            onClickIntent.putExtra(MainActivity1.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
             PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 

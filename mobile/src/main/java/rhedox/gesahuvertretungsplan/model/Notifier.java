@@ -21,7 +21,7 @@ import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi;
 import rhedox.gesahuvertretungsplan.model.api.QueryDate;
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 
 /**
@@ -82,9 +82,9 @@ public class Notifier {
 
 					NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 					//Open app on click on notification
-					Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
+					Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity1.class);
 					if (response.body().getDate() != null)
-						launchIntent.putExtra(MainActivity.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
+						launchIntent.putExtra(MainActivity1.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
 					PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 					builder.setContentIntent(launchPending);
 
@@ -127,7 +127,7 @@ public class Notifier {
 			try {
 				ContentValues cv = new ContentValues();
 
-				cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity");
+				cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity1");
 
 				cv.put("count", SubstitutesList.countRelevant(substitutes));
 
@@ -148,9 +148,9 @@ public class Notifier {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
 		//Open app on click on notification
-		Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity.class);
+		Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity1.class);
 		if(date != null)
-			launchIntent.putExtra(MainActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+			launchIntent.putExtra(MainActivity1.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
 		PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + notificationCount + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		builder.setContentIntent(launchPending);
 

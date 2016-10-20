@@ -3,14 +3,18 @@ package rhedox.gesahuvertretungsplan.ui.fragment;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SyncStatusObserver;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -32,13 +36,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.*;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver;
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider;
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesLoaderHelper;
-import rhedox.gesahuvertretungsplan.util.NetworkUtils;
 import rhedox.gesahuvertretungsplan.ui.DividerItemDecoration;
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter;
 import rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix;
@@ -47,55 +51,71 @@ import tr.xip.errorview.ErrorView;
 /**
  * Created by Robin on 30.06.2015.
  */
-public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SubstitutesLoaderHelper.Callback, ErrorView.RetryListener {
-    private SubstitutesAdapter adapter;
-    @BindView(R.id.swipe) SwipeRefreshLayoutFix refreshLayout;
-    @BindView(R.id.recycler) RecyclerView recyclerView;
-    private Snackbar snackbar;
-    private Unbinder unbinder;
+public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SubstitutesLoaderHelper.Callback, ErrorView.RetryListener, SyncStatusObserver {
+	private SubstitutesAdapter adapter;
+	@BindView(R.id.swipe)
+	SwipeRefreshLayoutFix refreshLayout;
+	@BindView(R.id.recycler)
+	RecyclerView recyclerView;
+	private Snackbar snackbar;
+	private Unbinder unbinder;
 
-    private boolean filterImportant = false;
-    private boolean sortImportant = false;
+	private boolean filterImportant = false;
+	private boolean sortImportant = false;
 
-    public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
-    public static final String TAG ="MAIN_FRAGMENT";
+	public static final String ARGUMENT_DATE = "ARGUMENT_DATE";
+	public static final String TAG = "MAIN_FRAGMENT";
 
-    private LocalDate date;
-    @Nullable private SubstitutesList substitutesList;
-    private boolean isLoading = false;
+	private LocalDate date;
+	@Nullable
+	private SubstitutesList substitutesList;
+	private boolean isLoading = false;
 
-    private MaterialActivity activity;
+	private MaterialActivity activity;
 
 	public static final String STATE_KEY_SUBSTITUTE_LIST = "substitutelist";
 
 	private SubstitutesLoaderHelper callback;
+	private SubstitutesContentObserver observer;
+	private Object statusListenerHandle;
 	private Account account;
 
-    public MainFragment() {}
+	public MainFragment1() {
+	}
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 
-        //Get Preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
-        sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
+		//Get Preferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		filterImportant = prefs.getBoolean(PreferenceFragment.PREF_FILTER, false);
+		sortImportant = prefs.getBoolean(PreferenceFragment.PREF_SORT, false);
 
-        //Get Arguments
-        Bundle arguments = getArguments();
-        if(arguments != null)
-            date = new DateTime(arguments.getLong(ARGUMENT_DATE, 0L)).toLocalDate();
-        else
-            date = SchoolWeek.next();
+		//Get Arguments
+		Bundle arguments = getArguments();
+		if (arguments != null)
+			date = new DateTime(arguments.getLong(ARGUMENT_DATE, 0L)).toLocalDate();
+		else
+			date = SchoolWeek.next();
 
-		AccountManager accountManager = AccountManager.get(getContext());
-	    Account[] accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE);
-	    if(accounts.length > 0)
-		    account = accounts[0];
+
+		if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+			AccountManager accountManager = AccountManager.get(getContext());
+
+			Account[] accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE);
+			if (accounts.length > 0)
+				account = accounts[0];
+		}
+
+		statusListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_PENDING | ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, this);
 
 	    callback = new SubstitutesLoaderHelper(getLoaderManager(), getContext(), date, this);
+		callback.load();
+		observer = new SubstitutesContentObserver(new Handler(), date, callback);
+		getContext().getContentResolver().registerContentObserver(Uri.parse("content://rhedox.gesahuvertretungsplan.substitutes/substitutes"), true, observer);
+		getContext().getContentResolver().registerContentObserver(Uri.parse("content://rhedox.gesahuvertretungsplan.substitutes/announcements"), true, observer);
     }
 
     @Nullable
@@ -163,8 +183,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if(isLoading && refreshLayout != null && refreshLayout.isEnabled())
             refreshLayout.setRefreshing(true);
-        else if(substitutesList == null && getUserVisibleHint())
-            onRefresh();
+        //else if(substitutesList == null && getUserVisibleHint())
+        //    onRefresh();
     }
 
     @Override
@@ -209,6 +229,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if(refWatcher != null)
             refWatcher.watch(this);
 
+	    ContentResolver.removeStatusChangeListener(statusListenerHandle);
+	    getContext().getContentResolver().unregisterContentObserver(observer);
+
         super.onDestroy();
     }
 
@@ -223,8 +246,14 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
+	    refreshLayout.setRefreshing(false);
 	    if(account != null) {
-		    ContentResolver.requestSync(account, App.ACCOUNT_TYPE, Bundle.EMPTY);
+		    if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+			    Bundle bundle = new Bundle();
+			    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+			    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+			    ContentResolver.requestSync(account, App.ACCOUNT_TYPE, bundle);
+		    }
 	    }
     }
 
@@ -283,67 +312,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 			activity.updateUI();
 	}
 
-    public void onResponse(retrofit2.Call<SubstitutesList> call, Response<SubstitutesList> response) {
-        isLoading = false;
-
-        clearRefreshViews();
-
-        if(!response.isSuccessful()) {
-            onFailure(call, new Exception(response.errorBody().toString()));
-            return;
-        }
-
-        substitutesList = response.body();
-        populateList();
-
-        //Update the floating action button
-        if(activity != null)
-            activity.updateUI();
-    }
-
-    public void onFailure(retrofit2.Call<SubstitutesList> call, Throwable t) {
-
-        isLoading = false;
-        Log.e("net-error", "Message: " + t.getMessage());
-
-	    //FirebaseCrash.log("RetrofitFailure: "+t.getMessage());
-	    //FirebaseCrash.report(t);
-
-	    /*PROGUARD DEBUGGING
-	    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage(t.getMessage());
-        builder.setTitle(t.toString());
-        builder.create().show();*/
-
-        clearRefreshViews();
-
-
-        if(activity != null)
-            activity.updateUI();
-
-        if (substitutesList == null) {
-            if (adapter != null)
-                adapter.showError();
-        } else {
-            if (getUserVisibleHint() && snackbar != null && getActivity() != null) {
-	            //Fragment is not empty, keep previous entries and show snackbar
-
-	            if (NetworkUtils.isNetworkConnected(getActivity().getApplicationContext()))
-		            snackbar.setText(R.string.oops);
-	            else
-		            snackbar.setText(R.string.error_no_connection);
-
-	            snackbar.show();
-            }
-        }
-    }
-
 	/**
 	 * Called when the fragment just became visible on the ViewPager
 	 */
     public void onDisplay() {
-        if(substitutesList == null)
-            onRefresh();
+        //if(substitutesList == null)
+        //    onRefresh();
     }
 
 	/**
@@ -369,14 +343,31 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public LocalDate getDate() { return date; }
 
-    public static MainFragment newInstance(LocalDate date) {
+    public static MainFragment1 newInstance(LocalDate date) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
-        MainFragment fragment = new MainFragment();
+        MainFragment1 fragment = new MainFragment1();
         fragment.setArguments(arguments);
 
         return fragment;
     }
+
+	@Override
+	public void onStatusChanged(int which) {
+		Log.d("SyncStatus", "STATUS CHANGED");
+
+		if(account != null) {
+			getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if(ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
+						refreshLayout.setRefreshing(true);
+					else
+						clearRefreshViews();
+				}
+			});
+		}
+	}
 
 	public interface MaterialActivity {
         /**
@@ -385,7 +376,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         void updateUI();
 
         CoordinatorLayout getCoordinatorLayout();
-        MainFragment getVisibleFragment();
+        MainFragment1 getVisibleFragment();
 
     }
 }

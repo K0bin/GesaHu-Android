@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
+import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.Substitute
@@ -21,8 +22,7 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
  * Created by robin on 19.10.2016.
  */
 
-class SubstitutesLoaderHelper(loaderManager: LoaderManager, private val context: Context, private val date: LocalDate, private val callback: Callback) : LoaderManager.LoaderCallbacks<Cursor> {
-
+class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private val context: Context, private val date: LocalDate, private val callback: Callback) : LoaderManager.LoaderCallbacks<Cursor> {
     companion object {
         const val substitutesType = 1;
         const val announcementType = 2;
@@ -33,15 +33,21 @@ class SubstitutesLoaderHelper(loaderManager: LoaderManager, private val context:
     private var areSubstitutesLoaded = false;
     private var isAnnouncementLoaded = false;
 
-    init {
-        loaderManager.initLoader(substitutesType, Bundle.EMPTY, this)
-        loaderManager.initLoader(announcementType, Bundle.EMPTY, this)
+    private var isLoading = false;
+    private val offset = (date.toDateTime(LocalTime()).millis - DateTime(2010,1,1,0,0).millis).toInt()
+
+    fun load() {
+        if(!isLoading) {
+            loaderManager.initLoader(offset + substitutesType, Bundle.EMPTY, this)
+            loaderManager.initLoader(offset + announcementType, Bundle.EMPTY, this)
+            isLoading = true;
+        }
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor>? {
 
         when (id) {
-            substitutesType -> {
+            offset + substitutesType -> {
                 val substitutesUri = Uri.Builder()
                         .scheme("content")
                         .authority(SubstitutesContentProvider.authority)
@@ -54,7 +60,7 @@ class SubstitutesLoaderHelper(loaderManager: LoaderManager, private val context:
 
                 return CursorLoader(context, substitutesUri, Substitutes.availableColumns.toTypedArray(), null, null, null);
             }
-            announcementType -> {
+            offset + announcementType -> {
                 val announcementsUri = Uri.Builder()
                         .scheme("content")
                         .authority(SubstitutesContentProvider.authority)
@@ -76,11 +82,11 @@ class SubstitutesLoaderHelper(loaderManager: LoaderManager, private val context:
             return
 
         when (loader.id) {
-            substitutesType -> {
+            offset + substitutesType -> {
                 substitutes = SubstituteAdapter.listFromCursor(data)
                 areSubstitutesLoaded = true;
             }
-            announcementType -> {
+            offset + announcementType -> {
                 announcement = AnnouncementAdapter.fromCursor(data)
                 isAnnouncementLoaded = true
             }
@@ -88,11 +94,14 @@ class SubstitutesLoaderHelper(loaderManager: LoaderManager, private val context:
 
         if(areSubstitutesLoaded && isAnnouncementLoaded) {
             callback.onSubstitutesLoaded(SubstitutesList(announcement, substitutes, date));
+
+            isLoading = false;
         }
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>?) {
         loader?.reset();
+        isLoading = false;
     }
 
     interface Callback {

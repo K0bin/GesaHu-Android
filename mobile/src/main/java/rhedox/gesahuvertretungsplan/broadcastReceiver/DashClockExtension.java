@@ -17,7 +17,7 @@ import rhedox.gesahuvertretungsplan.model.api.QueryDate;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1;
 
 /**
  * Created by Robin on 19.04.2015.
@@ -82,7 +82,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 					    .status(Integer.toString(count))
 					    .expandedTitle(getString(R.string.app_name))
 					    .expandedBody(body)
-					    .clickIntent(new Intent(this, MainActivity.class)));
+					    .clickIntent(new Intent(this, MainActivity1.class)));
 		    }
 		    else
 			    publishUpdate(new ExtensionData()

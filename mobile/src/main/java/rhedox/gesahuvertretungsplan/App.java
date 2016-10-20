@@ -11,7 +11,7 @@ import com.squareup.leakcanary.RefWatcher;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1;
 
 /**
  * Created by Robin on 29.06.2015.
@@ -33,7 +33,7 @@ public class App extends Application {
 		if(BuildConfig.DEBUG) {
 			StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
 					.detectAll()
-					.setClassInstanceLimit(MainActivity.class, 5)
+					.setClassInstanceLimit(MainActivity1.class, 5)
 					.penaltyDeath()
 					.build();
 			StrictMode.setVmPolicy(policy);
@@ -51,7 +51,7 @@ public class App extends Application {
 		} else {
 			StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
 					.detectAll()
-					.setClassInstanceLimit(MainActivity.class, 5)
+					.setClassInstanceLimit(MainActivity1.class, 5)
 					.penaltyLog()
 					.build();
 			StrictMode.setVmPolicy(policy);

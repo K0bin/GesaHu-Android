@@ -20,7 +20,7 @@ import java.util.List;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.util.NetworkUtils;
-import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment1;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 import tr.xip.errorview.ErrorView;
@@ -43,7 +43,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     private int selected = -1;
     @Nullable private SubstituteViewHolder selectedViewHolder;
 
-    @Nullable private MainFragment.MaterialActivity activity;
+    @Nullable private MainFragment1.MaterialActivity activity;
 	private Context context;
 
 	//#enumsmatter
@@ -117,8 +117,8 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
 
 	    this.context = context;
 
-        if(context instanceof MainFragment.MaterialActivity)
-            activity = (MainFragment.MaterialActivity)context;
+        if(context instanceof MainFragment1.MaterialActivity)
+            activity = (MainFragment1.MaterialActivity)context;
     }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {

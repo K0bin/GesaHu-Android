@@ -11,14 +11,14 @@ import android.widget.DatePicker;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1;
 
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+public class DatePickerFragment1 extends DialogFragment implements DatePickerDialog.OnDateSetListener{
     private LocalDate date;
-	private MainActivity mainActivity;
+	private MainActivity1 mainActivity;
 	private boolean isPickerDone = false;
 
-    public static final String TAG ="DatePickerFragment";
+    public static final String TAG ="DatePickerFragment1";
     public static final String KEY_DATE ="date";
     public static final String ARGUMENT_DATE = "ArgumentDate";
 
@@ -44,8 +44,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     public void onAttach(Context context) {
         super.onAttach(context);
 
-	    if(context instanceof MainActivity)
-		    mainActivity = (MainActivity)context;
+	    if(context instanceof MainActivity1)
+		    mainActivity = (MainActivity1)context;
     }
 
     @Override
@@ -76,12 +76,12 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 		dismiss();
 	}
 
-	public static DatePickerFragment newInstance(LocalDate date)
+	public static DatePickerFragment1 newInstance(LocalDate date)
 	{
 		Bundle bundle = new Bundle();
 		bundle.putLong(ARGUMENT_DATE, date.toDateTimeAtCurrentTime().getMillis());
 
-		DatePickerFragment fragment = new DatePickerFragment();
+		DatePickerFragment1 fragment = new DatePickerFragment1();
 		fragment.setArguments(bundle);
 
 		return fragment;

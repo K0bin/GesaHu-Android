@@ -28,7 +28,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
  * Created by robin on 28.09.2016.
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity1 extends AppCompatActivity {
 	private static boolean isInitialized = false;
 	private FirebaseAnalytics analytics;
 	private ActionBarDrawerToggle toggle;
