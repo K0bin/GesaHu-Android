@@ -8,10 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v4.util.Pair
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
@@ -28,7 +30,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
+class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
     companion object {
         const val extraDate = "date";
         const val extraBack = "back";
@@ -82,6 +84,9 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
         pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager, presenter)
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
+        viewPager.addOnPageChangeListener(this)
+
+        fab.setOnClickListener { presenter.onFabClicked() }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -139,5 +144,21 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun setIsRefreshing(position: Int, isRefreshing: Boolean) {
+        val fragment = pagerAdapter.getFragment(supportFragmentManager, position)
+        fragment?.isRefreshing = isRefreshing
+    }
+
+    override fun showDialog(text: String) {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+    override fun onPageScrollStateChanged(state: Int) { }
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) { }
+    override fun onPageSelected(position: Int) {
+        presenter.onActiveTabChanged(position)
     }
 }

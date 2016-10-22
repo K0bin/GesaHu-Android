@@ -12,8 +12,10 @@ interface SubstitutesContract {
         fun onDatePicked(date: LocalDate)
         fun getSubstitutes(position: Int): List<Substitute>
         fun getTabTitle(position: Int): String
+        fun onActiveTabChanged(position: Int)
         fun onFabClicked()
         fun onListItemSelected(listEntry: Int)
+        fun onRefresh()
     }
 
     interface View {
@@ -23,6 +25,7 @@ interface SubstitutesContract {
         var isFloatingActionButtonVisible: Boolean
         var isBackButtonVisible: Boolean
         var isAppBarExpanded: Boolean
+        fun setIsRefreshing(position: Int, isRefreshing: Boolean)
         fun showDialog(text: String)
     }
 }

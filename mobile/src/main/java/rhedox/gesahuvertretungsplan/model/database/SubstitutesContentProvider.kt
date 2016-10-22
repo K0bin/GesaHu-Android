@@ -7,6 +7,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
+import org.joda.time.DateTime
 import rhedox.gesahuvertretungsplan.model.database.SqLiteHelper
 import rhedox.gesahuvertretungsplan.model.database.tables.Announcements
 import rhedox.gesahuvertretungsplan.model.database.tables.Substitutes
@@ -109,19 +110,25 @@ class SubstitutesContentProvider : ContentProvider() {
 
         val db = database.writableDatabase;
         var insertUri: Uri;
+        var dateUri: Uri;
         when (uriType) {
             substitutes -> {
                 val id = db.insert(Substitutes.name, null, values);
+                val millis = values?.get(Substitutes.columnDate) ?: 0
                 insertUri = Uri.parse("$substitutesPath/"+id.toString());
+                dateUri = Uri.parse("$substitutesPath/date/"+millis.toString());
             }
             announcements -> {
                 val id = db.insert(Announcements.name, null, values);
+                val millis = values?.get(Announcements.columnDate) ?: 0
                 insertUri = Uri.parse("$announcementsPath/"+id.toString());
+                dateUri = Uri.parse("$announcementsPath/date/"+millis.toString());
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
         context.contentResolver.notifyChange(insertUri, null);
+        context.contentResolver.notifyChange(dateUri, null);
         return insertUri;
     }
 

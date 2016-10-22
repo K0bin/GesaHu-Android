@@ -1,18 +1,31 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.accounts.Account
+import android.accounts.AccountManager
+import android.content.ContentProvider
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.database.ContentObserver
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
+import android.widget.Toast
 import rhedox.gesahuvertretungsplan.model.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesLoaderHelper
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import com.pawegio.kandroid.startActivity;
 import org.joda.time.*
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
 import java.util.*
 
@@ -28,6 +41,10 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
     private var view: SubstitutesContract.View? = null
     private lateinit var helpers: Array<SubstitutesLoaderHelper>
     private var substitutes = arrayOf<List<Substitute>?>(null, null, null, null, null)
+    private lateinit var observer: SubstitutesContentObserver;
+    private lateinit var syncListenerHandle: Any;
+    private var account: Account? = null;
+    private var currentPosition: Int = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +56,8 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
         } else
             date = SchoolWeek.next();
 
-        view?.currentTab = date.dayOfWeek - DateTimeConstants.MONDAY
+        currentPosition = date.dayOfWeek - DateTimeConstants.MONDAY
+        view?.currentTab = currentPosition
         date = getFirstDayOfWeek(date)
 
         helpers = arrayOf(
@@ -52,6 +70,33 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
 
         helpers.forEach { it.load() }
 
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+            val accountManager = AccountManager.get(context)
+
+            val accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE)
+            if (accounts.size > 0)
+                account = accounts[0]
+        }
+
+        observer = SubstitutesContentObserver(Handler(), {
+            val position = it.dayOfWeek - DateTimeConstants.MONDAY
+            helpers[position].load()
+        })
+        context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.substitutesPath}/date"), true, observer);
+        context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.announcementsPath}/date"), true, observer);
+        syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
+            if (account != null) {
+                activity.runOnUiThread {
+                    view?.setIsRefreshing(currentPosition, ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
+                }
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        context.contentResolver.unregisterContentObserver(observer)
     }
 
     override fun onAttach(context: Context?) {
@@ -105,5 +150,25 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
     override fun getTabTitle(position: Int): String {
         return date.withFieldAdded(DurationFieldType.days(), position + 1 - date.dayOfWeek).toString("EEE dd.MM.yy", Locale.GERMANY)
     }
+    override fun onFabClicked() {
+        //view?.showDialog()
+    }
 
+    override fun onListItemSelected(listEntry: Int) {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onRefresh() {
+        view?.setIsRefreshing(currentPosition, false)
+
+        if (account != null && !ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+            val bundle = Bundle()
+            bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+            bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
+            ContentResolver.requestSync(account, App.ACCOUNT_TYPE, bundle)
+        }
+    }
+    override fun onActiveTabChanged(position: Int) {
+        currentPosition = position
+    }
 }

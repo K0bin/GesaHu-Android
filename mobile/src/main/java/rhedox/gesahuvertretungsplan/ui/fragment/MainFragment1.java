@@ -113,7 +113,7 @@ public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefr
 
 	    callback = new SubstitutesLoaderHelper(getLoaderManager(), getContext(), date, this);
 		callback.load();
-		observer = new SubstitutesContentObserver(new Handler(), date, callback);
+		//observer = new SubstitutesContentObserver(new Handler(), date, callback);
 		getContext().getContentResolver().registerContentObserver(Uri.parse("content://rhedox.gesahuvertretungsplan.substitutes/substitutes"), true, observer);
 		getContext().getContentResolver().registerContentObserver(Uri.parse("content://rhedox.gesahuvertretungsplan.substitutes/announcements"), true, observer);
     }

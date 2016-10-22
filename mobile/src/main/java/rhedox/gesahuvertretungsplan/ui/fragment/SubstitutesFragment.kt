@@ -20,10 +20,16 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
  */
 class SubstitutesFragment : Fragment() {
 
-    private lateinit var adapter: SubstitutesAdapter
+    private var adapter: SubstitutesAdapter? = null
     private var substituteActivity: SubstitutesActivity? = null;
 
     private var position: Int = -1;
+
+    var isRefreshing: Boolean
+        get() = swipe?.isRefreshing ?: false
+        set(value) {
+            swipe?.isRefreshing = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +61,18 @@ class SubstitutesFragment : Fragment() {
         adapter = SubstitutesAdapter(activity)
 
         if(substituteActivity != null) {
-            adapter.showList(substituteActivity!!.presenter.getSubstitutes(position))
+            adapter?.showList(substituteActivity!!.presenter.getSubstitutes(position))
         }
 
+        swipe.setOnRefreshListener { substituteActivity?.presenter?.onRefresh() }
+
         recycler.adapter = adapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        adapter = null
     }
 
     /**
@@ -72,7 +86,7 @@ class SubstitutesFragment : Fragment() {
             substitutes = Collections.unmodifiableList(SubstitutesList.filterImportant(substitutesList.getSubstitutes()));
         else*/
 
-        adapter.showList(substitutes)
+        adapter?.showList(substitutes)
         recycler.scrollToPosition(0)
     }
 
