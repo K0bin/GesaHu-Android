@@ -15,7 +15,7 @@ interface SubstitutesContract {
         fun onActiveTabChanged(position: Int)
         fun onFabClicked()
         fun onListItemSelected(listEntry: Int)
-        fun onRefresh()
+        fun onRefresh(position: Int)
     }
 
     interface View {

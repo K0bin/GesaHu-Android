@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstitutesList
+import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 
@@ -21,13 +22,15 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 class SubstitutesFragment : Fragment() {
 
     private var adapter: SubstitutesAdapter? = null
-    private var substituteActivity: SubstitutesActivity? = null;
+    private var presenter: SubstitutesContract.Presenter? = null;
 
     private var position: Int = -1;
 
+    private var isRefreshingField = false
     var isRefreshing: Boolean
-        get() = swipe?.isRefreshing ?: false
+        get() = isRefreshingField
         set(value) {
+            isRefreshingField = true
             swipe?.isRefreshing = value
         }
 
@@ -42,12 +45,12 @@ class SubstitutesFragment : Fragment() {
         super.onAttach(context)
 
         if(context is SubstitutesActivity)
-            substituteActivity = context
+            presenter = context.presenter
     }
 
     override fun onDetach() {
         super.onDetach()
-        substituteActivity = null;
+        presenter = null;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,18 +63,24 @@ class SubstitutesFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         adapter = SubstitutesAdapter(activity)
 
-        if(substituteActivity != null) {
-            adapter?.showList(substituteActivity!!.presenter.getSubstitutes(position))
+        if(presenter != null) {
+            adapter?.showList(presenter!!.getSubstitutes(position))
         }
 
-        swipe.setOnRefreshListener { substituteActivity?.presenter?.onRefresh() }
+        swipe.setOnRefreshListener {
+            isRefreshingField = true
+            presenter?.onRefresh(position)
+        }
+        swipe.isRefreshing = isRefreshingField
 
         recycler.adapter = adapter
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
+        swipe.isRefreshing = false
+        swipe.removeAllViews()
+        swipe.clearAnimation()
         adapter = null
     }
 
@@ -79,13 +88,6 @@ class SubstitutesFragment : Fragment() {
      * Display the loaded list
      */
     fun populateList(substitutes: List<Substitute>) {
-        /*
-        if(sortImportant)
-            substitutes = Collections.unmodifiableList(SubstitutesList.sort(substitutesList.getSubstitutes()));
-        else if (filterImportant)
-            substitutes = Collections.unmodifiableList(SubstitutesList.filterImportant(substitutesList.getSubstitutes()));
-        else*/
-
         adapter?.showList(substitutes)
         recycler.scrollToPosition(0)
     }

@@ -34,12 +34,13 @@ public class App extends Application {
 			StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
 					.detectAll()
 					.setClassInstanceLimit(MainActivity1.class, 5)
-					.penaltyDeath()
+					.penaltyLog()
 					.build();
 			StrictMode.setVmPolicy(policy);
 
 			StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder()
 					.detectAll()
+					.penaltyLog()
 					.penaltyDialog()
 					.build();
 			//StrictMode.setThreadPolicy(threadPolicy);

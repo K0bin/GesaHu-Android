@@ -2,13 +2,11 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.content.ContentProvider
-import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.ActivityCompat
@@ -24,6 +22,7 @@ import org.joda.time.*
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SyncAdapter
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
@@ -158,15 +157,42 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onRefresh() {
-        view?.setIsRefreshing(currentPosition, false)
+    override fun onRefresh(position: Int) {
+        if (account != null) {
+            if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+                val extras = Bundle()
+                extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), position).toDateTime(LocalTime(0)).millis)
 
-        if (account != null && !ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
-            val bundle = Bundle()
-            bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
-            bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
-            ContentResolver.requestSync(account, App.ACCOUNT_TYPE, bundle)
-        }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    val syncRequest = SyncRequest.Builder()
+                            .setSyncAdapter(account, SubstitutesContentProvider.authority)
+                            .setExpedited(true)
+                            .setManual(true)
+                            .setDisallowMetered(false)
+                            .setIgnoreSettings(true)
+                            .setIgnoreBackoff(true)
+                            .setNoRetry(true)
+                            .setExtras(extras)
+                            .syncOnce()
+                            .build()
+                    ContentResolver.requestSync(syncRequest)
+                } else {
+                    val bundle = Bundle()
+                    bundle.putAll(extras)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_INITIALIZE, true)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_BACKOFF, true)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_REQUIRE_CHARGING, false)
+                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
+                    bundle.putBoolean("disallow_metered", false)
+
+                    ContentResolver.requestSync(account, App.ACCOUNT_TYPE, bundle)
+                }
+            }
+        } else
+            view?.setIsRefreshing(currentPosition, false)
     }
     override fun onActiveTabChanged(position: Int) {
         currentPosition = position

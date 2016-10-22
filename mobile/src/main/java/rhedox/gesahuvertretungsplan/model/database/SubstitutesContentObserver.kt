@@ -18,7 +18,7 @@ class SubstitutesContentObserver(handler: Handler, private val callback: (date: 
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
-        Log.i("SubstiutesObserver", "onChange: $uri");
+        Log.i("SubstitutesObserver", "onChange: $uri");
 
         if(uri != null) {
             if(uri.pathSegments.size > 1 && uri.pathSegments[1] == "date" && (uri.pathSegments[0] == SubstitutesContentProvider.substitutesPath || uri.pathSegments[0]== SubstitutesContentProvider.announcementsPath))

@@ -7,6 +7,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
+import com.pawegio.kandroid.i
 import org.joda.time.DateTime
 import rhedox.gesahuvertretungsplan.model.database.SqLiteHelper
 import rhedox.gesahuvertretungsplan.model.database.tables.Announcements
@@ -130,6 +131,57 @@ class SubstitutesContentProvider : ContentProvider() {
         context.contentResolver.notifyChange(insertUri, null);
         context.contentResolver.notifyChange(dateUri, null);
         return insertUri;
+    }
+
+    override fun bulkInsert(uri: Uri?, values: Array<ContentValues>?): Int {
+        if(values == null || values.size == 0)
+            return 0;
+
+        val uriType = uriMatcher.match(uri);
+
+        val db = database.writableDatabase;
+        val dateUris = mutableListOf<Uri>();
+        var changed = 0;
+
+        when (uriType) {
+            substitutes -> {
+                for(value in values) {
+                    val id = db.insert(Substitutes.name, null, value);
+
+                    //Notify Content Resolver
+                    val insertUri = Uri.parse("$substitutesPath/" + id.toString());
+                    context.contentResolver.notifyChange(insertUri, null);
+
+                    val millis = value.get(Substitutes.columnDate) ?: 0
+                    val dateUri = Uri.parse("$substitutesPath/date/" + millis.toString());
+                    if(!dateUris.contains(dateUri)) {
+                        dateUris.add(dateUri);
+                    }
+                    changed++;
+                }
+            }
+            announcements ->
+                for(value in values) {
+                    val id = db.insert(Announcements.name, null, value);
+
+                    //Notify Content Resolver
+                    val insertUri = Uri.parse("$announcementsPath/" + id.toString());
+                    context.contentResolver.notifyChange(insertUri, null);
+
+                    val millis = value.get(Substitutes.columnDate) ?: 0
+                    val dateUri = Uri.parse("$announcementsPath/date/" + millis.toString())
+                    if (!dateUris.contains(dateUri)) {
+                        dateUris.add(dateUri);
+                    }
+                    changed++;
+                }
+
+            else -> throw IllegalArgumentException("Unknown URI: $uri");
+        }
+        for(dateUri in dateUris)
+            context.contentResolver.notifyChange(dateUri, null);
+
+        return changed;
     }
 
     private fun checkColumns(projection: Array<String>?, uriType: Int) {

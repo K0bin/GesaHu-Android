@@ -59,7 +59,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             supportActionBar?.setDisplayHomeAsUpEnabled(canGoBack)
         }
 
-
     override var isAppBarExpanded: Boolean = true
         get() = field
         set(value) {
