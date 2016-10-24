@@ -248,7 +248,7 @@ public class MainActivity1 extends BaseActivity1 implements ViewPager.OnPageChan
                 break;
 
             case R.id.action_about:
-                AboutLibs.start(this, isAmoledBlackEnabled);
+                AboutLibs.start(this);
                 break;
 
             case android.R.id.home:

@@ -44,7 +44,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
-    private var canGoBack = false;
     var pagerAdapter: SubstitutesPagerAdapter? = null
             private set;
 
@@ -65,7 +64,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         get() = field
         set(value) {
             field = value
-            supportActionBar?.setDisplayHomeAsUpEnabled(canGoBack)
+            supportActionBar?.setDisplayHomeAsUpEnabled(value)
         }
 
     override var isAppBarExpanded: Boolean = true
@@ -152,17 +151,11 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             return true
 
         when (item.itemId) {
-            R.id.action_settings -> {
-                val intent = Intent(this, PreferenceActivity::class.java)
-                startActivity(intent)
-            }
-
+            R.id.action_settings -> presenter.onSettingsClicked()
             R.id.action_load -> presenter.onDatePickerIconClicked()
-
-            R.id.action_about -> AboutLibs.start(this, isAmoledBlackEnabled)
-
+            R.id.action_about -> presenter.onAboutClicked()
             android.R.id.home -> {
-                if (canGoBack)
+                if (isBackButtonVisible)
                     this.onBackPressed()
                 return true
             }
@@ -184,7 +177,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         super.onSaveInstanceState(outState)
         outState.putStringArray(stateTitles, pagerAdapter?.tabTitles)
     }
-
 
     override fun onPageScrollStateChanged(state: Int) { }
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) { }

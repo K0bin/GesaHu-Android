@@ -31,7 +31,7 @@ class SubstitutesFragment : Fragment() {
     var isRefreshing: Boolean
         get() = isRefreshingField
         set(value) {
-            isRefreshingField = true
+            isRefreshingField = value
             swipe?.isRefreshing = value
         }
 

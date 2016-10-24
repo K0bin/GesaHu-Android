@@ -31,7 +31,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         super.onCreate(savedInstanceState)
 
         val prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this)
-        val isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false)
+        isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false)
 
         analytics = FirebaseAnalytics.getInstance(this)
 

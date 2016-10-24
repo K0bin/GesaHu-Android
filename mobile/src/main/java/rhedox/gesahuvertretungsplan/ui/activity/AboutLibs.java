@@ -27,8 +27,10 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 public final class AboutLibs {
     private AboutLibs() {}
 
-    public static void start(final Context context, boolean isAmoledBlackEnabled) {
+    public static void start(final Context context) {
 	    boolean isDarkThemeEnabled = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+	    boolean isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
 
         new LibsBuilder()
                 .withFields(R.string.class.getFields())

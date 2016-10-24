@@ -22,7 +22,9 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.ui.activity.AboutLibs
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
+import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
 import java.util.*
 
 /**
@@ -47,8 +49,6 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
 
         if (arguments.containsKey(SubstitutesActivity.extraDate)) {
             date = DateTime(arguments.getLong(SubstitutesActivity.extraDate)).toLocalDate()
-
-            view?.isBackButtonVisible = arguments.containsKey(SubstitutesActivity.extraBack) && arguments.getBoolean(SubstitutesActivity.extraBack)
         } else
             date = SchoolWeek.nextFromNow();
 
@@ -93,6 +93,9 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
                 date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
                 date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
         )
+
+        if (arguments.containsKey(SubstitutesActivity.extraDate))
+            view?.isBackButtonVisible = arguments.getBoolean(SubstitutesActivity.extraBack, false)
     }
 
     override fun onDestroy() {
@@ -202,5 +205,14 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
 
     override fun onTabCreated(position: Int) {
         view?.populateList(position, substitutes[position] ?: listOf())
+    }
+
+    override fun onSettingsClicked() {
+        val intent = Intent(context, PreferenceActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onAboutClicked() {
+        AboutLibs.start(context)
     }
 }
