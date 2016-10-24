@@ -25,6 +25,7 @@ class SubstitutesFragment : Fragment() {
     private var presenter: SubstitutesContract.Presenter? = null;
 
     private var position: Int = -1;
+    private var items: List<Substitute> = listOf()
 
     private var isRefreshingField = false
     var isRefreshing: Boolean
@@ -41,31 +42,14 @@ class SubstitutesFragment : Fragment() {
             position = arguments.getInt(argumentPosition);
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        if(context is SubstitutesActivity)
-            presenter = context.presenter
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        presenter = null;
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false);
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        if(activity is SubstitutesActivity)
+            presenter = (activity as SubstitutesActivity).presenter
 
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         adapter = SubstitutesAdapter(activity)
-
-        if(presenter != null) {
-            adapter?.showList(presenter!!.getSubstitutes(position))
-        }
 
         swipe.setOnRefreshListener {
             isRefreshingField = true
@@ -74,6 +58,21 @@ class SubstitutesFragment : Fragment() {
         swipe.isRefreshing = isRefreshingField
 
         recycler.adapter = adapter
+        presenter?.onTabCreated(position)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        presenter = null;
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     override fun onDestroyView() {
@@ -88,7 +87,8 @@ class SubstitutesFragment : Fragment() {
      * Display the loaded list
      */
     fun populateList(substitutes: List<Substitute>) {
-        adapter?.showList(substitutes)
+        items = substitutes
+        adapter?.showList(items)
         recycler.scrollToPosition(0)
     }
 

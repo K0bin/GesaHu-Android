@@ -13,16 +13,13 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
 import android.widget.Toast
-import rhedox.gesahuvertretungsplan.model.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesLoaderHelper
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import com.pawegio.kandroid.startActivity;
 import org.joda.time.*
 import rhedox.gesahuvertretungsplan.App
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.SyncAdapter
+import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
@@ -31,7 +28,7 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, SubstitutesLoaderHelper.Callback {
+class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, SubstitutesLoaderHelper.Callback {
     companion object {
         const val tag = "SubstitutesPresenter";
     }
@@ -42,7 +39,6 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
     private var substitutes = arrayOf<List<Substitute>?>(null, null, null, null, null)
     private lateinit var observer: SubstitutesContentObserver;
     private lateinit var syncListenerHandle: Any;
-    private var account: Account? = null;
     private var currentPosition: Int = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,49 +49,55 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
 
             view?.isBackButtonVisible = arguments.containsKey(SubstitutesActivity.extraBack) && arguments.getBoolean(SubstitutesActivity.extraBack)
         } else
-            date = SchoolWeek.next();
+            date = SchoolWeek.nextFromNow();
 
         currentPosition = date.dayOfWeek - DateTimeConstants.MONDAY
-        view?.currentTab = currentPosition
         date = getFirstDayOfWeek(date)
 
         helpers = arrayOf(
-                SubstitutesLoaderHelper(loaderManager, context, date, this),
-                SubstitutesLoaderHelper(loaderManager, context, date.withFieldAdded(DurationFieldType.days(), 1), this),
-                SubstitutesLoaderHelper(loaderManager, context, date.withFieldAdded(DurationFieldType.days(), 2), this),
-                SubstitutesLoaderHelper(loaderManager, context, date.withFieldAdded(DurationFieldType.days(), 3), this),
-                SubstitutesLoaderHelper(loaderManager, context, date.withFieldAdded(DurationFieldType.days(), 4), this)
+                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date, this),
+                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 1), this),
+                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 2), this),
+                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 3), this),
+                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 4), this)
         );
 
         helpers.forEach { it.load() }
 
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-            val accountManager = AccountManager.get(context)
-
-            val accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE)
-            if (accounts.size > 0)
-                account = accounts[0]
-        }
-
         observer = SubstitutesContentObserver(Handler(), {
-            val position = it.dayOfWeek - DateTimeConstants.MONDAY
-            helpers[position].load()
+            helpers[it.dayOfWeekIndex].load()
         })
         context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.substitutesPath}/date"), true, observer);
         context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.announcementsPath}/date"), true, observer);
         syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
             if (account != null) {
                 activity.runOnUiThread {
-                    view?.setIsRefreshing(currentPosition, ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
+                    for(i in 0..4)
+                    view?.setIsRefreshing(i, ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
                 }
             }
         })
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        view?.currentTab = currentPosition
+
+        view?.tabTitles = arrayOf(
+                date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         context.contentResolver.unregisterContentObserver(observer)
+        ContentResolver.removeStatusChangeListener(syncListenerHandle)
     }
 
     override fun onAttach(context: Context?) {
@@ -115,6 +117,7 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
         val position = substitutesList.date.dayOfWeek - DateTimeConstants.MONDAY;
         substitutes[position] = substitutesList.substitutes
         view?.populateList(position, substitutesList.substitutes)
+        view?.setIsRefreshing(position, false)
     }
 
     override fun onDatePickerIconClicked() {
@@ -123,8 +126,7 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
 
 
     private fun getFirstDayOfWeek(date: LocalDate): LocalDate {
-        val index = date.dayOfWeek - DateTimeConstants.MONDAY
-        val monday = date.minusDays(index)
+        val monday = date.minusDays(date.dayOfWeekIndex)
         return monday
     }
 
@@ -138,16 +140,12 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
             startActivity(intent)
         } else {
             //Same week => just switch to day-tab
-            val index = date.dayOfWeek - DateTimeConstants.MONDAY
-            val dayIndex = Math.max(0, Math.min(index, 5))
+            val dayIndex = Math.max(0, Math.min(date.dayOfWeekIndex, 5))
             view?.currentTab = dayIndex
         }
     }
     override fun getSubstitutes(position: Int): List<Substitute> {
         return substitutes[position] ?: listOf()
-    }
-    override fun getTabTitle(position: Int): String {
-        return date.withFieldAdded(DurationFieldType.days(), position + 1 - date.dayOfWeek).toString("EEE dd.MM.yy", Locale.GERMANY)
     }
     override fun onFabClicked() {
         //view?.showDialog()
@@ -181,20 +179,23 @@ class SubstitutesPresenter : Fragment(), SubstitutesContract.Presenter, Substitu
                     bundle.putAll(extras)
                     bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
                     bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_INITIALIZE, true)
                     bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_BACKOFF, true)
                     bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
                     bundle.putBoolean(ContentResolver.SYNC_EXTRAS_REQUIRE_CHARGING, false)
                     bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
-                    bundle.putBoolean("disallow_metered", false)
 
-                    ContentResolver.requestSync(account, App.ACCOUNT_TYPE, bundle)
+                    ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)
                 }
             }
         } else
             view?.setIsRefreshing(currentPosition, false)
     }
+
     override fun onActiveTabChanged(position: Int) {
         currentPosition = position
+    }
+
+    override fun onTabCreated(position: Int) {
+        view?.populateList(position, substitutes[position] ?: listOf())
     }
 }

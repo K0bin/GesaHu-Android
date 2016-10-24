@@ -29,7 +29,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for(int i= 0; i < appWidgetIds.length; i++) {
-            LocalDate date = SchoolWeek.next();
+            LocalDate date = SchoolWeek.nextFromNow();
 
             Intent factoryServiceIntent = new Intent(context, ListFactoryService.class);
             factoryServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);

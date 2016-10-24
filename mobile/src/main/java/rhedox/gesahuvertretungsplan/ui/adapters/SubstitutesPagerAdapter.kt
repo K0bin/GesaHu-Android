@@ -14,9 +14,11 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPagerAdapter(manager: FragmentManager, private val presenter: SubstitutesContract.Presenter): FragmentPagerAdapter(manager) {
+class SubstitutesPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager) {
 
     private var fragments: Array<SubstitutesFragment?> = arrayOf<SubstitutesFragment?>(null, null, null, null, null)
+
+    var tabTitles: Array<String> = arrayOf("","","","","")
 
     override fun getItem(position: Int): Fragment {
         val fragment = SubstitutesFragment.createInstance(position)
@@ -29,7 +31,7 @@ class SubstitutesPagerAdapter(manager: FragmentManager, private val presenter: S
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return presenter.getTabTitle(position)
+        return tabTitles[position]
     }
 
     fun makeFragmentName(viewPagerId: Int, fragmentPosition: Int): String {

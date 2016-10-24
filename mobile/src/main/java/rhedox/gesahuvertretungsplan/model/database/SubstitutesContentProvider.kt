@@ -128,8 +128,8 @@ class SubstitutesContentProvider : ContentProvider() {
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
-        context.contentResolver.notifyChange(insertUri, null);
-        context.contentResolver.notifyChange(dateUri, null);
+        context.contentResolver.notifyChange(insertUri, null, false);
+        context.contentResolver.notifyChange(dateUri, null, false);
         return insertUri;
     }
 
@@ -150,7 +150,7 @@ class SubstitutesContentProvider : ContentProvider() {
 
                     //Notify Content Resolver
                     val insertUri = Uri.parse("$substitutesPath/" + id.toString());
-                    context.contentResolver.notifyChange(insertUri, null);
+                    context.contentResolver.notifyChange(insertUri, null, false);
 
                     val millis = value.get(Substitutes.columnDate) ?: 0
                     val dateUri = Uri.parse("$substitutesPath/date/" + millis.toString());
@@ -166,7 +166,7 @@ class SubstitutesContentProvider : ContentProvider() {
 
                     //Notify Content Resolver
                     val insertUri = Uri.parse("$announcementsPath/" + id.toString());
-                    context.contentResolver.notifyChange(insertUri, null);
+                    context.contentResolver.notifyChange(insertUri, null, false);
 
                     val millis = value.get(Substitutes.columnDate) ?: 0
                     val dateUri = Uri.parse("$announcementsPath/date/" + millis.toString())
@@ -179,7 +179,7 @@ class SubstitutesContentProvider : ContentProvider() {
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
         for(dateUri in dateUris)
-            context.contentResolver.notifyChange(dateUri, null);
+            context.contentResolver.notifyChange(dateUri, null, false);
 
         return changed;
     }

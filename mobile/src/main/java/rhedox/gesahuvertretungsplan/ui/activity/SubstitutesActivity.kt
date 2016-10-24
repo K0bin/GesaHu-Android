@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.ColorInt
+import android.support.v4.app.NotificationCompatSideChannelService
 import android.support.v4.util.Pair
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
@@ -20,8 +21,9 @@ import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.presenter.BaseActivityPresenter
+import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
@@ -31,14 +33,17 @@ import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
  * Created by robin on 20.10.2016.
  */
 class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
+
     companion object {
         const val extraDate = "date";
         const val extraBack = "back";
+
+        const val stateTitles = "titles"
     }
 
-    lateinit var presenter: SubstitutesContract.Presenter
+    override lateinit var presenter: SubstitutesContract.Presenter
     private var canGoBack = false;
-    lateinit var pagerAdapter: SubstitutesPagerAdapter
+    var pagerAdapter: SubstitutesPagerAdapter? = null
             private set;
 
     override var isFloatingActionButtonVisible: Boolean
@@ -66,22 +71,39 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             appbarLayout.setExpanded(value)
         }
 
+    override var tabTitles: Array<String> = arrayOf("", "", "", "", "")
+        get() = field
+        set(value) {
+            field = value
+            pagerAdapter?.tabTitles = value;
+            pagerAdapter?.notifyDataSetChanged()
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //Create presenter
-        val _presenter = SubstitutesPresenter()
-        _presenter.arguments = intent?.extras ?: Bundle.EMPTY
-        supportFragmentManager.beginTransaction().add(_presenter, BaseActivityPresenter.tag).commit();
-        presenter = _presenter
+        val presenterFragment = supportFragmentManager.findFragmentByTag(SubstitutesPresenter.tag);
+        if(presenterFragment != null) {
+            presenter = presenterFragment as SubstitutesContract.Presenter;
+        } else {
+            val _presenter = SubstitutesPresenter()
+            _presenter.arguments = intent?.extras ?: Bundle.EMPTY
+            supportFragmentManager.beginTransaction().add(_presenter, SubstitutesPresenter.tag).commit();
+            presenter = _presenter
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription()
 
         setContentView(R.layout.activity_main)
 
-        pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager, presenter)
+        val titles = savedInstanceState?.getStringArray(stateTitles)
+
+        pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager)
         viewPager.adapter = pagerAdapter
+        if(titles != null)
+            pagerAdapter!!.tabTitles = titles;
         tabLayout.setupWithViewPager(viewPager)
         viewPager.addOnPageChangeListener(this)
 
@@ -100,7 +122,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun populateList(position: Int, list: List<Substitute>) {
-        val fragment = pagerAdapter.getFragment(supportFragmentManager, position)
+        val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.populateList(list)
     }
 
@@ -125,7 +147,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         if (super.onOptionsItemSelected(item))
             return true
 
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.action_settings -> {
                 val intent = Intent(this, PreferenceActivity::class.java)
                 startActivity(intent)
@@ -146,12 +168,17 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun setIsRefreshing(position: Int, isRefreshing: Boolean) {
-        val fragment = pagerAdapter.getFragment(supportFragmentManager, position)
+        val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.isRefreshing = isRefreshing
     }
 
     override fun showDialog(text: String) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putStringArray(stateTitles, pagerAdapter?.tabTitles)
     }
 
 

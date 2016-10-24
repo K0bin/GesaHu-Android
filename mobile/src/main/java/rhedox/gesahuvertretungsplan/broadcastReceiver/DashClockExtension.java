@@ -29,7 +29,7 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
     @Override
     protected void onUpdateData(int reason) {
 
-	    LocalDate date = SchoolWeek.next();
+	    LocalDate date = SchoolWeek.nextFromNow();
 
 	    //Init retro fit for pulling the data
 	    gesahui = GesaHuApi.Companion.create(this);

@@ -11,21 +11,21 @@ import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.mvp.BaseActivityContract
-import rhedox.gesahuvertretungsplan.presenter.BaseActivityPresenter
+import rhedox.gesahuvertretungsplan.mvp.BaseContract
+import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 
 /**
  * Created by robin on 20.10.2016.
  */
-open class BaseActivity : AppCompatActivity(), BaseActivityContract.View {
+abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
     private lateinit var toggle: ActionBarDrawerToggle;
     protected lateinit var analytics: FirebaseAnalytics;
     protected var isAmoledBlackEnabled = false
             private set;
 
-    private lateinit var presenter: BaseActivityContract.Presenter;
+    abstract val presenter: BaseContract.Presenter;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +34,6 @@ open class BaseActivity : AppCompatActivity(), BaseActivityContract.View {
         val isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false)
 
         analytics = FirebaseAnalytics.getInstance(this)
-
-        val _presenter = BaseActivityPresenter()
-        supportFragmentManager.beginTransaction().add(_presenter, BaseActivityPresenter.tag).commit();
-        presenter = _presenter
 
         //Initialize UI
         if (isAmoledBlackEnabled)

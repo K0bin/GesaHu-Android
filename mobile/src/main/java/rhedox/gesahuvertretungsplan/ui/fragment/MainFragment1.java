@@ -98,7 +98,7 @@ public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefr
 		if (arguments != null)
 			date = new DateTime(arguments.getLong(ARGUMENT_DATE, 0L)).toLocalDate();
 		else
-			date = SchoolWeek.next();
+			date = SchoolWeek.nextFromNow();
 
 
 		if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {

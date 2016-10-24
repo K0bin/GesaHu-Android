@@ -54,7 +54,7 @@ public class Notifier {
 	}
 
 	public void load() {
-		LocalDate date = SchoolWeek.next();
+		LocalDate date = SchoolWeek.nextFromNow();
 		Call<SubstitutesList> call = gesahui.substitutes(new QueryDate(date));
 		try {
 			Response<SubstitutesList> response = call.execute();

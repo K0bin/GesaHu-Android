@@ -129,7 +129,7 @@ public class MainActivity1 extends BaseActivity1 implements ViewPager.OnPageChan
 	        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
         }
         else
-            date = SchoolWeek.next();
+            date = SchoolWeek.nextFromNow();
 
         setupViewPager(date, isWhiteIndicatorEnabled ? 0xFFFFFFFF : color, savedInstanceState != null);
 
