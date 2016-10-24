@@ -20,7 +20,8 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
  */
 abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
-    private lateinit var toggle: ActionBarDrawerToggle;
+    protected lateinit var toggle: ActionBarDrawerToggle
+        private set
     protected lateinit var analytics: FirebaseAnalytics;
     protected var isAmoledBlackEnabled = false
             private set;
@@ -50,6 +51,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     private fun setupDrawerLayout() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setHomeButtonEnabled(true)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         toggle = ActionBarDrawerToggle(this, drawer, R.string.drawer_open, R.string.drawer_close)

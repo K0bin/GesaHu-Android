@@ -64,7 +64,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         get() = field
         set(value) {
             field = value
-            supportActionBar?.setDisplayHomeAsUpEnabled(value)
+            toggle.isDrawerIndicatorEnabled = !value
         }
 
     override var isAppBarExpanded: Boolean = true
@@ -155,8 +155,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             R.id.action_load -> presenter.onDatePickerIconClicked()
             R.id.action_about -> presenter.onAboutClicked()
             android.R.id.home -> {
-                if (isBackButtonVisible)
-                    this.onBackPressed()
+                finish()
                 return true
             }
         }

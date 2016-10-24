@@ -12,6 +12,7 @@ import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
+import android.util.Log
 import android.widget.Toast
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesLoaderHelper
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
@@ -71,10 +72,11 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.substitutesPath}/date"), true, observer);
         context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.announcementsPath}/date"), true, observer);
         syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
+            Log.d("SyncObserver", "Observed change in $it");
             if (account != null) {
                 activity.runOnUiThread {
                     for(i in 0..4)
-                    view?.setIsRefreshing(i, ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
+                        view?.setIsRefreshing(i, ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
                 }
             }
         })
