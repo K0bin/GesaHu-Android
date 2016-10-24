@@ -15,7 +15,7 @@ interface SubstitutesContract {
         fun onFabClicked()
         fun onTabCreated(position: Int)
         fun onListItemSelected(listEntry: Int)
-        fun onRefresh(position: Int)
+        fun onRefresh()
         fun onSettingsClicked()
         fun onAboutClicked()
     }
@@ -28,7 +28,7 @@ interface SubstitutesContract {
         var isBackButtonVisible: Boolean
         var isAppBarExpanded: Boolean
         var tabTitles: Array<String>
-        fun setIsRefreshing(position: Int, isRefreshing: Boolean)
+        var isRefreshing: Boolean
         fun showDialog(text: String)
     }
 }

@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
+<android.support.v7.widget.RecyclerView
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:maxWidth="400dp"
-	android:id="@+id/swipe">
-
-		<android.support.v7.widget.RecyclerView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/recycler"
-			android:scrollbars="vertical"
-			android:paddingTop="@dimen/listMargin"
-			android:paddingBottom="@dimen/listMargin"
-			android:clipToPadding="false"/>
-</rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix>
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:id="@+id/recycler"
+	android:scrollbars="vertical"
+	android:paddingTop="@dimen/listMargin"
+	android:paddingBottom="@dimen/listMargin"
+	android:clipToPadding="false"/>

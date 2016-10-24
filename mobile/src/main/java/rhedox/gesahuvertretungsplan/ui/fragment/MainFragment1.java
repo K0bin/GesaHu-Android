@@ -53,7 +53,7 @@ import tr.xip.errorview.ErrorView;
  */
 public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SubstitutesLoaderHelper.Callback, ErrorView.RetryListener, SyncStatusObserver {
 	private SubstitutesAdapter adapter;
-	@BindView(R.id.swipe)
+	@BindView(R.id.swipeRefreshLayout)
 	SwipeRefreshLayoutFix refreshLayout;
 	@BindView(R.id.recycler)
 	RecyclerView recyclerView;

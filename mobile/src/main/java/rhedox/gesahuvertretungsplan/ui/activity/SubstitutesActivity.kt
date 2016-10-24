@@ -82,6 +82,12 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             pagerAdapter?.notifyDataSetChanged()
         }
 
+    override var isRefreshing: Boolean
+        get() = swipeRefreshLayout.isRefreshing
+        set(value) {
+            swipeRefreshLayout.isRefreshing = value
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -109,6 +115,18 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             pagerAdapter!!.tabTitles = titles;
         tabLayout.setupWithViewPager(viewPager)
         viewPager.addOnPageChangeListener(this)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            presenter.onRefresh()
+        }
+
+        viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+                swipeRefreshLayout.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
+            }
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageSelected(position: Int) {}
+        })
 
         fab.setOnClickListener { presenter.onFabClicked() }
     }
@@ -161,11 +179,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun setIsRefreshing(position: Int, isRefreshing: Boolean) {
-        val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
-        fragment?.isRefreshing = isRefreshing
     }
 
     override fun showDialog(text: String) {

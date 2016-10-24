@@ -27,14 +27,6 @@ class SubstitutesFragment : Fragment() {
     private var position: Int = -1;
     private var items: List<Substitute> = listOf()
 
-    private var isRefreshingField = false
-    var isRefreshing: Boolean
-        get() = isRefreshingField
-        set(value) {
-            isRefreshingField = value
-            swipe?.isRefreshing = value
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,12 +42,6 @@ class SubstitutesFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         adapter = SubstitutesAdapter(activity)
-
-        swipe.setOnRefreshListener {
-            isRefreshingField = true
-            presenter?.onRefresh(position)
-        }
-        swipe.isRefreshing = isRefreshingField
 
         recycler.adapter = adapter
         presenter?.onTabCreated(position)
@@ -77,9 +63,6 @@ class SubstitutesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        swipe.isRefreshing = false
-        swipe.removeAllViews()
-        swipe.clearAnimation()
         adapter = null
     }
 
@@ -89,7 +72,7 @@ class SubstitutesFragment : Fragment() {
     fun populateList(substitutes: List<Substitute>) {
         items = substitutes
         adapter?.showList(items)
-        recycler.scrollToPosition(0)
+        recycler?.scrollToPosition(0)
     }
 
     companion object {

@@ -75,8 +75,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
             Log.d("SyncObserver", "Observed change in $it");
             if (account != null) {
                 activity.runOnUiThread {
-                    for(i in 0..4)
-                        view?.setIsRefreshing(i, ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority))
+                    view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
                 }
             }
         })
@@ -125,7 +124,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         substitutes[position] = substitutesList.substitutes
         announcements[position] = substitutesList.announcement
         view?.populateList(position, substitutesList.substitutes)
-        view?.setIsRefreshing(position, false)
+        view?.isRefreshing = false
         view?.isFloatingActionButtonVisible = substitutesList.announcement != ""
     }
 
@@ -164,11 +163,11 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onRefresh(position: Int) {
+    override fun onRefresh() {
         if (account != null) {
             if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
                 val extras = Bundle()
-                extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), position).toDateTime(LocalTime(0)).millis)
+                extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).toDateTime(LocalTime(0)).millis)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val syncRequest = SyncRequest.Builder()
@@ -197,7 +196,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
                 }
             }
         } else
-            view?.setIsRefreshing(currentPosition, false)
+            view?.isRefreshing = false
     }
 
     override fun onActiveTabChanged(position: Int) {

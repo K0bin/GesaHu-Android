@@ -10,7 +10,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '25'
     defaultConfig {
-        applicationId "rhedox.gesahuvertretungsplan"
+        applicationId "rhedox.gesahuvertretungsplan.beta"
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 3404
