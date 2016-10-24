@@ -37,6 +37,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
     private var view: SubstitutesContract.View? = null
     private lateinit var helpers: Array<SubstitutesLoaderHelper>
     private var substitutes = arrayOf<List<Substitute>?>(null, null, null, null, null)
+    private var announcements = arrayOf("","","","","")
     private lateinit var observer: SubstitutesContentObserver;
     private lateinit var syncListenerHandle: Any;
     private var currentPosition: Int = 0;
@@ -83,6 +84,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         super.onActivityCreated(savedInstanceState)
 
         view?.currentTab = currentPosition
+        view?.isFloatingActionButtonVisible = false
 
         view?.tabTitles = arrayOf(
                 date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
@@ -116,8 +118,10 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
     override fun onSubstitutesLoaded(substitutesList: SubstitutesList) {
         val position = substitutesList.date.dayOfWeek - DateTimeConstants.MONDAY;
         substitutes[position] = substitutesList.substitutes
+        announcements[position] = substitutesList.announcement
         view?.populateList(position, substitutesList.substitutes)
         view?.setIsRefreshing(position, false)
+        view?.isFloatingActionButtonVisible = substitutesList.announcement != ""
     }
 
     override fun onDatePickerIconClicked() {
@@ -148,7 +152,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         return substitutes[position] ?: listOf()
     }
     override fun onFabClicked() {
-        //view?.showDialog()
+        view?.showDialog(announcements[currentPosition])
     }
 
     override fun onListItemSelected(listEntry: Int) {
@@ -193,6 +197,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
 
     override fun onActiveTabChanged(position: Int) {
         currentPosition = position
+        view?.isFloatingActionButtonVisible = announcements[currentPosition] != ""
     }
 
     override fun onTabCreated(position: Int) {

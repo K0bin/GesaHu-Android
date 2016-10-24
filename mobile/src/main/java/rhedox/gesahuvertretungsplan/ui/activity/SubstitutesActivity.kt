@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.joda.time.DateTime
@@ -27,6 +28,7 @@ import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
+import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
 
 /**
@@ -47,8 +49,10 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             private set;
 
     override var isFloatingActionButtonVisible: Boolean
-        get() = throw UnsupportedOperationException()
+        get() = fab.visibility == View.VISIBLE
         set(value) {
+            fab.visibility = if(value) View.VISIBLE else View.GONE
+            fab.isEnabled = value
         }
 
     override var currentTab: Int
@@ -173,7 +177,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun showDialog(text: String) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        AnnouncementFragment.newInstance(text).show(supportFragmentManager, AnnouncementFragment.TAG)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
