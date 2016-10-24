@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.ui.widget;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -10,7 +11,7 @@ import android.view.View;
  * Workaround/ fix for SwipeRefreshLayout
  */
 public class SwipeRefreshLayoutFix extends SwipeRefreshLayout {
-    private boolean canRefresh = false;
+	private boolean isGuestureEnabled = false;
 
     public SwipeRefreshLayoutFix(Context context) {
         super(context);
@@ -20,25 +21,22 @@ public class SwipeRefreshLayoutFix extends SwipeRefreshLayout {
         super(context, attrs);
     }
 
-    @Override
-    public void setRefreshing(boolean refreshing) {
-        if (!refreshing || canRefresh) {
-            super.setRefreshing(refreshing);
-        } else {
-            this.post(new Runnable() {
-                @Override
-                public void run() {
-                    canRefresh = true;
-                    setRefreshing(true);
-                }
-            });
-        }
-    }
+	public void setIsGuestureEnabled(boolean isEnabled) {
+		isGuestureEnabled = isEnabled;
+	}
+	public boolean getIsGuestureEnabled() {
+		return isGuestureEnabled;
+	}
 
-    @Override
-    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        canRefresh = true;
-    }
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		switch (ev.getAction()) {
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+			case MotionEvent.ACTION_POINTER_UP:
+				return false;
+			default:
+				return isGuestureEnabled && super.onInterceptTouchEvent(ev);
+		}
+	}
 }

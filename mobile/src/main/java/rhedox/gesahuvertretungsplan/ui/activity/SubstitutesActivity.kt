@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.ColorInt
@@ -114,6 +115,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         if(titles != null)
             pagerAdapter!!.tabTitles = titles;
         tabLayout.setupWithViewPager(viewPager)
+        tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
         viewPager.addOnPageChangeListener(this)
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -122,7 +124,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
         viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
-                swipeRefreshLayout.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
+                swipeRefreshLayout.isGuestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {}

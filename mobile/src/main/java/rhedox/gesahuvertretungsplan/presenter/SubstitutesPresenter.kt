@@ -167,7 +167,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         if (account != null) {
             if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
                 val extras = Bundle()
-                extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).toDateTime(LocalTime(0)).millis)
+                //extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).toDateTime(LocalTime(0)).millis)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val syncRequest = SyncRequest.Builder()
