@@ -37,7 +37,7 @@ interface GesaHuApi {
             val builder = OkHttpClient.Builder()
 
             if (BuildConfig.DEBUG)
-                builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
 
             val gson = GsonBuilder()
                     .registerTypeAdapter(Substitute::class.java, SubstituteDeserializer(context))

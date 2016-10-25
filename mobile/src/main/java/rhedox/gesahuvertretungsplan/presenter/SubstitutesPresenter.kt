@@ -67,7 +67,9 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         helpers.forEach { it.load() }
 
         observer = SubstitutesContentObserver(Handler(), {
-            helpers[it.dayOfWeekIndex].load()
+            val index = it.dayOfWeekIndex
+            if(index in 0..4)
+                helpers[index].load()
         })
         context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.substitutesPath}/date"), true, observer);
         context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.announcementsPath}/date"), true, observer);
@@ -124,8 +126,9 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         substitutes[position] = substitutesList.substitutes
         announcements[position] = substitutesList.announcement
         view?.populateList(position, substitutesList.substitutes)
-        view?.isRefreshing = false
         view?.isFloatingActionButtonVisible = substitutesList.announcement != ""
+        if(account != null)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
 
     override fun onDatePickerIconClicked() {
@@ -167,7 +170,8 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         if (account != null) {
             if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
                 val extras = Bundle()
-                //extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).toDateTime(LocalTime(0)).millis)
+                extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).toDateTime(LocalTime(0)).millis)
+                extras.putBoolean(SyncAdapter.extraIgnorePast, true)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val syncRequest = SyncRequest.Builder()

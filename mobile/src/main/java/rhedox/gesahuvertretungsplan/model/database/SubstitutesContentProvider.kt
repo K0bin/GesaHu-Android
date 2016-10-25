@@ -110,20 +110,20 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
 
         val db = database.writableDatabase;
-        var insertUri: Uri;
-        var dateUri: Uri;
+        val insertUri: Uri;
+        val dateUri: Uri;
         when (uriType) {
             substitutes -> {
                 val id = db.insert(Substitutes.name, null, values);
                 val millis = values?.get(Substitutes.columnDate) ?: 0
-                insertUri = Uri.parse("$substitutesPath/"+id.toString());
-                dateUri = Uri.parse("$substitutesPath/date/"+millis.toString());
+                insertUri = Uri.parse("content://$authority/$substitutesPath/"+id.toString());
+                dateUri = Uri.parse("content://$authority/$substitutesPath/date/"+millis.toString());
             }
             announcements -> {
                 val id = db.insert(Announcements.name, null, values);
                 val millis = values?.get(Announcements.columnDate) ?: 0
-                insertUri = Uri.parse("$announcementsPath/"+id.toString());
-                dateUri = Uri.parse("$announcementsPath/date/"+millis.toString());
+                insertUri = Uri.parse("content://$authority/$announcementsPath/"+id.toString());
+                dateUri = Uri.parse("content://$authority/$announcementsPath/date/"+millis.toString());
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
@@ -149,11 +149,11 @@ class SubstitutesContentProvider : ContentProvider() {
                     val id = db.insert(Substitutes.name, null, value);
 
                     //Notify Content Resolver
-                    val insertUri = Uri.parse("$substitutesPath/" + id.toString());
+                    val insertUri = Uri.parse("content://$authority/$substitutesPath/" + id.toString());
                     context.contentResolver.notifyChange(insertUri, null, false);
 
                     val millis = value.get(Substitutes.columnDate) ?: 0
-                    val dateUri = Uri.parse("$substitutesPath/date/" + millis.toString());
+                    val dateUri = Uri.parse("content://$authority/$substitutesPath/date/" + millis.toString());
                     if(!dateUris.contains(dateUri)) {
                         dateUris.add(dateUri);
                     }
@@ -165,11 +165,11 @@ class SubstitutesContentProvider : ContentProvider() {
                     val id = db.insert(Announcements.name, null, value);
 
                     //Notify Content Resolver
-                    val insertUri = Uri.parse("$announcementsPath/" + id.toString());
+                    val insertUri = Uri.parse("content://$authority/$announcementsPath/" + id.toString());
                     context.contentResolver.notifyChange(insertUri, null, false);
 
                     val millis = value.get(Substitutes.columnDate) ?: 0
-                    val dateUri = Uri.parse("$announcementsPath/date/" + millis.toString())
+                    val dateUri = Uri.parse("content://$authority/$announcementsPath/date/" + millis.toString())
                     if (!dateUris.contains(dateUri)) {
                         dateUris.add(dateUri);
                     }

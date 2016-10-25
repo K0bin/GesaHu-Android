@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
+import android.util.Log
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
@@ -38,13 +39,19 @@ class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private 
 
     fun load() {
         if(!isLoading) {
+            Log.d("LoaderHelper", "Loading $date");
             loaderManager.initLoader(offset + substitutesType, Bundle.EMPTY, this)
             loaderManager.initLoader(offset + announcementType, Bundle.EMPTY, this)
-            isLoading = true;
+        } else {
+            Log.d("LoaderHelper", "$date is already loading");
+            loaderManager.restartLoader(offset + substitutesType, Bundle.EMPTY, this)
+            loaderManager.restartLoader(offset + announcementType, Bundle.EMPTY, this)
         }
+        isLoading = true;
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor>? {
+        Log.d("LoaderHelper", "$date loaded, id: $id");
 
         when (id) {
             offset + substitutesType -> {
@@ -93,14 +100,12 @@ class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private 
         }
 
         if(areSubstitutesLoaded && isAnnouncementLoaded) {
-            callback.onSubstitutesLoaded(SubstitutesList(announcement, substitutes, date));
-
             isLoading = false;
+            callback.onSubstitutesLoaded(SubstitutesList(announcement, substitutes, date));
         }
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>?) {
-        loader?.reset();
         isLoading = false;
     }
 

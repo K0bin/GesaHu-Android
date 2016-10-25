@@ -31,29 +31,35 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
     }
 
     companion object {
+        const val extraSingleDay = "day";
         const val extraDate = "date";
+        const val extraIgnorePast = "extraIgnorePast";
     }
 
     override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
         val username = account.name ?: "";
 
-        if(extras != null && extras.containsKey(extraDate)) {
-            val date = DateTime(extras.getLong(extraDate)).toLocalDate()
+        val date = if(extras != null && extras.containsKey(extraDate)) DateTime(extras.getLong(extraDate)).toLocalDate() else SchoolWeek.nextFromNow()
+
+        if(extras?.getBoolean(extraSingleDay, false) ?: false) {
             Log.d("SyncAdapter", "Sync triggered for $date")
             loadSubstitutesForDay(provider, date, username)
         } else {
             Log.d("SyncAdapter", "Sync triggered")
-            clearOldSubstitutes(provider);
-            //val today = SchoolWeek.next()
-            val today = LocalDate(2016, 10, 10);
-            for (i in 0..6) {
-                var date = today.withFieldAdded(DurationFieldType.days(), i)
-                if (date.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
-                    //Saturday => Monday & Sunday => Tuesday
-                    date = date.withFieldAdded(DurationFieldType.days(), 2);
-                }
+            val ignorePast = (extras?.getBoolean(extraIgnorePast, false) ?: false) && date > LocalDate.now();
 
-                loadSubstitutesForDay(provider, date, username)
+            clearOldSubstitutes(provider);
+
+            for (i in 0..7) {
+                var day = date.withFieldAdded(DurationFieldType.days(), i)
+                if (day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
+                    //Saturday => Monday & Sunday => Tuesday
+                    day = date.withFieldAdded(DurationFieldType.days(), 2);
+                }
+                if(ignorePast && day < LocalDate.now())
+                    continue
+
+                loadSubstitutesForDay(provider, day, username)
             }
         }
     }
@@ -104,7 +110,9 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
                 for (substitute in substitutesList.substitutes) {
                     substituteInserts.add(SubstituteAdapter.toContentValues(substitute, substitutesList.date))
                 }
-                provider.insert(announcementsUri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
+                if(substitutesList.announcement.trim().length != 0 && substitutesList.announcement.trim() != "keine")
+                    provider.insert(announcementsUri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
+
                 provider.bulkInsert(substitutesUri, substituteInserts.toTypedArray())
             }
         } catch (e: IOException) {
