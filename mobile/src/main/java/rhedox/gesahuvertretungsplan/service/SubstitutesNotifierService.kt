@@ -24,10 +24,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver
-import rhedox.gesahuvertretungsplan.model.Notifier
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.api.QueryDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
@@ -41,7 +38,7 @@ import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 /**
  * Created by robin on 26.10.2016.
  */
-class SubstitutesNotifierService : IntentService("SubstitutesNotifier"), android.support.v4.content.Loader.OnLoadCompleteListener<Cursor>, android.support.v4.content.Loader.OnLoadCanceledListener<Cursor> {
+class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
         const val EXTRA_LESSON = "lesson";
         const val REQUEST_CODE_BASE = 64
@@ -65,6 +62,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier"), android
         //Color is used for the notifications
         color = ContextCompat.getColor(applicationContext, R.color.colorDefaultAccent)
         repository = SubstitutesRepository(this)
+        repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
     }
 
     override fun onHandleIntent(intent: Intent) {
@@ -76,19 +74,12 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier"), android
             else
                 return
         }
-        cursorLoader = CursorLoader(applicationContext, Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.substitutesPath}/date/${date!!.toDateTime(LocalTime(0)).millis}"), Substitutes.availableColumns.toTypedArray(), null, null, "${Substitutes.columnLessonBegin} ASC")
-        cursorLoader?.registerListener(LOADER_ID, this)
-        cursorLoader?.registerOnLoadCanceledListener(this)
         date = SchoolWeek.nextFromNow()
-        cursorLoader?.startLoading()
+        repository.loadSubstitutesForDay(date!!)
         this.intent = intent
     }
 
-    override fun onLoadComplete(loader: android.support.v4.content.Loader<Cursor>, data: Cursor) {
-        val substitutes = SubstitutesList.filterRelevant(SubstituteAdapter.listFromCursor(data), true)
-        data.close()
-
-        val notificationManager = NotificationManagerCompat.from(applicationContext)
+    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {val notificationManager = NotificationManagerCompat.from(applicationContext)
 
         notificationManager.cancelAll()
 
@@ -161,16 +152,11 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier"), android
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
     }
 
-    override fun onLoadCanceled(loader: android.support.v4.content.Loader<Cursor>?) {
-        if(intent != null)
-            WakefulBroadcastReceiver.completeWakefulIntent(intent)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        cursorLoader?.unregisterListener(this)
-        cursorLoader?.cancelLoad()
-        cursorLoader?.stopLoading()
+        repository.destroy()
+        if(intent != null)
+            WakefulBroadcastReceiver.completeWakefulIntent(intent)
     }
 
     private fun makeSummaryNotification(lesson: Int, date: LocalDate?, notificationLines: List<String>): Notification? {
