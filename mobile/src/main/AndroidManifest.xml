@@ -96,8 +96,16 @@
         <provider
             android:name=".model.database.SubstitutesContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.substitutes"
-            android:exported="false"
-            android:syncable="true"/>
+            android:exported="true"
+            android:syncable="true"
+            android:label="@string/provider_substitutes" />
+
+        <provider
+            android:authorities="rhedox.gesahuvertretungsplan.boards"
+            android:name=".model.database.BoardsContentProvider"
+            android:exported="true"
+            android:syncable="true"
+            android:label="@string/provider_boards" />
 
         <service
             android:name=".service.GesaHuAccountService">
@@ -117,7 +125,18 @@
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
             <meta-data android:name="android.content.SyncAdapter"
-                       android:resource="@xml/sync_adapter" />
+                       android:resource="@xml/substitutes_sync_adapter" />
+        </service>
+
+        <service
+            android:name=".service.BoardsSyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/boards_sync_adapter" />
         </service>
 
     </application>

@@ -7,8 +7,11 @@
             android:icon="@drawable/ic_substitutes"
             android:checked="false"
             android:title="@string/drawer_substitutes" />
-    </group>
-    <group android:checkableBehavior="single"
-        android:id="@+id/boards">
+
+        <item android:id="@+id/boardsSubheader" android:title="@string/drawer_boards">
+            <menu>
+
+            </menu>
+        </item>
     </group>
 </menu>

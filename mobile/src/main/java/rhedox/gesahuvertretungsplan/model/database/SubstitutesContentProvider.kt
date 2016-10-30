@@ -51,21 +51,21 @@ class SubstitutesContentProvider : ContentProvider() {
             substitutes -> queryBuilder.tables = Substitutes.name;
             substitutesByDate -> {
                 queryBuilder.tables = Substitutes.name;
-                queryBuilder.appendWhere(Substitutes.columnDate + "='" + uri.lastPathSegment + "'")
+                queryBuilder.appendWhere("${Substitutes.columnDate} = '${uri.lastPathSegment}'")
             }
             substitutesById -> {
                 queryBuilder.tables = Substitutes.name;
-                queryBuilder.appendWhere(Substitutes.columnId + "='" + uri.lastPathSegment + "'")
+                queryBuilder.appendWhere("${Substitutes.columnId} = '${uri.lastPathSegment}'")
             }
 
             announcements -> queryBuilder.tables = Announcements.name
             announcementsByDate -> {
                 queryBuilder.tables = Announcements.name;
-                queryBuilder.appendWhere(Announcements.columnDate + "='" + uri.lastPathSegment + "'")
+                queryBuilder.appendWhere("${Announcements.columnDate} = '${uri.lastPathSegment}'")
             }
             announcementsById -> {
                 queryBuilder.tables = Announcements.name;
-                queryBuilder.appendWhere(Announcements.columnId + "='" + uri.lastPathSegment + "'")
+                queryBuilder.appendWhere("${Announcements.columnId} = '${uri.lastPathSegment}'")
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
@@ -89,9 +89,9 @@ class SubstitutesContentProvider : ContentProvider() {
         val db = database.writableDatabase;
 
         val uriType = uriMatcher.match(uri);
-        var rowsDeleted: Int = 0;
+        var rowsDeleted = 0;
         when (uriType) {
-            substitutes -> rowsDeleted = db.delete(Substitutes.name, selection ?: "", null)
+            substitutes -> rowsDeleted = db.delete(Substitutes.name, selection ?: "1", null)
             substitutesByDate -> rowsDeleted = db.delete(Substitutes.name, "${Substitutes.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
             substitutesById -> rowsDeleted = db.delete(Substitutes.name, "${Substitutes.columnId} = '${uri.lastPathSegment}'", null)
             announcements -> rowsDeleted = db.delete(Announcements.name, selection ?: "", null)

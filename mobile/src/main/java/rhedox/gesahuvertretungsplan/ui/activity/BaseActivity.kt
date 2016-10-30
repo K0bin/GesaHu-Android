@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
@@ -28,6 +30,14 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
     abstract val presenter: BaseContract.Presenter;
 
+    private lateinit var headerUsername: TextView;
+
+    override var userName: String
+        get() = headerUsername.text.toString();
+        set(value) {
+            headerUsername.text = value
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +56,8 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
         setupDrawerLayout()
+
+        headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
     }
 
     private fun setupDrawerLayout() {
@@ -83,7 +95,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     }
 
     override fun setBoards(boards: List<Board>) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        for(i in 0..boards.size-1) {
+            navigationView.menu.findItem(R.id.boardsSubheader)
+                    .subMenu
+                    .add(-1, i + 13, Menu.NONE, boards[i].name)
+        }
     }
 
 

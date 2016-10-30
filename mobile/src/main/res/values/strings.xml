@@ -6,6 +6,9 @@
     <string name="title_activity_about">Über</string>
 	<string name="title_activity_settings">Einstellungen</string>
 
+    <string name="provider_substitutes">Vertretungsstunden</string>
+    <string name="provider_boards">Boards</string>
+
     <string name="action_settings">Einstellungen</string>
     <string name="action_date">Datum auswählen</string>
     <string name="action_about">Über</string>

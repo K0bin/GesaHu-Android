@@ -25,6 +25,7 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.util.Md5Util
 import rhedox.gesahuvertretungsplan.util.bindView
@@ -147,6 +148,9 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
         ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 1);
         ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, true);
         ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
+        ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 1);
+        ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, true);
+        ContentResolver.addPeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
     }
 
     override fun onFailure(call: Call<List<Board>>?, t: Throwable?) {

@@ -30,7 +30,7 @@ sealed class Announcements private constructor() {
         }
 
         fun clear(db: SQLiteDatabase) {
-            db.execSQL("DELETE FROM ${Substitutes.name} WHERE 1;");
+            db.execSQL("DELETE FROM ${Announcements.name} WHERE 1;");
         }
     }
 }

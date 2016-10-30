@@ -31,6 +31,7 @@ import java.util.*
  * Created by robin on 20.10.2016.
  */
 class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
+
     companion object {
         const val tag = "SubstitutesPresenter";
     }

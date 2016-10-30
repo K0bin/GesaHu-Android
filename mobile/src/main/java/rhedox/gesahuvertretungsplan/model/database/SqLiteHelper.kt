@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.database.tables.Announcements
+import rhedox.gesahuvertretungsplan.model.database.tables.Boards
 import rhedox.gesahuvertretungsplan.model.database.tables.Substitutes
 
 /**
@@ -14,16 +15,21 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
 
     companion object {
         const val name = "gesahui.db"
-        const val version = 1
+        const val version = 2
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         Substitutes.onCreate(db);
         Announcements.onCreate(db)
+        Boards.onCreate(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if(newVersion > 1)
+            Boards.onCreate(db)
+
         Substitutes.onUpgrade(db, oldVersion, newVersion);
         Announcements.onUpgrade(db, oldVersion, newVersion)
+        Boards.onUpgrade(db, oldVersion, newVersion)
     }
 }

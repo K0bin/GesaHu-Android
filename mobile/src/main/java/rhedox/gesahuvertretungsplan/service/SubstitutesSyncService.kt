@@ -44,11 +44,7 @@ class SubstitutesSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedSyncAdapter(context, autoInitialize, true) {
 
-        private var gesaHu: GesaHuApi;
-
-        init {
-            gesaHu = GesaHuApi.create(context)
-        }
+        private var gesaHu = GesaHuApi.create(context);
 
         companion object {
             const val extraSingleDay = "day";

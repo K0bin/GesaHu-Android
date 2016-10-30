@@ -11,7 +11,9 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import com.pawegio.kandroid.accountManager
 import rhedox.gesahuvertretungsplan.App
+import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
@@ -20,9 +22,11 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
  * Created by robin on 20.10.2016.
  */
 abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
-    private lateinit var gesahu: GesaHuApi
     private var view: BaseContract.View? = null;
     protected var account: Account? = null;
+        private set
+
+    protected lateinit var boardsRepository: BoardsRepository
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +38,16 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         val accounts = accountManager?.getAccountsByType(App.ACCOUNT_TYPE) ?: arrayOf<Account>()
         if (accounts.size > 0)
             account = accounts[0]
-        gesahu = GesaHuApi.create(context)
+
+        boardsRepository = BoardsRepository(context)
+        boardsRepository.callback = { onBoardsLoaded(it) }
+        boardsRepository.loadBoards()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        view?.userName = account?.name ?: ""
     }
 
     override fun onAttach(context: Context?) {
@@ -48,6 +61,15 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         super.onDetach()
 
         view = null;
+    }
+
+    private fun onBoardsLoaded(boards: List<Board>) {
+        view?.setBoards(boards)
+
+    }
+
+    override fun onNavigationDrawerItemClicked(position: Int) {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onResume() {
