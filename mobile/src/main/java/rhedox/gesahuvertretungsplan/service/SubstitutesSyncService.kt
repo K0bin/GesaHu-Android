@@ -23,7 +23,7 @@ import java.io.IOException
 /**
  * Created by robin on 18.10.2016.
  */
-class SyncService : Service() {
+class SubstitutesSyncService : Service() {
 
     companion object {
         private var syncAdapter: SyncAdapter? = null;

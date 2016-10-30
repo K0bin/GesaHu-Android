@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="rhedox.gesahuvertretungsplan">
 
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" android:maxSdkVersion="22"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
@@ -37,11 +37,7 @@
         </activity>
         <activity
             android:name=".ui.activity.PreferenceActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.activity.MainActivity1" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activity.MainActivity1" />
+            android:label="@string/title_activity_settings">
         </activity>
 
         <activity
@@ -114,7 +110,7 @@
         </service>
 
         <service
-            android:name=".service.SyncService"
+            android:name=".service.SubstitutesSyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>

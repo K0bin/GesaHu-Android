@@ -14,19 +14,16 @@ import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
 import android.util.Log
 import android.widget.Toast
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesLoaderHelper
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import com.pawegio.kandroid.startActivity;
 import org.joda.time.*
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.service.SyncService
+import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.ui.activity.AboutLibs
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
 import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
 import java.util.*
 
@@ -40,7 +37,6 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
 
     private var date: LocalDate = LocalDate();
     private var view: SubstitutesContract.View? = null
-    private lateinit var helpers: Array<SubstitutesLoaderHelper>
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
     private var announcements = arrayOf("","","","","")
     private var selected = arrayOf(-1, -1, -1, -1, -1)
@@ -186,10 +182,10 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
                 }
 
                 val extras = Bundle()
-                extras.putInt(SyncService.SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).unixTimeStamp)
-                extras.putBoolean(SyncService.SyncAdapter.extraSingleDay, true)
+                extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).unixTimeStamp)
+                extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, true)
                 //extras.putLong(SyncAdapter.extraDate, date.toDateTime(LocalTime(0)).millis)
-                extras.putBoolean(SyncService.SyncAdapter.extraIgnorePast, true)
+                extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraIgnorePast, true)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val syncRequest = SyncRequest.Builder()

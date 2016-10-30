@@ -8,14 +8,12 @@ import android.support.v4.app.DialogFragment
 import android.widget.DatePicker
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
 
 /**
  * Created by robin on 20.10.2016.
  */
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
     private lateinit var date: LocalDate;
-    private var mainActivity: MainActivity1? = null
     private var isPickerDone = false
 
     var callback: ((date: LocalDate) -> Unit)? = null
@@ -38,15 +36,10 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-
-        if (context is MainActivity1)
-            mainActivity = context as MainActivity1?
     }
 
     override fun onDetach() {
         super.onDetach()
-
-        mainActivity = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -9,6 +9,7 @@ import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatButton
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import android.widget.Toast
 import com.github.paolorotolo.appintro.ISlidePolicy
 import com.pawegio.kandroid.accountManager
 import com.pawegio.kandroid.textWatcher
+import kotlinx.android.synthetic.main.fragment_login.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,26 +33,25 @@ import rhedox.gesahuvertretungsplan.util.bindView
  * Created by robin on 01.10.2016.
  */
 class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnClickListener {
-    private val usernameLayout: TextInputLayout by bindView(R.id.username_layout);
-    private val usernameEdit: TextInputEditText by bindView(R.id.usernameEdit);
-    private val passwordLayout: TextInputLayout by bindView(R.id.password_layout);
-    private val passwordEdit: TextInputEditText by bindView(R.id.passwordEdit);
-    private val login: AppCompatButton by bindView(R.id.login);
-
     private var username: String = "";
     private var password: String = "";
 
     private lateinit var gesaHu: GesaHuApi;
     private var call: Call<List<Board>>? = null;
-    private var isUserLoggedIn = false;
 
-    private lateinit var dialog: AlertDialog;
     private lateinit var snackbar: Snackbar;
     private lateinit var toast: Toast;
+
+    private var account: Account? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = false;
+
+        val accounts = context.accountManager?.getAccountsByType(App.ACCOUNT_TYPE) ?: arrayOf<Account>()
+        if (accounts.size > 0) {
+            account = accounts[0]
+        }
 
         gesaHu = GesaHuApi.create(context);
     }
@@ -62,16 +63,13 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(view == null)
+            return;
+
         toast = Toast.makeText(context, getString(R.string.login_required), Toast.LENGTH_LONG);
         snackbar = Snackbar.make(usernameLayout, R.string.login_failed, Snackbar.LENGTH_SHORT);
         snackbar.setAction(R.string.retry, this);
 
-        usernameEdit.textWatcher {
-            afterTextChanged { isUserLoggedIn = false; }
-        }
-        passwordEdit.textWatcher {
-            afterTextChanged { isUserLoggedIn = false; }
-        }
         login.setOnClickListener {
             var areFieldsEmpty = false
             if (passwordEdit.text == null || passwordEdit.text.toString().isNullOrBlank()) {
@@ -92,6 +90,13 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
                 call?.enqueue(this)
             }
         }
+
+        if(account != null) {
+            usernameEdit.setText(account!!.name)
+            usernameEdit.isFocusable = false;
+            usernameEdit.isFocusableInTouchMode = false;
+            usernameEdit.isEnabled = false;
+        }
     }
 
     override fun onClick(v: View?) {
@@ -104,7 +109,7 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
     }
 
     override fun isPolicyRespected(): Boolean {
-        return isUserLoggedIn;
+        return account != null;
     }
 
     override fun onUserIllegallyRequestedNextPage() {
@@ -112,24 +117,14 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
     }
 
     override fun onResponse(call: Call<List<Board>>, response: Response<List<Board>>) {
-        isUserLoggedIn = response.isSuccessful;
-
-        if(isUserLoggedIn) {
-            val account = Account(username, App.ACCOUNT_TYPE);
-            context.accountManager?.addAccountExplicitly(account, password, Bundle());
-
-            ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 1);
-            ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, true);
-            ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
-
-            usernameEdit.isFocusable = false;
-            usernameEdit.isFocusableInTouchMode = false;
-            passwordEdit.isFocusable = false;
-            passwordEdit.isFocusableInTouchMode = false;
-            usernameEdit.isEnabled = false;
-            passwordEdit.isEnabled = false;
-
-            login.isEnabled = false;
+        if(response.isSuccessful) {
+            if(account == null) {
+                account = Account(username, App.ACCOUNT_TYPE);
+                context.accountManager?.addAccountExplicitly(account, password, Bundle());
+            } else {
+                context.accountManager?.setPassword(account, password);
+            }
+            finishLogin(account!!)
         }
         else {
             usernameLayout.error = getString(R.string.login_403);
@@ -137,6 +132,21 @@ class LoginFragment : Fragment(), ISlidePolicy, Callback<List<Board>>, View.OnCl
             passwordLayout.error = getString(R.string.login_403);
             passwordLayout.isErrorEnabled = true;
         }
+    }
+
+    private fun finishLogin(account: Account) {
+        usernameEdit.isFocusable = false;
+        usernameEdit.isFocusableInTouchMode = false;
+        usernameEdit.isEnabled = false;
+        passwordEdit.isFocusable = false;
+        passwordEdit.isFocusableInTouchMode = false;
+        passwordEdit.isEnabled = false;
+
+        login.isEnabled = false;
+
+        ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 1);
+        ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, true);
+        ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
     }
 
     override fun onFailure(call: Call<List<Board>>?, t: Throwable?) {

@@ -23,7 +23,6 @@ import retrofit2.Response;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi;
 import rhedox.gesahuvertretungsplan.model.api.QueryDate;
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1;
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils;
 
 import static android.content.Context.POWER_SERVICE;
@@ -78,11 +77,11 @@ public class Notifier implements Callback<SubstitutesList> {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
 		//Open app on click on notification
-		Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity1.class);
-		if(date != null)
-			launchIntent.putExtra(MainActivity1.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
-		PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + notificationCount + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		builder.setContentIntent(launchPending);
+		//Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity1.class);
+		//if(date != null)
+			//launchIntent.putExtra(MainActivity1.EXTRA_DATE, date.toDateTimeAtCurrentTime().getMillis());
+		//PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + notificationCount + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		//builder.setContentIntent(launchPending);
 
 		//Normal notification
 		builder.setContentText(String.format("%s %s", Integer.toString(notificationCount), context.getString(R.string.lessons)));
@@ -145,18 +144,20 @@ public class Notifier implements Callback<SubstitutesList> {
 			if (lesson == -1 || lesson == substitutes.get(i).getLessonBegin()) {
 
 				//Text to display
+
 				String notificationText = SubstituteFormatter.makeNotificationText(context, substitutes.get(i));
-				String title = SubstituteFormatter.makeSubstituteKindText(context, substitutes.get(i).getKind());
+				//String title = SubstituteFormatter.makeSubstituteKindText(context, substitutes.get(i).getKind());
+				String title ="";
 				String body = String.format(context.getString(R.string.notification_summary), title, substitutes.get(i).getLessonText());
 				titles[count] = body;
 
-				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+				NotificationCompat.Builder builder = new NotificationCompat.Builder(context);/*
 				//Open app on click on notification
 				Intent launchIntent = new Intent(context.getApplicationContext(), MainActivity1.class);
 				if (response.body().getDate() != null)
 					launchIntent.putExtra(MainActivity1.EXTRA_DATE, response.body().getDate().toDateTimeAtCurrentTime().getMillis());
 				PendingIntent launchPending = PendingIntent.getActivity(context, REQUEST_CODE_BASE + count, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-				builder.setContentIntent(launchPending);
+				builder.setContentIntent(launchPending);*/
 
 				//Expanded style
 				NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();

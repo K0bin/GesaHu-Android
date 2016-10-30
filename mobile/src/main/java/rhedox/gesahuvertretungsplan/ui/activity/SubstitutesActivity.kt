@@ -28,7 +28,6 @@ import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
-import rhedox.gesahuvertretungsplan.ui.adapters.PagerAdapter
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment

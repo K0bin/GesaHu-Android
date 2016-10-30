@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import com.pawegio.kandroid.accountManager
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
@@ -28,13 +29,11 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         super.onCreate(savedInstanceState)
         retainInstance = true;
 
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-            val accountManager = AccountManager.get(context)
+        val accountManager = context.accountManager
 
-            val accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE)
-            if (accounts.size > 0)
-                account = accounts[0]
-        }
+        val accounts = accountManager?.getAccountsByType(App.ACCOUNT_TYPE) ?: arrayOf<Account>()
+        if (accounts.size > 0)
+            account = accounts[0]
         gesahu = GesaHuApi.create(context)
     }
 
