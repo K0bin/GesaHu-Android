@@ -41,7 +41,7 @@ class SubstitutesFragment : Fragment() {
             presenter = (activity as SubstitutesActivity).presenter
 
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        adapter = SubstitutesAdapter(activity)
+        adapter = SubstitutesAdapter(position, presenter, activity)
 
         recycler.adapter = adapter
         presenter?.onTabCreated(position)
@@ -70,9 +70,14 @@ class SubstitutesFragment : Fragment() {
      * Display the loaded list
      */
     fun populateList(substitutes: List<Substitute>) {
+        Log.d("SubstitutesFragment", "Showing list: $position, ${substitutes.size} items")
         items = substitutes
         adapter?.showList(items)
         recycler?.scrollToPosition(0)
+    }
+
+    fun setSelected(listPosition: Int) {
+
     }
 
     companion object {

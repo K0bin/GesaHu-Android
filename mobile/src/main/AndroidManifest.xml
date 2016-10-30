@@ -50,7 +50,7 @@
         </activity>
 
         <service
-            android:name=".broadcastReceiver.DashClockExtension"
+            android:name=".service.DashClockExtension"
             android:icon="@drawable/ic_notification"
             android:label="Gesahu Vertretungsplan"
             android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
@@ -69,7 +69,7 @@
                 android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
         </service>
 
-        <receiver android:name=".broadcastReceiver.AlarmReceiver" />
+        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver" />
         <receiver android:name=".broadcastReceiver.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -91,6 +91,10 @@
             android:name=".service.ListFactoryService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+        <service
+            android:name=".service.SubstitutesNotifierService">
         </service>
 
         <provider

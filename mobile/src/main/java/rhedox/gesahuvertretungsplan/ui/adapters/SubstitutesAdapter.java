@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.ColorInt;
@@ -8,6 +7,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -19,8 +19,7 @@ import java.util.List;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
-import rhedox.gesahuvertretungsplan.util.NetworkUtils;
-import rhedox.gesahuvertretungsplan.ui.fragment.MainFragment1;
+import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 import tr.xip.errorview.ErrorView;
@@ -32,19 +31,15 @@ import tr.xip.errorview.ErrorView;
  *
  * Created by Robin on 28.10.2014.
  */
-public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerView.ViewHolder> {
-    private List<Substitute> list;
+public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
+    @Nullable private List<Substitute> list = new ArrayList<Substitute>(0);
 
-    @ColorInt private int circleColorImportant;
-    @ColorInt private int circleColor;
-    @ColorInt private int textColor;
-    @ColorInt private int highlightedTextColor;
-    @ColorInt private int activatedBackgroundColor;
     private int selected = -1;
     @Nullable private SubstituteViewHolder selectedViewHolder;
 
-    @Nullable private MainFragment1.MaterialActivity activity;
-	private Context context;
+	@Nullable private SubstitutesContract.Presenter presenter;
+	private int pagerPosition = -1;
+	@Nullable private RecyclerView recyclerView;
 
 	//#enumsmatter
     private static final int ITEM_TYPE_SUBSTITUTE = 0;
@@ -53,74 +48,29 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     private static final int ITEM_TYPE_EMPTY_VIEW = 3;
     @IntDef({ITEM_TYPE_SUBSTITUTE, ITEM_TYPE_CONTENT_AD, ITEM_TYPE_INSTALL_AD, ITEM_TYPE_EMPTY_VIEW})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface ItemType {}
-
-	//#enumsmatter
-    private static final int ERROR_NONE = 0;
-    private static final int ERROR_EMPTY = 1;
-    private static final int ERROR_CONNECTION = 2;
-    private static final int ERROR_UNKNOWN = 3;
-    @IntDef({ERROR_NONE, ERROR_EMPTY, ERROR_UNKNOWN, ERROR_CONNECTION})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Error {}
-
-    private @Error int error = ERROR_NONE;
-    private ErrorView.Config emptyConfig;
-    private ErrorView.Config errorConfig;
-    private ErrorView.Config connectionConfig;
+    private @interface ItemType {}
 
     @SuppressWarnings("ResourceType")
-    public SubstitutesAdapter(@NonNull Activity context) {
-        this.list = new ArrayList<Substitute>(0);
-
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.activatedColor, R.attr.textPrimary, R.attr.textSecondary, R.attr.colorAccent});
-        textColor = typedArray.getColor(2, 0);
-        highlightedTextColor = typedArray.getColor(3, 0);
-        circleColorImportant= typedArray.getColor(1, 0);
-        circleColor = typedArray.getColor(0, 0);
-        activatedBackgroundColor = typedArray.getColor(4,0);
-        int errorTitleColor = typedArray.getColor(5,0);
-        int errorMessageColor = typedArray.getColor(6,0);
-        int errorRetryColor = typedArray.getColor(7,0);
-        typedArray.recycle();
-
-        String errorRetryText = context.getString(R.string.retry);
-
-        emptyConfig = ErrorView.Config.create()
-                .title(context.getString(R.string.no_substitutes))
-                .titleColor(errorTitleColor)
-                .image(R.drawable.no_substitutes)
-                .subtitle(context.getString(R.string.no_substitutes_hint))
-                .subtitleColor(errorMessageColor)
-                .retryVisible(false)
-                .build();
-
-        errorConfig = ErrorView.Config.create()
-                .title(context.getString(R.string.error))
-                .titleColor(errorTitleColor)
-                .image(R.drawable.error_view_cloud)
-                .subtitle(context.getString(R.string.oops))
-                .subtitleColor(errorMessageColor)
-                .retryTextColor(errorRetryColor)
-                .retryText(errorRetryText)
-                .build();
-
-	    connectionConfig = ErrorView.Config.create()
-			    .title(context.getString(R.string.error))
-			    .titleColor(errorTitleColor)
-			    .image(R.drawable.error_view_cloud)
-			    .subtitle(context.getString(R.string.error_no_connection))
-			    .subtitleColor(errorMessageColor)
-			    .retryTextColor(errorRetryColor)
-			    .retryText(errorRetryText)
-			    .build();
-
-	    this.context = context;
-
-        if(context instanceof MainFragment1.MaterialActivity)
-            activity = (MainFragment1.MaterialActivity)context;
+    public SubstitutesAdapter(int pagerPosition, @Nullable SubstitutesContract.Presenter presenter, @NonNull Context context) {
+	    this.pagerPosition = pagerPosition;
+	    this.presenter = presenter;
     }
-    @Override
+
+	@Override
+	public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+		super.onAttachedToRecyclerView(recyclerView);
+
+		this.recyclerView = recyclerView;
+	}
+
+	@Override
+	public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+		super.onDetachedFromRecyclerView(recyclerView);
+
+		this.recyclerView = null;
+	}
+
+	@Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         switch (getItemViewType(i)) {
             case ITEM_TYPE_SUBSTITUTE: {
@@ -136,18 +86,6 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
                 else if (selectedViewHolder == substituteViewHolder)
                     selectedViewHolder = null;
             } break;
-
-            case ITEM_TYPE_EMPTY_VIEW:
-                ErrorViewHolder errorViewHolder = (ErrorViewHolder) viewHolder;
-
-                if(error == ERROR_UNKNOWN)
-                    errorViewHolder.setConfig(errorConfig);
-                else if(error == ERROR_EMPTY)
-                    errorViewHolder.setConfig(emptyConfig);
-                else if(error == ERROR_CONNECTION)
-	                errorViewHolder.setConfig(connectionConfig);
-
-                break;
         }
     }
 
@@ -156,22 +94,11 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         switch (viewType) {
             case ITEM_TYPE_SUBSTITUTE: {
                 ViewGroup view = (ViewGroup) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_substitute, viewGroup, false);
-
-                return new SubstituteViewHolder(view, this, circleColor, circleColorImportant, textColor, highlightedTextColor, activatedBackgroundColor);
+                return new SubstituteViewHolder(view, presenter, pagerPosition);
             }
 
             case ITEM_TYPE_EMPTY_VIEW:
-                ErrorView view = new ErrorView(viewGroup.getContext());
-	            if(activity != null && activity.getVisibleFragment() != null)
-                    view.setOnRetryListener(activity.getVisibleFragment());
-
-                //Set width & margin
-                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                float margin = viewGroup.getContext().getResources().getDimension(R.dimen.errorView_margin_top);
-                params.setMargins(0, (int)margin, 0, 0);
-                view.setLayoutParams(params);
-
-                return new ErrorViewHolder(view);
+                return new ErrorViewHolder(new ErrorView(viewGroup.getContext()));
         }
         return null;
     }
@@ -180,15 +107,13 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     public int getItemCount() {
         if(list != null && list.size() > 0)
             return list.size();
-        else if(error != ERROR_NONE)
-            return 1;
         else
-            return 0;
+            return 1;
     }
 
     @Override
     public @ItemType int getItemViewType(int position) {
-        if((list == null || list.size() == 0) && error != ERROR_NONE)
+        if(list == null || list.size() == 0)
             return ITEM_TYPE_EMPTY_VIEW;
 
         return ITEM_TYPE_SUBSTITUTE;
@@ -198,6 +123,7 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
     * @param list The list of substitutes to display. If it's null, the RecyclerView will be cleared
      */
     public void showList(@Nullable List<Substitute> list) {
+	    Log.d("SubstitutesAdapter", "Showed list");
         if(list == null || list.size() == 0) {
             clear();
         } else {
@@ -219,59 +145,36 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
             //Update the selection
             if(selected >= this.list.size())
                 clearSelection();
-
-            //Show or hide error view
-            if(this.list.size() > 0)
-                error = ERROR_NONE;
-            else
-                error = ERROR_EMPTY;
         }
     }
-    public void clear() {
+    private void clear() {
         clearSelection();
+	    int previousCount = getItemCount();
         list = Collections.emptyList();
 
-        //Set error
-        error = ERROR_EMPTY;
-
         //Notify recyclerview about changes
-        if(getItemCount() > 0) {
-            int count = getItemCount();
-            notifyItemRangeRemoved(0, count);
+        if(previousCount > 0) {
+            notifyItemRangeRemoved(0, previousCount);
         }
         notifyItemInserted(0);
     }
 
-    public void showError() {
-        this.clear();
+	@Override
+	public void setSelected(int position) {
+		if(position == -1) {
+			if (recyclerView != null) {
+				RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+				if (viewHolder instanceof SubstituteViewHolder) {
+					selectedViewHolder = (SubstituteViewHolder) viewHolder;
+					selectedViewHolder.setSelected(true);
+				}
+			}
+		} else if(selectedViewHolder != null) {
+			selectedViewHolder.setSelected(false);
+		}
+	}
 
-	    if(NetworkUtils.isNetworkConnected(context))
-		    this.error = ERROR_UNKNOWN;
-	    else
-		    this.error = ERROR_CONNECTION;
-
-        notifyItemChanged(0);
-    }
-
-
-    @Override
-    public void setSelected(RecyclerView.ViewHolder viewHolder) {
-        if(viewHolder == null || selected == viewHolder.getAdapterPosition() || !(viewHolder instanceof SubstituteViewHolder))
-            return;
-
-        if(selectedViewHolder != null)
-            selectedViewHolder.setSelected(false);
-
-        selected = viewHolder.getAdapterPosition();
-        selectedViewHolder = (SubstituteViewHolder)viewHolder;
-
-        selectedViewHolder.setSelected(true);
-
-        if(activity != null)
-            activity.updateUI();
-    }
-
-    @Override
+	@Override
     public void clearSelection() {
         if(selected == -1 && selectedViewHolder == null)
             return;
@@ -282,19 +185,12 @@ public class SubstitutesAdapter extends SelectableAdapter<Substitute, RecyclerVi
         selected = -1;
         selectedViewHolder = null;
 
-        if(activity != null)
-            activity.updateUI();
+	    if(presenter != null)
+		    presenter.onListItemSelected(pagerPosition, -1);
     }
 
     @Override
     public int getSelectedIndex() {
         return selected;
-    }
-
-    @Override
-    public Substitute getSelected() {
-        if(list == null || selected == -1) return null;
-
-        return list.get(selected);
     }
 }

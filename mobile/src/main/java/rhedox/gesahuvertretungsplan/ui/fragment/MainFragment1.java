@@ -51,7 +51,7 @@ import tr.xip.errorview.ErrorView;
 /**
  * Created by Robin on 30.06.2015.
  */
-public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SubstitutesLoaderHelper.Callback, ErrorView.RetryListener, SyncStatusObserver {
+public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ErrorView.RetryListener, SyncStatusObserver {
 	private SubstitutesAdapter adapter;
 	@BindView(R.id.swipeRefreshLayout)
 	SwipeRefreshLayoutFix refreshLayout;
@@ -111,8 +111,9 @@ public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefr
 
 		statusListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_PENDING | ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, this);
 
+		/*
 	    callback = new SubstitutesLoaderHelper(getLoaderManager(), getContext(), date, this);
-		callback.load();
+		callback.load();*/
 		//observer = new SubstitutesContentObserver(new Handler(), date, callback);
 		getContext().getContentResolver().registerContentObserver(Uri.parse("content://rhedox.gesahuvertretungsplan.substitutes/substitutes"), true, observer);
 		getContext().getContentResolver().registerContentObserver(Uri.parse("content://rhedox.gesahuvertretungsplan.substitutes/announcements"), true, observer);
@@ -150,7 +151,7 @@ public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefr
 
 	    //RecyclerView Adapter
 	    //Try to display retained data on newly created view
-	    adapter = new SubstitutesAdapter(this.getActivity());
+	    //adapter = new SubstitutesAdapter(this.getActivity());
 	    if(substitutesList != null) {
 
 		    if(activity != null)
@@ -297,8 +298,6 @@ public class MainFragment1 extends Fragment implements SwipeRefreshLayout.OnRefr
         }
     }
 
-
-	@Override
 	public void onSubstitutesLoaded(@NotNull SubstitutesList substitutesList) {
 		isLoading = false;
 

@@ -1,9 +1,11 @@
 package rhedox.gesahuvertretungsplan.model
 
 import android.content.Context
+import android.support.annotation.IntDef
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver
 import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type
 
@@ -11,7 +13,7 @@ import java.lang.reflect.Type
  * Created by robin on 01.10.2016.
  */
 data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: String, val course: String, val teacher: String, val substitute: String, val room: String, val hint: String, val isRelevant: Boolean) : Comparable<Substitute> {
-    val kind: Kind;
+    @Kind val kind: Long;
 
     val lessonText: String
         get() = if(lessonBegin != lessonEnd) lessonBegin.toString() + "-" + lessonEnd.toString() else lessonBegin.toString();
@@ -19,19 +21,32 @@ data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: Str
     val title: String
         get() = course + " " + subject;
 
+    companion object {
+        const val KIND_SUBSTITUTE = 0L;
+        const val KIND_DROPPED = 1L;
+        const val KIND_ROOM_CHANGE = 2L;
+        const val KIND_TEST = 3L;
+        const val KIND_REGULAR = 4L;
+
+
+        @Retention(AnnotationRetention.SOURCE)
+        @IntDef(KIND_SUBSTITUTE, KIND_DROPPED, KIND_ROOM_CHANGE, KIND_TEST, KIND_REGULAR, flag = true)
+        annotation class Kind
+    }
+
     init {
         val lowerSubstitute = substitute.toLowerCase()
         val lowerHint = hint.toLowerCase()
         if (lowerSubstitute == "eigv. lernen" || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt"))
-            kind = Kind.Dropped
+            kind = KIND_DROPPED
         else if ((substitute.isBlank() || substitute == teacher) && lowerHint == "raumänderung")
-            kind = Kind.RoomChange
+            kind = KIND_ROOM_CHANGE
         else if (lowerHint.contains("klausur"))
-            kind = Kind.Test
+            kind = KIND_TEST
         else if (lowerHint.contains("findet statt"))
-            kind = Kind.Regular
+            kind = KIND_REGULAR
         else
-            kind = Kind.Substitute
+            kind = KIND_SUBSTITUTE
     }
 
     override fun compareTo(other: Substitute): Int {
@@ -56,13 +71,5 @@ data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: Str
                 return lessonBegin - other.lessonBegin
             }
         }
-    }
-
-    enum class Kind {
-        Substitute,
-        Dropped,
-        RoomChange,
-        Test,
-        Regular
     }
 }

@@ -8,20 +8,43 @@
               android:background="@color/intro_slide_4"
               android:paddingBottom="@dimen/appIntroBottomBarHeight">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <TextView
+        <TextView
         android:id="@+id/title"
         android:text="@string/login"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="3"
         android:gravity="center"
         android:paddingLeft="32dp"
+        android:paddingStart="32dp"
         android:paddingRight="32dp"
+        android:paddingEnd="32dp"
         android:textColor="@android:color/white"
         android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="64dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginRight="64dp"
+            android:layout_marginEnd="64dp"
+            android:gravity="center"
+            android:text="@string/login_explaination"/>
+    </LinearLayout>
+
+
+
 
     <LinearLayout
         android:layout_width="256dp"

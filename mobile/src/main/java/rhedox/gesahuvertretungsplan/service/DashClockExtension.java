@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.broadcastReceiver;
+package rhedox.gesahuvertretungsplan.service;
 
 import android.content.Intent;
 
@@ -51,20 +51,20 @@ public class DashClockExtension extends com.google.android.apps.dashclock.api.Da
 		    for (Substitute substitute : important) {
 			    String title = "";
 
-			    switch (substitute.getKind()) {
-				    case Substitute:
+			    switch ((int)substitute.getKind()) {
+				    case (int)Substitute.KIND_SUBSTITUTE:
 					    title = getString(R.string.substitute);
 					    break;
 
-				    case RoomChange:
+				    case (int)Substitute.KIND_ROOM_CHANGE:
 					    title = getString(R.string.roomchange);
 					    break;
 
-				    case Dropped:
+				    case (int)Substitute.KIND_DROPPED:
 					    title = getString(R.string.dropped);
 					    break;
 
-				    case Test:
+				    case (int)Substitute.KIND_TEST:
 					    title = getString(R.string.test);
 					    break;
 			    }

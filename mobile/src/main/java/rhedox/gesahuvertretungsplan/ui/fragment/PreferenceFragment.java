@@ -12,8 +12,8 @@ import org.joda.time.LocalTime;
 
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver;
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity;
-import rhedox.gesahuvertretungsplan.broadcastReceiver.AlarmReceiver;
 import rhedox.gesahuvertretungsplan.broadcastReceiver.BootReceiver;
 
 /**
@@ -56,23 +56,23 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
         String mode = prefs.getString(PREF_NOTIFICATION_MODE, null);
 
-        if(!"none".equals(mode)) {
-            @AlarmReceiver.NotificationFrequency int notificationFrequency;
+        if(!"NONE".equals(mode)) {
+            @SubstitutesAlarmReceiver.NotificationFrequency long notificationFrequency;
             if("per_lesson".equals(mode)) {
-	            AlarmReceiver.cancelDaily(getContext());
-	            notificationFrequency = AlarmReceiver.PER_LESSON;
+                SubstitutesAlarmReceiver.cancelDaily(getContext());
+	            notificationFrequency = SubstitutesAlarmReceiver.PER_LESSON;
             } else if("both".equals(mode))
-                notificationFrequency = AlarmReceiver.BOTH;
+                notificationFrequency = SubstitutesAlarmReceiver.BOTH;
             else {
-	            AlarmReceiver.cancelLesson(getContext());
-	            notificationFrequency = AlarmReceiver.DAILY;
+                SubstitutesAlarmReceiver.cancelLesson(getContext());
+	            notificationFrequency = SubstitutesAlarmReceiver.DAILY;
             }
 
-            AlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
+            SubstitutesAlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
             BootReceiver.create(getContext());
         } else {
-	        AlarmReceiver.cancelDaily(getContext());
-	        AlarmReceiver.cancelLesson(getContext());
+            SubstitutesAlarmReceiver.cancelDaily(getContext());
+            SubstitutesAlarmReceiver.cancelLesson(getContext());
 	        BootReceiver.cancel(getContext());
         }
 

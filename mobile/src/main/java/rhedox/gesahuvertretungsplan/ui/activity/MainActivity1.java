@@ -382,7 +382,8 @@ public class MainActivity1 extends BaseActivity1 implements ViewPager.OnPageChan
         if(item == null || currentFragment == null || currentFragment.getAdapter() == null)
             return false;
 
-        Substitute substitute = currentFragment.getAdapter().getSelected();
+        //Substitute substitute = currentFragment.getAdapter().getSelected();
+        Substitute substitute = null;
         if(substitute == null)
             return false;
 

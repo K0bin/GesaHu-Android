@@ -23,31 +23,39 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
  * Created by robin on 19.10.2016.
  */
 
-class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private val context: Context, private val date: LocalDate, private val callback: Callback) : LoaderManager.LoaderCallbacks<Cursor> {
+class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private val context: Context, private val date: LocalDate) : LoaderManager.LoaderCallbacks<Cursor> {
     companion object {
         const val substitutesType = 1;
         const val announcementType = 2;
     }
 
-    private var substitutes = listOf<Substitute>()
-    private var announcement = "";
-    private var areSubstitutesLoaded = false;
-    private var isAnnouncementLoaded = false;
-
-    private var isLoading = false;
+    private var isLoadingSubstitutes = false;
+    private var isLoadingAnnouncement = false;
     private val offset = (date.toDateTime(LocalTime()).millis - DateTime(2010,1,1,0,0).millis).toInt()
 
-    fun load() {
-        if(!isLoading) {
-            Log.d("LoaderHelper", "Loading $date");
+    var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null;
+    var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null;
+
+    fun loadSubstitutes() {
+        if(!isLoadingSubstitutes) {
+            Log.d("LoaderHelper", "Loading substitutes for $date");
             loaderManager.initLoader(offset + substitutesType, Bundle.EMPTY, this)
+        } else {
+            Log.d("LoaderHelper", "Substitutes for $date are already loading");
+            loaderManager.restartLoader(offset + substitutesType, Bundle.EMPTY, this)
+        }
+        isLoadingSubstitutes = true;
+    }
+
+    fun loadAnnouncement() {
+        if(!isLoadingAnnouncement) {
+            Log.d("LoaderHelper", "Loading announcement for $date");
             loaderManager.initLoader(offset + announcementType, Bundle.EMPTY, this)
         } else {
-            Log.d("LoaderHelper", "$date is already loading");
-            loaderManager.restartLoader(offset + substitutesType, Bundle.EMPTY, this)
+            Log.d("LoaderHelper", "Announcement for $date is already loading");
             loaderManager.restartLoader(offset + announcementType, Bundle.EMPTY, this)
         }
-        isLoading = true;
+        isLoadingAnnouncement = true;
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor>? {
@@ -63,9 +71,7 @@ class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private 
                         .appendPath(date.toDateTime(LocalTime(0)).millis.toString())
                         .build()
 
-                areSubstitutesLoaded = false
-
-                return CursorLoader(context, substitutesUri, Substitutes.availableColumns.toTypedArray(), null, null, null);
+                return CursorLoader(context, substitutesUri, Substitutes.availableColumns.toTypedArray(), null, null, "${Substitutes.columnLessonBegin} ASC");
             }
             offset + announcementType -> {
                 val announcementsUri = Uri.Builder()
@@ -75,8 +81,6 @@ class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private 
                         .appendPath("date")
                         .appendPath(date.toDateTime(LocalTime(0)).millis.toString())
                         .build()
-
-                isAnnouncementLoaded = false
 
                 return CursorLoader(context, announcementsUri, Announcements.availableColumns.toTypedArray(), null, null, null);
             }
@@ -90,27 +94,18 @@ class SubstitutesLoaderHelper(private val loaderManager: LoaderManager, private 
 
         when (loader.id) {
             offset + substitutesType -> {
-                substitutes = SubstituteAdapter.listFromCursor(data)
-                areSubstitutesLoaded = true;
+                substitutesCallback?.invoke(date, SubstituteAdapter.listFromCursor(data))
+                isLoadingSubstitutes = false;
             }
             offset + announcementType -> {
-                announcement = AnnouncementAdapter.fromCursor(data)
-                isAnnouncementLoaded = true
+                announcementCallback?.invoke(date, AnnouncementAdapter.fromCursor(data))
+                isLoadingAnnouncement = false;
             }
-        }
-
-        if(areSubstitutesLoaded && isAnnouncementLoaded) {
-            isLoading = false;
-            callback.onSubstitutesLoaded(SubstitutesList(announcement, substitutes, date));
         }
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>?) {
-        isLoading = false;
+        isLoadingSubstitutes = false;
+        isLoadingAnnouncement = false;
     }
-
-    interface Callback {
-        fun onSubstitutesLoaded(substitutesList: SubstitutesList)
-    }
-
 }

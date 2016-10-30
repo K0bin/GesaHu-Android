@@ -16,22 +16,22 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
  */
 public class SubstituteFormatter {
 
-    public static String makeSubstituteKindText(Context context, Substitute.Kind kind) {
-        switch(kind) {
-	        case RoomChange:
+    public static String makeSubstituteKindText(Context context, @Substitute.Companion.Kind long kind) {
+        switch((int)kind) {
+	        case (int)Substitute.KIND_ROOM_CHANGE:
                 return context.getString(R.string.roomchange);
 
-	        case Dropped:
+	        case (int)Substitute.KIND_DROPPED:
                 return context.getString(R.string.dropped);
 
-            case Test:
+            case (int)Substitute.KIND_TEST:
                 return context.getString(R.string.test);
 
-	        case Regular:
+	        case (int)Substitute.KIND_REGULAR:
                 return context.getString(R.string.regular);
 
             default:
-	        case Substitute:
+	        case (int)Substitute.KIND_SUBSTITUTE:
                 return context.getString(R.string.substitute);
         }
     }
@@ -60,20 +60,20 @@ public class SubstituteFormatter {
         }
 
 
-        switch (substitute.getKind()) {
-	        case Dropped:
+        switch ((int)substitute.getKind()) {
+	        case (int)Substitute.KIND_DROPPED:
                 return String.format(context.getString(R.string.share_dropped), dateText, substitute.getLessonText(), substitute.getSubject());
 
-	        case RoomChange:
+	        case (int)Substitute.KIND_ROOM_CHANGE:
                 return String.format(context.getString(R.string.share_room_change), dateText, substitute.getLessonText(), substitute.getSubject(), substitute.getRoom());
 
-	        case Test:
+	        case (int)Substitute.KIND_TEST:
                 return String.format(context.getString(R.string.share_test), dateText, substitute.getLessonText(), substitute.getSubject(), substitute.getRoom());
 
-	        case Regular:
+	        case (int)Substitute.KIND_REGULAR:
                 return String.format(context.getString(R.string.share_regular), substitute.getSubject(), dateText, substitute.getLessonText());
 
-	        case Substitute:
+	        case (int)Substitute.KIND_SUBSTITUTE:
             default:
                 return String.format(context.getString(R.string.share_subsitute), dateText, substitute.getLessonText(), substitute.getSubject(), substitute.getSubstitute(), substitute.getRoom());
         }

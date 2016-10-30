@@ -5,6 +5,7 @@ import android.database.Cursor
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.unixTimeStamp
 
 /**
  * Created by robin on 19.10.2016.
@@ -23,12 +24,12 @@ sealed class SubstituteAdapter private constructor(){
             values.put(Substitutes.columnRoom, substitute.room)
             values.put(Substitutes.columnIsRelevant, if (substitute.isRelevant) 1 else 0)
             //Datum als Unix Timestamp abspeichern, soll sich 2034 jemand anders drum kümmern
-            values.put(Substitutes.columnDate, date.toDateTime(LocalTime(0)).millis);
+            values.put(Substitutes.columnDate, date.unixTimeStamp);
             return values;
         }
 
         fun fromCursor(cursor: Cursor): Substitute? {
-            if(cursor.columnCount < 10)
+            if(cursor.columnCount < 10 || cursor.isClosed || cursor.count == 0)
                 return null;
 
             val lessonBegin = cursor.getInt(cursor.getColumnIndex(Substitutes.columnLessonBegin))
@@ -46,7 +47,7 @@ sealed class SubstituteAdapter private constructor(){
 
         fun listFromCursor(cursor: Cursor): List<Substitute> {
             val list = mutableListOf<Substitute>();
-            if(cursor.count == 0)
+            if(cursor.count == 0 || cursor.isClosed)
                 return list;
 
             cursor.moveToFirst()

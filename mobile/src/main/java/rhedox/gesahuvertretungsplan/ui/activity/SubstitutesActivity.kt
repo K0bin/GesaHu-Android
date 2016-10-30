@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompatSideChannelService
 import android.support.v4.util.Pair
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -36,12 +37,11 @@ import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
  * Created by robin on 20.10.2016.
  */
 class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
-
     companion object {
-        const val extraDate = "date";
-        const val extraBack = "back";
+        const val EXTRA_DATE = "date";
+        const val EXTRA_BACK = "back";
 
-        const val stateTitles = "titles"
+        const val STATE_TITLES = "titles"
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
@@ -89,6 +89,17 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             swipeRefreshLayout.isRefreshing = value
         }
 
+    override var isCabVisible: Boolean
+        get() = throw UnsupportedOperationException()
+        set(value) {
+        }
+
+    override var isSwipeRefreshEnabled: Boolean
+        get() = swipeRefreshLayout?.isEnabled ?: false
+        set(value) {
+            swipeRefreshLayout?.isEnabled = value
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -108,7 +119,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
         setContentView(R.layout.activity_main)
 
-        val titles = savedInstanceState?.getStringArray(stateTitles)
+        val titles = savedInstanceState?.getStringArray(STATE_TITLES)
 
         pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager)
         viewPager.adapter = pagerAdapter
@@ -145,6 +156,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun populateList(position: Int, list: List<Substitute>) {
+        Log.d("SubstituesActivity", "Populating list: $position, ${list.size} items")
         val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.populateList(list)
     }
@@ -156,6 +168,11 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         }
 
         picker.show(supportFragmentManager, "Datepicker")
+    }
+
+    override fun setSelected(position: Int, listPosition: Int) {
+        val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
+        fragment?.setSelected(listPosition)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -189,7 +206,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putStringArray(stateTitles, pagerAdapter?.tabTitles)
+        outState.putStringArray(STATE_TITLES, pagerAdapter?.tabTitles)
     }
 
     override fun onPageScrollStateChanged(state: Int) { }

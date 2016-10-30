@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GesaHu VP</string>
-    <string name="app_name_long">GesaHu Vertretungsplan</string>
+    <string name="app_name">GesaHu</string>
+    <string name="app_name_long">GesaHu</string>
     <string name="title_activity_single_day">Einzelner Tag</string>
     <string name="title_activity_about">Über</string>
 	<string name="title_activity_settings">Einstellungen</string>
@@ -21,6 +21,7 @@
     <string name="drawer_boards">Boards</string>
 
     <string name="login_account_name">GesaHui</string>
+    <string name="login_explaination">Du musst dich nur einmal anmelden.</string>
     <string name="login">Anmelden</string>
     <string name="login_failed">Anmelden fehlgeschlagen</string>
     <string name="login_403">Falscher Nutzername oder falsches Passwort!</string>
@@ -89,7 +90,7 @@
 	<string name="hello_world">Hello world!</string>
 
     <string name="feature_design">Mobile-freundliches Design</string>
-	<string name="feature_design_description">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys oder Tablets angepasstem Design an.</string>
+	<string name="feature_design_description">GesaHu für Android bietet die wichtigsten Features der GesaHu Webseite in einem für Handys oder Tablets angepasstem Design.</string>
 	<string name="feature_highlight">Relevante Stunden</string>
 	<string name="feature_highlight_description">Die App kann für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
 	<string name="feature_notify">Benachrichtigungen</string>

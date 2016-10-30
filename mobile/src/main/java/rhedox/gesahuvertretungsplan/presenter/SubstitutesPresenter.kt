@@ -23,6 +23,8 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentObserver
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.service.SyncService
 import rhedox.gesahuvertretungsplan.ui.activity.AboutLibs
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity1
 import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
@@ -31,7 +33,7 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, SubstitutesLoaderHelper.Callback {
+class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
     companion object {
         const val tag = "SubstitutesPresenter";
     }
@@ -39,40 +41,34 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
     private var date: LocalDate = LocalDate();
     private var view: SubstitutesContract.View? = null
     private lateinit var helpers: Array<SubstitutesLoaderHelper>
-    private var substitutes = arrayOf<List<Substitute>?>(null, null, null, null, null)
+    private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
     private var announcements = arrayOf("","","","","")
-    private lateinit var observer: SubstitutesContentObserver;
+    private var selected = arrayOf(-1, -1, -1, -1, -1)
     private lateinit var syncListenerHandle: Any;
     private var currentPosition: Int = 0;
+
+    private lateinit var repository: SubstitutesRepository;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (arguments.containsKey(SubstitutesActivity.extraDate)) {
-            date = DateTime(arguments.getLong(SubstitutesActivity.extraDate)).toLocalDate()
+        if (arguments.containsKey(SubstitutesActivity.EXTRA_DATE)) {
+            date = localDateFromUnix(arguments.getInt(SubstitutesActivity.EXTRA_DATE))
         } else
             date = SchoolWeek.nextFromNow();
 
         currentPosition = date.dayOfWeek - DateTimeConstants.MONDAY
         date = getFirstDayOfWeek(date)
 
-        helpers = arrayOf(
-                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date, this),
-                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 1), this),
-                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 2), this),
-                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 3), this),
-                SubstitutesLoaderHelper(loaderManager, context.applicationContext, date.withFieldAdded(DurationFieldType.days(), 4), this)
-        );
+        repository = SubstitutesRepository(context)
+        repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
+        repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
 
-        helpers.forEach { it.load() }
+        for(i in 0..4) {
+            repository.loadSubstitutesForDay(date.withFieldAdded(DurationFieldType.days(), i))
+            repository.loadAnnouncementForDay(date.withFieldAdded(DurationFieldType.days(), i))
+        }
 
-        observer = SubstitutesContentObserver(Handler(), {
-            val index = it.dayOfWeekIndex
-            if(index in 0..4)
-                helpers[index].load()
-        })
-        context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.substitutesPath}/date"), true, observer);
-        context.contentResolver.registerContentObserver(Uri.parse("content://${SubstitutesContentProvider.authority}/${SubstitutesContentProvider.announcementsPath}/date"), true, observer);
         syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
             Log.d("SyncObserver", "Observed change in $it");
             if (account != null) {
@@ -86,25 +82,29 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        view?.currentTab = currentPosition
-        view?.isFloatingActionButtonVisible = false
+        if(view != null) {
+            view!!.currentTab = currentPosition
+            view!!.isFloatingActionButtonVisible = false
 
-        view?.tabTitles = arrayOf(
-                date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
-        )
+            view!!.tabTitles = arrayOf(
+                    date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
+                    date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE dd.MM.yy", Locale.GERMANY),
+                    date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE dd.MM.yy", Locale.GERMANY),
+                    date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
+                    date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
+            )
 
-        if (arguments.containsKey(SubstitutesActivity.extraDate))
-            view?.isBackButtonVisible = arguments.getBoolean(SubstitutesActivity.extraBack, false)
+            if (arguments.containsKey(SubstitutesActivity.EXTRA_DATE))
+                view!!.isBackButtonVisible = arguments.getBoolean(SubstitutesActivity.EXTRA_BACK, false)
+
+            view!!.isSwipeRefreshEnabled = account != null;
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        context.contentResolver.unregisterContentObserver(observer)
+        repository.destroy()
         ContentResolver.removeStatusChangeListener(syncListenerHandle)
     }
 
@@ -121,12 +121,20 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         view = null;
     }
 
-    override fun onSubstitutesLoaded(substitutesList: SubstitutesList) {
-        val position = substitutesList.date.dayOfWeek - DateTimeConstants.MONDAY;
-        substitutes[position] = substitutesList.substitutes
-        announcements[position] = substitutesList.announcement
-        view?.populateList(position, substitutesList.substitutes)
-        view?.isFloatingActionButtonVisible = substitutesList.announcement != ""
+    fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
+        Log.d("SubstitutePresenter", "Substitutes loaded: $date, ${substitutes.size} items")
+
+        val position = date.dayOfWeekIndex
+        this.substitutes[position] = substitutes
+        view?.populateList(position, substitutes)
+        if(account != null)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+    }
+
+    fun onAnnouncementLoaded(date:LocalDate, text: String) {
+        val position = date.dayOfWeekIndex
+        announcements[position] = text
+        view?.isFloatingActionButtonVisible = text != ""
         if(account != null)
             view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
@@ -145,8 +153,8 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         if (date.weekOfWeekyear != this.date.weekOfWeekyear) {
             //Launch a new activity with that week
             val intent = Intent(context, SubstitutesActivity::class.java)
-            intent.putExtra(SubstitutesActivity.extraDate, date.toDateTime(LocalTime(0)).millis)
-            intent.putExtra(SubstitutesActivity.extraBack, true)
+            intent.putExtra(SubstitutesActivity.EXTRA_DATE, date.unixTimeStamp)
+            intent.putExtra(SubstitutesActivity.EXTRA_BACK, true)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         } else {
@@ -162,16 +170,26 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
         view?.showDialog(announcements[currentPosition])
     }
 
-    override fun onListItemSelected(listEntry: Int) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onListItemSelected(position: Int, listEntry: Int) {
+        selected[position] = if(selected[position] == listEntry) -1 else listEntry
+        if(view != null) {
+            view!!.setSelected(position, selected[position])
+            view!!.isCabVisible = selected[position] != listEntry
+        }
     }
 
     override fun onRefresh() {
         if (account != null) {
             if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+                for(i in 0..4) {
+                    view?.setSelected(i, -1)
+                }
+
                 val extras = Bundle()
-                extras.putLong(SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).toDateTime(LocalTime(0)).millis)
-                extras.putBoolean(SyncAdapter.extraIgnorePast, true)
+                extras.putInt(SyncService.SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).unixTimeStamp)
+                extras.putBoolean(SyncService.SyncAdapter.extraSingleDay, true)
+                //extras.putLong(SyncAdapter.extraDate, date.toDateTime(LocalTime(0)).millis)
+                extras.putBoolean(SyncService.SyncAdapter.extraIgnorePast, true)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     val syncRequest = SyncRequest.Builder()
@@ -204,8 +222,14 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter, Sub
     }
 
     override fun onActiveTabChanged(position: Int) {
+        val previousPosition = currentPosition
         currentPosition = position
-        view?.isFloatingActionButtonVisible = announcements[currentPosition] != ""
+
+        if(view != null) {
+            view!!.isCabVisible = false
+            view!!.setSelected(previousPosition, -1)
+            view!!.isFloatingActionButtonVisible = announcements[currentPosition] != ""
+        }
     }
 
     override fun onTabCreated(position: Int) {
