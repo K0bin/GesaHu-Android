@@ -65,6 +65,20 @@ public class PreferenceActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(super.onOptionsItemSelected(item))
+            return true;
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -72,10 +86,5 @@ public class PreferenceActivity extends AppCompatActivity {
             System.gc();
 
         unbinder.unbind();
-    }
-
-    @Override
-    public void onBackPressed() {
-        onSupportNavigateUp();
     }
 }

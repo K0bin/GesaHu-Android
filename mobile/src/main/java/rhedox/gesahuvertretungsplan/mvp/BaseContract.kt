@@ -7,11 +7,12 @@ import rhedox.gesahuvertretungsplan.model.Board
  */
 interface BaseContract {
     interface Presenter {
-        fun onNavigationDrawerItemClicked(position: Int)
+        fun onNavigationDrawerItemClicked(drawerId: Int)
     }
 
     interface View {
         fun setBoards(boards: List<Board>)
         var userName: String;
+        var currentDrawerId: Int;
     }
 }

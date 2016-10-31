@@ -19,6 +19,7 @@ import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import com.pawegio.kandroid.startActivity;
 import org.joda.time.*
 import rhedox.gesahuvertretungsplan.App
+import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
@@ -95,6 +96,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
                 view!!.isBackButtonVisible = arguments.getBoolean(SubstitutesActivity.EXTRA_BACK, false)
 
             view!!.isSwipeRefreshEnabled = account != null;
+            view!!.currentDrawerId = R.id.substitutes;
         }
     }
 
@@ -233,12 +235,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         view?.populateList(position, substitutes[position] ?: listOf())
     }
 
-    override fun onSettingsClicked() {
-        val intent = Intent(context, PreferenceActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onAboutClicked() {
+    /*fun onAboutClicked() {
         AboutLibs.start(context)
-    }
+    }*/
 }

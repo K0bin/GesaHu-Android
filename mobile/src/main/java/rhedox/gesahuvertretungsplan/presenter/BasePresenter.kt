@@ -11,10 +11,12 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import com.pawegio.kandroid.accountManager
 import rhedox.gesahuvertretungsplan.App
+import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
+import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 
@@ -28,6 +30,8 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
 
     protected lateinit var boardsRepository: BoardsRepository
         private set
+
+    private var boards: List<Board> = listOf();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,11 +69,17 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
 
     private fun onBoardsLoaded(boards: List<Board>) {
         view?.setBoards(boards)
-
+        this.boards = boards;
     }
 
-    override fun onNavigationDrawerItemClicked(position: Int) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onNavigationDrawerItemClicked(drawerId: Int) {
+        if(drawerId == R.id.settings) {
+            val intent = Intent(context, PreferenceActivity::class.java)
+            startActivity(intent)
+        }
+        if(drawerId >= drawerId && drawerId < drawerId + boards.size) {
+            //START BOARD
+        }
     }
 
     override fun onResume() {

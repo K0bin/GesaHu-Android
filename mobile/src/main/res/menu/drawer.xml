@@ -7,8 +7,13 @@
             android:icon="@drawable/ic_substitutes"
             android:checked="false"
             android:title="@string/drawer_substitutes" />
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings"
+            android:checked="false"
+            android:title="@string/action_settings" />
 
-        <item android:id="@+id/boardsSubheader" android:title="@string/drawer_boards">
+        <item android:id="@+id/boardsSubheader" android:title="@string/drawer_boards" android:checkable="true">
             <menu>
 
             </menu>

@@ -38,6 +38,16 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
             headerUsername.text = value
         }
 
+    override var currentDrawerId: Int = -1
+        get() = field
+        set(value) {
+            field = value
+            val menuItem = navigationView.menu.findItem(value);
+            if(menuItem != null) {
+                menuItem.isChecked = true;
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,6 +68,10 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         setupDrawerLayout()
 
         headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
+        navigationView.setNavigationItemSelectedListener {
+            presenter.onNavigationDrawerItemClicked(it.itemId);
+            false
+        }
     }
 
     private fun setupDrawerLayout() {
@@ -95,10 +109,9 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     }
 
     override fun setBoards(boards: List<Board>) {
+        val menu = navigationView.menu.findItem(R.id.boardsSubheader).subMenu
         for(i in 0..boards.size-1) {
-            navigationView.menu.findItem(R.id.boardsSubheader)
-                    .subMenu
-                    .add(-1, i + 13, Menu.NONE, boards[i].name)
+                menu.add(-1, i + 13, Menu.NONE, boards[i].name)
         }
     }
 

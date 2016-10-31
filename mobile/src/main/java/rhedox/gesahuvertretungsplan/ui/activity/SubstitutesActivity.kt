@@ -187,16 +187,14 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             return true
 
         when (item.itemId) {
-            R.id.action_settings -> presenter.onSettingsClicked()
             R.id.action_load -> presenter.onDatePickerIconClicked()
-            R.id.action_about -> presenter.onAboutClicked()
             android.R.id.home -> {
                 finish()
                 return true
             }
         }
 
-        return super.onOptionsItemSelected(item)
+        return false
     }
 
     override fun showDialog(text: String) {
