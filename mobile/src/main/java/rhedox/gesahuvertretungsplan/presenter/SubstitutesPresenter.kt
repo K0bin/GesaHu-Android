@@ -121,7 +121,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
     }
 
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
-        Log.d("SubstitutePresenter", "Substitutes loaded: $date, ${substitutes.size} items")
+        Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
 
         val position = date.dayOfWeekIndex
         this.substitutes[position] = substitutes

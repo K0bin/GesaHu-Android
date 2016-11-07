@@ -35,7 +35,7 @@ class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnL
         observer = Observer {
             loadBoards()
         }
-        context.contentResolver.registerContentObserver(Uri.parse("content://${BoardsContentProvider.authority}/"), true, observer);
+        context.contentResolver.registerContentObserver(BoardsContract.uri, true, observer);
     }
 
     fun destroy() {
@@ -54,7 +54,7 @@ class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnL
 
     fun loadBoards() {
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, Uri.parse("content://${BoardsContentProvider.authority}/"), Boards.availableColumns.toTypedArray(), null, null, null);
+            loader = CursorLoader(context.applicationContext, BoardsContract.uri, BoardsContract.columns.toTypedArray(), null, null, null);
             loader!!.registerListener(0, this)
         } else {
             loader!!.reset()

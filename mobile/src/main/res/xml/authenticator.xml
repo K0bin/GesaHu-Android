@@ -2,7 +2,7 @@
 <account-authenticator
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="rhedox.gesahuvertretungsplan.gesaHuAccount"
-    android:icon="@mipmap/ic_authenticator"
-    android:smallIcon="@mipmap/ic_authenticator"
+    android:icon="@mipmap/ic_launcher"
+    android:smallIcon="@mipmap/ic_launcher"
     android:userVisible="false"
     android:label="@string/login_account_name"/>

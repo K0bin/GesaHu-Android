@@ -16,7 +16,6 @@ import net.danlew.android.joda.JodaTimeAndroid;
  */
 public class App extends Application {
 	public static final String PREFERENCES_LOGIN = "rhedox.gesahuvertretungsplan.login";
-	public static final String ACCOUNT_TYPE = "rhedox.gesahuvertretungsplan.gesaHuAccount";
 
 	private RefWatcher refWatcher;
 

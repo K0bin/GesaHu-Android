@@ -7,10 +7,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import com.pawegio.kandroid.accountManager
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.BoardAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
 
 /**
  * Created by robin on 30.10.2016.
@@ -43,16 +46,27 @@ class BoardsSyncService : Service() {
             val call = gesahu.boards(account.name, password)
             val response = call.execute()
             if(response != null && response.isSuccessful) {
-                val uri = Uri.Builder()
-                        .scheme("content")
-                        .authority(BoardsContentProvider.authority)
-                        .build()
-
-                provider.delete(uri, null, null);
+                provider.delete(BoardsContract.uri, null, null);
 
                 val boards = response.body()
                 for(board in boards) {
-                    provider.insert(uri, BoardAdapter.toContentValues(board))
+                    provider.insert(BoardsContract.uri, BoardAdapter.toContentValues(board))
+                }
+            }
+
+            val okHttp = OkHttpClient();
+            val avatarRequest = Request.Builder()
+                .url("http://gesahui.de/home/schoolboard/userbilder_original/${account.name.toUpperCase()}.jpg")
+                .build()
+
+            val avatarResponse = okHttp.newCall(avatarRequest).execute()
+            if(avatarResponse != null && avatarResponse.isSuccessful) {
+                val bytes = avatarResponse.body().bytes();
+
+                if(bytes != null) {
+                    val fos = context.openFileOutput(BoardsContract.avatarFileName, Context.MODE_PRIVATE)
+                    fos.write(bytes)
+                    fos.close()
                 }
             }
         }

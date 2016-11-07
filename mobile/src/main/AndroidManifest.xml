@@ -1,122 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="rhedox.gesahuvertretungsplan">
+          package="rhedox.gesahuvertretungsplan">
 
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" android:maxSdkVersion="22"/>
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
-    <uses-feature android:name="android.hardware.touchscreen"
-                  android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false"/>
 
     <application
         android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:resizeableActivity="true"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="false"
-        android:theme="@style/GesahuTheme"
-        android:resizeableActivity="true">
-
+        android:theme="@style/GesahuTheme">
         <activity
             android:name=".ui.activity.SubstitutesActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.activity.AuthActivity"
+            android:label="@string/login">
         </activity>
         <activity
             android:name=".ui.activity.PreferenceActivity"
             android:label="@string/title_activity_settings">
         </activity>
-
         <activity
             android:name=".ui.activity.WelcomeActivity"
-            android:label="@string/title_activity_welcome" >
+            android:label="@string/title_activity_welcome">
         </activity>
 
         <service
             android:name=".service.DashClockExtension"
             android:icon="@drawable/ic_notification"
             android:label="Gesahu Vertretungsplan"
-            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
             <intent-filter>
-                <action android:name="com.google.android.apps.dashclock.Extension" />
+                <action android:name="com.google.android.apps.dashclock.Extension"/>
             </intent-filter>
 
             <meta-data
                 android:name="protocolVersion"
-                android:value="2" />
+                android:value="2"/>
             <meta-data
                 android:name="worldReadable"
-                android:value="true" />
+                android:value="true"/>
             <meta-data
                 android:name="description"
-                android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an." />
+                android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an."/>
         </service>
 
-        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver" />
-        <receiver android:name=".broadcastReceiver.BootReceiver" >
+        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver"/>
+        <receiver android:name=".broadcastReceiver.BootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
         <!-- List Widget -->
-        <receiver android:name=".broadcastReceiver.ListWidgetProvider" android:label="@string/widget_list_name">
+        <receiver
+            android:name=".broadcastReceiver.ListWidgetProvider"
+            android:label="@string/widget_list_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/list_widget_info" />
+                android:resource="@xml/list_widget_info"/>
         </receiver>
 
         <service
             android:name=".service.ListFactoryService"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS" >
+            android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
-
-        <service
-            android:name=".service.SubstitutesNotifierService">
+        <service android:name=".service.SubstitutesNotifierService">
         </service>
 
         <provider
             android:name=".model.database.SubstitutesContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.substitutes"
             android:exported="true"
-            android:syncable="true"
-            android:label="@string/provider_substitutes" />
-
+            android:label="@string/provider_substitutes"
+            android:syncable="true"/>
         <provider
-            android:authorities="rhedox.gesahuvertretungsplan.boards"
             android:name=".model.database.BoardsContentProvider"
+            android:authorities="rhedox.gesahuvertretungsplan.boards"
             android:exported="true"
-            android:syncable="true"
-            android:label="@string/provider_boards" />
+            android:label="@string/provider_boards"
+            android:syncable="true"/>
 
-        <service
-            android:name=".service.GesaHuAccountService">
+        <service android:name=".service.GesaHuAccountService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
+                android:resource="@xml/authenticator"/>
         </service>
-
         <service
             android:name=".service.SubstitutesSyncService"
             android:exported="true"
@@ -124,10 +127,11 @@
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
-                       android:resource="@xml/substitutes_sync_adapter" />
-        </service>
 
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/substitutes_sync_adapter"/>
+        </service>
         <service
             android:name=".service.BoardsSyncService"
             android:exported="true"
@@ -135,10 +139,16 @@
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
-                       android:resource="@xml/boards_sync_adapter" />
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/boards_sync_adapter"/>
         </service>
 
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login">
+        </activity>
     </application>
 
 </manifest>

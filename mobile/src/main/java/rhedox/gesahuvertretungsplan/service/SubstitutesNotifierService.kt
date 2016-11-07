@@ -30,7 +30,7 @@ import rhedox.gesahuvertretungsplan.model.api.QueryDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.Substitutes
+import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils

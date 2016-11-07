@@ -10,21 +10,19 @@ import rhedox.gesahuvertretungsplan.model.unixTimeStamp
 /**
  * Created by robin on 19.10.2016.
  */
-sealed class AnnouncementAdapter private constructor(){
-    companion object {
-        fun toContentValues(text: String, date: LocalDate): ContentValues {
-            val values = ContentValues();
-            values.put(Announcements.columnText, text)
-            values.put(Announcements.columnDate, date.unixTimeStamp);
-            return values;
-        }
+object AnnouncementAdapter {
+    fun toContentValues(text: String, date: LocalDate): ContentValues {
+        val values = ContentValues();
+        values.put(AnnouncementsContract.columnText, text)
+        values.put(AnnouncementsContract.columnDate, date.unixTimeStamp);
+        return values;
+    }
 
-        fun fromCursor(cursor: Cursor): String {
-            if(cursor.count == 0 || cursor.columnCount < 2 || cursor.isClosed)
-                return "";
+    fun fromCursor(cursor: Cursor): String {
+        if(cursor.count == 0 || cursor.columnCount < 2 || cursor.isClosed)
+            return "";
 
-            cursor.moveToFirst()
-            return cursor.getString(cursor.getColumnIndex(Announcements.columnText));
-        }
+        cursor.moveToFirst()
+        return cursor.getString(cursor.getColumnIndex(AnnouncementsContract.columnText));
     }
 }

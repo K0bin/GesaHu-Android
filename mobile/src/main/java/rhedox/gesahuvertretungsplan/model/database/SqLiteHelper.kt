@@ -4,9 +4,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import rhedox.gesahuvertretungsplan.App
-import rhedox.gesahuvertretungsplan.model.database.tables.Announcements
-import rhedox.gesahuvertretungsplan.model.database.tables.Boards
-import rhedox.gesahuvertretungsplan.model.database.tables.Substitutes
+import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
+import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
+import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 
 /**
  * Created by robin on 18.10.2016.
@@ -19,17 +19,17 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        Substitutes.onCreate(db);
-        Announcements.onCreate(db)
-        Boards.onCreate(db)
+        SubstitutesContract.onCreate(db);
+        AnnouncementsContract.onCreate(db)
+        BoardsContract.onCreate(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if(newVersion > 1)
-            Boards.onCreate(db)
+            BoardsContract.onCreate(db)
 
-        Substitutes.onUpgrade(db, oldVersion, newVersion);
-        Announcements.onUpgrade(db, oldVersion, newVersion)
-        Boards.onUpgrade(db, oldVersion, newVersion)
+        SubstitutesContract.onUpgrade(db, oldVersion, newVersion);
+        AnnouncementsContract.onUpgrade(db, oldVersion, newVersion)
+        BoardsContract.onUpgrade(db, oldVersion, newVersion)
     }
 }

@@ -16,6 +16,7 @@ import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
+import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
@@ -39,7 +40,7 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
 
         val accountManager = context.accountManager
 
-        val accounts = accountManager?.getAccountsByType(App.ACCOUNT_TYPE) ?: arrayOf<Account>()
+        val accounts = accountManager?.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
         if (accounts.size > 0)
             account = accounts[0]
 

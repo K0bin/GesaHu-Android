@@ -10,8 +10,9 @@ import android.net.Uri
 import com.pawegio.kandroid.i
 import org.joda.time.DateTime
 import rhedox.gesahuvertretungsplan.model.database.SqLiteHelper
-import rhedox.gesahuvertretungsplan.model.database.tables.Announcements
-import rhedox.gesahuvertretungsplan.model.database.tables.Substitutes
+import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
+import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 
 /**
  * Created by robin on 19.10.2016.
@@ -23,8 +24,6 @@ class SubstitutesContentProvider : ContentProvider() {
     companion object {
         val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
         const val authority = "rhedox.gesahuvertretungsplan.substitutes"
-        const val substitutesPath = "substitutes";
-        const val announcementsPath = "announcements";
         private const val substitutes = 1;
         private const val substitutesByDate = 10;
         private const val substitutesById = 20;
@@ -33,12 +32,12 @@ class SubstitutesContentProvider : ContentProvider() {
         private const val announcementsByDate = 25;
 
         init {
-            uriMatcher.addURI(authority, substitutesPath, substitutes)
-            uriMatcher.addURI(authority, "$substitutesPath/date/#", substitutesByDate)
-            uriMatcher.addURI(authority, "$substitutesPath/#", substitutesById)
-            uriMatcher.addURI(authority, announcementsPath, announcements)
-            uriMatcher.addURI(authority, "$announcementsPath/date/#", announcementsByDate)
-            uriMatcher.addURI(authority, "$announcementsPath/#", announcementsById)
+            uriMatcher.addURI(authority, SubstitutesContract.path, substitutes)
+            uriMatcher.addURI(authority, "${SubstitutesContract.path}/${SubstitutesContract.datePath}/#", substitutesByDate)
+            uriMatcher.addURI(authority, "${SubstitutesContract.path}/#", substitutesById)
+            uriMatcher.addURI(authority, AnnouncementsContract.path, announcements)
+            uriMatcher.addURI(authority, "${AnnouncementsContract.path}/${AnnouncementsContract.datePath}/#", announcementsByDate)
+            uriMatcher.addURI(authority, "${AnnouncementsContract.path}/#", announcementsById)
         }
     }
 
@@ -48,24 +47,24 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
         checkColumns(projection, uriType);
         when (uriType) {
-            substitutes -> queryBuilder.tables = Substitutes.name;
+            substitutes -> queryBuilder.tables = SubstitutesContract.name;
             substitutesByDate -> {
-                queryBuilder.tables = Substitutes.name;
-                queryBuilder.appendWhere("${Substitutes.columnDate} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = SubstitutesContract.name;
+                queryBuilder.appendWhere("${SubstitutesContract.columnDate} = '${uri.lastPathSegment}'")
             }
             substitutesById -> {
-                queryBuilder.tables = Substitutes.name;
-                queryBuilder.appendWhere("${Substitutes.columnId} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = SubstitutesContract.name;
+                queryBuilder.appendWhere("${SubstitutesContract.columnId} = '${uri.lastPathSegment}'")
             }
 
-            announcements -> queryBuilder.tables = Announcements.name
+            announcements -> queryBuilder.tables = AnnouncementsContract.name
             announcementsByDate -> {
-                queryBuilder.tables = Announcements.name;
-                queryBuilder.appendWhere("${Announcements.columnDate} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = AnnouncementsContract.name;
+                queryBuilder.appendWhere("${AnnouncementsContract.columnDate} = '${uri.lastPathSegment}'")
             }
             announcementsById -> {
-                queryBuilder.tables = Announcements.name;
-                queryBuilder.appendWhere("${Announcements.columnId} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = AnnouncementsContract.name;
+                queryBuilder.appendWhere("${AnnouncementsContract.columnId} = '${uri.lastPathSegment}'")
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
@@ -91,12 +90,12 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
         var rowsDeleted = 0;
         when (uriType) {
-            substitutes -> rowsDeleted = db.delete(Substitutes.name, selection ?: "1", null)
-            substitutesByDate -> rowsDeleted = db.delete(Substitutes.name, "${Substitutes.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            substitutesById -> rowsDeleted = db.delete(Substitutes.name, "${Substitutes.columnId} = '${uri.lastPathSegment}'", null)
-            announcements -> rowsDeleted = db.delete(Announcements.name, selection ?: "", null)
-            announcementsByDate -> rowsDeleted = db.delete(Announcements.name, "${Announcements.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            announcementsById -> rowsDeleted = db.delete(Announcements.name, "${Announcements.columnId} = '${uri.lastPathSegment}'", null)
+            substitutes -> rowsDeleted = db.delete(SubstitutesContract.name, selection ?: "1", null)
+            substitutesByDate -> rowsDeleted = db.delete(SubstitutesContract.name, "${SubstitutesContract.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            substitutesById -> rowsDeleted = db.delete(SubstitutesContract.name, "${SubstitutesContract.columnId} = '${uri.lastPathSegment}'", null)
+            announcements -> rowsDeleted = db.delete(AnnouncementsContract.name, selection ?: "", null)
+            announcementsByDate -> rowsDeleted = db.delete(AnnouncementsContract.name, "${AnnouncementsContract.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            announcementsById -> rowsDeleted = db.delete(AnnouncementsContract.name, "${AnnouncementsContract.columnId} = '${uri.lastPathSegment}'", null)
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
         return rowsDeleted;
@@ -114,16 +113,16 @@ class SubstitutesContentProvider : ContentProvider() {
         val dateUri: Uri;
         when (uriType) {
             substitutes -> {
-                val id = db.insert(Substitutes.name, null, values);
-                val millis = values?.get(Substitutes.columnDate) ?: 0
-                insertUri = Uri.parse("content://$authority/$substitutesPath/"+id.toString());
-                dateUri = Uri.parse("content://$authority/$substitutesPath/date/"+millis.toString());
+                val id = db.insert(SubstitutesContract.name, null, values);
+                val seconds = values?.getAsInteger(SubstitutesContract.columnDate) ?: 0
+                insertUri = SubstitutesContract.uriWithId(id)
+                dateUri = SubstitutesContract.uriWithSeconds(seconds);
             }
             announcements -> {
-                val id = db.insert(Announcements.name, null, values);
-                val millis = values?.get(Announcements.columnDate) ?: 0
-                insertUri = Uri.parse("content://$authority/$announcementsPath/"+id.toString());
-                dateUri = Uri.parse("content://$authority/$announcementsPath/date/"+millis.toString());
+                val id = db.insert(AnnouncementsContract.name, null, values);
+                val seconds = values?.getAsInteger(AnnouncementsContract.columnDate) ?: 0
+                insertUri = AnnouncementsContract.uriWithId(id)
+                dateUri = AnnouncementsContract.uriWithSeconds(seconds);
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
@@ -146,14 +145,14 @@ class SubstitutesContentProvider : ContentProvider() {
         when (uriType) {
             substitutes -> {
                 for(value in values) {
-                    val id = db.insert(Substitutes.name, null, value);
+                    val id = db.insert(SubstitutesContract.name, null, value);
 
                     //Notify Content Resolver
-                    val insertUri = Uri.parse("content://$authority/$substitutesPath/" + id.toString());
+                    val insertUri = Uri.parse("content://$authority/${SubstitutesContract.path}/" + id.toString());
                     context.contentResolver.notifyChange(insertUri, null, false);
 
-                    val millis = value.get(Substitutes.columnDate) ?: 0
-                    val dateUri = Uri.parse("content://$authority/$substitutesPath/date/" + millis.toString());
+                    val seconds = value.getAsInteger(SubstitutesContract.columnDate) ?: 0
+                    val dateUri = SubstitutesContract.uriWithSeconds(seconds)
                     if(!dateUris.contains(dateUri)) {
                         dateUris.add(dateUri);
                     }
@@ -162,14 +161,14 @@ class SubstitutesContentProvider : ContentProvider() {
             }
             announcements ->
                 for(value in values) {
-                    val id = db.insert(Announcements.name, null, value);
+                    val id = db.insert(AnnouncementsContract.name, null, value);
 
                     //Notify Content Resolver
-                    val insertUri = Uri.parse("content://$authority/$announcementsPath/" + id.toString());
+                    val insertUri = Uri.parse("content://$authority/${AnnouncementsContract.path}/" + id.toString());
                     context.contentResolver.notifyChange(insertUri, null, false);
 
-                    val millis = value.get(Substitutes.columnDate) ?: 0
-                    val dateUri = Uri.parse("content://$authority/$announcementsPath/date/" + millis.toString())
+                    val seconds = value.getAsInteger(AnnouncementsContract.columnDate) ?: 0
+                    val dateUri = AnnouncementsContract.uriWithSeconds(seconds)
                     if (!dateUris.contains(dateUri)) {
                         dateUris.add(dateUri);
                     }
@@ -188,11 +187,11 @@ class SubstitutesContentProvider : ContentProvider() {
         if(projection != null) {
             val requestedColumns = projection.toSet()
             if(uriType == substitutes || uriType == substitutesByDate || uriType == substitutesById) {
-                if (!Substitutes.availableColumns.containsAll(requestedColumns)) {
+                if (!SubstitutesContract.columns.containsAll(requestedColumns)) {
                     throw IllegalArgumentException("Unknown columns in projection");
                 }
             } else if(uriType == announcements || uriType == announcementsByDate || uriType == announcementsById) {
-                if (!Announcements.availableColumns.containsAll(requestedColumns)) {
+                if (!AnnouncementsContract.columns.containsAll(requestedColumns)) {
                     throw IllegalArgumentException("Unknown columns in projection");
                 }
             }

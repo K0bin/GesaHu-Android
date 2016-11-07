@@ -8,7 +8,7 @@
               android:background="@color/intro_slide_4"
               android:paddingBottom="@dimen/appIntroBottomBarHeight">
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
@@ -80,6 +80,7 @@
                 android:inputType="textPassword"
                 android:id="@+id/passwordEdit"
                 android:hint="@string/login_password_hint"
+                android:imeOptions="actionDone"
                 android:nextFocusDown="@+id/login"
                 android:nextFocusRight="@+id/login"
                 android:nextFocusForward="@+id/login"
@@ -88,15 +89,5 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.v7.widget.AppCompatButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/login"
-            android:id="@+id/login"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:imeOptions="actionSend"
-            android:nextFocusUp="@id/passwordEdit"
-            android:nextFocusLeft="@id/passwordEdit" />
-
-    </LinearLayout>
+    </LinearLayout>-->
 </LinearLayout>

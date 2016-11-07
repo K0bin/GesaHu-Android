@@ -15,7 +15,9 @@ import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.api.toQueryDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 import rhedox.gesahuvertretungsplan.model.localDateFromUnix
 import rhedox.gesahuvertretungsplan.model.unixTimeStamp
 import java.io.IOException
@@ -82,44 +84,20 @@ class SubstitutesSyncService : Service() {
         fun clearOldSubstitutes(provider: ContentProviderClient) {
             val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -6);
 
-            val substitutesUri = Uri.Builder()
-                    .scheme("content")
-                    .authority(SubstitutesContentProvider.authority)
-                    .path(SubstitutesContentProvider.substitutesPath)
-                    .build()
-
-            val announcementsUri = Uri.Builder()
-                    .scheme("content")
-                    .authority(SubstitutesContentProvider.authority)
-                    .path(SubstitutesContentProvider.announcementsPath)
-                    .build()
-
-            provider.delete(substitutesUri, "date < ${oldest.unixTimeStamp}", null);
-            provider.delete(announcementsUri, "date < ${oldest.unixTimeStamp}", null);
+            provider.delete(SubstitutesContract.uri, "date < ${oldest.unixTimeStamp}", null);
+            provider.delete(AnnouncementsContract.uri, "date < ${oldest.unixTimeStamp}", null);
         }
 
         fun loadSubstitutesForDay(provider: ContentProviderClient, date: LocalDate, username: String): Boolean {
             val call = gesaHu.substitutes(date.toQueryDate(), username)
-
-            val substitutesUri = Uri.Builder()
-                    .scheme("content")
-                    .authority(SubstitutesContentProvider.authority)
-                    .path(SubstitutesContentProvider.substitutesPath)
-                    .build();
-
-            val announcementsUri = Uri.Builder()
-                    .scheme("content")
-                    .authority(SubstitutesContentProvider.authority)
-                    .path(SubstitutesContentProvider.announcementsPath)
-                    .build()
 
 
             try {
                 val response = call.execute();
                 if (response != null && response.isSuccessful) {
                     val substitutesList = response.body();
-                    provider.delete(substitutesUri, "date = ${substitutesList.date.unixTimeStamp}", null);
-                    provider.delete(announcementsUri, "date = ${substitutesList.date.unixTimeStamp}", null);
+                    provider.delete(SubstitutesContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
+                    provider.delete(AnnouncementsContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
 
                     val substituteInserts = mutableListOf<ContentValues>()
                     for (substitute in substitutesList.substitutes) {
@@ -127,10 +105,10 @@ class SubstitutesSyncService : Service() {
                     }
                     if(substitutesList.announcement.trim().length != 0 && substitutesList.announcement.trim() != "keine") {
                         Log.d("SubstitutesSync", "Inserted an announcement.")
-                        provider.insert(announcementsUri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
+                        provider.insert(AnnouncementsContract.uri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
                     }
 
-                    val count = provider.bulkInsert(substitutesUri, substituteInserts.toTypedArray())
+                    val count = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())
                     Log.d("SubstitutesSync", "Inserted $count substitutes.")
                     return true;
                 }
