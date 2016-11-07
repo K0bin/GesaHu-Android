@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.mvp
 
+import android.graphics.Bitmap
 import rhedox.gesahuvertretungsplan.model.Board
 
 /**
@@ -12,6 +13,7 @@ interface BaseContract {
 
     interface View {
         fun setBoards(boards: List<Board>)
+        fun setAvatar(avatar: Bitmap)
         var userName: String;
         var currentDrawerId: Int;
     }

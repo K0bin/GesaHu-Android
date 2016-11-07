@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
@@ -9,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import rhedox.gesahuvertretungsplan.R
@@ -113,6 +115,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         for(i in 0..boards.size-1) {
                 menu.add(-1, i + 13, Menu.NONE, boards[i].name)
         }
+    }
+
+    override fun setAvatar(avatar: Bitmap) {
+        val imageView = navigationView.getHeaderView(0).findViewById(R.id.avatarView) as CircleImageView;
+        imageView.setImageBitmap(avatar)
     }
 
 

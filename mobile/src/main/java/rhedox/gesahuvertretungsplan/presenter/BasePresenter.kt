@@ -12,11 +12,14 @@ import android.support.v4.app.Fragment
 import com.pawegio.kandroid.accountManager
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
+import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
+import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
 import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
@@ -31,6 +34,9 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
 
     protected lateinit var boardsRepository: BoardsRepository
         private set
+
+    protected lateinit var avatarLoader: AvatarLoader;
+        private set;
 
     private var boards: List<Board> = listOf();
 
@@ -47,6 +53,13 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         boardsRepository = BoardsRepository(context)
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
+
+        //load avatar
+        avatarLoader = AvatarLoader(context)
+        avatarLoader.callback = {
+            view?.setAvatar(it)
+        }
+        avatarLoader.execute();
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -93,7 +106,8 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         } else if (account == null) {
-            //FIX ACCOUNT
+            context.accountManager?.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
+                    null, null, null, activity, null, null);
         }
     }
 }

@@ -5,6 +5,7 @@ import android.accounts.AccountManager
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -38,11 +39,13 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     companion object {
         const val stateAccount = "account";
         const val argIsNewAccount ="isNewAccout"
+        const val launchedByApp ="wasLaunchedByApp"
     }
 
     private var account: Account? = null;
     private var username: String = "";
     private var password: String = "";
+    private var wasLaunchedByApp = false;
 
     private lateinit var gesaHu: GesaHuApi;
     private var call: Call<List<Board>>? = null;
@@ -54,7 +57,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         setContentView(R.layout.activity_auth)
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = Color.parseColor("#ffe0e0e0");
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -64,6 +67,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         if(savedInstanceState != null) {
             account = savedInstanceState.getParcelable<Account>(stateAccount);
         }
+        wasLaunchedByApp = intent.getBooleanExtra(launchedByApp, false)
 
         if(account == null && !intent.getBooleanExtra(argIsNewAccount, true)) {
             val accounts = accountManager?.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
@@ -120,6 +124,13 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        if(account != null && outState != null)
+            outState.putParcelable(stateAccount, account)
+    }
+
     override fun onClick(v: View?) {
         login();
     }
@@ -164,6 +175,12 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         setResult(Activity.RESULT_OK, res)
         finish();
+
+        if(wasLaunchedByApp) {
+            val intent = Intent(this, SubstitutesActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
     }
 
     override fun onFailure(call: Call<List<Board>>?, t: Throwable?) {

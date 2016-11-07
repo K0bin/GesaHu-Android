@@ -41,7 +41,7 @@ public class App extends Application {
 					.build();
 			//StrictMode.setThreadPolicy(threadPolicy);
 
-			AndroidDevMetrics.initWith(this);
+			//AndroidDevMetrics.initWith(this);
 			Stetho.initializeWithDefaults(this);
 
 			refWatcher = LeakCanary.install(this);

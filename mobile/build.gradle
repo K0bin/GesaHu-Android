@@ -57,6 +57,7 @@ dependencies {
     compile 'com.android.support:design:25.+'
     compile 'com.android.support:preference-v7:25.+'
     compile 'com.android.support:preference-v14:25.+'
+    compile 'com.android.support:percent:25.+'
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
     compile 'net.danlew:android.joda:2.+'
     compile 'com.squareup.retrofit2:retrofit:2.+'
@@ -77,6 +78,8 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:+'
     compile 'com.google.firebase:firebase-core:+'
     compile 'com.github.paolorotolo:appintro:4.1.0'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+
     //compile 'com.google.android.gms:play-services-ads:8.+'
     compile 'com.squareup.retrofit2:converter-gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
