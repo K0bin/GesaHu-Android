@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
@@ -72,7 +73,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
         navigationView.setNavigationItemSelectedListener {
             presenter.onNavigationDrawerItemClicked(it.itemId);
-            false
+            true
         }
     }
 
@@ -111,9 +112,9 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     }
 
     override fun setBoards(boards: List<Board>) {
-        val menu = navigationView.menu.findItem(R.id.boardsSubheader).subMenu
+        val menu = navigationView.menu
         for(i in 0..boards.size-1) {
-                menu.add(-1, i + 13, Menu.NONE, boards[i].name)
+            menu.add(R.id.boardsSubheader, i + 13, Menu.NONE, boards[i].name)
         }
     }
 

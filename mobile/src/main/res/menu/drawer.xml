@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/mainGroup" android:checkableBehavior="single" android:checkable="true">
         <item
             android:id="@+id/substitutes"
             android:icon="@drawable/ic_substitutes"
@@ -12,11 +12,9 @@
             android:icon="@drawable/ic_settings"
             android:checked="false"
             android:title="@string/action_settings" />
+    </group>
 
-        <item android:id="@+id/boardsSubheader" android:title="@string/drawer_boards" android:checkable="true">
-            <menu>
+    <group android:id="@+id/boardsSubheader" android:title="@string/drawer_boards" android:checkableBehavior="single" android:checkable="true">
 
-            </menu>
-        </item>
     </group>
 </menu>
