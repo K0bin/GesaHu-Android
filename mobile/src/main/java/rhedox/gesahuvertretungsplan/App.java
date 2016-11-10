@@ -2,10 +2,10 @@ package rhedox.gesahuvertretungsplan;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.StrictMode;
 
 import com.facebook.stetho.Stetho;
-import com.frogermcs.androiddevmetrics.AndroidDevMetrics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -24,6 +24,7 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		JodaTimeAndroid.init(this);
 
 		//Debug
@@ -40,8 +41,6 @@ public class App extends Application {
 					.penaltyDialog()
 					.build();
 			//StrictMode.setThreadPolicy(threadPolicy);
-
-			//AndroidDevMetrics.initWith(this);
 			Stetho.initializeWithDefaults(this);
 
 			refWatcher = LeakCanary.install(this);

@@ -1,5 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import `in`.arjsna.cab.CabCallback
+import `in`.arjsna.cab.ContextualActionBar
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Intent
@@ -7,8 +9,11 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.annotation.ColorInt
 import android.support.v4.app.NotificationCompatSideChannelService
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.util.Pair
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +21,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import com.pawegio.kandroid.d
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.joda.time.DateTime
@@ -44,8 +52,10 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
-    var pagerAdapter: SubstitutesPagerAdapter? = null
+    private var pagerAdapter: SubstitutesPagerAdapter? = null
             private set;
+    private lateinit var cabFadeIn: Animation;
+    private lateinit var cabFadeOut: Animation;
 
     override var isFloatingActionButtonVisible: Boolean
         get() = fab.visibility == View.VISIBLE
@@ -88,9 +98,18 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             swipeRefreshLayout.isRefreshing = value
         }
 
-    override var isCabVisible: Boolean
-        get() = throw UnsupportedOperationException()
+    override var isCabVisible: Boolean = false
+        get() = field
         set(value) {
+            if(field != value) {
+                field = value;
+
+                if(value) {
+                    cab.startAnimation(cabFadeIn)
+                } else {
+                    cab.startAnimation(cabFadeOut)
+                }
+            }
         }
 
     override var isSwipeRefreshEnabled: Boolean
@@ -141,6 +160,33 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         })
 
         fab.setOnClickListener { presenter.onFabClicked() }
+
+        cab.inflateMenu(R.menu.menu_cab_main)
+        cab.setOnMenuItemClickListener {
+            if(it.itemId == R.id.action_share) {
+                presenter.onShareButtonClicked()
+                true
+            }
+            false
+        }
+        cab.setNavigationOnClickListener {
+            presenter.onCabClosed()
+            cab.startLayoutAnimation()
+            cab.visibility = View.GONE
+        }
+        cabFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        cabFadeIn.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {}
+            override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
+        })
+        cabFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        cabFadeOut.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {cab.visibility = View.GONE}
+            override fun onAnimationStart(animation: Animation) {}
+        })
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

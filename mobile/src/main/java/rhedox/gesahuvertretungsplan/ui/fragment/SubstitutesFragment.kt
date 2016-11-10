@@ -77,7 +77,7 @@ class SubstitutesFragment : Fragment() {
     }
 
     fun setSelected(listPosition: Int) {
-
+        adapter?.setSelected(listPosition)
     }
 
     companion object {

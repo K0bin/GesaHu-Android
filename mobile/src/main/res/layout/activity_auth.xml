@@ -45,64 +45,62 @@
         android:gravity="center"
         android:text="@string/login_explaination"/>
 
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="256dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="32dp"
-        android:id="@+id/usernameLayout">
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/usernameEdit"
-            android:hint="@string/login_username_hint"
-            android:nextFocusDown="@+id/passwordEdit"
-            android:nextFocusRight="@+id/passwordEdit"
-            android:nextFocusForward="@+id/passwordEdit"/>
-
-    </android.support.design.widget.TextInputLayout>
-
-
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="256dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/passwordLayout">
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:id="@+id/passwordEdit"
-            android:hint="@string/login_password_hint"
-            android:imeOptions="actionDone"
-            android:nextFocusDown="@+id/login"
-            android:nextFocusRight="@+id/login"
-            android:nextFocusForward="@+id/login"
-            android:nextFocusUp="@id/usernameEdit"
-            android:nextFocusLeft="@id/usernameEdit" />
-
-    </android.support.design.widget.TextInputLayout>
-
-
-    <FrameLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1">
-        <Button
-            android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="256dp"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:text="@string/login"
-            android:id="@+id/loginButton"
-            android:layout_gravity="bottom|end|right"
-            android:layout_marginTop="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"/>
-    </FrameLayout>
+            android:id="@+id/usernameLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/usernameEdit"
+                android:hint="@string/login_username_hint"
+                android:nextFocusDown="@+id/passwordEdit"
+                android:nextFocusRight="@+id/passwordEdit"
+                android:nextFocusForward="@+id/passwordEdit"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/passwordLayout">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:id="@+id/passwordEdit"
+                android:hint="@string/login_password_hint"
+                android:imeOptions="actionDone"
+                android:nextFocusDown="@+id/login"
+                android:nextFocusRight="@+id/login"
+                android:nextFocusForward="@+id/login"
+                android:nextFocusUp="@id/usernameEdit"
+                android:nextFocusLeft="@id/usernameEdit" />
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:text="@string/login"
+        android:id="@+id/loginButton"
+        android:layout_marginTop="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:layout_gravity="bottom|end|right"/>
 
 </LinearLayout>

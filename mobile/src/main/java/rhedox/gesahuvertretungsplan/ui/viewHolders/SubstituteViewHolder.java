@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -96,7 +97,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 		    view.setActivated(selected);
 
 		    if (!selected)
-			    view.setBackgroundColor(0x0);
+			    view.setBackgroundColor(Color.TRANSPARENT);
 		    else
 			    view.setBackgroundColor(activatedBackgroundColor);
 	    }

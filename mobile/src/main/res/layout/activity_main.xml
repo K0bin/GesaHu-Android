@@ -24,20 +24,28 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				app:layout_scrollFlags="scroll|enterAlways|snap">
-			<android.support.v7.widget.Toolbar
-				android:layout_width="match_parent"
-				android:layout_height="?attr/actionBarSize"
-				android:id="@+id/toolbar"
-				android:background="?attr/colorPrimary"
-				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-				app:popupTheme="?attr/toolbarPopupTheme"
-				android:transitionName="toolbar" />
-
-				<ViewStub
-					android:id="@+id/cab_stub"
+				<android.support.v7.widget.Toolbar
 					android:layout_width="match_parent"
 					android:layout_height="?attr/actionBarSize"
-					android:background="?attr/colorPrimary"/>
+					android:id="@+id/toolbar"
+					android:background="?attr/colorPrimary"
+					android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+					app:popupTheme="?attr/toolbarPopupTheme"
+					android:transitionName="toolbar" />
+
+				<android.support.v7.widget.Toolbar
+					android:layout_width="match_parent"
+					android:layout_height="?attr/actionBarSize"
+					android:background="?attr/colorPrimary"
+					android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+					app:popupTheme="?attr/toolbarPopupTheme"
+                    app:navigationIcon="@drawable/abc_ic_ab_back_material"
+                    app:contentInsetStart="72dp"
+                    app:title="@string/main_cab_title"
+                    app:contentInsetLeft="72dp"
+					android:id="@+id/cab"
+					android:visibility="gone">
+				</android.support.v7.widget.Toolbar>
 			</FrameLayout>
 			<android.support.design.widget.TabLayout
 				android:layout_width="match_parent"

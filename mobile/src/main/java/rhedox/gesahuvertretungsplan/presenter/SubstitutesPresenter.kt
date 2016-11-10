@@ -32,7 +32,6 @@ import java.util.*
  * Created by robin on 20.10.2016.
  */
 class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
-
     companion object {
         const val tag = "SubstitutesPresenter";
     }
@@ -120,6 +119,11 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         view = null;
     }
 
+    override fun onResume() {
+        super.onResume()
+        view!!.currentDrawerId = R.id.substitutes;
+    }
+
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
 
@@ -173,7 +177,8 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         selected[position] = if(selected[position] == listEntry) -1 else listEntry
         if(view != null) {
             view!!.setSelected(position, selected[position])
-            view!!.isCabVisible = selected[position] != listEntry
+            view!!.isCabVisible = selected[position] != -1
+            view!!.isAppBarExpanded = true;
         }
     }
 
@@ -233,6 +238,12 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
 
     override fun onTabCreated(position: Int) {
         view?.populateList(position, substitutes[position] ?: listOf())
+    }
+    override fun onCabClosed() {
+        view!!.setSelected(currentPosition, -1)
+        view!!.isCabVisible = false
+    }
+    override fun onShareButtonClicked() {
     }
 
     /*fun onAboutClicked() {

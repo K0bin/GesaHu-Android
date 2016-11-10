@@ -35,7 +35,6 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     @Nullable private List<Substitute> list = new ArrayList<Substitute>(0);
 
     private int selected = -1;
-    @Nullable private SubstituteViewHolder selectedViewHolder;
 
 	@Nullable private SubstitutesContract.Presenter presenter;
 	private int pagerPosition = -1;
@@ -80,11 +79,6 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
                 SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
                 substituteViewHolder.setSubstitute(list.get(i));
                 substituteViewHolder.setSelected(i == selected && selected != -1);
-
-                if (i == selected && selected != -1)
-                    selectedViewHolder = substituteViewHolder;
-                else if (selectedViewHolder == substituteViewHolder)
-                    selectedViewHolder = null;
             } break;
         }
     }
@@ -161,29 +155,33 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 
 	@Override
 	public void setSelected(int position) {
-		if(position == -1) {
-			if (recyclerView != null) {
-				RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
-				if (viewHolder instanceof SubstituteViewHolder) {
-					selectedViewHolder = (SubstituteViewHolder) viewHolder;
-					selectedViewHolder.setSelected(true);
-				}
-			}
-		} else if(selectedViewHolder != null) {
-			selectedViewHolder.setSelected(false);
+		if(position != -1) {
+			setViewHolderSelected(selected, false);
+			setViewHolderSelected(position, true);
+		} else if(selected != -1) {
+			setViewHolderSelected(selected, false);
+		}
+		selected = position;
+	}
+
+	private void setViewHolderSelected(int position, boolean isSelected) {
+		if(recyclerView == null)
+			return;
+
+		RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+		if (viewHolder instanceof SubstituteViewHolder) {
+			SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
+			substituteViewHolder.setSelected(isSelected);
 		}
 	}
 
 	@Override
     public void clearSelection() {
-        if(selected == -1 && selectedViewHolder == null)
+        if(selected == -1)
             return;
 
-        if(selectedViewHolder != null)
-            selectedViewHolder.setSelected(false);
-
+		setViewHolderSelected(selected, false);
         selected = -1;
-        selectedViewHolder = null;
 
 	    if(presenter != null)
 		    presenter.onListItemSelected(pagerPosition, -1);

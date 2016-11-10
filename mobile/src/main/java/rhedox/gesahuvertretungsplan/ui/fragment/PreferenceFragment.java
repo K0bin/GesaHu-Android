@@ -24,14 +24,9 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_CLASS ="pref_class";
     public static final String PREF_DARK_TYPE ="pref_dark_type";
     public static final String PREF_WIDGET_DARK ="pref_widget_dark";
-    public static final String PREF_COLOR ="pref_color";
-    public static final String PREF_FILTER ="pref_filter";
-    public static final String PREF_SORT ="pref_sort";
-    public static final String PREF_WHITE_TAB_INDICATOR ="pref_white_tab_indicator";
     public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_long";
     public static final String PREF_NOTIFICATION_MODE = "pref_notification_mode";
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
-    public static final String PREF_SPECIAL_MODE = "pref_special_mode";
     public static final String PREF_AMOLED = "pref_amoled";
 
     @Override
