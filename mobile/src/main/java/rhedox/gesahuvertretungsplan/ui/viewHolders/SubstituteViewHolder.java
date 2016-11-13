@@ -1,7 +1,8 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -41,21 +42,21 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     @ColorInt private int textColor;
     @ColorInt private int textColorRelevant;
 
-    @ColorInt private int activatedBackgroundColor;
-
 	private SubstitutesContract.Presenter presenter;
 	private int pagerPosition;
+
+	private Animator backgroundAnimatorSelect;
+	private Animator backgroundAnimatorUnselect;
 
 	@SuppressWarnings("ResourceType")
     public SubstituteViewHolder(ViewGroup view, SubstitutesContract.Presenter presenter, int pagerPosition) {
         super(view);
 
-	    TypedArray typedArray = view.getContext().getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.activatedColor, R.attr.textPrimary, R.attr.textSecondary});
+	    TypedArray typedArray = view.getContext().getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.textPrimary, R.attr.textSecondary});
 	    textColor = typedArray.getColor(2, 0);
 	    textColorRelevant = typedArray.getColor(3, 0);
 	    int circleColorRelevant = typedArray.getColor(1, 0);
 	    int circleColor = typedArray.getColor(0, 0);
-	    activatedBackgroundColor = typedArray.getColor(4,0);
 	    typedArray.recycle();
 
         this.view = view;
@@ -70,6 +71,11 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 
 	    this.presenter = presenter;
 	    this.pagerPosition = pagerPosition;
+
+		backgroundAnimatorSelect = AnimatorInflater.loadAnimator(view.getContext(), R.animator.substitute_select);
+		backgroundAnimatorSelect.setTarget(view);
+		backgroundAnimatorUnselect = AnimatorInflater.loadAnimator(view.getContext(), R.animator.substitute_unselect);
+		backgroundAnimatorUnselect.setTarget(view);
     }
 
     public void setSubstitute(Substitute substitute) {
@@ -93,13 +99,17 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setSelected(boolean selected) {
+
 	    if (view != null) {
 		    view.setActivated(selected);
-
-		    if (!selected)
-			    view.setBackgroundColor(Color.TRANSPARENT);
-		    else
-			    view.setBackgroundColor(activatedBackgroundColor);
+		    if(selected) {
+			    backgroundAnimatorUnselect.cancel();
+			    backgroundAnimatorSelect.start();
+		    }
+		    else {
+			    backgroundAnimatorSelect.cancel();
+			    backgroundAnimatorUnselect.start();
+		    }
 	    }
     }
 

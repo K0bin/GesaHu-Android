@@ -82,7 +82,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
             return null;
 
         if (position == 0 && !list.hasSubstitutes()) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_empty);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.view_empty);
             if (darkTheme) {
                 remoteViews.setTextColor(R.id.subject, 0xFFFFFFFF);
                 remoteViews.setTextColor(R.id.hint, 0xFFFFFFFF);
@@ -98,7 +98,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         Substitute substitute = substitutes.get(position);
 
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view_substitute);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.appwidget_view_substitute);
         remoteViews.setTextViewText(R.id.lesson, substitute.getLessonText());
         remoteViews.setTextViewText(R.id.subject, substitute.getSubject());
         remoteViews.setTextViewText(R.id.teacher, substitute.getTeacher());

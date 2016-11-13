@@ -1,7 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
-import `in`.arjsna.cab.CabCallback
-import `in`.arjsna.cab.ContextualActionBar
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Intent
@@ -105,8 +103,10 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
                 field = value;
 
                 if(value) {
+                    cab.clearAnimation()
                     cab.startAnimation(cabFadeIn)
                 } else {
+                    cab.clearAnimation()
                     cab.startAnimation(cabFadeOut)
                 }
             }
@@ -177,14 +177,14 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         cabFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         cabFadeIn.setAnimationListener(object: Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {cab.visibility = View.VISIBLE}
             override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
         })
         cabFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         cabFadeOut.setAnimationListener(object: Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {cab.visibility = View.GONE}
-            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
         })
 
     }

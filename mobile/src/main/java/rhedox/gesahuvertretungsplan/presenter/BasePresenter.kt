@@ -44,22 +44,11 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         super.onCreate(savedInstanceState)
         retainInstance = true;
 
-        val accountManager = context.accountManager
-
-        val accounts = accountManager?.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
-        if (accounts.size > 0)
-            account = accounts[0]
-
         boardsRepository = BoardsRepository(context)
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
-        //load avatar
-        avatarLoader = AvatarLoader(context)
-        avatarLoader.callback = {
-            view?.setAvatar(it)
-        }
-        avatarLoader.execute();
+        loadAccount();
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -106,6 +95,30 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         } else if (account == null) {
+            //Try reloading account (might have just returned from AuthActivity)
+            loadAccount()
+        }
+    }
+
+    /**
+     * Tries to load the account and avatar. If that fails, it'll start the AuthActivity to add an Account
+     */
+    private fun loadAccount() {
+        if(account != null)
+            return;
+
+        val accounts = context.accountManager?.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
+        if (accounts.size > 0)
+            account = accounts[0]
+
+        if(account != null) {
+            //load avatar
+            avatarLoader = AvatarLoader(context)
+            avatarLoader.callback = {
+                view?.setAvatar(it)
+            }
+            avatarLoader.execute();
+        } else {
             context.accountManager?.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                     null, null, null, activity, null, null);
         }

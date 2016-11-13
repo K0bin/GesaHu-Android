@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<style name="GesahuTheme" parent="GesahuBase">
-		<item name="circleColor">@color/circleDark</item>
+		<item name="circleColor">@color/circle</item>
 		<item name="circleTextColor">@android:color/black</item>
 
 		<item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
@@ -10,8 +10,8 @@
 		<item name="about_libraries_title_openSource">#FFFFFFFF</item>
 		<item name="about_libraries_text_openSource">#FFE3E3E3</item>
 
-		<item name="selectedColor">@color/selected_dark</item>
-		<item name="activatedColor">@color/activated_dark</item>
+		<item name="selectedColor">@color/selected</item>
+		<item name="activatedColor">@color/activated</item>
 
 		<item name="textPrimary">#ffffffff</item>
 		<item name="textSecondary">#ffB2B2B2</item>

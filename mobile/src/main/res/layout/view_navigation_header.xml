@@ -25,7 +25,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/ic_person"
+        app:srcCompat="@drawable/ic_person"
         android:background="@drawable/avatar_view_background"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"

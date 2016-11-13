@@ -6,12 +6,12 @@
 
 		<item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 
-		<item name="android:windowBackground">@color/windowBackgroundLight</item>
+		<item name="android:windowBackground">@color/windowBackground</item>
 
 		<item name="about_libraries_card">#FFFFFFFF</item>
 
-		<item name="selectedColor">@color/selected_light</item>
-		<item name="activatedColor">@color/activated_light</item>
+		<item name="selectedColor">@color/selected</item>
+		<item name="activatedColor">@color/activated</item>
 
 		<item name="textPrimary">#ff212121</item>
 		<item name="textSecondary">#ff757575</item>

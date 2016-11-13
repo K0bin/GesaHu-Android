@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.broadcastReceiver;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -39,15 +38,15 @@ public class ListWidgetProvider extends AppWidgetProvider {
             boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
             boolean amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
 
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.appwidget_list);
 
             @ColorInt int color;
             if(!darkTheme)
-                color = ContextCompat.getColor(context, R.color.windowBackgroundLight);
+                color = ContextCompat.getColor(context, R.color.widgetBackgroundLight);
             else if(amoled)
                 color = 0xFF000000;
             else
-                color = ContextCompat.getColor(context, R.color.windowBackgroundDark);
+                color = ContextCompat.getColor(context, R.color.widgetBackgroundDark);
 
             remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);

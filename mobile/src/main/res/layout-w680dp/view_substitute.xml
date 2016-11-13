@@ -4,7 +4,7 @@
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
 	android:id="@+id/rootFrame"
-	android:foreground="?attr/selectableItemBackground"
+	android:background="@drawable/substitutes_background"
 	android:clickable="true"
 	android:padding="16dp">
 	<android.support.v7.widget.AppCompatTextView

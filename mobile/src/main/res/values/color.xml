@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="circle">#4C4C4C</color>
-    <color name="circleDark">#B2B2B2</color>
-
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorDefaultAccent">#448aff</color>
 
-    <color name="windowBackgroundDark">#FF303030</color>
-    <color name="windowBackgroundLight">#FFFAFAFA</color>
-
-
-    <color name="cardBackgroundDark">#FF404040</color>
-    <color name="cardBackgroundLight">#FFFeFeFe</color>
-
     <color name="preference_fallback_accent_color">#448aff</color>
-
-    <color name="selected_light">#ffBCBCBC</color>
-	<color name="selected_dark">#ff424242</color>
-	<color name="activated_light">#ffEBEBEB</color>
-	<color name="activated_dark">#ff4B4B4B</color>
+    <color name="widgetBackgroundLight">#FF303030</color>
+    <color name="widgetBackgroundDark">#FFFAFAFA</color>
 
     <!-- Intro -->
     <color name="intro_slide_1">#ff4CAF50</color>
