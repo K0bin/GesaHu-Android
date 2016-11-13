@@ -26,6 +26,7 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.ui.activity.AboutLibs
 import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
+import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 import java.util.*
 
 /**

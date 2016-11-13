@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="@android:integer/config_shortAnimTime"
+        android:valueFrom="@color/windowBackground"
+        android:valueTo="?attr/selectedColor"
+        android:valueType="colorType"
+        android:propertyName="backgroundColor"/>
+    <objectAnimator
+        android:duration="@android:integer/config_shortAnimTime"
+        android:valueFrom="0dp"
+        android:valueTo="@dimen/touch_raise"
+        android:valueType="floatType"
+        android:propertyName="translationZ"/>
+</set>
