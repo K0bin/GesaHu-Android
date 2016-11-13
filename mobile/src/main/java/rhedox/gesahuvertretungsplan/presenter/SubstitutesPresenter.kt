@@ -245,6 +245,14 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         view!!.isCabVisible = false
     }
     override fun onShareButtonClicked() {
+        val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPosition)
+        val selectedIndex = selected[currentPosition];
+        val substitutesOfDay = substitutes[currentPosition]
+
+        if(substitutesOfDay != null && selectedIndex != -1) {
+            val substitute = substitutesOfDay[selectedIndex]
+            startActivity(SubstituteShareUtils.makeShareIntent(context, currentDate, substitute))
+        }
     }
 
     /*fun onAboutClicked() {
