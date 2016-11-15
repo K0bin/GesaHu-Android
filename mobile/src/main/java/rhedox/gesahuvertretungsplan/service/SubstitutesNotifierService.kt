@@ -51,7 +51,6 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     private var lesson: Int = -1;
 
     private var date: LocalDate? = null;
-    private var cursorLoader: CursorLoader? = null;
     private var intent: Intent? = null;
 
     private lateinit var repository: SubstitutesRepository;
@@ -114,7 +113,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
                 builder.setContentTitle(title)
                 builder.setContentText(body)
                 builder.setContentInfo(substitutes[i].lessonText)
-                builder.setGroup(Notifier.GROUP_KEY)
+                builder.setGroup(GROUP_KEY)
 
                 //Only relevant for JELLY_BEAN and higher
                 val pending = SubstituteShareUtils.makePendingShareIntent(applicationContext, LocalDate.now(), substitutes[i])
@@ -206,9 +205,9 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
         //Only relevant for LOLLIPOP and higher
         builder.setCategory(NotificationCompat.CATEGORY_EVENT)
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        builder.priority = NotificationCompat.PRIORITY_DEFAULT
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        builder.setColor(color)
+        builder.color = color
 
         //N + Wear summary
         builder.setGroupSummary(true)

@@ -66,7 +66,7 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
         val id = date.unixTimeStamp
         var loader = substituteLoaders[id]
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(date), SubstitutesContract.columns.toTypedArray(), null, null, "${SubstitutesContract.columnIsRelevant} DESC, ${SubstitutesContract.columnLessonBegin} ASC, ${SubstitutesContract.columnCourse}");
+            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnCourse}");
             loader.registerListener(id, this)
             substituteLoaders[id] = loader
         } else {
@@ -79,7 +79,7 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
         val id = date.unixTimeStamp
         var loader = announcementLoaders[id]
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(date), AnnouncementsContract.columns.toTypedArray(), null, null, null);
+            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null);
             loader.registerListener(id, this)
             announcementLoaders[id] = loader
         } else {

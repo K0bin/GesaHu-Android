@@ -78,7 +78,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 
                 SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
                 substituteViewHolder.setSubstitute(list.get(i));
-                substituteViewHolder.setSelected(i == selected && selected != -1);
+                substituteViewHolder.setSelected(i == selected && selected != -1, false);
             } break;
         }
     }
@@ -171,7 +171,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 		RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
 		if (viewHolder instanceof SubstituteViewHolder) {
 			SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
-			substituteViewHolder.setSelected(isSelected);
+			substituteViewHolder.setSelected(isSelected, true);
 		}
 	}
 

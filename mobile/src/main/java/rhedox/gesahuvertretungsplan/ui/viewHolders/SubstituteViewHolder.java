@@ -2,10 +2,13 @@ package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +44,8 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     @BindDrawable(R.drawable.circle)  Drawable circleBackground;
     @ColorInt private int textColor;
     @ColorInt private int textColorRelevant;
+	@ColorInt private int windowColor;
+	@ColorInt private int selectedColor;
 
 	private SubstitutesContract.Presenter presenter;
 	private int pagerPosition;
@@ -52,12 +57,15 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     public SubstituteViewHolder(ViewGroup view, SubstitutesContract.Presenter presenter, int pagerPosition) {
         super(view);
 
-	    TypedArray typedArray = view.getContext().getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.textPrimary, R.attr.textSecondary});
+	    TypedArray typedArray = view.getContext().getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor});
 	    textColor = typedArray.getColor(2, 0);
 	    textColorRelevant = typedArray.getColor(3, 0);
 	    int circleColorRelevant = typedArray.getColor(1, 0);
 	    int circleColor = typedArray.getColor(0, 0);
 	    typedArray.recycle();
+
+		windowColor = ContextCompat.getColor(view.getContext(), R.color.windowBackground);
+		selectedColor = ContextCompat.getColor(view.getContext(), R.color.selected);
 
         this.view = view;
         unbinder = ButterKnife.bind(this, view);
@@ -98,17 +106,24 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setSelected(boolean selected) {
+    public void setSelected(boolean selected, boolean animate) {
 
 	    if (view != null) {
 		    view.setActivated(selected);
-		    if(selected) {
-			    backgroundAnimatorUnselect.cancel();
-			    backgroundAnimatorSelect.start();
-		    }
-		    else {
-			    backgroundAnimatorSelect.cancel();
-			    backgroundAnimatorUnselect.start();
+		    if(animate) {
+			    if (selected) {
+				    backgroundAnimatorUnselect.cancel();
+				    backgroundAnimatorSelect.start();
+			    } else {
+				    backgroundAnimatorSelect.cancel();
+				    backgroundAnimatorUnselect.start();
+			    }
+		    } else {
+			    if(selected) {
+				    view.setBackgroundColor(selectedColor);
+			    } else {
+				    view.setBackgroundColor(windowColor);
+			    }
 		    }
 	    }
     }

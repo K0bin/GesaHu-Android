@@ -47,24 +47,24 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
         checkColumns(projection, uriType);
         when (uriType) {
-            substitutes -> queryBuilder.tables = SubstitutesContract.name;
+            substitutes -> queryBuilder.tables = SubstitutesContract.Table.name;
             substitutesByDate -> {
-                queryBuilder.tables = SubstitutesContract.name;
-                queryBuilder.appendWhere("${SubstitutesContract.columnDate} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = SubstitutesContract.Table.name;
+                queryBuilder.appendWhere("${SubstitutesContract.Table.columnDate} = '${uri.lastPathSegment}'")
             }
             substitutesById -> {
-                queryBuilder.tables = SubstitutesContract.name;
-                queryBuilder.appendWhere("${SubstitutesContract.columnId} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = SubstitutesContract.Table.name;
+                queryBuilder.appendWhere("${SubstitutesContract.Table.columnId} = '${uri.lastPathSegment}'")
             }
 
-            announcements -> queryBuilder.tables = AnnouncementsContract.name
+            announcements -> queryBuilder.tables = AnnouncementsContract.Table.name
             announcementsByDate -> {
-                queryBuilder.tables = AnnouncementsContract.name;
-                queryBuilder.appendWhere("${AnnouncementsContract.columnDate} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = AnnouncementsContract.Table.name;
+                queryBuilder.appendWhere("${AnnouncementsContract.Table.columnDate} = '${uri.lastPathSegment}'")
             }
             announcementsById -> {
-                queryBuilder.tables = AnnouncementsContract.name;
-                queryBuilder.appendWhere("${AnnouncementsContract.columnId} = '${uri.lastPathSegment}'")
+                queryBuilder.tables = AnnouncementsContract.Table.name;
+                queryBuilder.appendWhere("${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'")
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
@@ -90,12 +90,12 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
         var rowsDeleted = 0;
         when (uriType) {
-            substitutes -> rowsDeleted = db.delete(SubstitutesContract.name, selection ?: "1", null)
-            substitutesByDate -> rowsDeleted = db.delete(SubstitutesContract.name, "${SubstitutesContract.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            substitutesById -> rowsDeleted = db.delete(SubstitutesContract.name, "${SubstitutesContract.columnId} = '${uri.lastPathSegment}'", null)
-            announcements -> rowsDeleted = db.delete(AnnouncementsContract.name, selection ?: "", null)
-            announcementsByDate -> rowsDeleted = db.delete(AnnouncementsContract.name, "${AnnouncementsContract.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            announcementsById -> rowsDeleted = db.delete(AnnouncementsContract.name, "${AnnouncementsContract.columnId} = '${uri.lastPathSegment}'", null)
+            substitutes -> rowsDeleted = db.delete(SubstitutesContract.Table.name, selection ?: "1", null)
+            substitutesByDate -> rowsDeleted = db.delete(SubstitutesContract.Table.name, "${SubstitutesContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            substitutesById -> rowsDeleted = db.delete(SubstitutesContract.Table.name, "${SubstitutesContract.Table.columnId} = '${uri.lastPathSegment}'", null)
+            announcements -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, selection ?: "", null)
+            announcementsByDate -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            announcementsById -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
         return rowsDeleted;
@@ -113,14 +113,14 @@ class SubstitutesContentProvider : ContentProvider() {
         val dateUri: Uri;
         when (uriType) {
             substitutes -> {
-                val id = db.insert(SubstitutesContract.name, null, values);
-                val seconds = values?.getAsInteger(SubstitutesContract.columnDate) ?: 0
+                val id = db.insert(SubstitutesContract.Table.name, null, values);
+                val seconds = values?.getAsInteger(SubstitutesContract.Table.columnDate) ?: 0
                 insertUri = SubstitutesContract.uriWithId(id)
                 dateUri = SubstitutesContract.uriWithSeconds(seconds);
             }
             announcements -> {
-                val id = db.insert(AnnouncementsContract.name, null, values);
-                val seconds = values?.getAsInteger(AnnouncementsContract.columnDate) ?: 0
+                val id = db.insert(AnnouncementsContract.Table.name, null, values);
+                val seconds = values?.getAsInteger(AnnouncementsContract.Table.columnDate) ?: 0
                 insertUri = AnnouncementsContract.uriWithId(id)
                 dateUri = AnnouncementsContract.uriWithSeconds(seconds);
             }
@@ -145,13 +145,13 @@ class SubstitutesContentProvider : ContentProvider() {
         when (uriType) {
             substitutes -> {
                 for(value in values) {
-                    val id = db.insert(SubstitutesContract.name, null, value);
+                    val id = db.insert(SubstitutesContract.Table.name, null, value);
 
                     //Notify Content Resolver
                     val insertUri = Uri.parse("content://$authority/${SubstitutesContract.path}/" + id.toString());
                     context.contentResolver.notifyChange(insertUri, null, false);
 
-                    val seconds = value.getAsInteger(SubstitutesContract.columnDate) ?: 0
+                    val seconds = value.getAsInteger(SubstitutesContract.Table.columnDate) ?: 0
                     val dateUri = SubstitutesContract.uriWithSeconds(seconds)
                     if(!dateUris.contains(dateUri)) {
                         dateUris.add(dateUri);
@@ -161,13 +161,13 @@ class SubstitutesContentProvider : ContentProvider() {
             }
             announcements ->
                 for(value in values) {
-                    val id = db.insert(AnnouncementsContract.name, null, value);
+                    val id = db.insert(AnnouncementsContract.Table.name, null, value);
 
                     //Notify Content Resolver
                     val insertUri = Uri.parse("content://$authority/${AnnouncementsContract.path}/" + id.toString());
                     context.contentResolver.notifyChange(insertUri, null, false);
 
-                    val seconds = value.getAsInteger(AnnouncementsContract.columnDate) ?: 0
+                    val seconds = value.getAsInteger(AnnouncementsContract.Table.columnDate) ?: 0
                     val dateUri = AnnouncementsContract.uriWithSeconds(seconds)
                     if (!dateUris.contains(dateUri)) {
                         dateUris.add(dateUri);
@@ -187,11 +187,11 @@ class SubstitutesContentProvider : ContentProvider() {
         if(projection != null) {
             val requestedColumns = projection.toSet()
             if(uriType == substitutes || uriType == substitutesByDate || uriType == substitutesById) {
-                if (!SubstitutesContract.columns.containsAll(requestedColumns)) {
+                if (!SubstitutesContract.Table.columns.containsAll(requestedColumns)) {
                     throw IllegalArgumentException("Unknown columns in projection");
                 }
             } else if(uriType == announcements || uriType == announcementsByDate || uriType == announcementsById) {
-                if (!AnnouncementsContract.columns.containsAll(requestedColumns)) {
+                if (!AnnouncementsContract.Table.columns.containsAll(requestedColumns)) {
                     throw IllegalArgumentException("Unknown columns in projection");
                 }
             }

@@ -10,45 +10,51 @@ import rhedox.gesahuvertretungsplan.model.unixTimeStamp
  * Created by robin on 19.10.2016.
  */
 object SubstitutesContract {
-    const val name = "substitutes";
-    const val columnId = "id";
-    const val columnDate = "date"
-    const val columnLessonBegin = "lessonBegin";
-    const val columnLessonEnd = "lessonEnd";
-    const val columnSubject = "subject";
-    const val columnCourse = "course";
-    const val columnTeacher = "teacher";
-    const val columnSubstitute = "substitute";
-    const val columnRoom = "room";
-    const val columnHint = "hint";
-    const val columnIsRelevant = "isRelevant";
+
     const val datePath = "date"
     const val path = "substitutes"
 
-    val uri = Uri.Builder()
+    val uri: Uri = Uri.Builder()
             .scheme("content")
             .authority(SubstitutesContentProvider.authority)
             .path(path)
             .build();
-    val dateUri = Uri.withAppendedPath(uri, datePath)
+    val dateUri: Uri = Uri.withAppendedPath(uri, datePath)
 
-    val columns = setOf(
-        columnId, columnDate, columnCourse, columnLessonBegin, columnLessonEnd, columnSubject, columnTeacher, columnSubstitute, columnRoom, columnRoom, columnHint, columnIsRelevant)
+    object Table {
+        const val name = "substitutes";
+
+        const val columnId = "id";
+        const val columnDate = "date"
+        const val columnLessonBegin = "lessonBegin";
+        const val columnLessonEnd = "lessonEnd";
+        const val columnSubject = "subject";
+        const val columnCourse = "course";
+        const val columnTeacher = "teacher";
+        const val columnSubstitute = "substitute";
+        const val columnRoom = "room";
+        const val columnHint = "hint";
+        const val columnIsRelevant = "isRelevant";
+
+        val columns = setOf(
+                columnId, columnDate, columnCourse, columnLessonBegin, columnLessonEnd, columnSubject, columnTeacher, columnSubstitute, columnRoom, columnRoom, columnHint, columnIsRelevant)
+
+    }
 
     fun onCreate(db: SQLiteDatabase) {
-        val sql = """CREATE TABLE $name
+        val sql = """CREATE TABLE ${Table.name}
         (
-            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnDate INTEGER,
-            $columnLessonBegin INTEGER,
-            $columnLessonEnd INTEGER,
-            $columnSubject TEXT,
-            $columnCourse TEXT,
-            $columnTeacher TEXT,
-            $columnSubstitute TEXT,
-            $columnRoom TEXT,
-            $columnHint TEXT,
-            $columnIsRelevant INTEGER
+            ${Table.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
+            ${Table.columnDate} INTEGER,
+            ${Table.columnLessonBegin} INTEGER,
+            ${Table.columnLessonEnd} INTEGER,
+            ${Table.columnSubject} TEXT,
+            ${Table.columnCourse} TEXT,
+            ${Table.columnTeacher} TEXT,
+            ${Table.columnSubstitute} TEXT,
+            ${Table.columnRoom} TEXT,
+            ${Table.columnHint} TEXT,
+            ${Table.columnIsRelevant} INTEGER
         );
         """;
         db.execSQL(sql);
@@ -58,7 +64,7 @@ object SubstitutesContract {
     }
 
     fun clear(db: SQLiteDatabase) {
-        db.execSQL("DELETE FROM $name WHERE 1;");
+        db.execSQL("DELETE FROM ${Table.name} WHERE 1;");
     }
 
     fun uriWithDate(date: LocalDate): Uri {

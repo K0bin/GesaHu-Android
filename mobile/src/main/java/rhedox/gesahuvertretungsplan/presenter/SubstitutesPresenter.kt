@@ -82,7 +82,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
 
         if(view != null) {
             view!!.currentTab = currentPosition
-            view!!.isFloatingActionButtonVisible = false
+            view!!.isFabVisible = false
 
             view!!.tabTitles = arrayOf(
                     date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
@@ -138,7 +138,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
     fun onAnnouncementLoaded(date:LocalDate, text: String) {
         val position = date.dayOfWeekIndex
         announcements[position] = text
-        view?.isFloatingActionButtonVisible = text != ""
+        view?.isFabVisible = selected[position] == -1 && announcements[currentPosition] != "";
         if(account != null)
             view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
@@ -179,7 +179,10 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         if(view != null) {
             view!!.setSelected(position, selected[position])
             view!!.isCabVisible = selected[position] != -1
-            view!!.isAppBarExpanded = true;
+            if(selected[position] != -1)
+                view!!.isAppBarExpanded = true;
+
+            view!!.isFabVisible = selected[position] == -1 && announcements[currentPosition] != "";
         }
     }
 
@@ -192,7 +195,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
 
                 val extras = Bundle()
                 extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).unixTimeStamp)
-                extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, true)
+                extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, false)
                 //extras.putLong(SyncAdapter.extraDate, date.toDateTime(LocalTime(0)).millis)
                 extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraIgnorePast, true)
 
@@ -233,7 +236,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         if(view != null) {
             view!!.isCabVisible = false
             view!!.setSelected(previousPosition, -1)
-            view!!.isFloatingActionButtonVisible = announcements[currentPosition] != ""
+            view!!.isFabVisible = announcements[currentPosition] != ""
         }
     }
 

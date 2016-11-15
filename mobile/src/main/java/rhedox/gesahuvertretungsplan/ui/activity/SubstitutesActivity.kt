@@ -55,11 +55,18 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     private lateinit var cabFadeIn: Animation;
     private lateinit var cabFadeOut: Animation;
 
-    override var isFloatingActionButtonVisible: Boolean
+    override var isFabVisible: Boolean = false
         get() = fab.visibility == View.VISIBLE
         set(value) {
-            fab.visibility = if(value) View.VISIBLE else View.GONE
-            fab.isEnabled = value
+            if(value != field) {
+                if(value)
+                    fab.show()
+                else
+                    fab.hide()
+
+                field = value
+                fab.isEnabled = value
+            }
         }
 
     override var currentTab: Int
@@ -146,6 +153,8 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
         viewPager.addOnPageChangeListener(this)
+
+        fab.visibility = View.GONE
 
         swipeRefreshLayout.setOnRefreshListener {
             presenter.onRefresh()

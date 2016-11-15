@@ -35,6 +35,13 @@ class GesaHuAccountService : Service() {
             val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
         }
 
+        object Feature {
+            @JvmField
+            val supervisionSubstitutes = "aufsichtsvertretung";
+            @JvmField
+            val syncTimetable = "stundenplan";
+        }
+
         override fun getAuthTokenLabel(authTokenType: String?): String {
             throw UnsupportedOperationException("not implemented")
         }
@@ -51,8 +58,16 @@ class GesaHuAccountService : Service() {
             throw UnsupportedOperationException("not implemented")
         }
 
-        override fun hasFeatures(response: AccountAuthenticatorResponse?, account: Account?, features: Array<out String>?): Bundle {
-            throw UnsupportedOperationException("not implemented")
+        override fun hasFeatures(response: AccountAuthenticatorResponse, account: Account, features: Array<String>): Bundle {
+            var allSupported = false;
+            for(feature in features) {
+                if(feature == Feature.supervisionSubstitutes && !account.name.startsWith("l", true))
+                    allSupported = false;
+            }
+
+            val bundle = Bundle();
+            bundle.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allSupported)
+            return bundle;
         }
 
         override fun editProperties(response: AccountAuthenticatorResponse?, accountType: String?): Bundle {
@@ -63,7 +78,7 @@ class GesaHuAccountService : Service() {
             val bundle = Bundle()
 
             val accounts = context.accountManager?.getAccountsByType(accountType)
-            if (accounts != null && accounts.size > 0) {
+            if (accounts != null && accounts.isNotEmpty()) {
                 bundle.putInt(AccountManager.KEY_ERROR_CODE, 1);
                 bundle.putString(AccountManager.KEY_ERROR_MESSAGE, context.getString(R.string.login_account_exists));
                 return bundle;

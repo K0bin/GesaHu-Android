@@ -14,7 +14,7 @@ object BoardsContract {
     const val columnId = "id";
     const val columnName = "name"
 
-    val uri = Uri.Builder()
+    val uri: Uri = Uri.Builder()
             .scheme("content")
             .authority(BoardsContentProvider.authority)
             .build();

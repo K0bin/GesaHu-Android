@@ -27,6 +27,10 @@ class SubstitutesFragment : Fragment() {
     private var position: Int = -1;
     private var items: List<Substitute> = listOf()
 
+    object State {
+        const val list = "list";
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,13 +38,19 @@ class SubstitutesFragment : Fragment() {
             position = arguments.getInt(argumentPosition);
     }
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        if(savedInstanceState != null && savedInstanceState.containsKey(State.list))
+            recycler.layoutManager!!.onRestoreInstanceState(savedInstanceState.getParcelable(State.list))
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         if(activity is SubstitutesActivity)
             presenter = (activity as SubstitutesActivity).presenter
-
-        recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         adapter = SubstitutesAdapter(position, presenter, activity)
 
         recycler.adapter = adapter
@@ -66,6 +76,11 @@ class SubstitutesFragment : Fragment() {
         adapter = null
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putParcelable(State.list, recycler?.layoutManager?.onSaveInstanceState())
+    }
+
     /**
      * Display the loaded list
      */
@@ -83,6 +98,7 @@ class SubstitutesFragment : Fragment() {
     companion object {
         const val argumentPosition = "position";
 
+        @JvmStatic
         fun createInstance(position: Int): SubstitutesFragment {
             val bundle = Bundle();
             bundle.putInt(argumentPosition, position)

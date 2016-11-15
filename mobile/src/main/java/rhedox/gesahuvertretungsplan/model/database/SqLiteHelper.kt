@@ -25,8 +25,13 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if(newVersion > 1)
+        if(newVersion >= 2 && oldVersion < 2)
             BoardsContract.onCreate(db)
+
+        if(newVersion >= 1 && oldVersion < 1) {
+            SubstitutesContract.onCreate(db);
+            AnnouncementsContract.onCreate(db)
+        }
 
         SubstitutesContract.onUpgrade(db, oldVersion, newVersion);
         AnnouncementsContract.onUpgrade(db, oldVersion, newVersion)

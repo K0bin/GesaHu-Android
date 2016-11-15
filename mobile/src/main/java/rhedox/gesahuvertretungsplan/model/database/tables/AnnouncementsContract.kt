@@ -10,29 +10,31 @@ import rhedox.gesahuvertretungsplan.model.unixTimeStamp
  * Created by robin on 19.10.2016.
  */
 object AnnouncementsContract {
-    const val name = "announcements";
-    const val columnId = "id";
-    const val columnDate = "date"
-    const val columnText = "text";
     const val datePath = "date"
     const val path = "announcements"
-
-    val uri = Uri.Builder()
+    val uri: Uri = Uri.Builder()
             .scheme("content")
             .authority(SubstitutesContentProvider.authority)
             .path(path)
             .build();
-    val dateUri = Uri.withAppendedPath(uri, datePath)
+    val dateUri: Uri = Uri.withAppendedPath(uri, datePath)
 
-    val columns = setOf(
-            columnId, columnDate, columnText)
+    object Table {
+        const val name = "announcements";
+        const val columnId = "id";
+        const val columnDate = "date"
+        const val columnText = "text";
+
+        val columns = setOf(
+                columnId, columnDate, columnText)
+    }
 
     fun onCreate(db: SQLiteDatabase) {
-        val sql = """CREATE TABLE $name
+        val sql = """CREATE TABLE ${Table.name}
         (
-            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnDate INTEGER,
-            $columnText TEXT
+            ${Table.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
+            ${Table.columnDate} INTEGER,
+            ${Table.columnText} TEXT
         );
         """;
         db.execSQL(sql);
@@ -42,7 +44,7 @@ object AnnouncementsContract {
     }
 
     fun clear(db: SQLiteDatabase) {
-        db.execSQL("DELETE FROM ${AnnouncementsContract.name} WHERE 1;");
+        db.execSQL("DELETE FROM ${Table.name} WHERE 1;");
     }
 
     fun uriWithDate(date: LocalDate): Uri {

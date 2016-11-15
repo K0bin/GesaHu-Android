@@ -24,7 +24,7 @@ interface SubstitutesContract {
         fun populateList(position: Int, list: List<Substitute>)
         fun showDatePicker(defaultDate: LocalDate)
         var currentTab: Int
-        var isFloatingActionButtonVisible: Boolean
+        var isFabVisible: Boolean
         var isBackButtonVisible: Boolean
         var isAppBarExpanded: Boolean
         var tabTitles: Array<String>

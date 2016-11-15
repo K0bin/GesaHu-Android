@@ -77,6 +77,7 @@ class SubstitutesSyncService : Service() {
                     if(ignorePast && day < LocalDate.now())
                         continue
                     Log.d("SubstitutesSync", "Synced $day")
+                    loadSubstitutesForDay(provider, day, username)
                 }
             }
         }
@@ -91,7 +92,6 @@ class SubstitutesSyncService : Service() {
         fun loadSubstitutesForDay(provider: ContentProviderClient, date: LocalDate, username: String): Boolean {
             val call = gesaHu.substitutes(date.toQueryDate(), username)
 
-
             try {
                 val response = call.execute();
                 if (response != null && response.isSuccessful) {
@@ -103,7 +103,7 @@ class SubstitutesSyncService : Service() {
                     for (substitute in substitutesList.substitutes) {
                         substituteInserts.add(SubstituteAdapter.toContentValues(substitute, substitutesList.date))
                     }
-                    if(substitutesList.announcement.trim().length != 0 && substitutesList.announcement.trim() != "keine") {
+                    if(substitutesList.announcement.isNotEmpty() && substitutesList.announcement.trim() != "keine") {
                         Log.d("SubstitutesSync", "Inserted an announcement.")
                         provider.insert(AnnouncementsContract.uri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
                     }

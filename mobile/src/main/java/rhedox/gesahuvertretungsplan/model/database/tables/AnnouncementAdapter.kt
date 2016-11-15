@@ -13,8 +13,8 @@ import rhedox.gesahuvertretungsplan.model.unixTimeStamp
 object AnnouncementAdapter {
     fun toContentValues(text: String, date: LocalDate): ContentValues {
         val values = ContentValues();
-        values.put(AnnouncementsContract.columnText, text)
-        values.put(AnnouncementsContract.columnDate, date.unixTimeStamp);
+        values.put(AnnouncementsContract.Table.columnText, text)
+        values.put(AnnouncementsContract.Table.columnDate, date.unixTimeStamp);
         return values;
     }
 
@@ -23,6 +23,6 @@ object AnnouncementAdapter {
             return "";
 
         cursor.moveToFirst()
-        return cursor.getString(cursor.getColumnIndex(AnnouncementsContract.columnText));
+        return cursor.getString(cursor.getColumnIndex(AnnouncementsContract.Table.columnText));
     }
 }
