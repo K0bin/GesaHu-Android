@@ -15,11 +15,11 @@ import java.lang.reflect.Type
 data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: String, val course: String, val teacher: String, val substitute: String, val room: String, val hint: String, val isRelevant: Boolean) : Comparable<Substitute> {
     @Kind val kind: Long;
 
-    val lessonText: String
-        get() = if(lessonBegin != lessonEnd) lessonBegin.toString() + "-" + lessonEnd.toString() else lessonBegin.toString();
+    val lessonText: String = if(lessonBegin != lessonEnd) lessonBegin.toString() + "-" + lessonEnd.toString() else lessonBegin.toString();
+        get() = field
 
-    val title: String
-        get() = course + " " + subject;
+    val title: String = course + " " + subject;
+        get() = field
 
     companion object {
         const val KIND_SUBSTITUTE = 0L;

@@ -57,9 +57,11 @@ class SubstitutesSyncService : Service() {
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             val username = account.name ?: "";
 
-            val date = if(extras != null && extras.containsKey(extraDate)) localDateFromUnix(extras.getInt(extraDate)) else SchoolWeek.nextFromNow()
+            val hasDate = extras?.containsKey(extraDate) ?: false
+            val singleDay = extras?.getBoolean(extraSingleDay, false) ?: false
+            val date = if(hasDate) localDateFromUnix(extras!!.getInt(extraDate)) else SchoolWeek.nextFromNow()
 
-            if(extras?.getBoolean(extraSingleDay, false) ?: false) {
+            if(hasDate && singleDay) {
                 Log.d("SubstitutesSync", "Sync triggered for $date")
                 loadSubstitutesForDay(provider, date, username)
             } else {
@@ -68,7 +70,8 @@ class SubstitutesSyncService : Service() {
 
                 clearOldSubstitutes(provider);
 
-                for (i in 0..7) {
+                val days = if (hasDate) 7 else 14;
+                for (i in 0..days-1) {
                     var day = date.withFieldAdded(DurationFieldType.days(), i)
                     if (day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
                         //Saturday => Monday & Sunday => Tuesday

@@ -14,6 +14,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -32,16 +33,16 @@ import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract;
 public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     private View view;
 
-    @BindView(R.id.lesson) AppCompatTextView lesson;
-    @BindView(R.id.subject) AppCompatTextView subject;
-    @BindView(R.id.teacher)  AppCompatTextView teacher;
-    @BindView(R.id.substituteTeacher)  AppCompatTextView substituteTeacher;
-    @BindView(R.id.room)  AppCompatTextView room;
-    @BindView(R.id.hint)  AppCompatTextView hint;
+    @BindView(R.id.lesson) TextView lesson;
+    @BindView(R.id.subject) TextView subject;
+    @BindView(R.id.teacher)  TextView teacher;
+    @BindView(R.id.substituteTeacher)  TextView substituteTeacher;
+    @BindView(R.id.room)  TextView room;
+    @BindView(R.id.hint)  TextView hint;
     private Unbinder unbinder;
 
     @BindDrawable(R.drawable.circle) Drawable circleRelevantBackground;
-    @BindDrawable(R.drawable.circle)  Drawable circleBackground;
+    @BindDrawable(R.drawable.circle) Drawable circleBackground;
     @ColorInt private int textColor;
     @ColorInt private int textColorRelevant;
 	@ColorInt private int windowColor;
@@ -54,15 +55,11 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 	private Animator backgroundAnimatorUnselect;
 
 	@SuppressWarnings("ResourceType")
-    public SubstituteViewHolder(ViewGroup view, SubstitutesContract.Presenter presenter, int pagerPosition) {
+    public SubstituteViewHolder(View view, SubstitutesContract.Presenter presenter, int pagerPosition, int textColor, int textColorRelevant, int circleColor, int circleColorRelevant) {
         super(view);
 
-	    TypedArray typedArray = view.getContext().getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor});
-	    textColor = typedArray.getColor(2, 0);
-	    textColorRelevant = typedArray.getColor(3, 0);
-	    int circleColorRelevant = typedArray.getColor(1, 0);
-	    int circleColor = typedArray.getColor(0, 0);
-	    typedArray.recycle();
+		this.textColor = textColor;
+		this.textColorRelevant = textColorRelevant;
 
 		windowColor = ContextCompat.getColor(view.getContext(), R.color.windowBackground);
 		selectedColor = ContextCompat.getColor(view.getContext(), R.color.selected);
@@ -107,7 +104,6 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setSelected(boolean selected, boolean animate) {
-
 	    if (view != null) {
 		    view.setActivated(selected);
 		    if(animate) {

@@ -101,6 +101,8 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         get() = swipeRefreshLayout.isRefreshing
         set(value) {
             swipeRefreshLayout.isRefreshing = value
+            if(!value)
+                swipeRefreshLayout.clearAnimation();
         }
 
     override var isCabVisible: Boolean = false

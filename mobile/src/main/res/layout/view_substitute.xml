@@ -1,130 +1,120 @@
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/tileHeight"
-    android:orientation="horizontal"
     android:foreground="?attr/selectableItemBackground"
     android:id="@+id/rootFrame"
     android:clickable="true"
 	android:padding="0dp">
+
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="@dimen/tileAvatarSize"
         android:layout_height="@dimen/tileAvatarSize"
         android:id="@+id/lesson"
         android:textColor="?android:attr/textColorPrimaryInverse"
-        android:text="2-10"
+        tools:text="2-10"
         android:textSize="18dp"
-        android:layout_gravity="top"
         android:gravity="center"
         android:fontFamily="sans-serif-condensed"
         android:background="?attr/circleColor"
         android:lines="1"
-        android:layout_margin="@dimen/tilePadding"
+        android:layout_marginTop="@dimen/tilePadding"
+        android:layout_marginBottom="@dimen/tilePadding"
+        android:layout_marginLeft="@dimen/tilePadding"
+        android:layout_marginStart="@dimen/tilePadding"
+        android:layout_marginRight="@dimen/tilePadding"
+        android:layout_marginEnd="@dimen/tilePadding"
         android:shadowRadius="0"
         android:includeFontPadding="false"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_marginLeft="72dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="20dp"
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical">
+        tools:text="Deutsch Förderu. 05a"
+        android:id="@+id/subject"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:includeFontPadding="false"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:minWidth="64dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="@dimen/tilePadding"
+        />
 
-        <LinearLayout
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="R 08-05"
+        android:id="@+id/room"
+        android:layout_gravity="center_vertical"
+        android:gravity="end|right"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:textColor="?android:attr/textColorHint"
+        android:fontFamily="sans-serif-condensed"
+        android:includeFontPadding="false"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:minWidth="64dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBaseline="@id/subject"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Lindenberg xxxxxxxxx Lawl"
+        android:id="@+id/teacher"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:minWidth="64dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
+        android:layout_below="@id/subject"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Körschner"
+        android:id="@+id/substituteTeacher"
+        android:gravity="right"
+        android:layout_gravity="center_vertical"
+        android:textAlignment="gravity"
+        android:textColor="?android:attr/textColorSecondary"
+        android:includeFontPadding="false"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:minWidth="64dp"
+        android:layout_alignBaseline="@+id/teacher"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Deutsch Förderu. 05a"
-                android:id="@+id/subject"
-                android:textColor="?android:attr/textColorPrimary"
-                android:padding="0dp"
-                android:gravity="top"
-                android:layout_marginRight="8dp"
-                android:includeFontPadding="false"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:minWidth="64dp"
-                />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="R 08-05"
-                android:id="@+id/room"
-                android:layout_gravity="center_vertical"
-                android:gravity="right"
-                android:layout_marginLeft="8dp"
-                android:textColor="?android:attr/textColorHint"
-                android:fontFamily="sans-serif-condensed"
-                android:includeFontPadding="false"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:minWidth="64dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Lindenberg xxxxxxxxx Lawl"
-                android:id="@+id/teacher"
-                android:layout_marginRight="8dp"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_gravity="center_vertical"
-                android:includeFontPadding="false"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:minWidth="64dp"/>
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Körschner"
-                android:id="@+id/substituteTeacher"
-                android:gravity="right"
-                android:layout_gravity="center_vertical"
-                android:textAlignment="gravity"
-                android:layout_marginLeft="8dp"
-                android:textColor="?android:attr/textColorSecondary"
-                android:includeFontPadding="false"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:minWidth="64dp"/>
-
-        </LinearLayout>
-
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Klausur findet statt"
+            tools:text="Klausur findet statt"
             android:id="@+id/hint"
             android:textColor="?android:attr/textColorHint"
             android:fontFamily="sans-serif-condensed"
@@ -132,8 +122,9 @@
             android:ellipsize="end"
             android:lines="1"
             android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
-
-    </LinearLayout>
-</FrameLayout>
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:layout_marginLeft="72dp"
+            android:layout_marginStart="72dp"
+            android:layout_marginBottom="@dimen/tilePadding"
+            android:layout_below="@id/teacher"/>
+</RelativeLayout>

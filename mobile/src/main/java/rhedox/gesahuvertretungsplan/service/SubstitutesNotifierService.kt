@@ -43,8 +43,6 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         const val EXTRA_LESSON = "lesson";
         const val REQUEST_CODE_BASE = 64
         const val GROUP_KEY = "gesahuvpsubstitutes"
-
-        const val LOADER_ID: Int = 0;
     }
 
     private var color: Int = 0;

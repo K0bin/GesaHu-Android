@@ -241,6 +241,8 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
     }
 
     override fun onTabCreated(position: Int) {
+        Log.d("Presenter", "TabCreated: $position")
+
         view?.populateList(position, substitutes[position] ?: listOf())
     }
     override fun onCabClosed() {

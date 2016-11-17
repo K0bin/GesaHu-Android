@@ -9,7 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+
+import org.jetbrains.anko.AnkoContext;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -20,6 +23,7 @@ import java.util.List;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract;
+import rhedox.gesahuvertretungsplan.ui.anko.SubstituteView;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder;
 import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder;
 import tr.xip.errorview.ErrorView;
@@ -49,10 +53,29 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     @Retention(RetentionPolicy.SOURCE)
     private @interface ItemType {}
 
+	//Colors
+	@ColorInt private int textColor;
+	@ColorInt private int textColorRelevant;
+	@ColorInt private int circleColor;
+	@ColorInt private int circleColorRelevant;
+
+	@NonNull private AnkoContext ankoContext;
+	@NonNull private SubstituteView ankoComponent;
+
     @SuppressWarnings("ResourceType")
     public SubstitutesAdapter(int pagerPosition, @Nullable SubstitutesContract.Presenter presenter, @NonNull Context context) {
 	    this.pagerPosition = pagerPosition;
 	    this.presenter = presenter;
+
+	    TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor});
+	    textColor = typedArray.getColor(2, 0);
+	    textColorRelevant = typedArray.getColor(3, 0);
+	    circleColorRelevant = typedArray.getColor(1, 0);
+	    circleColor = typedArray.getColor(0, 0);
+	    typedArray.recycle();
+
+	    ankoContext = AnkoContext.Companion.createReusable(context, this, false);
+	    ankoComponent = new SubstituteView(context);
     }
 
 	@Override
@@ -87,8 +110,8 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         switch (viewType) {
             case ITEM_TYPE_SUBSTITUTE: {
-                ViewGroup view = (ViewGroup) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_substitute, viewGroup, false);
-                return new SubstituteViewHolder(view, presenter, pagerPosition);
+	            View view = ankoComponent.createView(viewGroup);
+                return new SubstituteViewHolder(view, presenter, pagerPosition, textColor, textColorRelevant, circleColor, circleColorRelevant);
             }
 
             case ITEM_TYPE_EMPTY_VIEW:
