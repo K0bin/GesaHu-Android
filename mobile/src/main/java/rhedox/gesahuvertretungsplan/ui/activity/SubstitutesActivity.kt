@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.animation.Animator
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Intent
@@ -15,6 +16,7 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.util.Pair
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.graphics.drawable.DrawerArrowDrawable
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -37,6 +39,12 @@ import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
+import android.animation.ValueAnimator
+import android.graphics.drawable.Drawable
+import android.support.v7.app.ActionBarDrawerToggle
+import android.view.animation.DecelerateInterpolator
+
+
 
 /**
  * Created by robin on 20.10.2016.
@@ -54,6 +62,8 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             private set;
     private lateinit var cabFadeIn: Animation;
     private lateinit var cabFadeOut: Animation;
+    private lateinit var cabDrawerAnimator: ValueAnimator;
+    private lateinit var cabDrawerIcon: DrawerArrowDrawable;
 
     override var isFabVisible: Boolean = false
         get() = fab.visibility == View.VISIBLE
@@ -114,9 +124,11 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
                 if(value) {
                     cab.clearAnimation()
                     cab.startAnimation(cabFadeIn)
+                    cabDrawerAnimator.start()
                 } else {
                     cab.clearAnimation()
                     cab.startAnimation(cabFadeOut)
+                    cabDrawerAnimator.reverse()
                 }
             }
         }
@@ -173,6 +185,9 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         fab.setOnClickListener { presenter.onFabClicked() }
 
         cab.inflateMenu(R.menu.menu_cab_main)
+        cabDrawerIcon = DrawerArrowDrawable(this)
+        cabDrawerIcon.color = Color.WHITE
+        cab.navigationIcon = cabDrawerIcon
         cab.setOnMenuItemClickListener {
             if(it.itemId == R.id.action_share) {
                 presenter.onShareButtonClicked()
@@ -197,7 +212,13 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             override fun onAnimationEnd(animation: Animation) {cab.visibility = View.GONE}
             override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
         })
-
+        cabDrawerAnimator = ValueAnimator.ofFloat(0f, 1f)
+        cabDrawerAnimator.addUpdateListener(ValueAnimator.AnimatorUpdateListener { valueAnimator ->
+            val slideOffset = valueAnimator.animatedValue as Float
+            cabDrawerIcon.progress = slideOffset
+        })
+        cabDrawerAnimator.interpolator = DecelerateInterpolator()
+        cabDrawerAnimator.duration = 250
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

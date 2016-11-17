@@ -39,7 +39,6 @@
 					android:background="?attr/colorPrimary"
 					android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 					app:popupTheme="?attr/toolbarPopupTheme"
-                    app:navigationIcon="@drawable/abc_ic_ab_back_material"
                     app:title="@string/main_cab_title"
 					android:id="@+id/cab"
 					android:visibility="gone">
