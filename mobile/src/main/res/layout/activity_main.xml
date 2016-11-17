@@ -40,9 +40,7 @@
 					android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 					app:popupTheme="?attr/toolbarPopupTheme"
                     app:navigationIcon="@drawable/abc_ic_ab_back_material"
-                    app:contentInsetStart="72dp"
                     app:title="@string/main_cab_title"
-                    app:contentInsetLeft="72dp"
 					android:id="@+id/cab"
 					android:visibility="gone">
 				</android.support.v7.widget.Toolbar>

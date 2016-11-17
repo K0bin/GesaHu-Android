@@ -5,12 +5,16 @@ import android.graphics.Typeface
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.MarginLayoutParamsCompat
+import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import org.jetbrains.anko.*
 import rhedox.gesahuvertretungsplan.R
@@ -42,147 +46,308 @@ class SubstituteView(context: Context) {
         val selectableItem = ContextCompat.getDrawable(parent.context, selectableItemId)
 
         return with(parent.context) {
-            relativeLayout {
-                id = R.id.rootFrame
-                minimumHeight = tileHeight
-                foreground = selectableItem
-                layoutTransition = null
 
-                //Lesson
-                textView {
-                    id = R.id.lesson
-                    gravity = android.view.Gravity.CENTER
-                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
-                    text = "Subject"
-                    textColor = textColorPrimaryInverse
-                    typeface = condensed
+            if (parent.width / parent.context.displayMetrics.density < 680) {
+                relativeLayout {
+                    id = R.id.rootFrame
+                    minimumHeight = tileHeight
+                    foreground = selectableItem
+                    isClickable = true
+                    layoutTransition = null
+                    layoutParams = RecyclerView.LayoutParams(matchParent, wrapContent)
 
-                    lines = 1
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                    includeFontPadding = false
-                }.lparams {
-                    width = dip(40)
-                    height = dip(40)
-                    margin = dip(16)
-                }
+                    //Lesson
+                    textView {
+                        id = R.id.lesson
+                        gravity = android.view.Gravity.CENTER
+                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
+                        text = "Subject"
+                        textColor = textColorPrimaryInverse
+                        typeface = condensed
 
-                //Subject
-                textView {
-                    id = R.id.subject
-                    text = "Deutsch Förderu. 05a"
-                    setTextAppearance(R.style.TextAppearance_AppCompat_Subhead)
-                    textColor = textColorPrimary
-
-                    lines = 1
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                    includeFontPadding = false
-                }.lparams {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        marginStart = dip(72)
-                        marginEnd = dip(8)
-                    } else {
-                        leftMargin = dip(72)
-                        rightMargin = dip(8)
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        width = dip(40)
+                        height = dip(40)
+                        margin = dip(16)
                     }
-                    topMargin = dip(16)
-                }
 
-                //Room
-                textView {
-                    id = R.id.room
-                    text = "Raum 08-05"
-                    setTextAppearance(R.style.TextAppearance_AppCompat_Caption)
-                    textColor = textColorHint
-                    gravity = GravityCompat.END
-                    typeface = condensed
+                    //Subject
+                    textView {
+                        id = R.id.subject
+                        text = "Deutsch Förderu. 05a"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Subhead)
+                        textColor = textColorPrimary
 
-                    lines = 1
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                    includeFontPadding = false
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(72)
+                            marginEnd = dip(8)
+                        } else {
+                            leftMargin = dip(72)
+                            rightMargin = dip(8)
+                        }
+                        topMargin = dip(16)
+                    }
 
-                }.lparams {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        marginEnd = dip(16)
-                        marginStart = dip(8)
-                        alignParentEnd()
-                    } else {
-                        rightMargin = dip(16)
-                        leftMargin = dip(8)
+                    //Room
+                    textView {
+                        id = R.id.room
+                        text = "Raum 08-05"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Caption)
+                        textColor = textColorHint
+                        gravity = GravityCompat.END
+                        typeface = condensed
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+
+                    }.lparams {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginEnd = dip(16)
+                            marginStart = dip(8)
+                            alignParentEnd()
+                        } else {
+                            rightMargin = dip(16)
+                            leftMargin = dip(8)
+                            alignParentRight()
+                        }
+                        addRule(RelativeLayout.ALIGN_BASELINE, R.id.subject)
+                    }
+
+                    //Teacher
+                    textView {
+                        id = R.id.teacher
+                        text = "Lindenberg"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Body1)
+                        textColor = textColorSecondary
+                        gravity = Gravity.CENTER_VERTICAL
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(72)
+                            marginEnd = dip(8)
+                        } else {
+                            leftMargin = dip(72)
+                            rightMargin = dip(8)
+                        }
+                        below(R.id.subject)
+                    }
+
+                    //Substitute
+                    textView {
+                        id = R.id.substituteTeacher
+                        text = "Körschner"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Body1)
+                        textColor = textColorSecondary
+                        gravity = Gravity.CENTER_VERTICAL
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(8)
+                            marginEnd = dip(16)
+                        } else {
+                            leftMargin = dip(8)
+                            rightMargin = dip(16)
+                        }
                         alignParentRight()
+                        addRule(RelativeLayout.ALIGN_BASELINE, R.id.teacher)
                     }
-                    addRule(RelativeLayout.ALIGN_BASELINE, R.id.subject)
+
+                    //Hint
+                    textView {
+                        id = R.id.hint
+                        text = "Klausur findet statt"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Caption)
+                        textColor = textColorHint
+                        gravity = Gravity.CENTER_VERTICAL
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(72)
+                        } else {
+                            leftMargin = dip(72)
+                        }
+                        below(R.id.teacher)
+                        bottomMargin = tilePadding
+                    }
                 }
+            } else {
+                linearLayout {
+                    id = R.id.rootFrame
+                    orientation = LinearLayout.HORIZONTAL
+                    padding = tilePadding
+                    //minimumHeight = tileHeight
+                    foreground = selectableItem
+                    isClickable = true
+                    layoutTransition = null
+                    layoutParams = RecyclerView.LayoutParams(matchParent, wrapContent)
 
-                //Teacher
-                textView {
-                    id = R.id.teacher
-                    text = "Lindenberg"
-                    setTextAppearance(R.style.TextAppearance_AppCompat_Body1)
-                    textColor = textColorSecondary
-                    gravity = Gravity.CENTER_VERTICAL
+                    //Lesson
+                    textView {
+                        id = R.id.lesson
+                        gravity = Gravity.CENTER
+                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
+                        text = "Subject"
+                        textColor = textColorPrimaryInverse
+                        typeface = condensed
 
-                    lines = 1
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                    includeFontPadding = false
-                }.lparams {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        marginStart = dip(72)
-                        marginEnd = dip(8)
-                    } else {
-                        leftMargin = dip(72)
-                        rightMargin = dip(8)
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        width = dip(40)
+                        height = dip(40)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginEnd = dip(8)
+                        } else {
+                            rightMargin = dip(8)
+                        }
                     }
-                    below(R.id.subject)
-                }
 
-                //Substitute
-                textView {
-                    id = R.id.substituteTeacher
-                    text = "Körschner"
-                    setTextAppearance(R.style.TextAppearance_AppCompat_Body1)
-                    textColor = textColorSecondary
-                    gravity = Gravity.CENTER_VERTICAL
+                    //Subject
+                    textView {
+                        id = R.id.subject
+                        text = "Deutsch Förderu. 05a"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Subhead)
+                        textColor = textColorPrimary
+                        gravity = GravityCompat.START or Gravity.CENTER_VERTICAL
 
-                    lines = 1
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                    includeFontPadding = false
-                }.lparams {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        marginStart = dip(8)
-                        marginEnd = dip(16)
-                    } else {
-                        leftMargin = dip(8)
-                        rightMargin = dip(16)
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        width = 0
+                        weight = 0.7f
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(8)
+                            marginEnd = dip(8)
+                        } else {
+                            leftMargin = dip(8)
+                            rightMargin = dip(8)
+                        }
                     }
-                    alignParentRight()
-                    addRule(RelativeLayout.ALIGN_BASELINE, R.id.teacher)
-                }
 
-                //Hint
-                textView {
-                    id = R.id.hint
-                    text = "Klausur findet statt"
-                    setTextAppearance(R.style.TextAppearance_AppCompat_Caption)
-                    textColor = textColorHint
-                    gravity = Gravity.CENTER_VERTICAL
+                    //Teacher
+                    textView {
+                        id = R.id.teacher
+                        text = "Lindenberg"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Body1)
+                        textColor = textColorSecondary
+                        gravity = GravityCompat.START or Gravity.CENTER_VERTICAL
 
-                    lines = 1
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                    includeFontPadding = false
-                }.lparams {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        marginStart = dip(72)
-                    } else {
-                        leftMargin = dip(72)
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        width = 0
+                        weight = 0.5f
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(8)
+                            marginEnd = dip(8)
+                        } else {
+                            leftMargin = dip(8)
+                            rightMargin = dip(8)
+                        }
                     }
-                    below(R.id.teacher)
-                    bottomMargin = tilePadding
+
+                    //Substitute
+                    textView {
+                        id = R.id.substituteTeacher
+                        text = "Körschner"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Body1)
+                        textColor = textColorSecondary
+                        gravity = GravityCompat.START or Gravity.CENTER_VERTICAL
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        width = 0
+                        weight = 0.5f
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginStart = dip(8)
+                            marginEnd = dip(8)
+                        } else {
+                            leftMargin = dip(8)
+                            rightMargin = dip(8)
+                        }
+                    }
+
+                    //Room
+                    textView {
+                        id = R.id.room
+                        text = "Raum 08-05"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Caption)
+                        textColor = textColorHint
+                        gravity = GravityCompat.START or Gravity.CENTER_VERTICAL
+                        typeface = condensed
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+
+                    }.lparams {
+                        width = 0
+                        weight = 0.25f
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginEnd = dip(8)
+                            marginStart = dip(8)
+                        } else {
+                            rightMargin = dip(8)
+                            leftMargin = dip(8)
+                        }
+                    }
+
+                    //Hint
+                    textView {
+                        id = R.id.hint
+                        text = "Klausur findet statt"
+                        setTextAppearance(R.style.TextAppearance_AppCompat_Caption)
+                        textColor = textColorHint
+                        gravity = GravityCompat.START or Gravity.CENTER_VERTICAL
+
+                        lines = 1
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                        includeFontPadding = false
+                    }.lparams {
+                        width = 0
+                        weight = 1f
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            marginEnd = dip(8)
+                            marginStart = dip(8)
+                        } else {
+                            rightMargin = dip(8)
+                            leftMargin = dip(8)
+                        }
+                    }
                 }
             }
         }
