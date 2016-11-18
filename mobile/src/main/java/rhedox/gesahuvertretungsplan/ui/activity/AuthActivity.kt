@@ -15,9 +15,9 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import com.pawegio.kandroid.accountManager
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.fragment_login.*
+import org.jetbrains.anko.accountManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -70,11 +70,11 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         wasLaunchedByApp = intent.getBooleanExtra(launchedByApp, false)
 
         if(account == null && !intent.getBooleanExtra(argIsNewAccount, true)) {
-            val accounts = accountManager?.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
+            val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
             if (accounts.size > 0) {
                 account = accounts[0]
                 username = account!!.name;
-                password = accountManager?.getPassword(account) ?: ""
+                password = accountManager.getPassword(account) ?: ""
             }
         }
         if(account != null) {
@@ -150,9 +150,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     fun finishLogin() {
         if(account == null) {
             account = Account(username, GesaHuAccountService.GesaHuAuthenticator.accountType);
-            accountManager?.addAccountExplicitly(account, password, Bundle());
+            accountManager.addAccountExplicitly(account, password, Bundle());
         } else {
-            accountManager?.setPassword(account, password);
+            accountManager.setPassword(account, password);
         }
 
         usernameEdit.isFocusable = false;

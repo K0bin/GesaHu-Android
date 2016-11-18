@@ -23,7 +23,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import com.pawegio.kandroid.d
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.joda.time.DateTime
@@ -43,8 +42,6 @@ import android.animation.ValueAnimator
 import android.graphics.drawable.Drawable
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.animation.DecelerateInterpolator
-
-
 
 /**
  * Created by robin on 20.10.2016.

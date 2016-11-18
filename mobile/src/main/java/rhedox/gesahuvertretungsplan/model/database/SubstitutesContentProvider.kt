@@ -7,7 +7,6 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
-import com.pawegio.kandroid.i
 import org.joda.time.DateTime
 import rhedox.gesahuvertretungsplan.model.database.SqLiteHelper
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter

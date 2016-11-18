@@ -8,7 +8,7 @@ import android.content.Intent
 import android.support.annotation.IntDef
 import android.support.annotation.RequiresPermission
 import android.support.v4.content.WakefulBroadcastReceiver
-import com.pawegio.kandroid.alarmManager
+import org.jetbrains.anko.alarmManager
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import rhedox.gesahuvertretungsplan.service.SubstitutesNotifierService
@@ -75,12 +75,12 @@ class SubstitutesAlarmReceiver : WakefulBroadcastReceiver() {
             intent.putExtra(EXTRA_LESSON, lesson)
             val pending = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            manager?.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending)
+            manager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending)
         }
 
         @JvmStatic
         fun cancelDaily(context: Context) {
-            val manager = context.alarmManager ?: return
+            val manager = context.alarmManager
 
             val intent = PendingIntent.getBroadcast(context, REQUEST_CODE, Intent(), PendingIntent.FLAG_NO_CREATE)
             if (intent != null)
@@ -89,7 +89,7 @@ class SubstitutesAlarmReceiver : WakefulBroadcastReceiver() {
 
         @JvmStatic
         fun cancelLesson(context: Context) {
-            val manager = context.alarmManager ?: return
+            val manager = context.alarmManager
 
             for (i in hours.indices) {
                 val intent = PendingIntent.getBroadcast(context, REQUEST_CODE_BASE + i, Intent(), PendingIntent.FLAG_NO_CREATE)

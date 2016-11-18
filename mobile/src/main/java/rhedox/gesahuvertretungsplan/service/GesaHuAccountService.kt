@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
-import com.pawegio.kandroid.accountManager
+import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
@@ -77,7 +77,7 @@ class GesaHuAccountService : Service() {
         override fun addAccount(response: AccountAuthenticatorResponse, accountType: String, authTokenType: String?, requiredFeatures: Array<String>?, options: Bundle?): Bundle {
             val bundle = Bundle()
 
-            val accounts = context.accountManager?.getAccountsByType(accountType)
+            val accounts = context.accountManager.getAccountsByType(accountType)
             if (accounts != null && accounts.isNotEmpty()) {
                 bundle.putInt(AccountManager.KEY_ERROR_CODE, 1);
                 bundle.putString(AccountManager.KEY_ERROR_MESSAGE, context.getString(R.string.login_account_exists));

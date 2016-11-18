@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import com.pawegio.kandroid.accountManager
+import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
@@ -107,8 +107,8 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         if(account != null)
             return;
 
-        val accounts = context.accountManager?.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
-        if (accounts.size > 0)
+        val accounts = context.accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
+        if (accounts.isNotEmpty())
             account = accounts[0]
 
         if(account != null) {
@@ -119,7 +119,7 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
             }
             avatarLoader.execute();
         } else {
-            context.accountManager?.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
+            context.accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                     null, null, null, activity, null, null);
         }
     }

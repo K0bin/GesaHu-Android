@@ -16,7 +16,6 @@ import android.util.Log
 import android.widget.Toast
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
-import com.pawegio.kandroid.startActivity;
 import org.joda.time.*
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
