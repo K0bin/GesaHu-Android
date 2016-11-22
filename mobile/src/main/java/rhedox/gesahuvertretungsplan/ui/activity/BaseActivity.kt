@@ -141,4 +141,8 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     override fun openSettings() {
         startActivity(intentFor<PreferenceActivity>());
     }
+
+    override fun openAbout() {
+        AboutLibs.start(this)
+    }
 }

@@ -72,8 +72,9 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
         if(drawerId == R.id.settings) {
             view?.openSettings()
-        }
-        if(drawerId >= drawerId && drawerId < drawerId + boards.size) {
+        } else if(drawerId == R.id.about) {
+            view?.openAbout()
+        } else if(drawerId >= drawerId && drawerId < drawerId + boards.size) {
             //START BOARD
         }
     }

@@ -12,6 +12,12 @@
             android:icon="@drawable/ic_settings"
             android:checked="false"
             android:title="@string/action_settings" />
+
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_info"
+            android:checked="false"
+            android:title="@string/action_about" />
     </group>
 
     <group android:id="@+id/boardsSubheader" android:title="@string/drawer_boards" android:checkableBehavior="single" android:checkable="true">

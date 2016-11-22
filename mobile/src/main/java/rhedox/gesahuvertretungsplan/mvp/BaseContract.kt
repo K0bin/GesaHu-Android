@@ -17,6 +17,7 @@ interface BaseContract {
         fun setBoards(boards: List<Board>)
         fun setAvatar(avatar: Bitmap)
         fun openSettings()
+        fun openAbout()
         var userName: String;
         var currentDrawerId: Int;
     }

@@ -95,7 +95,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
                 val builder = NotificationCompat.Builder(applicationContext)
                 //Open app on click on notification
                 val launchIntent = Intent(applicationContext, SubstitutesActivity::class.java)
-                launchIntent.putExtra(SubstitutesActivity.EXTRA_DATE, date!!.toDateTimeAtCurrentTime().millis)
+                launchIntent.putExtra(SubstitutesActivity.Extra.date, date.toDateTimeAtCurrentTime().millis)
                 val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + titles.size, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 builder.setContentIntent(launchPending)
 
@@ -120,9 +120,9 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
                 //Only relevant for LOLLIPOP and higher
                 builder.setCategory(NotificationCompat.CATEGORY_EVENT)
-                builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                builder.priority = NotificationCompat.PRIORITY_DEFAULT
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                builder.setColor(color)
+                builder.color = color
 
                 notificationManager.notify(i, builder.build())
             }
@@ -167,7 +167,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         //Open app on click on notification
         val launchIntent = Intent(applicationContext, SubstitutesActivity::class.java)
         if (date != null)
-            launchIntent.putExtra(SubstitutesActivity.EXTRA_DATE, date.toDateTimeAtCurrentTime().millis)
+            launchIntent.putExtra(SubstitutesActivity.Extra.date, date.toDateTimeAtCurrentTime().millis)
         val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + notificationLines.size + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(launchPending)
 
