@@ -63,6 +63,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/usernameEdit"
                 android:hint="@string/login_username_hint"
+                android:lines="1"
+                android:maxLines="1"
                 android:nextFocusDown="@+id/passwordEdit"
                 android:nextFocusRight="@+id/passwordEdit"
                 android:nextFocusForward="@+id/passwordEdit"/>
@@ -81,6 +83,8 @@
                 android:inputType="textPassword"
                 android:id="@+id/passwordEdit"
                 android:hint="@string/login_password_hint"
+                android:lines="1"
+                android:maxLines="1"
                 android:imeOptions="actionDone"
                 android:nextFocusDown="@+id/login"
                 android:nextFocusRight="@+id/login"

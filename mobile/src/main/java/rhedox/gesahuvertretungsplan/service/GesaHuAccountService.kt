@@ -41,7 +41,7 @@ class GesaHuAccountService : Service() {
             @JvmField
             val syncTimetable = "stundenplan";
             @JvmField
-            val originalUserpictur = "originalbild";
+            val originalUserpicture = "originalbild";
         }
 
         override fun getAuthTokenLabel(authTokenType: String?): String {
@@ -69,7 +69,7 @@ class GesaHuAccountService : Service() {
                 if(feature == Feature.supervisionSubstitutes && !isTeacher)
                     allSupported = false;
 
-                if(feature == Feature.originalUserpictur && !isStudent)
+                if(feature == Feature.originalUserpicture && !isStudent)
                     allSupported = false;
             }
 

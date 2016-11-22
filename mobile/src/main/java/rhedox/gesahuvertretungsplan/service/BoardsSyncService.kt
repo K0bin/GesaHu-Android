@@ -68,7 +68,7 @@ class BoardsSyncService : Service() {
             val hasAvatar = loadImage(okHttp, "http://gesahui.de/home/schoolboard/userbilder/${account.name.toUpperCase()}.jpg")
 
             if(!hasAvatar && !Thread.interrupted()) {
-                val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpictur),  null, null);
+                val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpicture),  null, null);
                 while(!future.isDone) {
                     //Block thread
                     if(Thread.interrupted())
