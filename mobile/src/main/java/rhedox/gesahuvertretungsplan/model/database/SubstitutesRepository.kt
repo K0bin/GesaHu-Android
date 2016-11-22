@@ -24,13 +24,16 @@ import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 /**
  * Created by robin on 29.10.2016.
  */
-class SubstitutesRepository(context: Context) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
+class SubstitutesRepository(context: Context, val date: LocalDate? = null) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
     private val context = context.applicationContext
 
     private val observer: Observer;
 
     private val substituteLoaders = mutableMapOf<Int, CursorLoader>()
     private val announcementLoaders = mutableMapOf<Int, CursorLoader>()
+
+    private val substitutesUri: Uri;
+    private val announcementsUri: Uri;
 
     var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null;
     var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null;
@@ -44,8 +47,17 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
                     loadAnnouncementForDay(localDateFromUnix(it.lastPathSegment.toInt()));
             }
         }
-        context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
-        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
+
+        if(date == null) {
+            substitutesUri = SubstitutesContract.dateUri;
+            announcementsUri = AnnouncementsContract.dateUri;
+        } else {
+            substitutesUri = SubstitutesContract.uriWithDate(date);
+            announcementsUri = AnnouncementsContract.uriWithDate(date);
+        }
+
+        context.contentResolver.registerContentObserver(substitutesUri, true, observer);
+        context.contentResolver.registerContentObserver(announcementsUri, true, observer);
     }
 
     fun destroy() {
@@ -62,11 +74,16 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
         substituteLoaders.clear()
     }
 
-    fun loadSubstitutesForDay(date: LocalDate) {
-        val id = date.unixTimeStamp
+    fun loadSubstitutesForDay(date: LocalDate? = null) {
+        if(date == null && this.date == null)
+            throw RuntimeException("SubstitutesRepository wasn't initialized with a date, need to provide one!")
+
+        val _date = date ?: this.date!!
+
+        val id = _date.unixTimeStamp
         var loader = substituteLoaders[id]
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnCourse}");
+            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(_date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnCourse}");
             loader.registerListener(id, this)
             substituteLoaders[id] = loader
         } else {
@@ -75,11 +92,16 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
         loader.startLoading();
     }
 
-    fun loadAnnouncementForDay(date: LocalDate) {
-        val id = date.unixTimeStamp
+    fun loadAnnouncementForDay(date: LocalDate? = null) {
+        if(date == null && this.date == null)
+            throw RuntimeException("SubstitutesRepository wasn't initialized with a date, need to provide one!")
+
+        val _date = date ?: this.date!!
+
+        val id = _date.unixTimeStamp
         var loader = announcementLoaders[id]
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null);
+            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(_date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null);
             loader.registerListener(id, this)
             announcementLoaders[id] = loader
         } else {

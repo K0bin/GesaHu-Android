@@ -42,16 +42,21 @@ import android.animation.ValueAnimator
 import android.graphics.drawable.Drawable
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.animation.DecelerateInterpolator
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.share
+import rhedox.gesahuvertretungsplan.model.localDateFromUnix
+import rhedox.gesahuvertretungsplan.model.unixTimeStamp
 
 /**
  * Created by robin on 20.10.2016.
  */
 class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
-    companion object {
-        const val EXTRA_DATE = "date";
-        const val EXTRA_BACK = "back";
-
-        const val STATE_TITLES = "titles"
+    object Extra {
+        const val date = "date"
+        const val back = "back"
+    }
+    object State {
+        const val tabTitles = "titles"
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
@@ -144,22 +149,16 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         super.onCreate(savedInstanceState)
 
         //Create presenter
-        val presenterFragment = supportFragmentManager.findFragmentByTag(SubstitutesPresenter.tag);
-        if(presenterFragment != null) {
-            presenter = presenterFragment as SubstitutesContract.Presenter;
-        } else {
-            val _presenter = SubstitutesPresenter()
-            _presenter.arguments = intent?.extras ?: Bundle.EMPTY
-            supportFragmentManager.beginTransaction().add(_presenter, SubstitutesPresenter.tag).commit();
-            presenter = _presenter
-        }
+        val unix = intent.extras?.getInt(Extra.date, -1);
+        val localDate = if (unix == null || unix == -1) null else localDateFromUnix(intent.extras.getInt(Extra.date))
+        presenter = SubstitutesPresenter(this, localDate, intent?.extras?.getBoolean(Extra.back, false) ?: false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription()
 
         setContentView(R.layout.activity_main)
 
-        val titles = savedInstanceState?.getStringArray(STATE_TITLES)
+        val titles = savedInstanceState?.getStringArray(State.tabTitles)
 
         pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager)
         viewPager.adapter = pagerAdapter
@@ -234,8 +233,18 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         this.setTaskDescription(description)
     }
 
+    override fun onStart() {
+        super.onResume()
+        presenter.onViewAttached(this)
+    }
+
+    override fun onStop() {
+        super.onPause()
+        presenter.onViewDetached()
+    }
+
     override fun populateList(position: Int, list: List<Substitute>) {
-        Log.d("SubstituesActivity", "Populating list: $position, ${list.size} items")
+        Log.d("SubstituesActivity", "Populating layoutManager: $position, ${list.size} items")
         val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.populateList(list)
     }
@@ -255,7 +264,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
@@ -283,7 +291,17 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putStringArray(STATE_TITLES, pagerAdapter?.tabTitles)
+        outState.putStringArray(State.tabTitles, pagerAdapter?.tabTitles)
+    }
+
+    override fun openSubstitutesForDate(date: LocalDate) {
+        val intent = intentFor<SubstitutesActivity>(Extra.back to true, Extra.date to date.unixTimeStamp)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+    }
+
+    override fun share(text: String) {
+        share(text, "")
     }
 
     override fun onPageScrollStateChanged(state: Int) { }

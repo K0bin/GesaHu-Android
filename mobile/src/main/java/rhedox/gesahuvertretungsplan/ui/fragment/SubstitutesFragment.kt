@@ -28,7 +28,7 @@ class SubstitutesFragment : Fragment() {
     private var items: List<Substitute> = listOf()
 
     object State {
-        const val list = "list";
+        const val layoutManager = "layoutManager";
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +42,8 @@ class SubstitutesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        if(savedInstanceState != null && savedInstanceState.containsKey(State.list))
-            recycler.layoutManager!!.onRestoreInstanceState(savedInstanceState.getParcelable(State.list))
+        if(savedInstanceState != null && savedInstanceState.containsKey(State.layoutManager))
+            recycler.layoutManager!!.onRestoreInstanceState(savedInstanceState.getParcelable(State.layoutManager))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -78,14 +78,14 @@ class SubstitutesFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putParcelable(State.list, recycler?.layoutManager?.onSaveInstanceState())
+        outState?.putParcelable(State.layoutManager, recycler?.layoutManager?.onSaveInstanceState())
     }
 
     /**
-     * Display the loaded list
+     * Display the loaded layoutManager
      */
     fun populateList(substitutes: List<Substitute>) {
-        Log.d("SubstitutesFragment", "Showing list: $position, ${substitutes.size} items")
+        Log.d("SubstitutesFragment", "Showing layoutManager: $position, ${substitutes.size} items")
         items = substitutes
         adapter?.showList(items)
         recycler?.scrollToPosition(0)

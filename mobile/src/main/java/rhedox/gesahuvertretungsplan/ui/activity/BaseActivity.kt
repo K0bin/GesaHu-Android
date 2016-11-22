@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
@@ -17,6 +18,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
+import org.jetbrains.anko.intentFor
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
@@ -69,6 +71,14 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
             this.setTheme(R.style.GesahuTheme)
     }
 
+    override fun onResume() {
+        super.onResume()
+        val menuItem = navigationView.menu.findItem(currentDrawerId);
+        if(menuItem != null) {
+            menuItem.isChecked = true;
+        }
+    }
+
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
         setupDrawerLayout()
@@ -117,7 +127,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
     override fun setBoards(boards: List<Board>) {
         val menu = navigationView.menu
-        for(i in 0..boards.size-1) {
+        for (i in 0..boards.size-1) {
             val item = menu.add(R.id.boardsSubheader, i + 13, Menu.NONE, boards[i].name)
             item.isCheckable = true
         }
@@ -128,5 +138,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         imageView.setImageBitmap(avatar)
     }
 
-
+    override fun openSettings() {
+        startActivity(intentFor<PreferenceActivity>());
+    }
 }

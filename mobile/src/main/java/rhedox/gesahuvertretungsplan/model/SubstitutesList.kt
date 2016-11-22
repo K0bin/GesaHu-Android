@@ -23,8 +23,8 @@ data class SubstitutesList(@SerializedName("Hinweise") val announcement: String,
 
     companion object {
         /**
-         * Returns a list that only contains relevant substitutes
-         * @param substitutes the substitutes to put into the list
+         * Returns a layoutManager that only contains relevant substitutes
+         * @param substitutes the substitutes to put into the layoutManager
          * @param removeDoubles whether or not it should also remove redundant entries
          */
         @JvmStatic
@@ -40,8 +40,8 @@ data class SubstitutesList(@SerializedName("Hinweise") val announcement: String,
 
 
         /**
-         * Returns a list that is sorted so that relevant entries are on top
-         * @param substitutes the substitutes to put into the list
+         * Returns a layoutManager that is sorted so that relevant entries are on top
+         * @param substitutes the substitutes to put into the layoutManager
          */
         @JvmStatic
         fun sort(substitutes: List<Substitute>): List<Substitute> {
@@ -50,8 +50,8 @@ data class SubstitutesList(@SerializedName("Hinweise") val announcement: String,
 
 
         /**
-         * Counts the amount of relevant substitutes on the given list
-         * @param substitutes the substitutes to put into the list
+         * Counts the amount of relevant substitutes on the given layoutManager
+         * @param substitutes the substitutes to put into the layoutManager
          * @return the amount of relevant substitutes
          */
         @JvmStatic
@@ -65,8 +65,8 @@ data class SubstitutesList(@SerializedName("Hinweise") val announcement: String,
         }
 
         /**
-         * Returns a new list without redundant entries
-         * @param substitutes the substitutes to put into the list
+         * Returns a new layoutManager without redundant entries
+         * @param substitutes the substitutes to put into the layoutManager
          */
         @JvmStatic
         fun removeDoubles(substitutes: List<Substitute>): List<Substitute> {

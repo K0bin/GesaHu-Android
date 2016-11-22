@@ -31,7 +31,7 @@ import tr.xip.errorview.ErrorView;
 /**
  * SubstitutesAdapter
  * Manages the views that are expected to be displayed by the RecyclerView
- * Also handles the selection of list entries
+ * Also handles the selection of layoutManager entries
  *
  * Created by Robin on 28.10.2014.
  */
@@ -137,14 +137,14 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     }
 
     /*
-    * @param list The list of substitutes to display. If it's null, the RecyclerView will be cleared
+    * @param layoutManager The layoutManager of substitutes to display. If it's null, the RecyclerView will be cleared
      */
     public void showList(@Nullable List<Substitute> list) {
-	    Log.d("SubstitutesAdapter", "Showed list");
+	    Log.d("SubstitutesAdapter", "Showed layoutManager");
         if(list == null || list.size() == 0) {
             clear();
         } else {
-            //Get count before replacing list
+            //Get count before replacing layoutManager
             int count = getItemCount();
 
             this.list = list;

@@ -15,11 +15,12 @@ class AvatarLoader(context: Context) : AsyncTask<Unit, Unit, Bitmap?>() {
     var callback: ((bitmap: Bitmap) -> Unit)? = null
 
     override fun doInBackground(vararg param: Unit?): Bitmap? {
-        if(fileExists(context, BoardsContract.avatarFileName)) {
-            val fileStream = context.openFileInput(BoardsContract.avatarFileName)
-            val bitmap = BitmapFactory.decodeStream(fileStream)
-            fileStream.close()
-
+        val file = context.getFileStreamPath(BoardsContract.avatarFileName)
+        if (file == null || !file.exists()) {
+        } else {
+            val stream = file.inputStream();
+            val bitmap = BitmapFactory.decodeStream(stream)
+            stream.close()
             return bitmap
         }
         return null;
@@ -30,13 +31,5 @@ class AvatarLoader(context: Context) : AsyncTask<Unit, Unit, Bitmap?>() {
         if(result != null) {
             callback?.invoke(result)
         }
-    }
-
-    private fun fileExists(context: Context, filename: String): Boolean {
-        val file = context.getFileStreamPath(filename)
-        if (file == null || !file.exists()) {
-            return false
-        }
-        return true
     }
 }

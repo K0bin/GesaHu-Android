@@ -33,5 +33,7 @@ interface SubstitutesContract {
         var isCabVisible: Boolean
         fun setSelected(position: Int, listPosition: Int)
         fun showDialog(text: String)
+        fun openSubstitutesForDate(date: LocalDate)
+        fun share(text: String)
     }
 }

@@ -16,7 +16,7 @@ import java.util.*
  */
 class SubstitutesPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager) {
 
-    private var fragments: Array<SubstitutesFragment?> = arrayOf<SubstitutesFragment?>(null, null, null, null, null)
+    private var fragments: Array<SubstitutesFragment?> = kotlin.arrayOfNulls<SubstitutesFragment?>(5)
 
     var tabTitles: Array<String> = arrayOf("","","","","")
 
@@ -36,11 +36,6 @@ class SubstitutesPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(ma
 
     fun makeFragmentName(viewPagerId: Int, fragmentPosition: Int): String {
         return "android:switcher:$viewPagerId:$fragmentPosition"
-    }
-
-    fun destroy() {
-        for (i in this.fragments.indices)
-            this.fragments[i] = null
     }
 
     fun getFragment(manager: FragmentManager, position: Int): SubstitutesFragment? {

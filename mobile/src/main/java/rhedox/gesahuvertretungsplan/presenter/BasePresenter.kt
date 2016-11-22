@@ -1,38 +1,30 @@
 package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
-import android.accounts.AccountManager
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import org.jetbrains.anko.accountManager
-import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
-import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
-import rhedox.gesahuvertretungsplan.ui.activity.PreferenceActivity
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
+abstract class BasePresenter(context: Context) : BaseContract.Presenter {
+    protected val context: Context = context.applicationContext
     private var view: BaseContract.View? = null;
     protected var account: Account? = null;
         private set
 
-    protected lateinit var boardsRepository: BoardsRepository
+    protected var boardsRepository: BoardsRepository
         private set
 
     protected lateinit var avatarLoader: AvatarLoader;
@@ -40,10 +32,7 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
 
     private var boards: List<Board> = listOf();
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true;
-
+    init {
         boardsRepository = BoardsRepository(context)
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
@@ -55,23 +44,24 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewAttached(view: BaseContract.View) {
+        this.view = view;
+        view.userName = account?.name ?: ""
 
-        view?.userName = account?.name ?: ""
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
+        if (!previouslyStarted) {
+            val intent = Intent(context, WelcomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        } else if (account == null) {
+            //Try reloading account (might have just returned from AuthActivity)
+            loadAccount()
+        }
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        if(context is BaseContract.View)
-            view = context
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-
-        view = null;
+    override fun onViewDetached() {
+        this.view = null;
     }
 
     private fun onBoardsLoaded(boards: List<Board>) {
@@ -81,26 +71,10 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
 
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
         if(drawerId == R.id.settings) {
-            val intent = Intent(context, PreferenceActivity::class.java)
-            startActivity(intent)
+            view?.openSettings()
         }
         if(drawerId >= drawerId && drawerId < drawerId + boards.size) {
             //START BOARD
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
-        if (!previouslyStarted) {
-            val intent = Intent(context, WelcomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        } else if (account == null) {
-            //Try reloading account (might have just returned from AuthActivity)
-            loadAccount()
         }
     }
 
@@ -124,7 +98,7 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
             avatarLoader.execute();
         } else {
             context.accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
-                    null, null, null, activity, null, null);
+                    null, null, null, view as Activity, null, null);
         }
     }
 }

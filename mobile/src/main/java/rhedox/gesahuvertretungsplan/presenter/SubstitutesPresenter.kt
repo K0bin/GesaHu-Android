@@ -1,8 +1,8 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Intent
 import android.content.SyncRequest
 import android.os.Build
 import android.os.Bundle
@@ -14,107 +14,77 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
-import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
-import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 import java.util.*
 
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
-    companion object {
-        const val tag = "SubstitutesPresenter";
-    }
-
-    private var date: LocalDate = LocalDate();
+class SubstitutesPresenter(context: Context, date: LocalDate? = null, private val canGoBack: Boolean = false) : BasePresenter(context), SubstitutesContract.Presenter {
+    private val date: LocalDate = getFirstDayOfWeek(date ?: SchoolWeek.nextFromNow())
+    private val wasDateProvided = date != null;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
     private var announcements = arrayOf("","","","","")
     private var selected = arrayOf(-1, -1, -1, -1, -1)
-    private lateinit var syncListenerHandle: Any;
+    private var syncListenerHandle: Any;
     private var currentPosition: Int = 0;
 
-    private lateinit var repository: SubstitutesRepository;
+    private var repository: SubstitutesRepository;
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (arguments.containsKey(SubstitutesActivity.EXTRA_DATE)) {
-            date = localDateFromUnix(arguments.getInt(SubstitutesActivity.EXTRA_DATE))
-        } else
-            date = SchoolWeek.nextFromNow();
-
-        currentPosition = date.dayOfWeek - DateTimeConstants.MONDAY
-        date = getFirstDayOfWeek(date)
+    init {
+        currentPosition = (date ?: SchoolWeek.nextFromNow()).dayOfWeek - DateTimeConstants.MONDAY
 
         repository = SubstitutesRepository(context)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
         repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
 
         for(i in 0..4) {
-            repository.loadSubstitutesForDay(date.withFieldAdded(DurationFieldType.days(), i))
-            repository.loadAnnouncementForDay(date.withFieldAdded(DurationFieldType.days(), i))
+            repository.loadSubstitutesForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+            repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
         }
 
         syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
             Log.d("SyncObserver", "Observed change in $it");
             if (account != null) {
-                activity.runOnUiThread {
+                (view as Activity).runOnUiThread {
                     view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
                 }
             }
         })
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewAttached(view: BaseContract.View) {
+        super.onViewAttached(view)
 
-        if(view != null) {
-            view!!.currentTab = currentPosition
-            view!!.isFabVisible = false
+        this.view = view as SubstitutesContract.View
+        view.currentTab = currentPosition
+        view.isFabVisible = false
 
-            view!!.tabTitles = arrayOf(
-                    date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
-                    date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE dd.MM.yy", Locale.GERMANY),
-                    date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE dd.MM.yy", Locale.GERMANY),
-                    date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
-                    date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
-            )
+        view.tabTitles = arrayOf(
+                date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
+        )
 
-            if (arguments.containsKey(SubstitutesActivity.EXTRA_DATE))
-                view!!.isBackButtonVisible = arguments.getBoolean(SubstitutesActivity.EXTRA_BACK, false)
+        if (wasDateProvided)
+            view.isBackButtonVisible = canGoBack
 
-            view!!.isSwipeRefreshEnabled = account != null;
-            view!!.currentDrawerId = R.id.substitutes;
-        }
+        view.isSwipeRefreshEnabled = account != null;
+        view.currentDrawerId = R.id.substitutes;
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        repository.destroy()
-        ContentResolver.removeStatusChangeListener(syncListenerHandle)
+    override fun onViewDetached() {
+        super.onViewDetached()
+        this.view = null;
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        if(context is SubstitutesContract.View)
-            view = context
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-
-        view = null;
-    }
-
-    override fun onResume() {
-        super.onResume()
-        view!!.currentDrawerId = R.id.substitutes;
-    }
+    //repository.destroy()
+    //ContentResolver.removeStatusChangeListener(syncListenerHandle)
 
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
@@ -138,7 +108,6 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
         view?.showDatePicker(date)
     }
 
-
     private fun getFirstDayOfWeek(date: LocalDate): LocalDate {
         val monday = date.minusDays(date.dayOfWeekIndex)
         return monday
@@ -147,11 +116,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
     override fun onDatePicked(date: LocalDate) {
         if (date.weekOfWeekyear != this.date.weekOfWeekyear) {
             //Launch a new activity with that week
-            val intent = Intent(context, SubstitutesActivity::class.java)
-            intent.putExtra(SubstitutesActivity.EXTRA_DATE, date.unixTimeStamp)
-            intent.putExtra(SubstitutesActivity.EXTRA_BACK, true)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
+            view?.openSubstitutesForDate(date)
         } else {
             //Same week => just switch to day-tab
             val dayIndex = Math.max(0, Math.min(date.dayOfWeekIndex, 5))
@@ -247,7 +212,7 @@ class SubstitutesPresenter : BasePresenter(), SubstitutesContract.Presenter {
 
         if(substitutesOfDay != null && selectedIndex != -1) {
             val substitute = substitutesOfDay[selectedIndex]
-            startActivity(SubstituteShareUtils.makeShareIntent(context, currentDate, substitute))
+            view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
         }
     }
 
