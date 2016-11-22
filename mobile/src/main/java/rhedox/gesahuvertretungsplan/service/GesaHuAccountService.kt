@@ -40,6 +40,8 @@ class GesaHuAccountService : Service() {
             val supervisionSubstitutes = "aufsichtsvertretung";
             @JvmField
             val syncTimetable = "stundenplan";
+            @JvmField
+            val originalUserpictur = "originalbild";
         }
 
         override fun getAuthTokenLabel(authTokenType: String?): String {
@@ -59,9 +61,15 @@ class GesaHuAccountService : Service() {
         }
 
         override fun hasFeatures(response: AccountAuthenticatorResponse, account: Account, features: Array<String>): Bundle {
-            var allSupported = false;
+            val isTeacher = account.name.startsWith("l", true);
+            val isStudent = account.name.startsWith("s", true);
+
+            var allSupported = true;
             for(feature in features) {
-                if(feature == Feature.supervisionSubstitutes && !account.name.startsWith("l", true))
+                if(feature == Feature.supervisionSubstitutes && !isTeacher)
+                    allSupported = false;
+
+                if(feature == Feature.originalUserpictur && !isStudent)
                     allSupported = false;
             }
 
