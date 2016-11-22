@@ -63,7 +63,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     private lateinit var cabDrawerIcon: DrawerArrowDrawable;
 
     override var isFabVisible: Boolean = false
-        get() = fab.visibility == View.VISIBLE
+        get() = field
         set(value) {
             if(value != field) {
                 if(value)
@@ -121,11 +121,15 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
                 if(value) {
                     cab.clearAnimation()
                     cab.startAnimation(cabFadeIn)
-                    cabDrawerAnimator.start()
+                    if(!isBackButtonVisible)
+                        cabDrawerAnimator.start()
+                    else
+                        cabDrawerAnimator.end()
                 } else {
                     cab.clearAnimation()
                     cab.startAnimation(cabFadeOut)
-                    cabDrawerAnimator.reverse()
+                    if(!isBackButtonVisible)
+                        cabDrawerAnimator.reverse()
                 }
             }
         }
@@ -166,6 +170,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         viewPager.addOnPageChangeListener(this)
 
         fab.visibility = View.GONE
+        fab.isEnabled = false
 
         swipeRefreshLayout.setOnRefreshListener {
             presenter.onRefresh()

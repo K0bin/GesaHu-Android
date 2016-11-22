@@ -48,7 +48,11 @@ abstract class BasePresenter() : Fragment(), BaseContract.Presenter {
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
-        loadAccount();
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
+        if (previouslyStarted) {
+            loadAccount();
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
