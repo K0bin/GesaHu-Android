@@ -84,7 +84,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         val titles = mutableListOf<String>()
 
         for (i in substitutes.indices) {
-            if (lesson == -1 || lesson == substitutes[i].lessonBegin) {
+            if ((lesson == -1 || lesson == substitutes[i].lessonBegin) && substitutes[i].isRelevant) {
 
                 //Text to display
                 val notificationText = SubstituteFormatter.makeNotificationText(applicationContext, substitutes[i])
