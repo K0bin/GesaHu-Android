@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.mvp
 
 import android.graphics.Bitmap
+import android.os.Bundle
 import rhedox.gesahuvertretungsplan.model.Board
 
 /**
@@ -11,6 +12,7 @@ interface BaseContract {
         fun onNavigationDrawerItemClicked(drawerId: Int)
         fun onViewAttached(view: View)
         fun onViewDetached()
+        fun saveState(bundle: Bundle)
     }
 
     interface View {

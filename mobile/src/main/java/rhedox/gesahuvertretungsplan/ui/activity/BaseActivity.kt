@@ -145,4 +145,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     override fun openAbout() {
         AboutLibs.start(this)
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        if(outState != null)
+            presenter.saveState(outState)
+    }
 }

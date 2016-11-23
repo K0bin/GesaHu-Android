@@ -1,10 +1,15 @@
 package rhedox.gesahuvertretungsplan.model.database
 
+import android.accounts.Account
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Loader
+import android.content.SyncRequest
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
@@ -19,21 +24,18 @@ import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 import rhedox.gesahuvertretungsplan.model.localDateFromUnix
 import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 
 /**
  * Created by robin on 29.10.2016.
  */
-class SubstitutesRepository(context: Context, val date: LocalDate? = null) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
-    private val context = context.applicationContext
-
+class SubstitutesRepository(context: Context) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
+    private val context: Context = context.applicationContext
     private val observer: Observer;
 
     private val substituteLoaders = mutableMapOf<Int, CursorLoader>()
     private val announcementLoaders = mutableMapOf<Int, CursorLoader>()
-
-    private val substitutesUri: Uri;
-    private val announcementsUri: Uri;
 
     var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null;
     var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null;
@@ -48,16 +50,8 @@ class SubstitutesRepository(context: Context, val date: LocalDate? = null) : and
             }
         }
 
-        if(date == null) {
-            substitutesUri = SubstitutesContract.dateUri;
-            announcementsUri = AnnouncementsContract.dateUri;
-        } else {
-            substitutesUri = SubstitutesContract.uriWithDate(date);
-            announcementsUri = AnnouncementsContract.uriWithDate(date);
-        }
-
-        context.contentResolver.registerContentObserver(substitutesUri, true, observer);
-        context.contentResolver.registerContentObserver(announcementsUri, true, observer);
+        context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
+        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
     }
 
     fun destroy() {
@@ -74,16 +68,11 @@ class SubstitutesRepository(context: Context, val date: LocalDate? = null) : and
         substituteLoaders.clear()
     }
 
-    fun loadSubstitutesForDay(date: LocalDate? = null) {
-        if(date == null && this.date == null)
-            throw RuntimeException("SubstitutesRepository wasn't initialized with a date, need to provide one!")
-
-        val _date = date ?: this.date!!
-
-        val id = _date.unixTimeStamp
+    fun loadSubstitutesForDay(date: LocalDate) {
+        val id = date.unixTimeStamp
         var loader = substituteLoaders[id]
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(_date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnCourse}");
+            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnCourse}");
             loader.registerListener(id, this)
             substituteLoaders[id] = loader
         } else {
@@ -92,16 +81,11 @@ class SubstitutesRepository(context: Context, val date: LocalDate? = null) : and
         loader.startLoading();
     }
 
-    fun loadAnnouncementForDay(date: LocalDate? = null) {
-        if(date == null && this.date == null)
-            throw RuntimeException("SubstitutesRepository wasn't initialized with a date, need to provide one!")
-
-        val _date = date ?: this.date!!
-
-        val id = _date.unixTimeStamp
+    fun loadAnnouncementForDay(date: LocalDate) {
+        val id = date.unixTimeStamp
         var loader = announcementLoaders[id]
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(_date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null);
+            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null);
             loader.registerListener(id, this)
             announcementLoaders[id] = loader
         } else {
@@ -120,6 +104,42 @@ class SubstitutesRepository(context: Context, val date: LocalDate? = null) : and
             announcementCallback?.invoke(localDateFromUnix(loader.id), AnnouncementAdapter.fromCursor(data))
         }
         data.close()
+    }
+
+    fun requestUpdate(account: Account, date: LocalDate) {
+        if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+            val extras = Bundle()
+            extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.unixTimeStamp)
+            extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, false)
+            //extras.putLong(SyncAdapter.extraDate, date.toDateTime(LocalTime(0)).millis)
+            extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraIgnorePast, true)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                val syncRequest = SyncRequest.Builder()
+                        .setSyncAdapter(account, SubstitutesContentProvider.authority)
+                        .setExpedited(true)
+                        .setManual(true)
+                        .setDisallowMetered(false)
+                        .setIgnoreSettings(true)
+                        .setIgnoreBackoff(true)
+                        .setNoRetry(true)
+                        .setExtras(extras)
+                        .syncOnce()
+                        .build()
+                ContentResolver.requestSync(syncRequest)
+            } else {
+                val bundle = Bundle()
+                bundle.putAll(extras)
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_BACKOFF, true)
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_REQUIRE_CHARGING, false)
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
+
+                ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)
+            }
+        }
     }
 
     class Observer(private val callback: (uri: Uri) -> Unit): ContentObserver(Handler()) {

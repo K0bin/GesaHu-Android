@@ -56,7 +56,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         const val back = "back"
     }
     object State {
-        const val tabTitles = "titles"
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
@@ -151,19 +150,19 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         //Create presenter
         val unix = intent.extras?.getInt(Extra.date, -1);
         val localDate = if (unix == null || unix == -1) null else localDateFromUnix(intent.extras.getInt(Extra.date))
-        presenter = SubstitutesPresenter(this, localDate, intent?.extras?.getBoolean(Extra.back, false) ?: false)
+
+        if(lastCustomNonConfigurationInstance != null)
+            presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
+        else
+            presenter = SubstitutesPresenter(this, localDate, intent?.extras?.getBoolean(Extra.back, false) ?: false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription()
 
         setContentView(R.layout.activity_main)
 
-        val titles = savedInstanceState?.getStringArray(State.tabTitles)
-
         pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager)
         viewPager.adapter = pagerAdapter
-        if(titles != null)
-            pagerAdapter!!.tabTitles = titles;
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
         viewPager.addOnPageChangeListener(this)
@@ -289,11 +288,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         AnnouncementFragment.newInstance(text).show(supportFragmentManager, AnnouncementFragment.TAG)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putStringArray(State.tabTitles, pagerAdapter?.tabTitles)
-    }
-
     override fun openSubstitutesForDate(date: LocalDate) {
         val intent = intentFor<SubstitutesActivity>(Extra.back to true, Extra.date to date.unixTimeStamp)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -308,5 +302,9 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) { }
     override fun onPageSelected(position: Int) {
         presenter.onActiveTabChanged(position)
+    }
+
+    override fun onRetainCustomNonConfigurationInstance(): Any {
+        return presenter
     }
 }

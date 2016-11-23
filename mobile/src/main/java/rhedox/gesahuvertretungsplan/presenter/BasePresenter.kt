@@ -4,6 +4,7 @@ import android.accounts.Account
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.preference.PreferenceManager
 import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.R
@@ -18,7 +19,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BasePresenter(context: Context) : BaseContract.Presenter {
+abstract class BasePresenter(context: Context, state: Bundle? = null) : BaseContract.Presenter {
     protected val context: Context = context.applicationContext
     private var view: BaseContract.View? = null;
     protected var account: Account? = null;
@@ -97,7 +98,7 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
                 view?.setAvatar(it)
             }
             avatarLoader.execute();
-        } else {
+        } else if (view != null) {
             context.accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                     null, null, null, view as Activity, null, null);
         }

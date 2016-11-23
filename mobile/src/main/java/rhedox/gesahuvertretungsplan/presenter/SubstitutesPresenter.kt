@@ -22,20 +22,24 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(context: Context, date: LocalDate? = null, private val canGoBack: Boolean = false) : BasePresenter(context), SubstitutesContract.Presenter {
+class SubstitutesPresenter(context: Context, date: LocalDate? = null, private val canGoBack: Boolean = false, state: Bundle? = null) : BasePresenter(context, state), SubstitutesContract.Presenter {
     private val date: LocalDate = getFirstDayOfWeek(date ?: SchoolWeek.nextFromNow())
     private val wasDateProvided = date != null;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
     private var announcements = arrayOf("","","","","")
-    private var selected = arrayOf(-1, -1, -1, -1, -1)
+    private var selected = -1
     private var syncListenerHandle: Any;
-    private var currentPosition: Int = 0;
+    private var currentPage: Int = 0;
 
     private var repository: SubstitutesRepository;
 
+    private object State {
+        const val selected = "selected"
+    }
+
     init {
-        currentPosition = (date ?: SchoolWeek.nextFromNow()).dayOfWeek - DateTimeConstants.MONDAY
+        currentPage = (date ?: SchoolWeek.nextFromNow()).dayOfWeek - DateTimeConstants.MONDAY
 
         repository = SubstitutesRepository(context)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
@@ -54,13 +58,15 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
                 }
             }
         })
+
+        selected = state?.getInt(State.selected) ?: -1;
     }
 
     override fun onViewAttached(view: BaseContract.View) {
         super.onViewAttached(view)
 
         this.view = view as SubstitutesContract.View
-        view.currentTab = currentPosition
+        view.currentTab = currentPage
         view.isFabVisible = false
 
         view.tabTitles = arrayOf(
@@ -76,6 +82,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
 
         view.isSwipeRefreshEnabled = account != null;
         view.currentDrawerId = R.id.substitutes;
+        view.setSelected(currentPage, selected)
     }
 
     override fun onViewDetached() {
@@ -99,7 +106,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
     fun onAnnouncementLoaded(date:LocalDate, text: String) {
         val position = date.dayOfWeekIndex
         announcements[position] = text
-        view?.isFabVisible = selected[position] == -1 && announcements[currentPosition] != "";
+        view?.isFabVisible = selected == -1 && announcements[currentPage] != "";
         if(account != null)
             view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
@@ -127,72 +134,37 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
         return substitutes[position] ?: listOf()
     }
     override fun onFabClicked() {
-        view?.showDialog(announcements[currentPosition])
+        view?.showDialog(announcements[currentPage])
     }
 
     override fun onListItemSelected(position: Int, listEntry: Int) {
-        selected[position] = if(selected[position] == listEntry) -1 else listEntry
+        selected = if(selected == listEntry) -1 else listEntry
         if(view != null) {
-            view!!.setSelected(position, selected[position])
-            view!!.isCabVisible = selected[position] != -1
-            if(selected[position] != -1)
+            view!!.setSelected(position, selected)
+            view!!.isCabVisible = selected != -1
+            if(selected != -1)
                 view!!.isAppBarExpanded = true;
 
-            view!!.isFabVisible = selected[position] == -1 && announcements[currentPosition] != "";
+            view!!.isFabVisible = selected == -1 && announcements[currentPage] != "";
         }
     }
 
     override fun onRefresh() {
         if (account != null) {
-            if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
-                for(i in 0..4) {
-                    view?.setSelected(i, -1)
-                }
-
-                val extras = Bundle()
-                extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.withFieldAdded(DurationFieldType.days(), currentPosition).unixTimeStamp)
-                extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, false)
-                //extras.putLong(SyncAdapter.extraDate, date.toDateTime(LocalTime(0)).millis)
-                extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraIgnorePast, true)
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    val syncRequest = SyncRequest.Builder()
-                            .setSyncAdapter(account, SubstitutesContentProvider.authority)
-                            .setExpedited(true)
-                            .setManual(true)
-                            .setDisallowMetered(false)
-                            .setIgnoreSettings(true)
-                            .setIgnoreBackoff(true)
-                            .setNoRetry(true)
-                            .setExtras(extras)
-                            .syncOnce()
-                            .build()
-                    ContentResolver.requestSync(syncRequest)
-                } else {
-                    val bundle = Bundle()
-                    bundle.putAll(extras)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_BACKOFF, true)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_REQUIRE_CHARGING, false)
-                    bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
-
-                    ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)
-                }
-            }
+            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage))
         } else
             view?.isRefreshing = false
     }
 
     override fun onActiveTabChanged(position: Int) {
-        val previousPosition = currentPosition
-        currentPosition = position
+        val previousPosition = currentPage
+        currentPage = position
+        selected = -1
 
         if(view != null) {
             view!!.isCabVisible = false
             view!!.setSelected(previousPosition, -1)
-            view!!.isFabVisible = announcements[currentPosition] != ""
+            view!!.isFabVisible = announcements[currentPage] != ""
         }
     }
 
@@ -202,21 +174,20 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
         view?.populateList(position, substitutes[position] ?: listOf())
     }
     override fun onCabClosed() {
-        view!!.setSelected(currentPosition, -1)
+        view!!.setSelected(currentPage, -1)
         view!!.isCabVisible = false
     }
     override fun onShareButtonClicked() {
-        val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPosition)
-        val selectedIndex = selected[currentPosition];
-        val substitutesOfDay = substitutes[currentPosition]
+        val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
+        val substitutesOfDay = substitutes[currentPage]
 
-        if(substitutesOfDay != null && selectedIndex != -1) {
-            val substitute = substitutesOfDay[selectedIndex]
+        if(substitutesOfDay != null && selected != -1) {
+            val substitute = substitutesOfDay[selected]
             view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
         }
     }
 
-    /*fun onAboutClicked() {
-        AboutLibs.start(context)
-    }*/
+    override fun saveState(bundle: Bundle) {
+        bundle.putInt(State.selected, selected)
+    }
 }
