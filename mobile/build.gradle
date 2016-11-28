@@ -11,7 +11,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4002
+        versionCode 4004
         versionName "4 ALPHA"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -69,7 +69,6 @@ dependencies {
         transitive = true
     }
     compile 'com.github.xiprox.errorview:library:2.+'
-    compile 'org.jsoup:jsoup:1.9.+'
     compile 'com.jakewharton:butterknife:+'
     apt 'com.jakewharton:butterknife-compiler:+'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
@@ -78,11 +77,8 @@ dependencies {
     compile 'com.google.firebase:firebase-core:+'
     compile 'com.github.paolorotolo:appintro:4.+'
     compile 'de.hdodenhof:circleimageview:2.+'
-
-    //compile 'com.google.android.gms:play-services-ads:8.+'
     compile 'com.squareup.retrofit2:converter-gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    //compile 'com.pawegio.kandroid:kandroid:0.6.14@aar'
     compile 'com.facebook.stetho:stetho:1.4.+'
     compile 'org.jetbrains.anko:anko-sdk15:+'
     compile 'org.jetbrains.anko:anko-support-v4:+'

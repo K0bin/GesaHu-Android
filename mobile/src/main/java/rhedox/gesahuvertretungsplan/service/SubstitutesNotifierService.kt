@@ -76,7 +76,8 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         this.intent = intent
     }
 
-    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {val notificationManager = NotificationManagerCompat.from(applicationContext)
+    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
+        val notificationManager = NotificationManagerCompat.from(applicationContext)
 
         notificationManager.cancelAll()
 

@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.ui.adapters;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.ColorInt;
+import android.support.annotation.Dimension;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -59,7 +60,8 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 	@ColorInt private int circleColor;
 	@ColorInt private int circleColorRelevant;
 
-	@NonNull private AnkoContext ankoContext;
+	@Dimension private float selectedElevation;
+
 	@NonNull private SubstituteView ankoComponent;
 
     @SuppressWarnings("ResourceType")
@@ -74,7 +76,8 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 	    circleColor = typedArray.getColor(0, 0);
 	    typedArray.recycle();
 
-	    ankoContext = AnkoContext.Companion.createReusable(context, this, false);
+	    selectedElevation = context.getResources().getDimension(R.dimen.touch_raise);
+
 	    ankoComponent = new SubstituteView(context);
     }
 
@@ -111,7 +114,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
         switch (viewType) {
             case ITEM_TYPE_SUBSTITUTE: {
 	            View view = ankoComponent.createView(viewGroup);
-                return new SubstituteViewHolder(view, presenter, pagerPosition, textColor, textColorRelevant, circleColor, circleColorRelevant);
+                return new SubstituteViewHolder(view, presenter, pagerPosition, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation);
             }
 
             case ITEM_TYPE_EMPTY_VIEW:

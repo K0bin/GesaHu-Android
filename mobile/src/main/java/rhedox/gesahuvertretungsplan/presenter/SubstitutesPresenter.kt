@@ -3,9 +3,8 @@ package rhedox.gesahuvertretungsplan.presenter
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
-import android.content.SyncRequest
-import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.NotificationCompatSideChannelService
 import android.util.Log
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
@@ -16,30 +15,54 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import java.util.*
 
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(context: Context, date: LocalDate? = null, private val canGoBack: Boolean = false, state: Bundle? = null) : BasePresenter(context, state), SubstitutesContract.Presenter {
-    private val date: LocalDate = getFirstDayOfWeek(date ?: SchoolWeek.nextFromNow())
-    private val wasDateProvided = date != null;
+class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: Boolean = false, state: Bundle? = null) : BasePresenter(context, state), SubstitutesContract.Presenter {
+    private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
     private var announcements = arrayOf("","","","","")
+    /**
+     * The selected substitute (of the current page); -1 for none
+     */
     private var selected = -1
     private var syncListenerHandle: Any;
+    /**
+     * The page (day of week) which is currently visible to the user
+     */
     private var currentPage: Int = 0;
-
     private var repository: SubstitutesRepository;
+
+    /**
+     * Determines whether or not the view was started by the date picker and is sitting on top of another SubstitutesActivity
+     */
+    private val canGoUp: Boolean;
 
     private object State {
         const val selected = "selected"
+        const val date = "date"
+        const val canGoUp = "canGoUp"
     }
 
     init {
-        currentPage = (date ?: SchoolWeek.nextFromNow()).dayOfWeek - DateTimeConstants.MONDAY
+        val _date: LocalDate;
+        if(state != null && state.containsKey(State.date))
+            _date = localDateFromUnix(state.getInt(State.date))
+        else if (date != null)
+            _date = date;
+        else
+            _date = SchoolWeek.nextFromNow()
+
+        if(state != null && state.containsKey(State.canGoUp))
+            this.canGoUp = state.getBoolean(State.canGoUp, false)
+        else
+            this.canGoUp = canGoUp;
+
+        currentPage = _date.dayOfWeek - DateTimeConstants.MONDAY
+        this.date = getFirstDayOfWeek(_date)
 
         repository = SubstitutesRepository(context)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
@@ -62,8 +85,8 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
         selected = state?.getInt(State.selected) ?: -1;
     }
 
-    override fun onViewAttached(view: BaseContract.View) {
-        super.onViewAttached(view)
+    override fun attachView(view: BaseContract.View) {
+        super.attachView(view)
 
         this.view = view as SubstitutesContract.View
         view.currentTab = currentPage
@@ -77,21 +100,22 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
                 date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
         )
 
-        if (wasDateProvided)
-            view.isBackButtonVisible = canGoBack
+        view.isBackButtonVisible = canGoUp
 
         view.isSwipeRefreshEnabled = account != null;
         view.currentDrawerId = R.id.substitutes;
         view.setSelected(currentPage, selected)
     }
 
-    override fun onViewDetached() {
-        super.onViewDetached()
+    override fun detachView() {
+        super.detachView()
         this.view = null;
     }
 
-    //repository.destroy()
-    //ContentResolver.removeStatusChangeListener(syncListenerHandle)
+    override fun destroy() {
+        repository.destroy()
+        ContentResolver.removeStatusChangeListener(syncListenerHandle)
+    }
 
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
@@ -189,5 +213,6 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, private va
 
     override fun saveState(bundle: Bundle) {
         bundle.putInt(State.selected, selected)
+        bundle.putInt(State.date, date.withFieldAdded(DurationFieldType.days(), currentPage).unixTimeStamp)
     }
 }

@@ -45,7 +45,7 @@ abstract class BasePresenter(context: Context, state: Bundle? = null) : BaseCont
         }
     }
 
-    override fun onViewAttached(view: BaseContract.View) {
+    override fun attachView(view: BaseContract.View) {
         this.view = view;
         view.userName = account?.name ?: ""
 
@@ -61,8 +61,12 @@ abstract class BasePresenter(context: Context, state: Bundle? = null) : BaseCont
         }
     }
 
-    override fun onViewDetached() {
+    override fun detachView() {
         this.view = null;
+    }
+
+    override fun destroy() {
+        boardsRepository.destroy()
     }
 
     private fun onBoardsLoaded(boards: List<Board>) {

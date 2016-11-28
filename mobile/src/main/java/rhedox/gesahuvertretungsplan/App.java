@@ -40,7 +40,7 @@ public class App extends Application {
 					.penaltyLog()
 					.penaltyDialog()
 					.build();
-			//StrictMode.setThreadPolicy(threadPolicy);
+			StrictMode.setThreadPolicy(threadPolicy);
 			Stetho.initializeWithDefaults(this);
 
 			refWatcher = LeakCanary.install(this);

@@ -7,7 +7,9 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
+import android.support.annotation.Dimension;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatTextView;
@@ -47,6 +49,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     @ColorInt private int textColorRelevant;
 	@ColorInt private int windowColor;
 	@ColorInt private int selectedColor;
+	@Dimension private float selectedElevation;
 
 	private SubstitutesContract.Presenter presenter;
 	private int pagerPosition;
@@ -55,11 +58,12 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 	private Animator backgroundAnimatorUnselect;
 
 	@SuppressWarnings("ResourceType")
-    public SubstituteViewHolder(View view, SubstitutesContract.Presenter presenter, int pagerPosition, int textColor, int textColorRelevant, int circleColor, int circleColorRelevant) {
+    public SubstituteViewHolder(View view, SubstitutesContract.Presenter presenter, int pagerPosition, int textColor, int textColorRelevant, int circleColor, int circleColorRelevant, float selectedElevation) {
         super(view);
 
 		this.textColor = textColor;
 		this.textColorRelevant = textColorRelevant;
+		this.selectedElevation = selectedElevation;
 
 		windowColor = ContextCompat.getColor(view.getContext(), R.color.windowBackground);
 		selectedColor = ContextCompat.getColor(view.getContext(), R.color.selected);
@@ -117,8 +121,14 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 		    } else {
 			    if(selected) {
 				    view.setBackgroundColor(selectedColor);
+				    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					    view.setElevation(0);
+				    }
 			    } else {
 				    view.setBackgroundColor(windowColor);
+				    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					    view.setElevation(selectedElevation);
+				    }
 			    }
 		    }
 	    }

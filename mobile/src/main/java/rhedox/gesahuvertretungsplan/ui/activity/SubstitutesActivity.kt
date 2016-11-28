@@ -51,11 +51,9 @@ import rhedox.gesahuvertretungsplan.model.unixTimeStamp
  * Created by robin on 20.10.2016.
  */
 class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
-    object Extra {
+    private object Extra {
         const val date = "date"
         const val back = "back"
-    }
-    object State {
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
@@ -148,13 +146,18 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         super.onCreate(savedInstanceState)
 
         //Create presenter
-        val unix = intent.extras?.getInt(Extra.date, -1);
-        val localDate = if (unix == null || unix == -1) null else localDateFromUnix(intent.extras.getInt(Extra.date))
-
         if(lastCustomNonConfigurationInstance != null)
             presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
-        else
-            presenter = SubstitutesPresenter(this, localDate, intent?.extras?.getBoolean(Extra.back, false) ?: false)
+        else {
+            if(savedInstanceState != null)
+                presenter = SubstitutesPresenter(this, state = savedInstanceState)
+            else {
+                val date = localDateFromUnix(intent.extras.getInt(Extra.date))
+                val canGoBack = intent?.extras?.getBoolean(Extra.back, false) ?: false
+
+                presenter = SubstitutesPresenter(this, date = date, canGoUp = canGoBack)
+            }
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setupTaskDescription()
@@ -234,12 +237,18 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
     override fun onStart() {
         super.onResume()
-        presenter.onViewAttached(this)
+        presenter.attachView(this)
     }
 
     override fun onStop() {
         super.onPause()
-        presenter.onViewDetached()
+        presenter.detachView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(!isChangingConfigurations)
+            presenter.destroy()
     }
 
     override fun populateList(position: Int, list: List<Substitute>) {
