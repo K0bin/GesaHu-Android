@@ -16,6 +16,18 @@ val LocalDate.unixTimeStamp: Int
 fun localDateFromUnix(seconds: Int): LocalDate {
     return DateTime(seconds * 1000L).toLocalDate()
 }
+fun localDateFromUnix(seconds: Int?): LocalDate? {
+    if(seconds == null)
+        return null
+    else
+        return DateTime(seconds * 1000L).toLocalDate()
+}
 fun dateTimeFromUnix(seconds: Int): DateTime {
     return DateTime(seconds * 1000L)
+}
+fun dateTimeFromUnix(seconds: Int?): DateTime? {
+    if(seconds == null)
+        return null;
+    else
+        return DateTime(seconds * 1000L)
 }

@@ -8,6 +8,4 @@ import android.support.v7.widget.RecyclerView;
 public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     public abstract void setSelected(int position);
-    public abstract void clearSelection();
-    public abstract int getSelectedIndex();
 }

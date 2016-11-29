@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.annotation.IntDef;
@@ -9,11 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.jetbrains.anko.AnkoContext;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -63,6 +61,8 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 	@Dimension private float selectedElevation;
 
 	@NonNull private SubstituteView ankoComponent;
+
+	private static final String STATE_SELECTED = "selected";
 
     @SuppressWarnings("ResourceType")
     public SubstitutesAdapter(int pagerPosition, @Nullable SubstitutesContract.Presenter presenter, @NonNull Context context) {
@@ -143,7 +143,6 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     * @param layoutManager The layoutManager of substitutes to display. If it's null, the RecyclerView will be cleared
      */
     public void showList(@Nullable List<Substitute> list) {
-	    Log.d("SubstitutesAdapter", "Showed layoutManager");
         if(list == null || list.size() == 0) {
             clear();
         } else {
@@ -162,13 +161,12 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 
             notifyItemRangeChanged(0, Math.min(this.list.size(), count));
 
-            //Update the selection
-            if(selected >= this.list.size())
-                clearSelection();
+            //Clear the selection
+            setSelected(-1);
         }
     }
     private void clear() {
-        clearSelection();
+	    setSelected(-1);
 	    int previousCount = getItemCount();
         list = Collections.emptyList();
 
@@ -201,20 +199,12 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 		}
 	}
 
-	@Override
-    public void clearSelection() {
-        if(selected == -1)
-            return;
+	public void saveState(@NonNull Bundle bundle) {
+		bundle.putInt(STATE_SELECTED, selected);
+	}
 
-		setViewHolderSelected(selected, false);
-        selected = -1;
+	public void restoreState(@NonNull Bundle bundle) {
+		setSelected(bundle.getInt(STATE_SELECTED, -1));
+	}
 
-	    if(presenter != null)
-		    presenter.onListItemSelected(pagerPosition, -1);
-    }
-
-    @Override
-    public int getSelectedIndex() {
-        return selected;
-    }
 }

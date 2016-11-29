@@ -10,7 +10,7 @@ import rhedox.gesahuvertretungsplan.model.Board
 interface BaseContract {
     interface Presenter {
         fun onNavigationDrawerItemClicked(drawerId: Int)
-        fun attachView(view: View)
+        fun attachView(view: View, isRecreated: Boolean)
         fun detachView()
         fun saveState(bundle: Bundle)
         fun destroy()

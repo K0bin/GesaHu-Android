@@ -42,8 +42,9 @@ class SubstitutesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        if(savedInstanceState != null && savedInstanceState.containsKey(State.layoutManager))
-            recycler.layoutManager!!.onRestoreInstanceState(savedInstanceState.getParcelable(State.layoutManager))
+        if(savedInstanceState != null)
+            if(savedInstanceState.containsKey(State.layoutManager))
+                recycler.layoutManager!!.onRestoreInstanceState(savedInstanceState.getParcelable(State.layoutManager))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -52,6 +53,8 @@ class SubstitutesFragment : Fragment() {
         if(activity is SubstitutesActivity)
             presenter = (activity as SubstitutesActivity).presenter
         adapter = SubstitutesAdapter(position, presenter, activity)
+        if(savedInstanceState != null)
+            adapter!!.restoreState(savedInstanceState)
 
         recycler.adapter = adapter
         presenter?.onTabCreated(position)
@@ -78,14 +81,16 @@ class SubstitutesFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putParcelable(State.layoutManager, recycler?.layoutManager?.onSaveInstanceState())
+        if(outState != null) {
+            outState.putParcelable(State.layoutManager, recycler?.layoutManager?.onSaveInstanceState())
+            adapter?.saveState(outState)
+        }
     }
 
     /**
      * Display the loaded layoutManager
      */
     fun populateList(substitutes: List<Substitute>) {
-        Log.d("SubstitutesFragment", "Showing layoutManager: $position, ${substitutes.size} items")
         items = substitutes
         adapter?.showList(items)
         recycler?.scrollToPosition(0)

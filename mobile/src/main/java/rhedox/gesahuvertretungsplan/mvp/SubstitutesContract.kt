@@ -15,13 +15,13 @@ interface SubstitutesContract {
         fun onFabClicked()
         fun onTabCreated(position: Int)
         fun onShareButtonClicked()
-        fun onListItemSelected(position: Int, listEntry: Int)
+        fun onListItemClicked(position: Int, listEntry: Int)
         fun onRefresh()
         fun onCabClosed()
     }
 
     interface View : BaseContract.View {
-        fun populateList(position: Int, list: List<Substitute>)
+        fun showList(position: Int, list: List<Substitute>)
         fun showDatePicker(defaultDate: LocalDate)
         var currentTab: Int
         var isFabVisible: Boolean

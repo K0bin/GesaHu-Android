@@ -51,12 +51,13 @@ import rhedox.gesahuvertretungsplan.model.unixTimeStamp
  * Created by robin on 20.10.2016.
  */
 class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
-    private object Extra {
+    object Extra {
         const val date = "date"
         const val back = "back"
     }
 
     override lateinit var presenter: SubstitutesContract.Presenter
+    private var isRecreated: Boolean = false
     private var pagerAdapter: SubstitutesPagerAdapter? = null
             private set;
     private lateinit var cabFadeIn: Animation;
@@ -146,14 +147,16 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         super.onCreate(savedInstanceState)
 
         //Create presenter
-        if(lastCustomNonConfigurationInstance != null)
+        if(lastCustomNonConfigurationInstance != null) {
             presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
-        else {
-            if(savedInstanceState != null)
+            isRecreated = true
+        } else {
+            if(savedInstanceState != null) {
                 presenter = SubstitutesPresenter(this, state = savedInstanceState)
-            else {
-                val date = localDateFromUnix(intent.extras.getInt(Extra.date))
-                val canGoBack = intent?.extras?.getBoolean(Extra.back, false) ?: false
+                isRecreated = true
+            } else {
+                val date = localDateFromUnix(intent.extras?.getInt(Extra.date))
+                val canGoBack = intent.extras?.getBoolean(Extra.back, false) ?: false
 
                 presenter = SubstitutesPresenter(this, date = date, canGoUp = canGoBack)
             }
@@ -200,8 +203,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         }
         cab.setNavigationOnClickListener {
             presenter.onCabClosed()
-            cab.startLayoutAnimation()
-            cab.visibility = View.GONE
+            isCabVisible = false
         }
         cabFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         cabFadeIn.setAnimationListener(object: Animation.AnimationListener {
@@ -237,7 +239,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
     override fun onStart() {
         super.onResume()
-        presenter.attachView(this)
+        presenter.attachView(this, isRecreated)
     }
 
     override fun onStop() {
@@ -251,7 +253,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             presenter.destroy()
     }
 
-    override fun populateList(position: Int, list: List<Substitute>) {
+    override fun showList(position: Int, list: List<Substitute>) {
         Log.d("SubstituesActivity", "Populating layoutManager: $position, ${list.size} items")
         val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.populateList(list)

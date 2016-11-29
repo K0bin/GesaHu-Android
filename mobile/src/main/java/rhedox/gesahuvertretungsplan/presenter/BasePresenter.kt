@@ -45,7 +45,7 @@ abstract class BasePresenter(context: Context, state: Bundle? = null) : BaseCont
         }
     }
 
-    override fun attachView(view: BaseContract.View) {
+    override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
         this.view = view;
         view.userName = account?.name ?: ""
 

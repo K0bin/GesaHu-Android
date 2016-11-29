@@ -33,7 +33,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     /**
      * The page (day of week) which is currently visible to the user
      */
-    private var currentPage: Int = 0;
+    private var currentPage: Int = -1;
     private var repository: SubstitutesRepository;
 
     /**
@@ -48,6 +48,11 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     }
 
     init {
+        if(state != null)
+            Log.d("Presenter", "constructor with state")
+        else
+            Log.d("Presenter", "constructor from scratch")
+
         val _date: LocalDate;
         if(state != null && state.containsKey(State.date))
             _date = localDateFromUnix(state.getInt(State.date))
@@ -56,13 +61,13 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         else
             _date = SchoolWeek.nextFromNow()
 
+        currentPage = _date.dayOfWeek - DateTimeConstants.MONDAY
+        this.date = getFirstDayOfWeek(_date)
+
         if(state != null && state.containsKey(State.canGoUp))
             this.canGoUp = state.getBoolean(State.canGoUp, false)
         else
             this.canGoUp = canGoUp;
-
-        currentPage = _date.dayOfWeek - DateTimeConstants.MONDAY
-        this.date = getFirstDayOfWeek(_date)
 
         repository = SubstitutesRepository(context)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
@@ -76,8 +81,10 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
             Log.d("SyncObserver", "Observed change in $it");
             if (account != null) {
-                (view as Activity).runOnUiThread {
-                    view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+                if(view is Activity) {
+                    (view as Activity).runOnUiThread {
+                        view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+                    }
                 }
             }
         })
@@ -85,12 +92,17 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         selected = state?.getInt(State.selected) ?: -1;
     }
 
-    override fun attachView(view: BaseContract.View) {
-        super.attachView(view)
+    override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
+        super.attachView(view, false)
+        Log.d("Presenter", "attachView")
 
         this.view = view as SubstitutesContract.View
+
         view.currentTab = currentPage
         view.isFabVisible = false
+        view.isCabVisible = selected != -1
+        if(selected != -1)
+            view.isAppBarExpanded = true
 
         view.tabTitles = arrayOf(
                 date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
@@ -101,10 +113,10 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         )
 
         view.isBackButtonVisible = canGoUp
-
         view.isSwipeRefreshEnabled = account != null;
         view.currentDrawerId = R.id.substitutes;
-        view.setSelected(currentPage, selected)
+
+        Log.d("Restore", "viewattached selected $selected")
     }
 
     override fun detachView() {
@@ -122,7 +134,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
 
         val position = date.dayOfWeekIndex
         this.substitutes[position] = substitutes
-        view?.populateList(position, substitutes)
+        view?.showList(position, substitutes)
         if(account != null)
             view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
@@ -161,7 +173,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         view?.showDialog(announcements[currentPage])
     }
 
-    override fun onListItemSelected(position: Int, listEntry: Int) {
+    override fun onListItemClicked(position: Int, listEntry: Int) {
         selected = if(selected == listEntry) -1 else listEntry
         if(view != null) {
             view!!.setSelected(position, selected)
@@ -181,24 +193,31 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     }
 
     override fun onActiveTabChanged(position: Int) {
+        Log.d("Presenter", "onActiveTabChanged position: $position")
+
         val previousPosition = currentPage
         currentPage = position
-        selected = -1
+        if(previousPosition != position)
+            selected = -1
 
         if(view != null) {
-            view!!.isCabVisible = false
-            view!!.setSelected(previousPosition, -1)
-            view!!.isFabVisible = announcements[currentPage] != ""
+            if(previousPosition != position) {
+                view!!.setSelected(previousPosition, -1)
+                view!!.isCabVisible = false
+            }
+            view!!.isFabVisible = selected == -1 && announcements[currentPage] != ""
         }
     }
 
     override fun onTabCreated(position: Int) {
-        Log.d("Presenter", "TabCreated: $position")
+        Log.d("Presenter", "onTabCreated position: $position")
 
-        view?.populateList(position, substitutes[position] ?: listOf())
+        if(substitutes[position] != null)
+            view?.showList(position, substitutes[position]!!)
     }
     override fun onCabClosed() {
         view!!.setSelected(currentPage, -1)
+        selected = -1;
         view!!.isCabVisible = false
     }
     override fun onShareButtonClicked() {

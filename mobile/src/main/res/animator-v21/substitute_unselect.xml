@@ -11,5 +11,5 @@
         android:valueFrom="@dimen/touch_raise"
         android:valueTo="0dp"
         android:valueType="floatType"
-        android:propertyName="translationZ"/>
+        android:propertyName="elevation"/>
 </set>

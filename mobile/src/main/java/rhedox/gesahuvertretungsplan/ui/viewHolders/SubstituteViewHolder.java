@@ -2,9 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.viewHolders;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -12,10 +9,8 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import butterknife.BindDrawable;
@@ -122,12 +117,12 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 			    if(selected) {
 				    view.setBackgroundColor(selectedColor);
 				    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-					    view.setElevation(0);
+					    view.setElevation(selectedElevation);
 				    }
 			    } else {
 				    view.setBackgroundColor(windowColor);
 				    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-					    view.setElevation(selectedElevation);
+					    view.setElevation(0);
 				    }
 			    }
 		    }
@@ -138,7 +133,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     @OnClick(R.id.rootFrame)
     public void Click(View view) {
 		if(presenter != null)
-			presenter.onListItemSelected(pagerPosition, this.getAdapterPosition());
+			presenter.onListItemClicked(pagerPosition, this.getAdapterPosition());
     }
 
     public void destroy() {
