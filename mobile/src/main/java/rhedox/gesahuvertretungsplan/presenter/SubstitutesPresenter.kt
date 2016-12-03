@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.NotificationCompatSideChannelService
 import android.util.Log
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
@@ -49,17 +48,20 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
 
     init {
         if(state != null)
-            Log.d("Presenter", "constructor with state")
+            Log.d("SubstitutesPresenter", "constructor with state")
         else
-            Log.d("Presenter", "constructor from scratch")
+            Log.d("SubstitutesPresenter", "constructor from scratch")
 
         val _date: LocalDate;
-        if(state != null && state.containsKey(State.date))
+        if(state != null && state.containsKey(State.date)) {
             _date = localDateFromUnix(state.getInt(State.date))
+        }
         else if (date != null)
             _date = date;
         else
             _date = SchoolWeek.nextFromNow()
+
+        Log.d("SubstitutesPresenter", "Date: ${_date}")
 
         currentPage = _date.dayOfWeek - DateTimeConstants.MONDAY
         this.date = getFirstDayOfWeek(_date)
@@ -94,7 +96,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
 
     override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
         super.attachView(view, false)
-        Log.d("Presenter", "attachView")
+        Log.d("SubstitutesPresenter", "attachView")
 
         this.view = view as SubstitutesContract.View
 
@@ -116,12 +118,13 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         view.isSwipeRefreshEnabled = account != null;
         view.currentDrawerId = R.id.substitutes;
 
-        Log.d("Restore", "viewattached selected $selected")
+        Log.d("SubstitutesPresenter", "viewattached selected $selected")
     }
 
     override fun detachView() {
         super.detachView()
         this.view = null;
+        Log.d("SubstitutesPresenter", "view detached")
     }
 
     override fun destroy() {
@@ -193,7 +196,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     }
 
     override fun onActiveTabChanged(position: Int) {
-        Log.d("Presenter", "onActiveTabChanged position: $position")
+        Log.d("SubstitutesPresenter", "onActiveTabChanged position: $position")
 
         val previousPosition = currentPage
         currentPage = position
@@ -210,7 +213,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     }
 
     override fun onTabCreated(position: Int) {
-        Log.d("Presenter", "onTabCreated position: $position")
+        Log.d("SubstitutesPresenter", "onTabCreated position: $position")
 
         if(substitutes[position] != null)
             view?.showList(position, substitutes[position]!!)

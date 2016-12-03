@@ -254,7 +254,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun showList(position: Int, list: List<Substitute>) {
-        Log.d("SubstituesActivity", "Populating layoutManager: $position, ${list.size} items")
         val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.populateList(list)
     }

@@ -68,6 +68,9 @@ object SubstitutesContract {
     }
 
     fun uriWithDate(date: LocalDate): Uri {
+        if(date.unixTimeStamp < 0)
+            throw RuntimeException(date.toString());
+
         return Uri.withAppendedPath(dateUri, date.unixTimeStamp.toString())
     }
     fun uriWithSeconds(seconds: Int): Uri {
