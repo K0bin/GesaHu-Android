@@ -135,9 +135,12 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
 
-        val position = date.dayOfWeekIndex
-        this.substitutes[position] = substitutes
-        view?.showList(position, substitutes)
+        if (date.weekOfWeekyear != this.date.weekOfWeekyear) {
+            val position = date.dayOfWeekIndex
+            this.substitutes[position] = substitutes
+            view?.showList(position, substitutes)
+        }
+
         if(account != null)
             view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
