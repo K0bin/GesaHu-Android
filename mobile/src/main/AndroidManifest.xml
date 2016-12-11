@@ -55,7 +55,7 @@
         </activity>
 
         <service
-            android:name=".service.DashClockExtension"
+            android:name=".service.SubstitutesDashClockExtension"
             android:icon="@drawable/ic_notification"
             android:label="Gesahu Vertretungsplan"
             android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
@@ -148,11 +148,6 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/boards_sync_adapter"/>
         </service>
-
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
-        </activity>
     </application>
 
 </manifest>
