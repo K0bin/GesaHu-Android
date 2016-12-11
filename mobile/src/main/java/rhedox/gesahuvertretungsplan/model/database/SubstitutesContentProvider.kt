@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import org.joda.time.DateTime
+import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesWidgetProvider
 import rhedox.gesahuvertretungsplan.model.database.SqLiteHelper
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
@@ -97,6 +98,10 @@ class SubstitutesContentProvider : ContentProvider() {
             announcementsById -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
+
+        val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
+        context.sendBroadcast(intent)
+
         return rowsDeleted;
     }
 
@@ -128,6 +133,10 @@ class SubstitutesContentProvider : ContentProvider() {
         }
         context.contentResolver.notifyChange(insertUri, null, false);
         context.contentResolver.notifyChange(dateUri, null, false);
+
+        val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
+        context.sendBroadcast(intent)
+
         return insertUri;
     }
 
@@ -178,6 +187,9 @@ class SubstitutesContentProvider : ContentProvider() {
         }
         for(dateUri in dateUris)
             context.contentResolver.notifyChange(dateUri, null, false);
+
+        val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
+        context.sendBroadcast(intent)
 
         return changed;
     }

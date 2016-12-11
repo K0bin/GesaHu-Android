@@ -18,8 +18,8 @@ import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
-import rhedox.gesahuvertretungsplan.model.localDateFromUnix
-import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.io.IOException
 
 /**

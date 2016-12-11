@@ -5,8 +5,8 @@
     <color name="colorDefaultAccent">#448aff</color>
 
     <color name="preference_fallback_accent_color">#448aff</color>
-    <color name="widgetBackgroundLight">#FF303030</color>
-    <color name="widgetBackgroundDark">#FFFAFAFA</color>
+    <color name="widgetBackgroundDark">#FF303030</color>
+    <color name="widgetBackgroundLight">#FFFAFAFA</color>
 
     <!-- Intro -->
     <color name="intro_slide_1">#ff4CAF50</color>

@@ -5,7 +5,7 @@ import android.database.Cursor
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 19.10.2016.

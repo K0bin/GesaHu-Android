@@ -14,6 +14,8 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.util.*
 
 /**
@@ -135,7 +137,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
 
-        if (date.weekOfWeekyear != this.date.weekOfWeekyear) {
+        if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
             this.substitutes[position] = substitutes
             view?.showList(position, substitutes)
@@ -146,9 +148,12 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     }
 
     fun onAnnouncementLoaded(date:LocalDate, text: String) {
-        val position = date.dayOfWeekIndex
-        announcements[position] = text
-        view?.isFabVisible = selected == -1 && announcements[currentPage] != "";
+        if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
+            val position = date.dayOfWeekIndex
+            announcements[position] = text
+            view?.isFabVisible = selected == -1 && announcements[currentPage] != "";
+        }
+
         if(account != null)
             view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }

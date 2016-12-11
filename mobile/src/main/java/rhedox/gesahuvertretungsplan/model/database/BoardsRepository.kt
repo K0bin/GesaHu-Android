@@ -15,8 +15,8 @@ import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.database.tables.*
-import rhedox.gesahuvertretungsplan.model.localDateFromUnix
-import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 
 /**

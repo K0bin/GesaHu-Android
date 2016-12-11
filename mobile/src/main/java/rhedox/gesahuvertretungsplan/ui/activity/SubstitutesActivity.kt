@@ -44,8 +44,8 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.view.animation.DecelerateInterpolator
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.share
-import rhedox.gesahuvertretungsplan.model.localDateFromUnix
-import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 20.10.2016.

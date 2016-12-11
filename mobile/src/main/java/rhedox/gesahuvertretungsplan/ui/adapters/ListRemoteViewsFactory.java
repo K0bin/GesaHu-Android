@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.List;
@@ -22,9 +21,8 @@ import rhedox.gesahuvertretungsplan.model.api.GesaHuApi;
 import rhedox.gesahuvertretungsplan.model.api.QueryDate;
 import rhedox.gesahuvertretungsplan.model.Substitute;
 import rhedox.gesahuvertretungsplan.model.SubstitutesList;
-import rhedox.gesahuvertretungsplan.broadcastReceiver.ListWidgetProvider;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesWidgetProvider;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
-import rhedox.gesahuvertretungsplan.service.ListFactoryService;
 
 /**
  * Created by Robin on 22.07.2015.
@@ -43,7 +41,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         this.context = context;
         appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-        date = new DateTime(intent.getLongExtra(ListFactoryService.EXTRA_DATE, 0l)).toLocalDate();
+        //date = new DateTime(intent.getLongExtra(ListFactoryService.EXTRA_DATE, 0l)).toLocalDate();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
@@ -159,7 +157,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
         if (appWidgetId == -1) {
-            int[] ids = widgetManager.getAppWidgetIds(new ComponentName(context, ListWidgetProvider.class));
+            int[] ids = widgetManager.getAppWidgetIds(new ComponentName(context, SubstitutesWidgetProvider.class));
 
             widgetManager.notifyAppWidgetViewDataChanged(ids, R.id.list);
         } else {

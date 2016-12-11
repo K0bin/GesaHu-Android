@@ -83,7 +83,7 @@
 
         <!-- List Widget -->
         <receiver
-            android:name=".broadcastReceiver.ListWidgetProvider"
+            android:name=".broadcastReceiver.SubstitutesWidgetProvider"
             android:label="@string/widget_list_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -95,7 +95,7 @@
         </receiver>
 
         <service
-            android:name=".service.ListFactoryService"
+            android:name=".service.SubstitutesWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>

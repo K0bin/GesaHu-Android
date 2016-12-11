@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 19.10.2016.

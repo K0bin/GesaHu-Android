@@ -22,8 +22,8 @@ import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
-import rhedox.gesahuvertretungsplan.model.localDateFromUnix
-import rhedox.gesahuvertretungsplan.model.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 
@@ -154,5 +154,17 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
             if(uri != null)
                 callback(uri)
         }
+    }
+
+    companion object {
+        @JvmStatic
+        fun loadSubstitutesForDaySync(context: Context, date: LocalDate, onlyRelevant: Boolean = false): List<Substitute> {
+            val filter = if(onlyRelevant) "${SubstitutesContract.Table.columnIsRelevant} = '1'" else null;
+            val cursor = context.contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), filter, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnLessonEnd} ASC, ${SubstitutesContract.Table.columnCourse}");
+            val substitutes = SubstituteAdapter.listFromCursor(cursor)
+            cursor.close()
+            return substitutes;
+        }
+
     }
 }
