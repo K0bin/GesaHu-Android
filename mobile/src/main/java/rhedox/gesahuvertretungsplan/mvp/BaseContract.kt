@@ -12,8 +12,8 @@ interface BaseContract {
         fun onNavigationDrawerItemClicked(drawerId: Int)
         fun attachView(view: View, isRecreated: Boolean)
         fun detachView()
-        fun saveState(bundle: Bundle)
         fun destroy()
+        fun saveState(bundle: Bundle)
     }
 
     interface View {

@@ -53,9 +53,6 @@ class SubstitutesFragment : Fragment() {
         if(activity is SubstitutesActivity)
             presenter = (activity as SubstitutesActivity).presenter
         adapter = SubstitutesAdapter(position, presenter, activity)
-        if(savedInstanceState != null)
-            adapter!!.restoreState(savedInstanceState)
-
         recycler.adapter = adapter
         presenter?.onTabCreated(position)
     }
@@ -81,10 +78,7 @@ class SubstitutesFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        if(outState != null) {
-            outState.putParcelable(State.layoutManager, recycler?.layoutManager?.onSaveInstanceState())
-            adapter?.saveState(outState)
-        }
+        outState?.putParcelable(State.layoutManager, recycler?.layoutManager?.onSaveInstanceState())
     }
 
     /**
@@ -96,8 +90,8 @@ class SubstitutesFragment : Fragment() {
         recycler?.scrollToPosition(0)
     }
 
-    fun setSelected(listPosition: Int) {
-        adapter?.setSelected(listPosition)
+    fun setSelected(listPosition: Int?) {
+        adapter?.setSelected(listPosition ?: -1)
     }
 
     companion object {

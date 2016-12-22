@@ -11,7 +11,7 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4008
+        versionCode 4009
         versionName "4 ALPHA"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -92,17 +92,16 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.+'
     androidTestCompile 'com.android.support.test:rules:0.+'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    //testCompile 'org.testng:testng:6.9.6'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.+'
     testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.0'
-    testCompile 'com.google.guava:guava:19.0'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
-    testCompile 'org.mockito:mockito-core:2.+'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
-    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.5'
-    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.5'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+    testCompile 'org.robolectric:robolectric:3.+'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'
+    //testCompile 'org.mockito:mockito-core:2.+'
+    testCompile 'org.powermock:powermock-api-mockito:1.+'
+    testCompile "org.powermock:powermock-classloading-xstream:1.+"
+    testCompile 'org.powermock:powermock-module-junit4-rule-agent:+'
+    testCompile 'org.powermock:powermock-module-junit4-rule:+'
+    testCompile 'org.powermock:powermock-module-junit4:+'
 }
 repositories {
     mavenCentral()

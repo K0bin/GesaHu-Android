@@ -15,6 +15,7 @@ import android.widget.RemoteViews;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
+import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter;
 import rhedox.gesahuvertretungsplan.service.SubstitutesWidgetService;
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
@@ -65,7 +66,7 @@ public class SubstitutesWidgetProvider extends AppWidgetProvider {
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
             Intent onClickIntent = new Intent(context, SubstitutesActivity.class);
-            onClickIntent.putExtra(SubstitutesActivity.Extra.date, JodaTimeUtils.getUnixTimeStamp(SchoolWeek.nextFromNow()));
+            onClickIntent.putExtras(SubstitutesPresenter.createState(SchoolWeek.nextFromNow(), false, -1));
             PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 

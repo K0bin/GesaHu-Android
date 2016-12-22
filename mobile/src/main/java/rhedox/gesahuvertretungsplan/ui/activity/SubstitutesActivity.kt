@@ -51,11 +51,6 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
  * Created by robin on 20.10.2016.
  */
 class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
-    object Extra {
-        const val date = "date"
-        const val back = "back"
-    }
-
     override lateinit var presenter: SubstitutesContract.Presenter
     private var isRecreated: Boolean = false
     private var pagerAdapter: SubstitutesPagerAdapter? = null
@@ -152,13 +147,10 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
             isRecreated = true
         } else {
             if(savedInstanceState != null) {
-                presenter = SubstitutesPresenter(this, state = savedInstanceState)
+                presenter = SubstitutesPresenter(this, savedInstanceState)
                 isRecreated = true
             } else {
-                val date = localDateFromUnix(intent.extras?.getInt(Extra.date))
-                val canGoBack = intent.extras?.getBoolean(Extra.back, false) ?: false
-
-                presenter = SubstitutesPresenter(this, date = date, canGoUp = canGoBack)
+                presenter = SubstitutesPresenter(this, intent.extras ?: Bundle.EMPTY)
             }
         }
 
@@ -267,7 +259,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         picker.show(supportFragmentManager, "Datepicker")
     }
 
-    override fun setSelected(position: Int, listPosition: Int) {
+    override fun setSelected(position: Int, listPosition: Int?) {
         val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
         fragment?.setSelected(listPosition)
     }
@@ -299,7 +291,9 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {
-        val intent = intentFor<SubstitutesActivity>(Extra.back to true, Extra.date to date.unixTimeStamp)
+        val state = SubstitutesPresenter.createState(date, true)
+        val intent = intentFor<SubstitutesActivity>()
+        intent.putExtras(state)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
     }

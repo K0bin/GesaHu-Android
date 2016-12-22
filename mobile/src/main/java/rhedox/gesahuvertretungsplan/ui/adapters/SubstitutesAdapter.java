@@ -198,13 +198,4 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 			substituteViewHolder.setSelected(isSelected, true);
 		}
 	}
-
-	public void saveState(@NonNull Bundle bundle) {
-		bundle.putInt(STATE_SELECTED, selected);
-	}
-
-	public void restoreState(@NonNull Bundle bundle) {
-		setSelected(bundle.getInt(STATE_SELECTED, -1));
-	}
-
 }

@@ -19,7 +19,7 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BasePresenter(context: Context, state: Bundle? = null) : BaseContract.Presenter {
+abstract class BasePresenter(context: Context) : BaseContract.Presenter {
     protected val context: Context = context.applicationContext
     private var view: BaseContract.View? = null;
     protected var account: Account? = null;

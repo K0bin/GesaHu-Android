@@ -9,9 +9,12 @@ import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.*
+import rhedox.gesahuvertretungsplan.model.SchoolWeek
+import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.dayOfWeekIndex
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
@@ -21,20 +24,20 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: Boolean = false, state: Bundle? = null) : BasePresenter(context, state), SubstitutesContract.Presenter {
+class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(context), SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
     private var announcements = arrayOf("","","","","")
     /**
-     * The selected substitute (of the current page); -1 for none
+     * The selected substitute (of the current page); null for none
      */
-    private var selected = -1
+    private var selected: Int? = null
     private var syncListenerHandle: Any;
     /**
      * The page (day of week) which is currently visible to the user
      */
-    private var currentPage: Int = -1;
+    private var currentPage: Int;
     private var repository: SubstitutesRepository;
 
     /**
@@ -43,35 +46,36 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     private val canGoUp: Boolean;
 
     private object State {
-        const val selected = "selected"
         const val date = "date"
         const val canGoUp = "canGoUp"
+        const val selected = "selected"
+    }
+
+    companion object {
+        @JvmStatic
+        fun createState(date: LocalDate?, canGoUp: Boolean = false, selected: Int? = null): Bundle {
+            val bundle = Bundle();
+            bundle.putInt(State.date, date?.unixTimeStamp ?: 0)
+            bundle.putInt(State.selected, selected ?: -1)
+            bundle.putBoolean(State.canGoUp, canGoUp)
+            return bundle;
+        }
     }
 
     init {
-        if(state != null)
-            Log.d("SubstitutesPresenter", "constructor with state")
-        else
-            Log.d("SubstitutesPresenter", "constructor from scratch")
-
+        val seconds = state.getInt(State.date, 0);
         val _date: LocalDate;
-        if(state != null && state.containsKey(State.date)) {
-            _date = localDateFromUnix(state.getInt(State.date))
-        }
-        else if (date != null)
-            _date = date;
-        else
-            _date = SchoolWeek.nextFromNow()
 
-        Log.d("SubstitutesPresenter", "Date: ${_date}")
+        if (seconds == 0)
+            _date = SchoolWeek.nextFromNow()
+        else
+            _date = localDateFromUnix(seconds)
+
+        Log.d("SubstitutesPresenter", "Date: $_date")
 
         currentPage = _date.dayOfWeek - DateTimeConstants.MONDAY
         this.date = getFirstDayOfWeek(_date)
-
-        if(state != null && state.containsKey(State.canGoUp))
-            this.canGoUp = state.getBoolean(State.canGoUp, false)
-        else
-            this.canGoUp = canGoUp;
+        this.canGoUp = state.getBoolean(State.canGoUp, false)
 
         repository = SubstitutesRepository(context)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
@@ -82,7 +86,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
             repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
         }
 
-        syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE or ContentResolver.SYNC_OBSERVER_TYPE_PENDING or ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS, {
+        syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, {
             Log.d("SyncObserver", "Observed change in $it");
             if (account != null) {
                 if(view is Activity) {
@@ -93,7 +97,8 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
             }
         })
 
-        selected = state?.getInt(State.selected) ?: -1;
+        val stateSelected = state.getInt(State.selected, -1)
+        selected = if (stateSelected != -1) stateSelected else null
     }
 
     override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
@@ -103,9 +108,10 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         this.view = view as SubstitutesContract.View
 
         view.currentTab = currentPage
-        view.isFabVisible = false
-        view.isCabVisible = selected != -1
-        if(selected != -1)
+        view.isFabVisible = selected == null && announcements[currentPage].isNotEmpty()
+        view.isCabVisible = selected != null
+        view.setSelected(currentPage, selected)
+        if(selected != null)
             view.isAppBarExpanded = true
 
         view.tabTitles = arrayOf(
@@ -151,7 +157,7 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
             announcements[position] = text
-            view?.isFabVisible = selected == -1 && announcements[currentPage] != "";
+            view?.isFabVisible = selected == null && announcements[currentPage] != "";
         }
 
         if(account != null)
@@ -185,14 +191,14 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
     }
 
     override fun onListItemClicked(position: Int, listEntry: Int) {
-        selected = if(selected == listEntry) -1 else listEntry
+        selected = if(selected == listEntry) null else listEntry
         if(view != null) {
             view!!.setSelected(position, selected)
-            view!!.isCabVisible = selected != -1
-            if(selected != -1)
+            view!!.isCabVisible = selected != null
+            if(selected != null)
                 view!!.isAppBarExpanded = true;
 
-            view!!.isFabVisible = selected == -1 && announcements[currentPage] != "";
+            view!!.isFabVisible = selected == null && announcements[currentPage] != "";
         }
     }
 
@@ -209,14 +215,16 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
         val previousPosition = currentPage
         currentPage = position
         if(previousPosition != position)
-            selected = -1
+            selected = null
 
         if(view != null) {
             if(previousPosition != position) {
-                view!!.setSelected(previousPosition, -1)
+                view!!.setSelected(previousPosition, null)
                 view!!.isCabVisible = false
+            } else {
+                view!!.setSelected(previousPosition, selected)
             }
-            view!!.isFabVisible = selected == -1 && announcements[currentPage] != ""
+            view!!.isFabVisible = selected == null && announcements[currentPage] != ""
         }
     }
 
@@ -225,24 +233,27 @@ class SubstitutesPresenter(context: Context, date: LocalDate? = null, canGoUp: B
 
         if(substitutes[position] != null)
             view?.showList(position, substitutes[position]!!)
+
+        if(position == currentPage)
+            view!!.setSelected(currentPage, selected)
     }
     override fun onCabClosed() {
-        view!!.setSelected(currentPage, -1)
-        selected = -1;
+        view!!.setSelected(currentPage, null)
+        selected = null;
         view!!.isCabVisible = false
     }
     override fun onShareButtonClicked() {
         val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
         val substitutesOfDay = substitutes[currentPage]
 
-        if(substitutesOfDay != null && selected != -1) {
-            val substitute = substitutesOfDay[selected]
+        if(substitutesOfDay != null && selected != null) {
+            val substitute = substitutesOfDay[selected!!]
             view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
         }
     }
-
     override fun saveState(bundle: Bundle) {
-        bundle.putInt(State.selected, selected)
+        bundle.putInt(State.selected, selected ?: 0)
+        bundle.putBoolean(State.canGoUp, false)
         bundle.putInt(State.date, date.withFieldAdded(DurationFieldType.days(), currentPage).unixTimeStamp)
     }
 }

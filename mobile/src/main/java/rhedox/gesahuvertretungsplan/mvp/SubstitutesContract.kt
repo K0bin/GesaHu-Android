@@ -31,7 +31,7 @@ interface SubstitutesContract {
         var isRefreshing: Boolean
         var isSwipeRefreshEnabled: Boolean
         var isCabVisible: Boolean
-        fun setSelected(position: Int, listPosition: Int)
+        fun setSelected(position: Int, listPosition: Int?)
         fun showDialog(text: String)
         fun openSubstitutesForDate(date: LocalDate)
         fun share(text: String)
