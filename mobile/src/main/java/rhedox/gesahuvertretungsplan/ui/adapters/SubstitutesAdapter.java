@@ -189,7 +189,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 	}
 
 	private void setViewHolderSelected(int position, boolean isSelected) {
-		if(recyclerView == null)
+		if(recyclerView == null || position == -1)
 			return;
 
 		RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);

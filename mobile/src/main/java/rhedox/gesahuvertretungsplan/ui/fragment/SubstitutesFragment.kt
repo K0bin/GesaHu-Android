@@ -54,7 +54,7 @@ class SubstitutesFragment : Fragment() {
             presenter = (activity as SubstitutesActivity).presenter
         adapter = SubstitutesAdapter(position, presenter, activity)
         recycler.adapter = adapter
-        presenter?.onTabCreated(position)
+        presenter?.onPageAttached(position)
     }
 
     override fun onAttach(context: Context?) {

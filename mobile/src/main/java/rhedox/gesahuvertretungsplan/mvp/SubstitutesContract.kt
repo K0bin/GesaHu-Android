@@ -11,9 +11,9 @@ interface SubstitutesContract {
         fun onDatePickerIconClicked();
         fun onDatePicked(date: LocalDate)
         fun getSubstitutes(position: Int): List<Substitute>
-        fun onActiveTabChanged(position: Int)
+        fun onActivePageChanged(position: Int)
         fun onFabClicked()
-        fun onTabCreated(position: Int)
+        fun onPageAttached(position: Int)
         fun onShareButtonClicked()
         fun onListItemClicked(position: Int, listEntry: Int)
         fun onRefresh()

@@ -209,8 +209,8 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
             view?.isRefreshing = false
     }
 
-    override fun onActiveTabChanged(position: Int) {
-        Log.d("SubstitutesPresenter", "onActiveTabChanged position: $position")
+    override fun onActivePageChanged(position: Int) {
+        Log.d("SubstitutesPresenter", "onActivePageChanged position: $position, selected: $selected, currentPage: $currentPage")
 
         val previousPosition = currentPage
         currentPage = position
@@ -228,8 +228,8 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
         }
     }
 
-    override fun onTabCreated(position: Int) {
-        Log.d("SubstitutesPresenter", "onTabCreated position: $position")
+    override fun onPageAttached(position: Int) {
+        Log.d("SubstitutesPresenter", "onPageAttached position: $position, selected: $selected, currentPage: $currentPage")
 
         if(substitutes[position] != null)
             view?.showList(position, substitutes[position]!!)
@@ -252,7 +252,7 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
         }
     }
     override fun saveState(bundle: Bundle) {
-        bundle.putInt(State.selected, selected ?: 0)
+        bundle.putInt(State.selected, selected ?: -1)
         bundle.putBoolean(State.canGoUp, false)
         bundle.putInt(State.date, date.withFieldAdded(DurationFieldType.days(), currentPage).unixTimeStamp)
     }

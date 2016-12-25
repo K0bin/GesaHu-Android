@@ -50,7 +50,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.OnPageChangeListener {
+class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     override lateinit var presenter: SubstitutesContract.Presenter
     private var isRecreated: Boolean = false
     private var pagerAdapter: SubstitutesPagerAdapter? = null
@@ -163,7 +163,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
-        viewPager.addOnPageChangeListener(this)
 
         fab.visibility = View.GONE
         fab.isEnabled = false
@@ -177,9 +176,10 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
                 swipeRefreshLayout.isGuestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-            override fun onPageSelected(position: Int) {}
+            override fun onPageSelected(position: Int) {
+                presenter.onActivePageChanged(position)
+            }
         })
-
         fab.setOnClickListener { presenter.onFabClicked() }
 
         cab.inflateMenu(R.menu.menu_cab_main)
@@ -300,12 +300,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View, ViewPager.
 
     override fun share(text: String) {
         share(text, "")
-    }
-
-    override fun onPageScrollStateChanged(state: Int) { }
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) { }
-    override fun onPageSelected(position: Int) {
-        presenter.onActiveTabChanged(position)
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
