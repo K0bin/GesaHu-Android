@@ -108,9 +108,8 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
         this.view = view as SubstitutesContract.View
 
         view.currentTab = currentPage
-        view.isFabVisible = selected == null && announcements[currentPage].isNotEmpty()
+        view.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
         view.isCabVisible = selected != null
-        view.setSelected(currentPage, selected)
         if(selected != null)
             view.isAppBarExpanded = true
 
@@ -157,7 +156,7 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
             announcements[position] = text
-            view?.isFabVisible = selected == null && announcements[currentPage] != "";
+            view?.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
         }
 
         if(account != null)
@@ -183,22 +182,19 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
             view?.currentTab = dayIndex
         }
     }
-    override fun getSubstitutes(position: Int): List<Substitute> {
-        return substitutes[position] ?: listOf()
-    }
     override fun onFabClicked() {
         view?.showDialog(announcements[currentPage])
     }
 
-    override fun onListItemClicked(position: Int, listEntry: Int) {
+    override fun onListItemClicked(listEntry: Int) {
         selected = if(selected == listEntry) null else listEntry
         if(view != null) {
-            view!!.setSelected(position, selected)
+            view!!.setSelected(currentPage, selected)
             view!!.isCabVisible = selected != null
             if(selected != null)
                 view!!.isAppBarExpanded = true;
 
-            view!!.isFabVisible = selected == null && announcements[currentPage] != "";
+            view!!.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
         }
     }
 
@@ -219,28 +215,30 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
 
         if(view != null) {
             if(previousPosition != position) {
-                view!!.setSelected(previousPosition, null)
                 view!!.isCabVisible = false
-            } else {
-                view!!.setSelected(previousPosition, selected)
+                view!!.setSelected(previousPosition, null)
             }
-            view!!.isFabVisible = selected == null && announcements[currentPage] != ""
+            view!!.setSelected(position, selected)
+            view!!.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
         }
     }
 
     override fun onPageAttached(position: Int) {
         Log.d("SubstitutesPresenter", "onPageAttached position: $position, selected: $selected, currentPage: $currentPage")
 
-        if(substitutes[position] != null)
-            view?.showList(position, substitutes[position]!!)
+        if(view != null) {
+            if (substitutes[position] != null)
+                view!!.showList(position, substitutes[position]!!)
 
-        if(position == currentPage)
-            view!!.setSelected(currentPage, selected)
+            if (position == currentPage)
+                view!!.setSelected(position, selected)
+        }
     }
     override fun onCabClosed() {
         view!!.setSelected(currentPage, null)
         selected = null;
         view!!.isCabVisible = false
+        view!!.isFabVisible = announcements[currentPage].isNotBlank()
     }
     override fun onShareButtonClicked() {
         val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
@@ -251,6 +249,17 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
             view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
         }
     }
+
+    override fun onBackPressed() {
+        if(selected != null) {
+            selected = null;
+            view?.setSelected(currentPage, null)
+            view?.isCabVisible = false;
+        } else {
+            view?.goBack()
+        }
+    }
+
     override fun saveState(bundle: Bundle) {
         bundle.putInt(State.selected, selected ?: -1)
         bundle.putBoolean(State.canGoUp, false)

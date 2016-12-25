@@ -10,14 +10,14 @@ interface SubstitutesContract {
     interface Presenter : BaseContract.Presenter {
         fun onDatePickerIconClicked();
         fun onDatePicked(date: LocalDate)
-        fun getSubstitutes(position: Int): List<Substitute>
         fun onActivePageChanged(position: Int)
         fun onFabClicked()
         fun onPageAttached(position: Int)
         fun onShareButtonClicked()
-        fun onListItemClicked(position: Int, listEntry: Int)
+        fun onListItemClicked(listEntry: Int)
         fun onRefresh()
         fun onCabClosed()
+        fun onBackPressed()
     }
 
     interface View : BaseContract.View {
@@ -35,5 +35,7 @@ interface SubstitutesContract {
         fun showDialog(text: String)
         fun openSubstitutesForDate(date: LocalDate)
         fun share(text: String)
+        fun goBack()
+        fun finish()
     }
 }

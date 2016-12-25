@@ -1,58 +1,63 @@
 package rhedox.gesahuvertretungsplan.ui.adapters
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import org.joda.time.DurationFieldType
-import org.joda.time.LocalDate
+import android.os.Bundle
+import android.os.Parcelable
+import android.support.v4.view.PagerAdapter
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.ui.fragment.SubstitutesFragment
-import java.util.*
 
 /**
- * Created by robin on 20.10.2016.
+ * Created by robin on 25.12.2016.
  */
-class SubstitutesPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager) {
-
-    private var fragments: Array<SubstitutesFragment?> = kotlin.arrayOfNulls<SubstitutesFragment?>(5)
+class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Presenter) : PagerAdapter() {
 
     var tabTitles: Array<String> = arrayOf("","","","","")
 
-    override fun getItem(position: Int): Fragment {
-        val fragment = SubstitutesFragment.createInstance(position)
-        fragments[position] = fragment
-        return fragment
+    private val adapters = arrayOfNulls<SubstitutesAdapter>(5)
+
+    private val layoutManagerStates = arrayOfNulls<Parcelable>(5)
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val inflater = LayoutInflater.from(container.context)
+        val recyclerView = inflater.inflate(R.layout.fragment_main, container, false) as RecyclerView;
+        val layoutManager = LinearLayoutManager(container.context, LinearLayoutManager.VERTICAL, false)
+        if(layoutManagerStates[position] != null)
+            layoutManager.onRestoreInstanceState(layoutManagerStates[position])
+        recyclerView.layoutManager = layoutManager
+        val adapter = SubstitutesAdapter(presenter, container.context)
+        recyclerView.adapter = adapter;
+
+        container.addView(recyclerView, 0);
+        adapters[position] = adapter;
+        presenter.onPageAttached(position)
+        return recyclerView
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, page: Any) {
+        val recyclerView = page as RecyclerView
+        layoutManagerStates[position] = recyclerView.layoutManager.onSaveInstanceState()
+
+        container.removeView(recyclerView);
+    }
+
+    override fun isViewFromObject(view: View?, page: Any?): Boolean {
+        return view == page;
     }
 
     override fun getCount(): Int {
-        return 5
+        return 5;
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return tabTitles[position]
     }
 
-    fun makeFragmentName(viewPagerId: Int, fragmentPosition: Int): String {
-        return "android:switcher:$viewPagerId:$fragmentPosition"
-    }
-
-    fun getFragment(manager: FragmentManager, position: Int): SubstitutesFragment? {
-        if (position < 0 || position >= fragments.size)
-            return null;
-
-        var substitutesFragment: SubstitutesFragment? = fragments[position]
-        if (substitutesFragment != null)
-            return substitutesFragment
-        else {
-            val fragment = manager.findFragmentByTag(makeFragmentName(R.id.viewPager, position))
-            if (fragment != null && fragment is SubstitutesFragment) {
-                substitutesFragment = fragment
-                fragments[position] = substitutesFragment
-                return substitutesFragment
-            } else
-                return null
-        }
+    fun getAdapter(position: Int): SubstitutesAdapter? {
+        return adapters[position]
     }
 }

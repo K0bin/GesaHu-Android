@@ -47,13 +47,12 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
 	@Dimension private float selectedElevation;
 
 	private SubstitutesContract.Presenter presenter;
-	private int pagerPosition;
 
 	private Animator backgroundAnimatorSelect;
 	private Animator backgroundAnimatorUnselect;
 
 	@SuppressWarnings("ResourceType")
-    public SubstituteViewHolder(View view, SubstitutesContract.Presenter presenter, int pagerPosition, int textColor, int textColorRelevant, int circleColor, int circleColorRelevant, float selectedElevation) {
+    public SubstituteViewHolder(View view, SubstitutesContract.Presenter presenter, int textColor, int textColorRelevant, int circleColor, int circleColorRelevant, float selectedElevation) {
         super(view);
 
 		this.textColor = textColor;
@@ -74,7 +73,6 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
         DrawableCompat.setTint(circleRelevantBackground, circleColorRelevant);
 
 	    this.presenter = presenter;
-	    this.pagerPosition = pagerPosition;
 
 		backgroundAnimatorSelect = AnimatorInflater.loadAnimator(view.getContext(), R.animator.substitute_select);
 		backgroundAnimatorSelect.setTarget(view);
@@ -133,7 +131,7 @@ public class SubstituteViewHolder extends RecyclerView.ViewHolder {
     @OnClick(R.id.rootFrame)
     public void Click(View view) {
 		if(presenter != null)
-			presenter.onListItemClicked(pagerPosition, this.getAdapterPosition());
+			presenter.onListItemClicked(this.getAdapterPosition());
     }
 
     public void destroy() {

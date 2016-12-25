@@ -35,7 +35,6 @@ import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
 import android.animation.ValueAnimator
@@ -44,6 +43,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.view.animation.DecelerateInterpolator
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.share
+import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
@@ -159,7 +159,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
 
         setContentView(R.layout.activity_main)
 
-        pagerAdapter = SubstitutesPagerAdapter(supportFragmentManager)
+        pagerAdapter = SubstitutesPagerAdapter(presenter)
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
@@ -246,8 +246,8 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     }
 
     override fun showList(position: Int, list: List<Substitute>) {
-        val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
-        fragment?.populateList(list)
+        val adapter = pagerAdapter?.getAdapter(position)
+        adapter?.showList(list)
     }
 
     override fun showDatePicker(defaultDate: LocalDate) {
@@ -260,8 +260,8 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     }
 
     override fun setSelected(position: Int, listPosition: Int?) {
-        val fragment = pagerAdapter?.getFragment(supportFragmentManager, position)
-        fragment?.setSelected(listPosition)
+        val adapter = pagerAdapter?.getAdapter(position)
+        adapter?.setSelected(listPosition ?: -1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -284,6 +284,14 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
         }
 
         return false
+    }
+
+    override fun onBackPressed() {
+        presenter.onBackPressed()
+    }
+
+    override fun goBack() {
+        super.onBackPressed()
     }
 
     override fun showDialog(text: String) {

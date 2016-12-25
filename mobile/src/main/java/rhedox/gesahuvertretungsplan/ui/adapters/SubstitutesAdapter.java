@@ -40,7 +40,6 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     private int selected = -1;
 
 	@Nullable private SubstitutesContract.Presenter presenter;
-	private int pagerPosition = -1;
 	@Nullable private RecyclerView recyclerView;
 
 	//#enumsmatter
@@ -65,8 +64,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 	private static final String STATE_SELECTED = "selected";
 
     @SuppressWarnings("ResourceType")
-    public SubstitutesAdapter(int pagerPosition, @Nullable SubstitutesContract.Presenter presenter, @NonNull Context context) {
-	    this.pagerPosition = pagerPosition;
+    public SubstitutesAdapter(@Nullable SubstitutesContract.Presenter presenter, @NonNull Context context) {
 	    this.presenter = presenter;
 
 	    TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor});
@@ -114,7 +112,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
         switch (viewType) {
             case ITEM_TYPE_SUBSTITUTE: {
 	            View view = ankoComponent.createView(viewGroup);
-                return new SubstituteViewHolder(view, presenter, pagerPosition, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation);
+                return new SubstituteViewHolder(view, presenter, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation);
             }
 
             case ITEM_TYPE_EMPTY_VIEW:
@@ -163,6 +161,9 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 
             //Clear the selection
             setSelected(-1);
+
+	        if(count < this.list.size() && recyclerView != null)
+		        recyclerView.scrollToPosition(0);
         }
     }
     private void clear() {
@@ -175,6 +176,9 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
             notifyItemRangeRemoved(0, previousCount);
         }
         notifyItemInserted(0);
+
+	    if(recyclerView != null)
+		    recyclerView.scrollToPosition(0);
     }
 
 	@Override
