@@ -134,7 +134,6 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_BACKOFF, true)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
-                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_REQUIRE_CHARGING, false)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
 
                 ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)

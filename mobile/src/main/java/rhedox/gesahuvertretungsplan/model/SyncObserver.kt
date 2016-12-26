@@ -1,0 +1,27 @@
+package rhedox.gesahuvertretungsplan.model
+
+import android.content.ContentResolver
+import android.content.Context
+import android.util.Log
+
+/**
+ * Created by robin on 25.12.2016.
+ */
+class SyncObserver() {
+    var callback: (() -> Unit)? = null
+
+    private var syncListenerHandle: Any? = null;
+
+    init {
+        syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, {
+            Log.d("SyncObserver", "Observed change in $it");
+            callback?.invoke()
+        });
+    }
+
+    fun destroy() {
+        if(syncListenerHandle != null) {
+            ContentResolver.removeStatusChangeListener(syncListenerHandle);
+        }
+    }
+}

@@ -5,16 +5,14 @@ import android.content.ContentResolver
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import com.github.salomonbrys.kodein.*
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.model.dayOfWeekIndex
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
@@ -24,7 +22,7 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(context), SubstitutesContract.Presenter {
+class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn), SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
@@ -33,12 +31,12 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
      * The selected substitute (of the current page); null for none
      */
     private var selected: Int? = null
-    private var syncListenerHandle: Any;
+    private val syncObserver: SyncObserver
     /**
      * The page (day of week) which is currently visible to the user
      */
     private var currentPage: Int;
-    private var repository: SubstitutesRepository;
+    private val repository: SubstitutesRepository
 
     /**
      * Determines whether or not the view was started by the date picker and is sitting on top of another SubstitutesActivity
@@ -77,7 +75,8 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
         this.date = getFirstDayOfWeek(_date)
         this.canGoUp = state.getBoolean(State.canGoUp, false)
 
-        repository = SubstitutesRepository(context)
+        val repositoryProvider: () -> SubstitutesRepository = kodeIn.provider()
+        repository = repositoryProvider.invoke()
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
         repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
 
@@ -86,16 +85,17 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
             repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
         }
 
-        syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, {
-            Log.d("SyncObserver", "Observed change in $it");
+        val syncObserverProvider: () -> SyncObserver = kodeIn.provider()
+        syncObserver = syncObserverProvider.invoke()
+        syncObserver.callback = {
             if (account != null) {
-                if(view is Activity) {
+                if (view is Activity) {
                     (view as Activity).runOnUiThread {
                         view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
                     }
                 }
             }
-        })
+        }
 
         val stateSelected = state.getInt(State.selected, -1)
         selected = if (stateSelected != -1) stateSelected else null
@@ -136,7 +136,7 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
 
     override fun destroy() {
         repository.destroy()
-        ContentResolver.removeStatusChangeListener(syncListenerHandle)
+        syncObserver.destroy()
     }
 
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
@@ -246,7 +246,7 @@ class SubstitutesPresenter(context: Context, state: Bundle) : BasePresenter(cont
 
         if(substitutesOfDay != null && selected != null) {
             val substitute = substitutesOfDay[selected!!]
-            view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
+            //view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
         }
     }
 

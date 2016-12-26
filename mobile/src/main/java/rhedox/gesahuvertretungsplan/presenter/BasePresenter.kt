@@ -1,11 +1,14 @@
 package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
+import android.accounts.AccountManager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import com.github.salomonbrys.kodein.*
 import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
@@ -19,26 +22,29 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BasePresenter(context: Context) : BaseContract.Presenter {
-    protected val context: Context = context.applicationContext
+abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presenter, KodeinInjected {
+    override val injector: KodeinInjector = KodeinInjector()
+
     private var view: BaseContract.View? = null;
     protected var account: Account? = null;
         private set
 
-    protected var boardsRepository: BoardsRepository
-        private set
+    private val accountManager: AccountManager by instance()
 
-    protected lateinit var avatarLoader: AvatarLoader;
-        private set;
+    private val boardsRepositoryProvider: () -> BoardsRepository by provider()
+    protected val boardsRepository: BoardsRepository
+
+    private val prefs: SharedPreferences by instance()
 
     private var boards: List<Board> = listOf();
 
     init {
-        boardsRepository = BoardsRepository(context)
+        inject(kodeIn)
+
+        boardsRepository = boardsRepositoryProvider.invoke()
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
         if (previouslyStarted) {
             loadAccount();
@@ -49,12 +55,9 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
         this.view = view;
         view.userName = account?.name ?: ""
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
         if (!previouslyStarted) {
-            val intent = Intent(context, WelcomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(intent)
+            view.openIntro()
         } else if (account == null) {
             //Try reloading account (might have just returned from AuthActivity)
             loadAccount()
@@ -91,19 +94,20 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
         if(account != null)
             return;
 
-        val accounts = context.accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
+        val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
         if (accounts.isNotEmpty())
             account = accounts[0]
 
         if(account != null) {
             //load avatar
-            avatarLoader = AvatarLoader(context)
+            val avatarLoaderProvider: () -> AvatarLoader = kodeIn.provider();
+            val avatarLoader = avatarLoaderProvider.invoke()
             avatarLoader.callback = {
                 view?.setAvatar(it)
             }
             avatarLoader.execute();
         } else if (view != null) {
-            context.accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
+            accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                     null, null, null, view as Activity, null, null);
         }
     }

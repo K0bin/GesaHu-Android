@@ -32,7 +32,7 @@ class SubstitutesPresenterTest {
         //PowerMockito.mockStatic(ContentResolver::class.java);
         //`when`(ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, {})).then {  }
 
-        val presenter = SubstitutesPresenter(RuntimeEnvironment.application, Bundle.EMPTY)
+        //val presenter = SubstitutesPresenter(RuntimeEnvironment.application, Bundle.EMPTY)
 
 
     }

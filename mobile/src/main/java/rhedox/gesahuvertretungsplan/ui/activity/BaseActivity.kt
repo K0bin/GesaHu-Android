@@ -153,4 +153,10 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
             presenter.saveState(outState)
         }
     }
+
+    override fun openIntro() {
+        val intent = Intent(this, WelcomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        this.startActivity(intent)
+    }
 }
