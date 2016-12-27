@@ -15,7 +15,6 @@ import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.Event
-import rhedox.gesahuvertretungsplan.model.api.QueryDate
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.api.json.DateTimeDeserializer
@@ -98,9 +97,5 @@ class GesaHu(context: Context) {
 
         @GET("getdates.php")
         fun events(@Query("username") username: String, @Query("pw") password: String, @Query("start") begin: String, @Query("end") end: String): Call<List<Event>>
-
-        companion object {
-
-        }
     }
 }

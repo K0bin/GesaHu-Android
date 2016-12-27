@@ -12,8 +12,6 @@ import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
-import rhedox.gesahuvertretungsplan.model.api.toQueryDate
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
@@ -55,6 +53,9 @@ class SubstitutesSyncService : Service() {
         }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
+            if(Thread.interrupted()) {
+                return;
+            }
             val username = account.name ?: "";
 
             val hasDate = extras?.containsKey(extraDate) ?: false
@@ -72,6 +73,10 @@ class SubstitutesSyncService : Service() {
 
                 val days = if (hasDate) 7 else 14;
                 for (i in 0..days-1) {
+                    if(Thread.interrupted()) {
+                        return;
+                    }
+
                     var day = date.withFieldAdded(DurationFieldType.days(), i)
                     if (day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
                         //Saturday => Monday & Sunday => Tuesday
