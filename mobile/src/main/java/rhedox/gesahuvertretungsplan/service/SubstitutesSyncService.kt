@@ -11,7 +11,7 @@ import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.toQueryDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
@@ -46,7 +46,7 @@ class SubstitutesSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedSyncAdapter(context, autoInitialize, true) {
 
-        private var gesaHu = GesaHuApi.create(context);
+        private var gesaHu = GesaHu(context);
 
         companion object {
             const val extraSingleDay = "day";
@@ -93,7 +93,7 @@ class SubstitutesSyncService : Service() {
         }
 
         fun loadSubstitutesForDay(provider: ContentProviderClient, date: LocalDate, username: String): Boolean {
-            val call = gesaHu.substitutes(date.toQueryDate(), username)
+            val call = gesaHu.substitutes(username, date)
 
             try {
                 val response = call.execute();

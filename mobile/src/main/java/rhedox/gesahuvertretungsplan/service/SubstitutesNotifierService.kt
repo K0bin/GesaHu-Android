@@ -25,7 +25,6 @@ import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver
 import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
 import rhedox.gesahuvertretungsplan.model.api.QueryDate
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository

@@ -10,25 +10,19 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.preference.PreferenceManager
 import android.view.View
-import android.view.Window
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.accountManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
-import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.Md5Util
 
 /**
@@ -47,7 +41,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var password: String = "";
     private var wasLaunchedByApp = false;
 
-    private lateinit var gesaHu: GesaHuApi;
+    private lateinit var gesaHu: GesaHu;
     private var call: Call<List<Board>>? = null;
 
     private lateinit var snackbar: Snackbar;
@@ -82,7 +76,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             if(password != "")
                 passwordEdit.setText(password)
         }
-        gesaHu = GesaHuApi.create(this);
+        gesaHu = GesaHu(this);
 
         passwordEdit.setOnEditorActionListener { textView, actionId, keyEvent ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {

@@ -12,7 +12,7 @@ import android.util.Log.d
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jetbrains.anko.accountManager
-import rhedox.gesahuvertretungsplan.model.api.GesaHuApi
+import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.BoardAdapter
@@ -42,7 +42,7 @@ class BoardsSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
 
-        private val gesahu = GesaHuApi.create(context);
+        private val gesahu = GesaHu(context);
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             if(Thread.interrupted()) {
