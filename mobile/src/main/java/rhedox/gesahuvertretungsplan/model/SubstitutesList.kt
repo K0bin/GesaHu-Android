@@ -15,11 +15,11 @@ import java.lang.reflect.Type
 data class SubstitutesList(@SerializedName("Hinweise") val announcement: String, @SerializedName("Stunden") val substitutes: List<Substitute>, @SerializedName("Datum") val date: LocalDate) {
     val hasSubstitutes: Boolean
         @JvmName("hasSubstitutes")
-        get() = substitutes.size > 0;
+        get() = substitutes.isNotEmpty();
 
     val hasAnnouncement: Boolean
         @JvmName("hasAnnouncement")
-        get() = announcement.trim().length > 0 && announcement.trim() != "keine";
+        get() = announcement.isNullOrBlank() && announcement.trim() != "keine";
 
     companion object {
         /**

@@ -14,12 +14,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.Event
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.api.json.DateTimeDeserializer
-import rhedox.gesahuvertretungsplan.model.api.json.LocalDateDeserializer
-import rhedox.gesahuvertretungsplan.model.api.json.SubstituteDeserializer
+import rhedox.gesahuvertretungsplan.model.api.json.*
 
 /**
  * Created by robin on 01.10.2016.
@@ -36,6 +33,7 @@ class GesaHu(context: Context) {
 
         val gson = GsonBuilder()
                 .registerTypeAdapter(Substitute::class.java, SubstituteDeserializer(context))
+                .registerTypeAdapter(Test::class.java, TestDeserializer())
                 .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
                 .registerTypeAdapter(DateTime::class.java, DateTimeDeserializer())
                 .create()
@@ -85,6 +83,14 @@ class GesaHu(context: Context) {
         return api.events(username, password, begin.toString(dateTimeFormatter), end.toString(dateTimeFormatter))
     }
 
+    fun tests(username: String, password: String, begin: DateTime): Call<List<Test>> {
+        return api.tests(username, password, begin.toString(dateTimeFormatter))
+    }
+
+    fun exams(username: String, password: String, begin: DateTime): Call<List<Exam>> {
+        return api.exams(username, password, begin.toString(dateTimeFormatter))
+    }
+
     private interface GesaHuApi {
         @GET("getboards.php")
         fun boards(@Query("username") username: String, @Query("pw") password: String): Call<List<Board>>
@@ -97,5 +103,11 @@ class GesaHu(context: Context) {
 
         @GET("getdates.php")
         fun events(@Query("username") username: String, @Query("pw") password: String, @Query("start") begin: String, @Query("end") end: String): Call<List<Event>>
+
+        @GET("gettestdates.php")
+        fun tests(@Query("username") username: String, @Query("pw") password: String, @Query("beginn") begin: String): Call<List<Test>>
+
+        @GET("getexamdates.php")
+        fun exams(@Query("username") username: String, @Query("pw") password: String, @Query("beginn") begin: String): Call<List<Exam>>
     }
 }

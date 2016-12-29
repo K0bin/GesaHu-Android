@@ -54,7 +54,7 @@ class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnL
 
     fun loadBoards() {
         if(loader == null) {
-            loader = CursorLoader(context.applicationContext, BoardsContract.uri, BoardsContract.columns.toTypedArray(), null, null, null);
+            loader = CursorLoader(context.applicationContext, BoardsContract.uri, BoardsContract.Table.columns.toTypedArray(), null, null, null);
             loader!!.registerListener(0, this)
         } else {
             loader!!.reset()

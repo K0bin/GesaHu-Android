@@ -17,7 +17,7 @@ object SubstituteAdapter {
         values.put(SubstitutesContract.Table.columnHint, substitute.hint)
         values.put(SubstitutesContract.Table.columnSubject, substitute.subject)
         values.put(SubstitutesContract.Table.columnLessonBegin, substitute.lessonBegin)
-        values.put(SubstitutesContract.Table.columnLessonEnd, substitute.lessonEnd)
+        values.put(SubstitutesContract.Table.columnDuration, substitute.duration)
         values.put(SubstitutesContract.Table.columnTeacher, substitute.teacher)
         values.put(SubstitutesContract.Table.columnSubstitute, substitute.substitute)
         values.put(SubstitutesContract.Table.columnRoom, substitute.room)
@@ -32,7 +32,7 @@ object SubstituteAdapter {
             return null;
 
         val lessonBegin = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnLessonBegin))
-        val lessonEnd = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnLessonEnd))
+        val duration = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnDuration))
         val course = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnCourse))
         val subject = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnSubject))
         val teacher = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnTeacher))
@@ -41,7 +41,7 @@ object SubstituteAdapter {
         val hint = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnHint))
         val isRelevant = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnIsRelevant)) == 1
 
-        return Substitute(lessonBegin,  lessonEnd, subject, course, teacher, substitute, room, hint, isRelevant = isRelevant);
+        return Substitute(lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant);
     }
 
     fun listFromCursor(cursor: Cursor): List<Substitute> {

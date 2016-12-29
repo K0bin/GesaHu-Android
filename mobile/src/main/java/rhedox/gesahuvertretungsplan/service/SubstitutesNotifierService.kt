@@ -3,38 +3,25 @@ package rhedox.gesahuvertretungsplan.service
 import android.app.IntentService
 import android.app.Notification
 import android.app.PendingIntent
-import android.app.Service
 import android.content.ContentValues
 import android.content.Intent
-import android.content.Loader
-import android.database.Cursor
 import android.net.Uri
-import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.CursorLoader
 import android.support.v4.content.WakefulBroadcastReceiver
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
-import org.joda.time.LocalTime
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver
-import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.api.QueryDate
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.model.SchoolWeek
+import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 26.10.2016.

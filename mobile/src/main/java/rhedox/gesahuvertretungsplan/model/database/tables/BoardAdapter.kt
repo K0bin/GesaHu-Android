@@ -10,7 +10,7 @@ import rhedox.gesahuvertretungsplan.model.Board
 object BoardAdapter {
     fun toContentValues(board: Board): ContentValues {
         val values = ContentValues();
-        values.put(BoardsContract.columnName, board.name)
+        values.put(BoardsContract.Table.columnName, board.name)
         return values;
     }
 
@@ -18,7 +18,7 @@ object BoardAdapter {
         if (cursor.count == 0 || cursor.columnCount < 1 || cursor.isClosed)
             return null
 
-        return Board(cursor.getString(cursor.getColumnIndex(BoardsContract.columnName)));
+        return Board(cursor.getString(cursor.getColumnIndex(BoardsContract.Table.columnName)));
     }
 
     fun listFromCursor(cursor: Cursor): List<Board> {

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model
+package rhedox.gesahuvertretungsplan.model.api.json
 
 import com.google.gson.annotations.SerializedName
 import org.joda.time.DateTime

@@ -8,6 +8,10 @@
     <color name="widgetBackgroundDark">#FF303030</color>
     <color name="widgetBackgroundLight">#FFFAFAFA</color>
 
+    <color name="calendar_event_color">#81C784</color>
+    <color name="calendar_test_color">#388E3C</color>
+    <color name="calendar_exam_color">#1B5E20</color>
+
     <!-- Intro -->
     <color name="intro_slide_1">#ff4CAF50</color>
     <color name="intro_slide_2">#ff673AB7</color>

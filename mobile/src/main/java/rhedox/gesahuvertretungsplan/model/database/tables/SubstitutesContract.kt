@@ -26,10 +26,10 @@ object SubstitutesContract {
     object Table {
         const val name = "substitutes";
 
-        const val columnId = "id";
+        const val columnId = "ROWID";
         const val columnDate = "date"
         const val columnLessonBegin = "lessonBegin";
-        const val columnLessonEnd = "lessonEnd";
+        const val columnDuration = "duration";
         const val columnSubject = "subject";
         const val columnCourse = "course";
         const val columnTeacher = "teacher";
@@ -38,18 +38,22 @@ object SubstitutesContract {
         const val columnHint = "hint";
         const val columnIsRelevant = "isRelevant";
 
+        //legacy
+        @Deprecated("columnLessonEnd is deprecated.", replaceWith = ReplaceWith("columnDuration"), level = DeprecationLevel.WARNING)
+        const val columnLessonEnd = "lessonEnd";
+
         val columns = setOf(
-                columnId, columnDate, columnCourse, columnLessonBegin, columnLessonEnd, columnSubject, columnTeacher, columnSubstitute, columnRoom, columnRoom, columnHint, columnIsRelevant)
+                columnId, columnDate, columnCourse, columnLessonBegin, columnDuration, columnSubject, columnTeacher, columnSubstitute, columnRoom, columnRoom, columnHint, columnIsRelevant)
 
     }
 
     fun onCreate(db: SQLiteDatabase) {
+        //${Table.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
         val sql = """CREATE TABLE ${Table.name}
         (
-            ${Table.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
             ${Table.columnDate} INTEGER,
             ${Table.columnLessonBegin} INTEGER,
-            ${Table.columnLessonEnd} INTEGER,
+            ${Table.columnDuration} INTEGER,
             ${Table.columnSubject} TEXT,
             ${Table.columnCourse} TEXT,
             ${Table.columnTeacher} TEXT,
@@ -64,6 +68,14 @@ object SubstitutesContract {
 
     @JvmStatic
     fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if(newVersion >= 3 && oldVersion < 3) {
+            db.execSQL("ALTER TABLE ${Table.name} RENAME TO ${Table.name}_old")
+            onCreate(db)
+            db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnLessonBegin}, ${Table.columnDuration}, ${Table.columnSubject}, ${Table.columnCourse}, ${Table.columnTeacher}, ${Table.columnSubstitute}, ${Table.columnRoom}, ${Table.columnHint}, ${Table.columnIsRelevant}) " +
+                    "SELECT ${Table.columnId}, ${Table.columnLessonBegin}, (${Table.columnLessonEnd} - ${Table.columnLessonBegin}) + 1, ${Table.columnSubject}, ${Table.columnCourse}, ${Table.columnTeacher}, ${Table.columnSubstitute}, ${Table.columnRoom}, ${Table.columnHint}, ${Table.columnIsRelevant} " +
+                    "FROM ${Table.name}_old")
+            db.execSQL("DROP TABLE ${Table.name}_old")
+        }
     }
 
     @JvmStatic

@@ -15,7 +15,7 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
 
     companion object {
         const val name = "gesahui.db"
-        const val version = 2
+        const val version = 3
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -25,16 +25,18 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if(newVersion >= 2 && oldVersion < 2)
+        if(newVersion >= 2 && oldVersion < 2) {
             BoardsContract.onCreate(db)
+        } else {
+            BoardsContract.onUpgrade(db, oldVersion, newVersion)
+        }
 
         if(newVersion >= 1 && oldVersion < 1) {
             SubstitutesContract.onCreate(db);
             AnnouncementsContract.onCreate(db)
+        } else {
+            SubstitutesContract.onUpgrade(db, oldVersion, newVersion);
+            AnnouncementsContract.onUpgrade(db, oldVersion, newVersion)
         }
-
-        SubstitutesContract.onUpgrade(db, oldVersion, newVersion);
-        AnnouncementsContract.onUpgrade(db, oldVersion, newVersion)
-        BoardsContract.onUpgrade(db, oldVersion, newVersion)
     }
 }

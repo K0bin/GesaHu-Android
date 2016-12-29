@@ -12,10 +12,10 @@ import java.lang.reflect.Type
 /**
  * Created by robin on 01.10.2016.
  */
-data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: String, val course: String, val teacher: String, val substitute: String, val room: String, val hint: String, val isRelevant: Boolean) : Comparable<Substitute> {
+data class Substitute(val lessonBegin: Int, val duration: Int, val subject: String, val course: String, val teacher: String, val substitute: String, val room: String, val hint: String, val isRelevant: Boolean) : Comparable<Substitute> {
     @Kind val kind: Long;
 
-    val lessonText: String = if(lessonBegin != lessonEnd) lessonBegin.toString() + "-" + lessonEnd.toString() else lessonBegin.toString();
+    val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString();
         get() = field
 
     val title: String = course + " " + subject;
@@ -55,7 +55,7 @@ data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: Str
                 return -1
             else {
                 if (lessonBegin - other.lessonBegin == 0) {
-                    return lessonEnd - other.lessonEnd;
+                    return duration - other.duration;
                 }
 
                 return lessonBegin - other.lessonBegin;
@@ -65,7 +65,7 @@ data class Substitute(val lessonBegin: Int, val lessonEnd: Int, val subject: Str
                 return 1
             else {
                 if (lessonBegin - other.lessonBegin == 0) {
-                    return lessonEnd - other.lessonEnd;
+                    return duration - other.duration;
                 }
 
                 return lessonBegin - other.lessonBegin

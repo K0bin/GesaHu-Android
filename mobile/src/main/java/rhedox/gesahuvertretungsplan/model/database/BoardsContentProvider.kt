@@ -42,7 +42,7 @@ class BoardsContentProvider : ContentProvider() {
             throw IllegalArgumentException("Unknown URI: $uri")
         }
 
-        val id = db.insert(BoardsContract.name, null, values)
+        val id = db.insert(BoardsContract.Table.name, null, values)
         val insertUri = Uri.parse("content://$authority/"+id.toString());
         context.contentResolver.notifyChange(insertUri, null, false)
         return insertUri
@@ -53,10 +53,10 @@ class BoardsContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri)
         checkColumns(projection, uriType)
         when (uriType) {
-            allBoards -> queryBuilder.tables = BoardsContract.name;
+            allBoards -> queryBuilder.tables = BoardsContract.Table.name;
             boardById -> {
-                queryBuilder.tables = BoardsContract.name
-                queryBuilder.appendWhere("${BoardsContract.columnId} = ${uri.lastPathSegment}")
+                queryBuilder.tables = BoardsContract.Table.name
+                queryBuilder.appendWhere("${BoardsContract.Table.columnId} = ${uri.lastPathSegment}")
             }
             else -> throw IllegalArgumentException("Unknown URI: $uri")
         }
@@ -67,7 +67,7 @@ class BoardsContentProvider : ContentProvider() {
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<out String>?): Int {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented")
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
@@ -76,8 +76,8 @@ class BoardsContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri)
         var rowsDeleted = 0;
         when (uriType) {
-            allBoards -> rowsDeleted = db.delete(BoardsContract.name, selection ?: "1", null)
-            boardById -> rowsDeleted = db.delete(BoardsContract.name, "${BoardsContract.columnId} = ''", null)
+            allBoards -> rowsDeleted = db.delete(BoardsContract.Table.name, selection ?: "1", null)
+            boardById -> rowsDeleted = db.delete(BoardsContract.Table.name, "${BoardsContract.Table.columnId} = ''", null)
         }
         return rowsDeleted
     }
@@ -90,7 +90,7 @@ class BoardsContentProvider : ContentProvider() {
         if(projection != null) {
             val requestedColumns = projection.toSet()
             if(uriType == allBoards || uriType == boardById) {
-                if (!BoardsContract.columns.containsAll(requestedColumns)) {
+                if (!BoardsContract.Table.columns.containsAll(requestedColumns)) {
                     throw IllegalArgumentException("Unknown columns in projection");
                 }
             }

@@ -21,7 +21,7 @@ object AnnouncementsContract {
 
     object Table {
         const val name = "announcements";
-        const val columnId = "id";
+        const val columnId = "ROWID";
         const val columnDate = "date"
         const val columnText = "text";
 
@@ -32,7 +32,6 @@ object AnnouncementsContract {
     fun onCreate(db: SQLiteDatabase) {
         val sql = """CREATE TABLE ${Table.name}
         (
-            ${Table.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
             ${Table.columnDate} INTEGER,
             ${Table.columnText} TEXT
         );
@@ -41,6 +40,15 @@ object AnnouncementsContract {
     }
 
     fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if(newVersion >= 3 && oldVersion < 3) {
+            db.execSQL("ALTER TABLE ${Table.name} RENAME TO ${Table.name}_old")
+            onCreate(db)
+            db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnDate}, ${Table.columnText}) " +
+                    "SELECT ${Table.columnId}, ${Table.columnDate}, ${Table.columnText} " +
+                    "FROM ${Table.name}_old")
+
+            db.execSQL("DROP TABLE ${Table.name}_old")
+        }
     }
 
     fun clear(db: SQLiteDatabase) {

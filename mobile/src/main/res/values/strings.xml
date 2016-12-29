@@ -123,6 +123,11 @@
     <string name="school_year">Schuljahr</string>
     <string name="title_activity_login">Sign in</string>
 
+    <!-- calendar names -->
+    <string name="calendar_event_name">Schultermine</string>
+    <string name="calendar_test_name">Klausuren</string>
+    <string name="calendar_exam_name">Prüfungen</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
