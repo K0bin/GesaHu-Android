@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -162,6 +163,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 1);
         ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, true);
         ContentResolver.addPeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
+        ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
+        ContentResolver.addPeriodicSync(account,  CalendarContract.AUTHORITY, Bundle.EMPTY, 2 * 24 * 60 * 60)
 
         val res = Intent()
         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username)

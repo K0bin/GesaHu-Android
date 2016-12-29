@@ -15,8 +15,12 @@ import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.R
+import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.json.Event
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
+import rhedox.gesahuvertretungsplan.model.api.json.Exam
+import rhedox.gesahuvertretungsplan.model.api.json.Test
+import java.util.*
 
 /**
  * Created by robin on 27.12.2016.
@@ -50,7 +54,7 @@ class CalendarSyncService : Service() {
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             //debug
-            android.os.Debug.waitForDebugger();
+            //android.os.Debug.waitForDebugger();
 
             /*if(Thread.interrupted()) {
                 return;
@@ -73,6 +77,20 @@ class CalendarSyncService : Service() {
             val end = start.withFieldAdded(DurationFieldType.days(), 60).withTime(23,59,59,999)
 
             val password = context.accountManager.getPassword(account) ?: "";
+
+            val testCall = gesaHu.tests(account.name, password, start)
+            val testResponse = testCall.execute()
+            if(testResponse != null && testResponse.isSuccessful) {
+                if(calendars[testCalendarName] != null) {
+                    clearExistingCalendars(calendars[testCalendarName]!!, start)
+                }
+
+                val tests = testResponse.body()
+                tests.forEach {
+                    insert(it, calendars[testCalendarName]!!)
+                }
+            }
+
             val eventCall = gesaHu.events(account.name, password, start, end)
             val eventResponse = eventCall.execute()
             if(eventResponse != null && eventResponse.isSuccessful) {
@@ -82,7 +100,20 @@ class CalendarSyncService : Service() {
 
                 val events = eventResponse.body()
                 events.forEach {
-                    insertEvent(it)
+                    insert(it, calendars[eventCalendarName]!!)
+                }
+            }
+
+            val examCall = gesaHu.exams(account.name, password, start)
+            val examResponse = examCall.execute()
+            if(examResponse != null && examResponse.isSuccessful) {
+                if(calendars[examCalendarName] != null) {
+                    clearExistingCalendars(calendars[examCalendarName]!!, start)
+                }
+
+                val exams = examResponse.body()
+                exams.forEach {
+                    insert(it, calendars[examCalendarName]!!)
                 }
             }
         }
@@ -95,9 +126,12 @@ class CalendarSyncService : Service() {
 
             val calendars = mutableMapOf<String, Long>()
 
-            while (!cursor.isAfterLast && !cursor.isClosed) {
-                calendars.put(cursor.getString(0), cursor.getLong(2))
-                cursor.moveToNext()
+            if(cursor.count > 0 && !cursor.isClosed) {
+                cursor.moveToFirst()
+                while (!cursor.isAfterLast && !cursor.isClosed) {
+                    calendars.put(cursor.getString(0), cursor.getLong(2))
+                    cursor.moveToNext()
+                }
             }
 
             cursor.close()
@@ -114,7 +148,7 @@ class CalendarSyncService : Service() {
             val values = ContentValues()
             values.put(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
             values.put(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
-            values.put(CalendarContract.Calendars.NAME, account.name)
+            values.put(CalendarContract.Calendars.NAME, name)
             values.put(CalendarContract.Calendars.SYNC_EVENTS, 1)
             values.put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_READ)
             values.put(CalendarContract.Calendars.OWNER_ACCOUNT, "GesaHu")
@@ -149,7 +183,40 @@ class CalendarSyncService : Service() {
             return calendarUri.lastPathSegment.toLong();
         }
 
-        private fun insertEvent(event: Event) {
+        private fun insert(event: Event, calendarId: Long) {
+            val values = ContentValues()
+            values.put(CalendarContract.Events.DTSTART, event.begin.millis)
+
+            if(event.end != null && !event.isWholeDay) {
+                values.put(CalendarContract.Events.DTEND, event.end.millis)
+            } else {
+                values.put(CalendarContract.Events.DTEND, event.begin.millis)
+                values.put(CalendarContract.Events.ALL_DAY, event.isWholeDay)
+            }
+
+            values.put(CalendarContract.Events.TITLE, event.description)
+            values.put(CalendarContract.Events.DESCRIPTION, context.getString(R.string.calendar_event_description, event.category))
+            values.put(CalendarContract.Events.EVENT_LOCATION, event.location)
+            values.put(CalendarContract.Events.ORGANIZER, event.author)
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+
+            context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+        }
+
+        private fun insert(test: Test, calendarId: Long) {
+            val values = ContentValues()
+            values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(SchoolWeek.lessonStart(test.lessonStart)).millis)
+            values.put(CalendarContract.Events.DTEND, test.date.toDateTime(SchoolWeek.lessonEnd(if(test.duration >= 1) test.lessonStart + test.duration - 1 else test.lessonStart)).millis)
+            values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_test_title, test.year.toString(), test.subject, test.course, test.teacher))
+            values.put(CalendarContract.Events.DESCRIPTION, test.remark)
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+
+            context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+        }
+
+        private fun insert(exam: Exam, calendarId: Long) {
 
         }
 

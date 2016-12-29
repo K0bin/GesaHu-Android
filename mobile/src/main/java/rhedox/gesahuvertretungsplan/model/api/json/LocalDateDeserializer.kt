@@ -11,10 +11,10 @@ import java.lang.reflect.Type
  * Created by robin on 08.10.2016.
  */
 
-class LocalDateDeserializer : JsonDeserializer<LocalDate> {
-    override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): LocalDate {
-        if(json == null)
-            return LocalDate();
+class LocalDateDeserializer : JsonDeserializer<LocalDate?> {
+    override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): LocalDate? {
+        if(json == null || json.asString.isNullOrBlank())
+            return null
 
         return LocalDate.parse(json.asString);
     }

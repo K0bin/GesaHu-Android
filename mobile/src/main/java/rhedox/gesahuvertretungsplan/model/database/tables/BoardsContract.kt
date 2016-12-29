@@ -28,7 +28,7 @@ object BoardsContract {
     fun onCreate(db: SQLiteDatabase) {
         val sql = """CREATE TABLE ${Table.name}
             (
-                ${Table.columnName}TEXT
+                ${Table.columnName} TEXT
             );
             """;
         db.execSQL(sql);

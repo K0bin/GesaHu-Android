@@ -1,14 +1,15 @@
 package rhedox.gesahuvertretungsplan.model
 
-import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
-import org.joda.time.DurationFieldType
-import org.joda.time.LocalDate
+import org.joda.time.*
 
 /**
  * Created by Robin on 02.03.2015.
  */
 object SchoolWeek {
+    val startHours = intArrayOf(  8,  8,  9, 10, 11, 12, 14, 14, 15, 16)
+    val startMinutes = intArrayOf(0, 50, 50, 40, 40, 30, 0, 45, 45, 30)
+    val endHours = intArrayOf(   8,  9, 10, 11, 12, 13, 14, 15, 16, 17)
+    val endMinutes = intArrayOf(45, 35, 35, 25, 35, 15, 45, 30, 25, 15)
 
     /**
      * Finds the next monday
@@ -50,6 +51,15 @@ object SchoolWeek {
     @JvmStatic
     fun nextFromNow(): LocalDate {
         return nextFrom(DateTime.now())
+    }
+
+    @JvmStatic
+    fun lessonStart(lessonIndex: Int): LocalTime {
+        return LocalTime(startHours[lessonIndex - 1], startMinutes[lessonIndex - 1])
+    }
+    @JvmStatic
+    fun lessonEnd(lessonIndex: Int): LocalTime {
+        return LocalTime(endHours[lessonIndex - 1], endMinutes[lessonIndex - 1])
     }
 }
 

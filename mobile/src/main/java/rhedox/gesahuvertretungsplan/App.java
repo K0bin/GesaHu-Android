@@ -43,7 +43,7 @@ public class App extends Application {
 			StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder()
 					.detectAll()
 					.penaltyLog()
-					.penaltyDialog()
+					/*.penaltyDialog()*/
 					.build();
 			StrictMode.setThreadPolicy(threadPolicy);
 			Stetho.initialize(Stetho.newInitializerBuilder(this)

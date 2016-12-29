@@ -100,6 +100,8 @@
     <string name="feature_highlight_description">Die App kann für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
     <string name="feature_notify">Benachrichtigungen</string>
     <string name="feature_notify_description">Die App kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
+    <string name="feature_calendar">Kalender</string>
+    <string name="feature_calendar_description">Die App trägt Schultermine, Klausuren und Prüfungen automatisch in deinen Kalender ein.</string>
 
     <string name="widget_counter_name">Gesahu VP Zähler</string>
     <string name="widget_list_name">Gesahu VP Liste</string>
@@ -127,6 +129,9 @@
     <string name="calendar_event_name">Schultermine</string>
     <string name="calendar_test_name">Klausuren</string>
     <string name="calendar_exam_name">Prüfungen</string>
+
+    <string name="calendar_test_title" formatted="false">Klausur %s %s %s bei %s</string>
+    <string name="calendar_event_description" formatted="false">Kategorie: %s</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

@@ -13,18 +13,19 @@ import java.lang.reflect.Type
 /**
  * Created by robin on 19.10.2016.
  */
-class TestDeserializer() : JsonDeserializer<Test> {
+class TestDeserializer(context: Context) : JsonDeserializer<Test> {
     private val localDateDeserializer = LocalDateDeserializer()
+    private val resolver = AbbreviationResolver(context.applicationContext);
 
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Test {
         val jsonObject = json.asJsonObject;
 
         val remark = Html.decode(jsonObject.get("Bemerkung").asString.trim())
-        val date = localDateDeserializer.deserialize(jsonObject.get("Bemerkung"), LocalDate::class.java, context)
-        val subject = Html.decode(jsonObject.get("Fach").asString.trim())
+        val date = localDateDeserializer.deserialize(jsonObject.get("Datum"), LocalDate::class.java, context)!!
+        val subject = resolver.resolveSubject(Html.decode(jsonObject.get("Fach").asString.trim()))
         val course = Html.decode(jsonObject.get("Klasse").asString.trim())
         val year = Html.decode(jsonObject.get("Klassenstufe").asString.trim()).toInt()
-        val teacher = Html.decode(jsonObject.get("Lehrer").asString.trim())
+        val teacher = resolver.resolveTeacher(Html.decode(jsonObject.get("Lehrer").asString.trim()))
         val lessons = Html.decode(jsonObject.get("Stunden").asString.trim()).replace(".", "")
 
         val begin: Int;

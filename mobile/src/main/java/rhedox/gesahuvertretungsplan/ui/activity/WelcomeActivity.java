@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -27,6 +28,8 @@ public class WelcomeActivity extends AppIntro {
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_design), getString(R.string.feature_design_description), R.drawable.ic_phone, ContextCompat.getColor(this, R.color.intro_slide_1)));
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_highlight), getString(R.string.feature_highlight_description), R.drawable.ic_relevant, ContextCompat.getColor(this, R.color.intro_slide_2)));
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_notify), getString(R.string.feature_notify_description), R.drawable.ic_bell, ContextCompat.getColor(this, R.color.intro_slide_3)));
+		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_calendar), getString(R.string.feature_calendar_description), R.drawable.ic_calendar, ContextCompat.getColor(this, R.color.intro_slide_4)));
+		askForPermissions(new String[] { Manifest.permission.WRITE_CALENDAR }, 4);
 
 		this.showSkipButton(false);
 

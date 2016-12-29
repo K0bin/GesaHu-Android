@@ -50,6 +50,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.android.support:support-compat:25.+'
     compile 'com.android.support:support-core-utils:25.+'
     compile 'com.android.support:support-core-ui:25.+'
@@ -78,7 +79,6 @@ dependencies {
     compile 'com.github.paolorotolo:appintro:4.+'
     compile 'de.hdodenhof:circleimageview:2.+'
     compile 'com.squareup.retrofit2:converter-gson:+'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.facebook.stetho:stetho:1.4.+'
     compile 'org.jetbrains.anko:anko-sdk15:+'
     compile 'org.jetbrains.anko:anko-support-v4:+'
