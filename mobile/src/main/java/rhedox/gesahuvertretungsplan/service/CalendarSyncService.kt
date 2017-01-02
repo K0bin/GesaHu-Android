@@ -53,12 +53,9 @@ class CalendarSyncService : Service() {
         private val gesaHu = GesaHu(context)
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
-            //debug
-            //android.os.Debug.waitForDebugger();
-
-            /*if(Thread.interrupted()) {
+            if(Thread.interrupted()) {
                 return;
-            }*/
+            }
             val existingCalendars = getCalendarIds(account)
             val calendars = mutableMapOf<String, Long>()
             calendars.putAll(existingCalendars)
@@ -80,6 +77,9 @@ class CalendarSyncService : Service() {
 
             val testCall = gesaHu.tests(account.name, password, start)
             val testResponse = testCall.execute()
+            if(Thread.interrupted()) {
+                return;
+            }
             if(testResponse != null && testResponse.isSuccessful) {
                 if(calendars[testCalendarName] != null) {
                     clearExistingCalendars(calendars[testCalendarName]!!, start)
@@ -93,6 +93,9 @@ class CalendarSyncService : Service() {
 
             val eventCall = gesaHu.events(account.name, password, start, end)
             val eventResponse = eventCall.execute()
+            if(Thread.interrupted()) {
+                return;
+            }
             if(eventResponse != null && eventResponse.isSuccessful) {
                 if(calendars[eventCalendarName] != null) {
                     clearExistingCalendars(calendars[eventCalendarName]!!, start)
@@ -106,6 +109,9 @@ class CalendarSyncService : Service() {
 
             val examCall = gesaHu.exams(account.name, password, start)
             val examResponse = examCall.execute()
+            if(Thread.interrupted()) {
+                return;
+            }
             if(examResponse != null && examResponse.isSuccessful) {
                 if(calendars[examCalendarName] != null) {
                     clearExistingCalendars(calendars[examCalendarName]!!, start)
@@ -141,7 +147,7 @@ class CalendarSyncService : Service() {
 
         private fun clearExistingCalendars(calendarId: Long, start: DateTime) {
             val uri = CalendarContract.Events.CONTENT_URI
-            context.contentResolver.delete(uri, "${CalendarContract.Events.CALENDAR_ID} = $calendarId AND ${CalendarContract.Events.DTSTART} > ${start.millis}", null)
+            context.contentResolver.delete(uri, "${CalendarContract.Events.CALENDAR_ID} = $calendarId AND (${CalendarContract.Events.DTSTART} >= ${start.millis} OR ${CalendarContract.Events.DTEND} <= ${start.millis})", null)
         }
 
         private fun createCalendar(name: String, account: Account): Long {
@@ -187,12 +193,12 @@ class CalendarSyncService : Service() {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, event.begin.millis)
 
-            if(event.end != null && !event.isWholeDay) {
+            if(event.end != null) {
                 values.put(CalendarContract.Events.DTEND, event.end.millis)
             } else {
                 values.put(CalendarContract.Events.DTEND, event.begin.millis)
-                values.put(CalendarContract.Events.ALL_DAY, event.isWholeDay)
             }
+            values.put(CalendarContract.Events.ALL_DAY, event.isWholeDay)
 
             values.put(CalendarContract.Events.TITLE, event.description)
             values.put(CalendarContract.Events.DESCRIPTION, context.getString(R.string.calendar_event_description, event.category))
