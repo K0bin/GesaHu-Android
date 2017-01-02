@@ -66,7 +66,7 @@ public class SubstitutesWidgetProvider extends AppWidgetProvider {
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
             Intent onClickIntent = new Intent(context, SubstitutesActivity.class);
-            onClickIntent.putExtras(SubstitutesPresenter.createState(SchoolWeek.nextFromNow(), false, -1));
+            onClickIntent.putExtra(SubstitutesActivity.Extra.date, JodaTimeUtils.getUnixTimeStamp(SchoolWeek.nextFromNow()));
             PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 

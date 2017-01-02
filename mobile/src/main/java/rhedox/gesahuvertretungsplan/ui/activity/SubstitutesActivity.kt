@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.view.ViewPager
 import android.support.v7.graphics.drawable.DrawerArrowDrawable
 import android.view.Menu
@@ -22,12 +23,16 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.share
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
+import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
+import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 20.10.2016.
@@ -120,6 +125,15 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
             swipeRefreshLayout?.isEnabled = value
         }
 
+    private object State {
+        const val presenter = "presenter"
+    }
+
+    object Extra {
+        const val date = "date"
+        const val canGoUp = "cangoup"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -128,12 +142,22 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
             presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
             isRecreated = true
         } else {
+            val state: SubstitutesState?;
             if(savedInstanceState != null) {
-                presenter = SubstitutesPresenter(appKodein(), savedInstanceState)
+                state = savedInstanceState.getParcelable<SubstitutesState>(State.presenter)
                 isRecreated = true
             } else {
-                presenter = SubstitutesPresenter(appKodein(), intent.extras ?: Bundle.EMPTY)
+                val seconds = intent?.extras?.getInt(Extra.date, 0) ?: 0
+                val date: LocalDate?;
+                if(seconds != 0) {
+                    date = localDateFromUnix(seconds)
+                } else {
+                    date = null
+                }
+                val canGoUp = intent?.extras?.getBoolean(Extra.canGoUp, false) ?: false
+                state = SubstitutesState(date, canGoUp = canGoUp)
             }
+            presenter = SubstitutesPresenter(appKodein(), state)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -281,9 +305,9 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {
-        val state = SubstitutesPresenter.createState(date, true)
         val intent = intentFor<SubstitutesActivity>()
-        intent.putExtras(state)
+        intent.putExtra(Extra.date, date.unixTimeStamp)
+        intent.putExtra(Extra.canGoUp, true)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
     }
@@ -294,5 +318,13 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
         return presenter
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        if(outState == null) {
+            return
+        }
+        outState.putParcelable(State.presenter, presenter.saveState() as Parcelable)
     }
 }

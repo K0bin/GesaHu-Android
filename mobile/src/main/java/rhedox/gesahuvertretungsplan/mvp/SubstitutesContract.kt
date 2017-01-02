@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.mvp
 
+import android.os.Parcelable
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.Substitute
 
@@ -7,6 +8,12 @@ import rhedox.gesahuvertretungsplan.model.Substitute
  * Created by robin on 20.10.2016.
  */
 interface SubstitutesContract {
+    interface State {
+        val date: LocalDate?
+        val canGoUp: Boolean?
+        val selected: Int?
+    }
+
     interface Presenter : BaseContract.Presenter {
         fun onDatePickerIconClicked();
         fun onDatePicked(date: LocalDate)
@@ -18,6 +25,7 @@ interface SubstitutesContract {
         fun onRefresh()
         fun onCabClosed()
         fun onBackPressed()
+        fun saveState(): State
     }
 
     interface View : BaseContract.View {

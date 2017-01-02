@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'android-apt'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: "kotlin-allopen"
 
 android {
     compileSdkVersion 25
@@ -43,9 +44,16 @@ android {
     aaptOptions {
         additionalParameters "--no-version-vectors"
     }*/
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+}
+
+allOpen {
+    annotation("rhedox.gesahuvertretungsplan.util.Open")
 }
 
 dependencies {
@@ -61,7 +69,8 @@ dependencies {
     compile 'com.android.support:preference-v14:25.+'
     compile 'com.android.support:percent:25.+'
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
-    compile 'net.danlew:android.joda:2.+'
+    debugCompile 'net.danlew:android.joda:2.+'
+    releaseCompile 'net.danlew:android.joda:2.+'
     compile 'com.squareup.retrofit2:retrofit:2.+'
     compile 'com.squareup.okhttp3:logging-interceptor:3.+'
     compile 'com.squareup.okhttp3:okhttp:3.+'
@@ -99,6 +108,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'
     testCompile "com.nhaarman:mockito-kotlin:+"
+    testCompile 'joda-time:joda-time:+'
     /*testCompile 'org.robolectric:robolectric:3.+'
     //testCompile 'org.mockito:mockito-core:2.+'
     testCompile 'org.powermock:powermock-api-mockito:1.+'

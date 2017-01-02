@@ -13,7 +13,6 @@ interface BaseContract {
         fun attachView(view: View, isRecreated: Boolean)
         fun detachView()
         fun destroy()
-        fun saveState(bundle: Bundle)
     }
 
     interface View {

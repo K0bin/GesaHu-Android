@@ -15,6 +15,7 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
+import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.util.*
@@ -22,7 +23,7 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn), SubstitutesContract.Presenter {
+class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : BasePresenter(kodeIn), SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
@@ -43,37 +44,14 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
      */
     private val canGoUp: Boolean;
 
-    private object State {
-        const val date = "date"
-        const val canGoUp = "canGoUp"
-        const val selected = "selected"
-    }
-
-    companion object {
-        @JvmStatic
-        fun createState(date: LocalDate?, canGoUp: Boolean = false, selected: Int? = null): Bundle {
-            val bundle = Bundle();
-            bundle.putInt(State.date, date?.unixTimeStamp ?: 0)
-            bundle.putInt(State.selected, selected ?: -1)
-            bundle.putBoolean(State.canGoUp, canGoUp)
-            return bundle;
-        }
-    }
-
     init {
-        val seconds = state.getInt(State.date, 0);
-        val _date: LocalDate;
-
-        if (seconds == 0)
-            _date = SchoolWeek.nextFromNow()
-        else
-            _date = localDateFromUnix(seconds)
+        val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
         Log.d("SubstitutesPresenter", "Date: $_date")
 
-        currentPage = _date.dayOfWeek - DateTimeConstants.MONDAY
+        currentPage = Math.max(0, Math.min(_date.dayOfWeek - DateTimeConstants.MONDAY, 4))
         this.date = getFirstDayOfWeek(_date)
-        this.canGoUp = state.getBoolean(State.canGoUp, false)
+        this.canGoUp = state?.canGoUp ?: false
 
         val repositoryProvider: () -> SubstitutesRepository = kodeIn.provider()
         repository = repositoryProvider.invoke()
@@ -97,8 +75,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
             }
         }
 
-        val stateSelected = state.getInt(State.selected, -1)
-        selected = if (stateSelected != -1) stateSelected else null
+        selected = state?.selected
     }
 
     override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
@@ -114,11 +91,11 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
             view.isAppBarExpanded = true
 
         view.tabTitles = arrayOf(
-                date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE dd.MM.yy", Locale.GERMANY),
-                date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE dd.MM.yy", Locale.GERMANY)
+                date.withFieldAdded(DurationFieldType.days(), 0).toString("EEE. dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 1).toString("EEE. dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 2).toString("EEE. dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE. dd.MM.yy", Locale.GERMANY),
+                date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE. dd.MM.yy", Locale.GERMANY)
         )
 
         view.isBackButtonVisible = canGoUp
@@ -141,6 +118,9 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
 
     fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
+        if(date.dayOfWeekIndex > 4) {
+            return;
+        }
 
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
@@ -153,6 +133,10 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
     }
 
     fun onAnnouncementLoaded(date:LocalDate, text: String) {
+        if(date.dayOfWeekIndex > 4) {
+            return;
+        }
+
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
             announcements[position] = text
@@ -187,6 +171,10 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
     }
 
     override fun onListItemClicked(listEntry: Int) {
+        if (currentPage < 0 || listEntry < 0 || listEntry >= substitutes[currentPage]?.size ?: 0) {
+            return;
+        }
+
         selected = if(selected == listEntry) null else listEntry
         if(view != null) {
             view!!.setSelected(currentPage, selected)
@@ -260,9 +248,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: Bundle) : BasePresenter(kodeIn
         }
     }
 
-    override fun saveState(bundle: Bundle) {
-        bundle.putInt(State.selected, selected ?: -1)
-        bundle.putBoolean(State.canGoUp, false)
-        bundle.putInt(State.date, date.withFieldAdded(DurationFieldType.days(), currentPage).unixTimeStamp)
+    override fun saveState(): SubstitutesContract.State {
+        return SubstitutesState(date, canGoUp, selected)
     }
 }

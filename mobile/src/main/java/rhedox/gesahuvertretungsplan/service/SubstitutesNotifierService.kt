@@ -98,7 +98,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
                 val builder = NotificationCompat.Builder(applicationContext)
                 //Open app on click on notification
                 val launchIntent = Intent(applicationContext, SubstitutesActivity::class.java)
-                launchIntent.putExtras(SubstitutesPresenter.createState(date))
+                launchIntent.putExtra(SubstitutesActivity.Extra.date, date.unixTimeStamp)
                 val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + titles.size, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 builder.setContentIntent(launchPending)
 
@@ -169,8 +169,9 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
         //Open app on click on notification
         val launchIntent = Intent(applicationContext, SubstitutesActivity::class.java)
-        if (date != null)
-            launchIntent.putExtras(SubstitutesPresenter.createState(date))
+        if (date != null) {
+            launchIntent.putExtra(SubstitutesActivity.Extra.date, date.unixTimeStamp)
+        }
         val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + notificationLines.size + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(launchPending)
 
