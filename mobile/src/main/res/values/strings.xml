@@ -131,6 +131,8 @@
     <string name="calendar_exam_name">Prüfungen</string>
 
     <string name="calendar_test_title" formatted="false">Klausur %s %s %s bei %s</string>
+    <string name="calendar_author" formatted="false">Ersteller: %s</string>
+    <string name="calendar_location" formatted="false">Ort: %s</string>
     <string name="calendar_event_description" formatted="false">Kategorie: %s</string>
 
     <!-- Strings related to login -->

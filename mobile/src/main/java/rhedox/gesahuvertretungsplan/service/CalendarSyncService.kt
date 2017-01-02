@@ -147,7 +147,7 @@ class CalendarSyncService : Service() {
 
         private fun clearExistingCalendars(calendarId: Long, start: DateTime) {
             val uri = CalendarContract.Events.CONTENT_URI
-            context.contentResolver.delete(uri, "${CalendarContract.Events.CALENDAR_ID} = $calendarId AND (${CalendarContract.Events.DTSTART} >= ${start.millis} OR ${CalendarContract.Events.DTEND} <= ${start.millis})", null)
+            context.contentResolver.delete(uri, "${CalendarContract.Events.CALENDAR_ID} = $calendarId AND (${CalendarContract.Events.DTSTART} >= ${start.millis} OR ${CalendarContract.Events.DTEND} >= ${start.millis})", null)
         }
 
         private fun createCalendar(name: String, account: Account): Long {
@@ -201,9 +201,14 @@ class CalendarSyncService : Service() {
             values.put(CalendarContract.Events.ALL_DAY, event.isWholeDay)
 
             values.put(CalendarContract.Events.TITLE, event.description)
-            values.put(CalendarContract.Events.DESCRIPTION, context.getString(R.string.calendar_event_description, event.category))
-            values.put(CalendarContract.Events.EVENT_LOCATION, event.location)
-            values.put(CalendarContract.Events.ORGANIZER, event.author)
+            var description = context.getString(R.string.calendar_event_description, event.category);
+            if(event.location.isNotBlank()) {
+                description += System.getProperty("line.separator") + context.getString(R.string.calendar_location, event.location)
+            }
+            if(event.author.isNotBlank()) {
+                description += System.getProperty("line.separator") + context.getString(R.string.calendar_author, event.author)
+            }
+            values.put(CalendarContract.Events.DESCRIPTION, description)
             values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
 
