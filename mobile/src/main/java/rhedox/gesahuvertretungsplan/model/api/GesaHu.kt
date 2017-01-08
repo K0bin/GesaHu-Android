@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
+import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormatterBuilder
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -34,8 +35,10 @@ class GesaHu(context: Context) {
         val gson = GsonBuilder()
                 .registerTypeAdapter(Substitute::class.java, SubstituteDeserializer(context))
                 .registerTypeAdapter(Test::class.java, TestDeserializer(context))
-                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(Exam::class.java, ExamDeserializer(context))
                 .registerTypeAdapter(DateTime::class.java, DateTimeDeserializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
                 .create()
 
         val client = builder.build()
@@ -83,12 +86,12 @@ class GesaHu(context: Context) {
         return api.events(username, password, begin.toString(dateTimeFormatter), end.toString(dateTimeFormatter))
     }
 
-    fun tests(username: String, password: String, begin: DateTime): Call<List<Test>> {
-        return api.tests(username, password, begin.toString(dateTimeFormatter))
+    fun tests(username: String, begin: DateTime): Call<List<Test>> {
+        return api.tests(username, begin.toString(dateTimeFormatter))
     }
 
-    fun exams(username: String, password: String, begin: DateTime): Call<List<Exam>> {
-        return api.exams(username, password, begin.toString(dateTimeFormatter))
+    fun exams(username: String, begin: DateTime): Call<List<Exam>> {
+        return api.exams(username, begin.toString(dateTimeFormatter))
     }
 
     private interface GesaHuApi {
@@ -105,9 +108,9 @@ class GesaHu(context: Context) {
         fun events(@Query("username") username: String, @Query("pw") password: String, @Query("start") begin: String, @Query("end") end: String): Call<List<Event>>
 
         @GET("gettestdates.php")
-        fun tests(@Query("username") username: String, @Query("pw") password: String, @Query("beginn") begin: String): Call<List<Test>>
+        fun tests(@Query("username") username: String, @Query("beginn") begin: String): Call<List<Test>>
 
         @GET("getexamdates.php")
-        fun exams(@Query("username") username: String, @Query("pw") password: String, @Query("beginn") begin: String): Call<List<Exam>>
+        fun exams(@Query("username") username: String, @Query("beginn") begin: String): Call<List<Exam>>
     }
 }

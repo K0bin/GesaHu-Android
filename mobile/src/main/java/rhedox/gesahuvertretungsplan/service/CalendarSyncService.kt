@@ -51,8 +51,11 @@ class CalendarSyncService : Service() {
         }
 
         private val gesaHu = GesaHu(context)
+        private val address = context.getString(R.string.school_address)
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
+            android.os.Debug.waitForDebugger();
+
             if(Thread.interrupted()) {
                 return;
             }
@@ -75,7 +78,7 @@ class CalendarSyncService : Service() {
 
             val password = context.accountManager.getPassword(account) ?: "";
 
-            val testCall = gesaHu.tests(account.name, password, start)
+            val testCall = gesaHu.tests(account.name, start)
             val testResponse = testCall.execute()
             if(Thread.interrupted()) {
                 return;
@@ -107,7 +110,7 @@ class CalendarSyncService : Service() {
                 }
             }
 
-            val examCall = gesaHu.exams(account.name, password, start)
+            val examCall = gesaHu.exams(account.name, start)
             val examResponse = examCall.execute()
             if(Thread.interrupted()) {
                 return;
@@ -211,6 +214,7 @@ class CalendarSyncService : Service() {
             values.put(CalendarContract.Events.DESCRIPTION, description)
             values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+            values.put(CalendarContract.Events.EVENT_LOCATION, address);
 
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
@@ -219,16 +223,26 @@ class CalendarSyncService : Service() {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(SchoolWeek.lessonStart(test.lessonStart)).millis)
             values.put(CalendarContract.Events.DTEND, test.date.toDateTime(SchoolWeek.lessonEnd(if(test.duration >= 1) test.lessonStart + test.duration - 1 else test.lessonStart)).millis)
-            values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_test_title, test.year.toString(), test.subject, test.course, test.teacher))
+            values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_test_title, test.subject, test.course, test.year.toString(), test.teacher))
             values.put(CalendarContract.Events.DESCRIPTION, test.remark)
             values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+            values.put(CalendarContract.Events.EVENT_LOCATION, address)
 
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
 
         private fun insert(exam: Exam, calendarId: Long) {
+            val values = ContentValues()
+            values.put(CalendarContract.Events.DTSTART, exam.date.toDateTime(exam.time).millis)
+            values.put(CalendarContract.Events.DTEND, exam.date.toDateTime(exam.time).withFieldAdded(DurationFieldType.minutes(), 90).millis)
+            values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_exam_title, exam.subject, exam.course, exam.examiner))
+            values.put(CalendarContract.Events.DESCRIPTION, context.getString(R.string.calendar_exam_description, exam.examinee, exam.examiner, exam.chair, exam.recorder, exam.room, if(exam.allowAudience) context.getString(R.string.bool_true_lower) else context.getString(R.string.bool_false_lower)))
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+            values.put(CalendarContract.Events.EVENT_LOCATION, address);
 
+            context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
 
         private fun buildUri(baseUri: Uri, account: Account): Uri {

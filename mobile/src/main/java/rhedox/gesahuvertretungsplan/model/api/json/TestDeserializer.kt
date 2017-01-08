@@ -14,14 +14,13 @@ import java.lang.reflect.Type
  * Created by robin on 19.10.2016.
  */
 class TestDeserializer(context: Context) : JsonDeserializer<Test> {
-    private val localDateDeserializer = LocalDateDeserializer()
     private val resolver = AbbreviationResolver(context.applicationContext);
 
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Test {
         val jsonObject = json.asJsonObject;
 
         val remark = Html.decode(jsonObject.get("Bemerkung").asString.trim())
-        val date = localDateDeserializer.deserialize(jsonObject.get("Datum"), LocalDate::class.java, context)!!
+        val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
         val subject = resolver.resolveSubject(Html.decode(jsonObject.get("Fach").asString.trim()))
         val course = Html.decode(jsonObject.get("Klasse").asString.trim())
         val year = Html.decode(jsonObject.get("Klassenstufe").asString.trim()).toInt()

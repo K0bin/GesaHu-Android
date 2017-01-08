@@ -130,10 +130,14 @@
     <string name="calendar_test_name">Klausuren</string>
     <string name="calendar_exam_name">Prüfungen</string>
 
-    <string name="calendar_test_title" formatted="false">Klausur %s %s %s bei %s</string>
+    <string name="calendar_test_title" formatted="false">Klausur in %s %s (%s) bei %s</string>
+    <string name="calendar_exam_title" formatted="false">Prüfung in %s %s bei %s</string>
+    <string name="calendar_exam_description" formatted="false">Prüfling: %s\nPrüfer: %s\nVorsitz: %s\nProtokollant: %s\nRaum: %s\nZuschauer erlaubt: %s</string>
     <string name="calendar_author" formatted="false">Ersteller: %s</string>
     <string name="calendar_location" formatted="false">Ort: %s</string>
     <string name="calendar_event_description" formatted="false">Kategorie: %s</string>
+    <string name="bool_true_lower">ja</string>
+    <string name="bool_false_lower">nein</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
