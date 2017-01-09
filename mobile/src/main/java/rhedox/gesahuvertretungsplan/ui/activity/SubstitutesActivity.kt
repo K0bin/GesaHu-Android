@@ -17,7 +17,10 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
+import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
+import com.github.salomonbrys.kodein.provider
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.share
@@ -25,6 +28,8 @@ import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
@@ -137,6 +142,12 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val kodeIn = Kodein {
+            extend(appKodein())
+            bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
+            bind<SubstituteFormatter>() with instance(SubstituteFormatter(applicationContext))
+        }
+
         //Create presenter
         if(lastCustomNonConfigurationInstance != null) {
             presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
@@ -157,7 +168,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
                 val canGoUp = intent?.extras?.getBoolean(Extra.canGoUp, false) ?: false
                 state = SubstitutesState(date, canGoUp = canGoUp)
             }
-            presenter = SubstitutesPresenter(appKodein(), state)
+            presenter = SubstitutesPresenter(kodeIn, state)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

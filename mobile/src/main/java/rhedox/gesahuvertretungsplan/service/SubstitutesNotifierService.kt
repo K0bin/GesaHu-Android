@@ -42,6 +42,8 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
     private lateinit var repository: SubstitutesRepository;
 
+    private lateinit var formatter: SubstituteFormatter;
+
     override fun onCreate() {
         super.onCreate()
 
@@ -49,6 +51,8 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         color = ContextCompat.getColor(applicationContext, R.color.colorDefaultAccent)
         repository = SubstitutesRepository(this)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
+
+        formatter = SubstituteFormatter(this)
     }
 
     override fun onHandleIntent(intent: Intent) {
@@ -77,8 +81,8 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
             if ((lesson == -1 || lesson == substitutes[i].lessonBegin) && substitutes[i].isRelevant) {
 
                 //Text to display
-                val notificationText = SubstituteFormatter.makeNotificationText(applicationContext, substitutes[i])
-                val title = SubstituteFormatter.makeSubstituteKindText(applicationContext, substitutes[i].kind)
+                val notificationText = formatter.makeNotificationText(substitutes[i])
+                val title = formatter.makeSubstituteKindText(substitutes[i].kind)
                 val body = String.format(applicationContext.getString(R.string.notification_summary), title, substitutes[i].lessonText)
                 titles.add(body)
 

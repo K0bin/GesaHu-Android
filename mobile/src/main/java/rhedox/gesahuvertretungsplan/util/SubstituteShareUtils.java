@@ -21,7 +21,9 @@ public final class SubstituteShareUtils {
     private SubstituteShareUtils() {}
 
     public static Intent makeShareIntent(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute substitute) {
-        String text = SubstituteFormatter.makeShareText(context, date, substitute);
+        final SubstituteFormatter formatter = new SubstituteFormatter(context);
+
+        String text = formatter.makeShareText(date, substitute);
         
         Intent share = new Intent();
         share.setAction(Intent.ACTION_SEND);

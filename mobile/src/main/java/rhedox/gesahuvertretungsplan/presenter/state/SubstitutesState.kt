@@ -23,8 +23,8 @@ data class SubstitutesState(override val date: LocalDate?, override val canGoUp:
     }
 
     companion object {
-        @JvmStatic
-        final val CREATOR: Parcelable.Creator<SubstitutesState> = object : Parcelable.Creator<SubstitutesState> {
+        @JvmField
+        val CREATOR: Parcelable.Creator<SubstitutesState> = object : Parcelable.Creator<SubstitutesState> {
             override fun createFromParcel(parcel: Parcel): SubstitutesState {
                 val seconds = parcel.readInt()
                 val date: LocalDate?;

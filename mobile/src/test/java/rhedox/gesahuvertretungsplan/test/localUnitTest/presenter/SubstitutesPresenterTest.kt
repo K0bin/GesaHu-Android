@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 import android.accounts.AccountManager
 import android.content.ContentResolver
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import com.github.salomonbrys.kodein.Kodein
@@ -37,6 +38,7 @@ class SubstitutesPresenterTest {
         bind<AccountManager>() with instance ( mock<AccountManager> {} )
         bind<AvatarLoader>() with provider { mock<AvatarLoader> {} }
         bind<PermissionManager>() with provider { mock<PermissionManager> {} }
+        bind<ConnectivityManager>() with provider { mock<ConnectivityManager> {} }
     }
 
     var view = StubSubstitutesView()

@@ -108,12 +108,11 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
         data.close()
     }
 
-    fun requestUpdate(account: Account, date: LocalDate) {
+    fun requestUpdate(account: Account, date: LocalDate, singleDay: Boolean) {
         if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
             val extras = Bundle()
             extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.unixTimeStamp)
-            extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, false)
-            //extras.putLong(SyncAdapter.extraDate, date.toDateTime(LocalTime(0)).millis)
+            extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, singleDay)
             extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraIgnorePast, true)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

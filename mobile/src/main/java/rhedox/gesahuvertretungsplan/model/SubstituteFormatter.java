@@ -16,7 +16,14 @@ import rhedox.gesahuvertretungsplan.util.TextUtils;
  */
 public class SubstituteFormatter {
 
-    public static String makeSubstituteKindText(Context context, @Substitute.Companion.Kind long kind) {
+    @NonNull
+    private final Context context;
+
+    public SubstituteFormatter(@NonNull Context context) {
+        this.context = context;
+    }
+
+    public String makeSubstituteKindText(@Substitute.Companion.Kind long kind) {
         switch((int)kind) {
 	        case (int)Substitute.KIND_ROOM_CHANGE:
                 return context.getString(R.string.roomchange);
@@ -36,7 +43,7 @@ public class SubstituteFormatter {
         }
     }
 
-    public static String makeShareText(@NonNull Context context, @Nullable LocalDate date, @NonNull Substitute substitute) {
+    public String makeShareText(@Nullable LocalDate date, @NonNull Substitute substitute) {
         String dateText = "";
 
         if(date != null) {
@@ -79,7 +86,7 @@ public class SubstituteFormatter {
         }
     }
 
-    public static String makeNotificationText(Context context, Substitute substitute) {
+    public String makeNotificationText(Substitute substitute) {
         String text = substitute.getSubject();
 
         if(!TextUtils.isEmpty(substitute.getRoom()))

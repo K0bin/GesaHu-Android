@@ -3,6 +3,8 @@ package rhedox.gesahuvertretungsplan.presenter
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
+import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import com.github.salomonbrys.kodein.*
@@ -38,6 +40,9 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
      */
     private var currentPage: Int;
     private val repository: SubstitutesRepository
+
+    private val connectivityManager: ConnectivityManager = kodeIn.instance()
+    private val formatter: SubstituteFormatter = kodeIn.instance()
 
     /**
      * Determines whether or not the view was started by the date picker and is sitting on top of another SubstitutesActivity
@@ -188,7 +193,9 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
 
     override fun onRefresh() {
         if (account != null) {
-            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage))
+            val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
+
+            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
     }
@@ -234,7 +241,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
 
         if(substitutesOfDay != null && selected != null) {
             val substitute = substitutesOfDay[selected!!]
-            //view?.share(SubstituteFormatter.makeShareText(context, currentDate, substitute))
+            view?.share(formatter.makeShareText(currentDate, substitute))
         }
     }
 

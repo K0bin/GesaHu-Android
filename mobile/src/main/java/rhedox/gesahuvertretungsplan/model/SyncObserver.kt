@@ -9,7 +9,7 @@ import rhedox.gesahuvertretungsplan.util.Open
  * Created by robin on 25.12.2016.
  */
 @Open
-class SyncObserver() {
+class SyncObserver {
     var callback: (() -> Unit)? = null
 
     private var syncListenerHandle: Any? = null;

@@ -4,6 +4,7 @@ import android.accounts.AccountManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.StrictMode
 import android.preference.PreferenceManager
 import android.provider.CalendarContract
@@ -19,6 +20,7 @@ import com.squareup.leakcanary.RefWatcher
 
 import net.danlew.android.joda.JodaTimeAndroid
 import org.jetbrains.anko.accountManager
+import org.jetbrains.anko.connectivityManager
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SyncObserver
@@ -33,11 +35,11 @@ class App : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
         bind<SharedPreferences>() with instance(PreferenceManager.getDefaultSharedPreferences(applicationContext))
         bind<BoardsRepository>() with provider { BoardsRepository(applicationContext) }
-        bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
         bind<SyncObserver>() with provider { SyncObserver() }
         bind<AccountManager>() with instance (applicationContext.accountManager)
         bind<AvatarLoader>() with provider { AvatarLoader(applicationContext) }
         bind<PermissionManager>() with instance(PermissionManager(applicationContext))
+        bind<ConnectivityManager>() with instance(applicationContext.connectivityManager)
     }
 
     private var refWatcher: RefWatcher? = null
