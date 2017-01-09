@@ -53,3 +53,4 @@ mobile/google-services.json
 *.log
 
 appintro/
+mobile/src/main/res/values/teachers.xml
