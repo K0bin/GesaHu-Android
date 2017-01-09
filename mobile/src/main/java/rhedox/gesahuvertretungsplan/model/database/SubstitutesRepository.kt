@@ -26,10 +26,12 @@ import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
+import rhedox.gesahuvertretungsplan.util.Open
 
 /**
  * Created by robin on 29.10.2016.
  */
+@Open
 class SubstitutesRepository(context: Context) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
     private val context: Context = context.applicationContext
     private val observer: Observer;
@@ -134,7 +136,6 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_BACKOFF, true)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
-                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_REQUIRE_CHARGING, false)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
 
                 ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)

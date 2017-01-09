@@ -2,16 +2,19 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.Manifest
 import android.accounts.Account
+import android.accounts.AccountManager
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.CalendarContract
 import android.support.v4.content.ContextCompat
+import android.content.SharedPreferences
+import android.os.Bundle
+import com.github.salomonbrys.kodein.*
 import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
@@ -23,26 +26,32 @@ import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
+import rhedox.gesahuvertretungsplan.util.PermissionManager
 
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BasePresenter(context: Context) : BaseContract.Presenter {
-    protected val context: Context = context.applicationContext
+abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presenter, KodeinInjected {
+    override val injector: KodeinInjector = KodeinInjector()
+
     private var view: BaseContract.View? = null;
     protected var account: Account? = null;
         private set
 
-    protected var boardsRepository: BoardsRepository
-        private set
+    private val accountManager: AccountManager by instance()
+    private val permissionManager: PermissionManager by instance()
 
-    protected lateinit var avatarLoader: AvatarLoader;
-        private set;
+    private val boardsRepositoryProvider: () -> BoardsRepository by provider()
+    protected val boardsRepository: BoardsRepository
+
+    private val prefs: SharedPreferences by instance()
 
     private var boards: List<Board> = listOf();
 
     init {
-        boardsRepository = BoardsRepository(context)
+        inject(kodeIn)
+
+        boardsRepository = boardsRepositoryProvider.invoke()
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
@@ -61,7 +70,6 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
     }
 
     private fun checkFirstStart() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
         if (!previouslyStarted) {
             view?.navigateToIntro()
@@ -71,16 +79,17 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
     }
 
     private fun updateApp() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val version = prefs.getInt(PreferenceFragment.PREF_VERSION, 0)
+        if (version < BuildConfig.VERSION_CODE) {
+            val editor = prefs.edit() ?: return
+
+            editor.putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
+            editor.apply()
+        }
+
         if (version < 4012) {
             //Show intro again due to major update & permissions
             view?.navigateToIntro()
-        }
-        if (version < BuildConfig.VERSION_CODE) {
-            val editor = prefs.edit()
-            editor.putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
-            editor.apply()
         }
     }
 
@@ -114,19 +123,20 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
         if(account != null)
             return;
 
-        val accounts = context.accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
+        val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
         if (accounts.isNotEmpty())
             account = accounts[0]
 
         if(account != null) {
             //load avatar
-            avatarLoader = AvatarLoader(context)
+            val avatarLoaderProvider: () -> AvatarLoader = kodeIn.provider();
+            val avatarLoader = avatarLoaderProvider.invoke()
             avatarLoader.callback = {
                 view?.setAvatar(it)
             }
             avatarLoader.execute();
 
-            if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+            if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && permissionManager.isCalendarWritingPermissionGranted) {
                 CalendarSyncService.setIsSyncEnabled(account!!, true)
             }
         } else if (view != null) {

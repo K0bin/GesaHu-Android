@@ -160,12 +160,4 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                 null, null, null, this, null, null);
     }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-
-        if(outState != null) {
-            presenter.saveState(outState)
-        }
-    }
 }

@@ -23,6 +23,7 @@ import rhedox.gesahuvertretungsplan.model.api.json.Event
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.json.Exam
 import rhedox.gesahuvertretungsplan.model.api.json.Test
+import rhedox.gesahuvertretungsplan.util.PermissionManager
 import java.util.*
 
 /**
@@ -74,7 +75,8 @@ class CalendarSyncService : Service() {
             if(Thread.interrupted()) {
                 return;
             }
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            val permissionManager = PermissionManager(context)
+            if (!permissionManager.isCalendarReadingPermissionGranted || !permissionManager.isCalendarWritingPermissionGranted) {
                 setIsSyncEnabled(account, false)
                 return;
             }

@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
-import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Intent
@@ -8,42 +8,29 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.annotation.ColorInt
-import android.support.v4.app.NotificationCompatSideChannelService
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v4.util.Pair
+import android.os.Parcelable
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.drawable.DrawerArrowDrawable
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
+import com.github.salomonbrys.kodein.android.appKodein
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_main.*
-import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.share
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
+import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.ui.fragment.AnnouncementFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.DatePickerFragment
-import android.animation.ValueAnimator
-import android.graphics.drawable.Drawable
-import android.support.v7.app.ActionBarDrawerToggle
-import android.view.animation.DecelerateInterpolator
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.share
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
@@ -138,6 +125,15 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
             swipeRefreshLayout?.isEnabled = value
         }
 
+    private object State {
+        const val presenter = "presenter"
+    }
+
+    object Extra {
+        const val date = "date"
+        const val canGoUp = "cangoup"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -146,12 +142,22 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
             presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
             isRecreated = true
         } else {
+            val state: SubstitutesState?;
             if(savedInstanceState != null) {
-                presenter = SubstitutesPresenter(this, savedInstanceState)
+                state = savedInstanceState.getParcelable<SubstitutesState>(State.presenter)
                 isRecreated = true
             } else {
-                presenter = SubstitutesPresenter(this, intent.extras ?: Bundle.EMPTY)
+                val seconds = intent?.extras?.getInt(Extra.date, 0) ?: 0
+                val date: LocalDate?;
+                if(seconds != 0) {
+                    date = localDateFromUnix(seconds)
+                } else {
+                    date = null
+                }
+                val canGoUp = intent?.extras?.getBoolean(Extra.canGoUp, false) ?: false
+                state = SubstitutesState(date, canGoUp = canGoUp)
             }
+            presenter = SubstitutesPresenter(appKodein(), state)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -299,9 +305,9 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {
-        val state = SubstitutesPresenter.createState(date, true)
         val intent = intentFor<SubstitutesActivity>()
-        intent.putExtras(state)
+        intent.putExtra(Extra.date, date.unixTimeStamp)
+        intent.putExtra(Extra.canGoUp, true)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
     }
@@ -312,5 +318,13 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
         return presenter
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        if(outState == null) {
+            return
+        }
+        outState.putParcelable(State.presenter, presenter.saveState() as Parcelable)
     }
 }

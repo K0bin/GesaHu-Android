@@ -18,10 +18,12 @@ import rhedox.gesahuvertretungsplan.model.database.tables.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
+import rhedox.gesahuvertretungsplan.util.Open
 
 /**
  * Created by robin on 29.10.2016.
  */
+@Open
 class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
     private val context = context.applicationContext
 
