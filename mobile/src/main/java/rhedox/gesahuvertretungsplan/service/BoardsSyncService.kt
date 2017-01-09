@@ -25,6 +25,18 @@ class BoardsSyncService : Service() {
 
     companion object {
         private var syncAdapter: SyncAdapter? = null;
+
+        fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
+            if(isEnabled) {
+                ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 1);
+                ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, true);
+                ContentResolver.addPeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
+            } else {
+                ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 0);
+                ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, false);
+                ContentResolver.removePeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY)
+            }
+        }
     }
 
     override fun onCreate() {

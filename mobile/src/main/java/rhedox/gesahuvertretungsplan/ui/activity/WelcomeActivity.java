@@ -26,10 +26,10 @@ public class WelcomeActivity extends AppIntro {
 		super.onCreate(savedInstanceState);
 
 		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_design), getString(R.string.feature_design_description), R.drawable.ic_phone, ContextCompat.getColor(this, R.color.intro_slide_1)));
-		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_highlight), getString(R.string.feature_highlight_description), R.drawable.ic_relevant, ContextCompat.getColor(this, R.color.intro_slide_2)));
-		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_notify), getString(R.string.feature_notify_description), R.drawable.ic_bell, ContextCompat.getColor(this, R.color.intro_slide_3)));
-		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_calendar), getString(R.string.feature_calendar_description), R.drawable.ic_calendar, ContextCompat.getColor(this, R.color.intro_slide_4)));
-		askForPermissions(new String[] { Manifest.permission.WRITE_CALENDAR }, 4);
+		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_notify), getString(R.string.feature_notify_description), R.drawable.ic_bell, ContextCompat.getColor(this, R.color.intro_slide_2)));
+		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_calendar), getString(R.string.feature_calendar_description), R.drawable.ic_calendar, ContextCompat.getColor(this, R.color.intro_slide_3)));
+		addSlide(AppIntroFragment.newInstance(getString(R.string.feature_boards), getString(R.string.feature_boards_description), R.drawable.ic_board, ContextCompat.getColor(this, R.color.intro_slide_4)));
+		askForPermissions(new String[] { Manifest.permission.WRITE_CALENDAR }, 3);
 
 		this.showSkipButton(false);
 

@@ -74,7 +74,7 @@ class GesaHu(context: Context) {
         return api.boards(username, password)
     }
 
-    fun publicSubstitutes(username: String, password: String, date: LocalDate): Call<SubstitutesList> {
+    fun publicSubstitutes(date: LocalDate): Call<SubstitutesList> {
         return api.substitutes(date.toString(localDateFormatter))
     }
 

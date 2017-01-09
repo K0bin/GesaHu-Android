@@ -12,6 +12,7 @@ import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
@@ -27,6 +28,18 @@ class SubstitutesSyncService : Service() {
 
     companion object {
         private var syncAdapter: SyncAdapter? = null;
+
+        fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
+            if(isEnabled) {
+                ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 1);
+                ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, true);
+                ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
+            } else {
+                ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 0)
+                ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, false);
+                ContentResolver.removePeriodicSync(account,  SubstitutesContentProvider.authority, Bundle.EMPTY)
+            }
+        }
     }
 
     override fun onCreate() {

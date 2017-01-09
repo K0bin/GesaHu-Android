@@ -1,16 +1,19 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -23,7 +26,10 @@ import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.service.BoardsSyncService
+import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
+import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.util.Md5Util
 
 /**
@@ -101,6 +107,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             }
         } else {
             username = usernameEdit.text.toString()
+            if(username.length > 2) {
+                username = username.substring(0, 2).toUpperCase() + username.substring(2, username.length)
+            }
         }
 
         if (usernameEdit.text == null || usernameEdit.text.toString().isNullOrBlank()) {
@@ -157,15 +166,11 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         passwordEdit.isFocusableInTouchMode = false;
         passwordEdit.isEnabled = false;
 
-        ContentResolver.setIsSyncable(account, SubstitutesContentProvider.authority, 1);
-        ContentResolver.setSyncAutomatically(account, SubstitutesContentProvider.authority, true);
-        ContentResolver.addPeriodicSync(account, SubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
-        ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 1);
-        ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, true);
-        ContentResolver.addPeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
-        ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
-        ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
-        ContentResolver.addPeriodicSync(account,  CalendarContract.AUTHORITY, Bundle.EMPTY, 2 * 24 * 60 * 60)
+        SubstitutesSyncService.setIsSyncEnabled(account!!, true)
+        BoardsSyncService.setIsSyncEnabled(account!!, true)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+            CalendarSyncService.setIsSyncEnabled(account!!, true)
+        }
 
         val res = Intent()
         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username)

@@ -27,6 +27,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_long";
     public static final String PREF_NOTIFICATION_MODE = "pref_notification_mode";
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
+    public static final String PREF_VERSION = "pref_version";
     public static final String PREF_AMOLED = "pref_amoled";
 
     @Override

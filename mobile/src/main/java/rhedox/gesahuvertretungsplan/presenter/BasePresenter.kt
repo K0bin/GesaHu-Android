@@ -1,17 +1,25 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.Manifest
 import android.accounts.Account
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.provider.CalendarContract
+import android.support.v4.content.ContextCompat
 import org.jetbrains.anko.accountManager
+import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
+import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
@@ -38,26 +46,41 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
-        if (previouslyStarted) {
-            loadAccount();
-        }
+        checkFirstStart()
     }
 
     override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
         this.view = view;
         view.userName = account?.name ?: ""
 
+        //Check first start again, might have returned from AuthActivity
+        checkFirstStart()
+
+        //Introduce new features to the user (needs View)
+        updateApp()
+    }
+
+    private fun checkFirstStart() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val previouslyStarted = prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
         if (!previouslyStarted) {
-            val intent = Intent(context, WelcomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(intent)
+            view?.navigateToIntro()
         } else if (account == null) {
-            //Try reloading account (might have just returned from AuthActivity)
             loadAccount()
+        }
+    }
+
+    private fun updateApp() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val version = prefs.getInt(PreferenceFragment.PREF_VERSION, 0)
+        if (version < 4012) {
+            //Show intro again due to major update & permissions
+            view?.navigateToIntro()
+        }
+        if (version < BuildConfig.VERSION_CODE) {
+            val editor = prefs.edit()
+            editor.putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
+            editor.apply()
         }
     }
 
@@ -76,9 +99,9 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
 
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
         if(drawerId == R.id.settings) {
-            view?.openSettings()
+            view?.navigateToSettings()
         } else if(drawerId == R.id.about) {
-            view?.openAbout()
+            view?.navigateToAbout()
         } else if(drawerId >= drawerId && drawerId < drawerId + boards.size) {
             //START BOARD
         }
@@ -102,9 +125,12 @@ abstract class BasePresenter(context: Context) : BaseContract.Presenter {
                 view?.setAvatar(it)
             }
             avatarLoader.execute();
+
+            if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                CalendarSyncService.setIsSyncEnabled(account!!, true)
+            }
         } else if (view != null) {
-            context.accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
-                    null, null, null, view as Activity, null, null);
+            view!!.navigateToAuth()
         }
     }
 }

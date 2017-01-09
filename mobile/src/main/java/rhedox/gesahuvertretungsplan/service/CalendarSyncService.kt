@@ -1,9 +1,12 @@
 package rhedox.gesahuvertretungsplan.service
 
+import android.Manifest
 import android.accounts.Account
 import android.app.Service
 import android.content.*
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.CalendarContract
@@ -28,6 +31,18 @@ import java.util.*
 class CalendarSyncService : Service() {
     companion object {
         private var syncAdapter: SyncAdapter? = null;
+
+        fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
+            if(isEnabled) {
+                ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
+                ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
+                ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, Bundle.EMPTY, 2 * 24 * 60 * 60)
+            } else {
+                ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 0)
+                ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, false);
+                ContentResolver.removePeriodicSync(account,  CalendarContract.AUTHORITY, Bundle.EMPTY)
+            }
+        }
     }
 
     override fun onCreate() {
@@ -54,11 +69,16 @@ class CalendarSyncService : Service() {
         private val address = context.getString(R.string.school_address)
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
-            android.os.Debug.waitForDebugger();
+            //android.os.Debug.waitForDebugger();
 
             if(Thread.interrupted()) {
                 return;
             }
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                setIsSyncEnabled(account, false)
+                return;
+            }
+
             val existingCalendars = getCalendarIds(account)
             val calendars = mutableMapOf<String, Long>()
             calendars.putAll(existingCalendars)

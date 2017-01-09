@@ -19,8 +19,10 @@ interface BaseContract {
     interface View {
         fun setBoards(boards: List<Board>)
         fun setAvatar(avatar: Bitmap)
-        fun openSettings()
-        fun openAbout()
+        fun navigateToSettings()
+        fun navigateToAbout()
+        fun navigateToIntro()
+        fun navigateToAuth()
         var userName: String;
         var currentDrawerId: Int;
     }

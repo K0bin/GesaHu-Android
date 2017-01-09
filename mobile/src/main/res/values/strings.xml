@@ -96,12 +96,12 @@
 
     <string name="feature_design">Mobile-freundliches Design</string>
     <string name="feature_design_description">GesaHu für Android bietet die wichtigsten Features der GesaHu Webseite in einem für Handys oder Tablets angepasstem Design.</string>
-    <string name="feature_highlight">Relevante Stunden</string>
-    <string name="feature_highlight_description">Die App kann für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
     <string name="feature_notify">Benachrichtigungen</string>
-    <string name="feature_notify_description">Die App kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
+    <string name="feature_notify_description">Die App benachrichtigt dich einmal am Tag und vor jeder Stunde, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
     <string name="feature_calendar">Kalender</string>
     <string name="feature_calendar_description">Die App trägt Schultermine, Klausuren und Prüfungen automatisch in deinen Kalender ein.</string>
+    <string name="feature_boards">Boards</string>
+    <string name="feature_boards_description">Du kannst mit der GesaHu App deine Boards und Noten einsehen.</string>
 
     <string name="widget_counter_name">Gesahu VP Zähler</string>
     <string name="widget_list_name">Gesahu VP Liste</string>

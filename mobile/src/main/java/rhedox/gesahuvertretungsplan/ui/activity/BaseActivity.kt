@@ -1,11 +1,13 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -18,11 +20,13 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
+import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.intentFor
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.presenter.BasePresenter
+import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 
 /**
@@ -138,12 +142,23 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         imageView.setImageBitmap(avatar)
     }
 
-    override fun openSettings() {
+    override fun navigateToSettings() {
         startActivity(intentFor<PreferenceActivity>());
     }
 
-    override fun openAbout() {
+    override fun navigateToAbout() {
         AboutLibs.start(this)
+    }
+
+    override fun navigateToIntro() {
+        val intent = Intent(this, WelcomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    override fun navigateToAuth() {
+        accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
+                null, null, null, this, null, null);
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
