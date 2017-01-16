@@ -23,6 +23,7 @@ import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.connectivityManager
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
@@ -40,6 +41,10 @@ class App : Application(), KodeinAware {
         bind<AvatarLoader>() with provider { AvatarLoader(applicationContext) }
         bind<PermissionManager>() with instance(PermissionManager(applicationContext))
         bind<ConnectivityManager>() with instance(applicationContext.connectivityManager)
+
+        //Substitute
+        bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
+        bind<SubstituteFormatter>() with singleton { SubstituteFormatter(applicationContext)}
     }
 
     private var refWatcher: RefWatcher? = null

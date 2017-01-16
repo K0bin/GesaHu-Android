@@ -57,6 +57,8 @@ class SubstitutesRepository(context: Context) : android.support.v4.content.Loade
     }
 
     fun destroy() {
+        substitutesCallback = null;
+        announcementCallback = null;
         context.contentResolver.unregisterContentObserver(observer)
 
         for((date, loader) in substituteLoaders) {

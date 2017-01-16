@@ -34,12 +34,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
      * The selected substitute (of the current page); null for none
      */
     private var selected: Int? = null
-    private val syncObserver: SyncObserver
+    private val syncObserver: SyncObserver = kodeIn.instance()
     /**
      * The page (day of week) which is currently visible to the user
      */
     private var currentPage: Int;
-    private val repository: SubstitutesRepository
+    private val repository: SubstitutesRepository = kodeIn.instance()
 
     private val connectivityManager: ConnectivityManager = kodeIn.instance()
     private val formatter: SubstituteFormatter = kodeIn.instance()
@@ -58,8 +58,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         this.date = getFirstDayOfWeek(_date)
         this.canGoUp = state?.canGoUp ?: false
 
-        val repositoryProvider: () -> SubstitutesRepository = kodeIn.provider()
-        repository = repositoryProvider.invoke()
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
         repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
 
@@ -68,8 +66,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
             repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
         }
 
-        val syncObserverProvider: () -> SyncObserver = kodeIn.provider()
-        syncObserver = syncObserverProvider.invoke()
         syncObserver.callback = {
             if (account != null) {
                 if (view is Activity) {

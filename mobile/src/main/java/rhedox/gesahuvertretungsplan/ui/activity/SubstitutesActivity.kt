@@ -142,12 +142,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val kodeIn = Kodein {
-            extend(appKodein())
-            bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
-            bind<SubstituteFormatter>() with instance(SubstituteFormatter(applicationContext))
-        }
-
         //Create presenter
         if(lastCustomNonConfigurationInstance != null) {
             presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
@@ -168,7 +162,7 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
                 val canGoUp = intent?.extras?.getBoolean(Extra.canGoUp, false) ?: false
                 state = SubstitutesState(date, canGoUp = canGoUp)
             }
-            presenter = SubstitutesPresenter(kodeIn, state)
+            presenter = SubstitutesPresenter(appKodein(), state)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

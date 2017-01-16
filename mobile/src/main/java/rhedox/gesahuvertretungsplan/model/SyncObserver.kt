@@ -12,18 +12,19 @@ import rhedox.gesahuvertretungsplan.util.Open
 class SyncObserver {
     var callback: (() -> Unit)? = null
 
-    private var syncListenerHandle: Any? = null;
+    private var handle: Any? = null;
 
     init {
-        syncListenerHandle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, {
+        handle = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, {
             Log.d("SyncObserver", "Observed change in $it");
             callback?.invoke()
         });
     }
 
     fun destroy() {
-        if(syncListenerHandle != null) {
-            ContentResolver.removeStatusChangeListener(syncListenerHandle);
+        callback = null;
+        if(handle != null) {
+            ContentResolver.removeStatusChangeListener(handle);
         }
     }
 }

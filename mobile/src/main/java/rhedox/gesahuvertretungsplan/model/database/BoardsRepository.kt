@@ -41,6 +41,7 @@ class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnL
     }
 
     fun destroy() {
+        callback = null;
         context.contentResolver.unregisterContentObserver(observer)
 
         if(loader == null) {

@@ -41,8 +41,7 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
     private val accountManager: AccountManager by instance()
     private val permissionManager: PermissionManager by instance()
 
-    private val boardsRepositoryProvider: () -> BoardsRepository by provider()
-    protected val boardsRepository: BoardsRepository
+    protected val boardsRepository: BoardsRepository = kodeIn.instance()
 
     private val prefs: SharedPreferences by instance()
 
@@ -51,7 +50,6 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
     init {
         inject(kodeIn)
 
-        boardsRepository = boardsRepositoryProvider.invoke()
         boardsRepository.callback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
