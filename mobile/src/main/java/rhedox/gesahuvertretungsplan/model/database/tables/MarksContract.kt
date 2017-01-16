@@ -8,22 +8,24 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 /**
  * Created by robin on 30.10.2016.
  */
-object LessonsContract {
-    const val path = "lessons"
+object MarksContract {
+    const val path = "marks"
 
     object Table {
         const val name = "lessons";
         const val columnId = "ROWID";
         const val columnBoardId = "boardId";
         const val columnDate = "date"
-        const val columnTopic = "topic"
-        const val columnDuration = "duration"
-        const val columnStatus = "status"
-        const val columnHomework = "homework"
-        const val columnHomeworkDue = "homeworkDue"
+        const val columnDescription = "description"
+        const val columnKind = "kind"
+        const val columnMark = "mark"
+        const val columnAverage = "average"
+        const val columnMarkKind = "markKind"
+        const val columnLogo = "logo"
+        const val columnWeighting = "weighting"
 
         val columns = setOf(
-                columnId, columnBoardId, columnDate, columnTopic, columnDuration, columnStatus, columnHomework, columnHomeworkDue)
+                columnId, columnBoardId, columnDate, columnDescription, columnKind, columnMark, columnAverage, columnMarkKind, columnLogo, columnWeighting)
     }
 
     val uri: Uri = Uri.Builder()
@@ -37,11 +39,13 @@ object LessonsContract {
             (
                 ${Table.columnDate} INTEGER,
                 ${Table.columnBoardId} INTEGER,
-                ${Table.columnTopic} TEXT,
-                ${Table.columnDuration} INTEGER,
-                ${Table.columnStatus} INTEGER,
-                ${Table.columnHomework} TEXT,
-                ${Table.columnHomeworkDue} INTEGER,
+                ${Table.columnDescription} TEXT,
+                ${Table.columnKind} TEXT,
+                ${Table.columnMark} INTEGER,
+                ${Table.columnAverage} REAL,
+                ${Table.columnMarkKind} INTEGER,
+                ${Table.columnLogo} TEXT,
+                ${Table.columnWeighting} REAL,
                 FOREIGN KEY(${Table.columnBoardId}) REFERENCES ${BoardsContract.Table.name}(${BoardsContract.Table.columnId})
             );
             """;

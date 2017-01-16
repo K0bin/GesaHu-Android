@@ -21,7 +21,7 @@ data class Substitute(val lessonBegin: Int,
                       val room: String,
                       val hint: String,
                       val isRelevant: Boolean,
-                      val id: Int? = null) : Comparable<Substitute> {
+                      val id: Long? = null) : Comparable<Substitute> {
 
     @Kind val kind: Long;
 

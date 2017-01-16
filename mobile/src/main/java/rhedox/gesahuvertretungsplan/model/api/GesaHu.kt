@@ -41,6 +41,7 @@ class GesaHu(context: Context) {
                 .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
                 .registerTypeAdapter(LocalTimeDeserializer())
                 .registerTypeAdapter(BoardDeserializer.MarkDeserializer())
+                .registerTypeAdapter(BoardDeserializer.LessonDeserializer())
                 .registerTypeAdapter(BoardDeserializer())
                 .create()
 

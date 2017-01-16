@@ -42,10 +42,10 @@ class SubstitutesContentProvider : ContentProvider() {
     }
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
-        val queryBuilder = SQLiteQueryBuilder();
-
         val uriType = uriMatcher.match(uri);
         checkColumns(projection, uriType);
+
+        val queryBuilder = SQLiteQueryBuilder();
         when (uriType) {
             substitutes -> queryBuilder.tables = SubstitutesContract.Table.name;
             substitutesByDate -> {
@@ -85,9 +85,9 @@ class SubstitutesContentProvider : ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
+        val uriType = uriMatcher.match(uri);
         val db = database.writableDatabase;
 
-        val uriType = uriMatcher.match(uri);
         var rowsDeleted = 0;
         when (uriType) {
             substitutes -> rowsDeleted = db.delete(SubstitutesContract.Table.name, selection ?: "1", null)

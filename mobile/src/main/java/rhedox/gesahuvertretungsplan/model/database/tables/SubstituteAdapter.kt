@@ -31,7 +31,7 @@ object SubstituteAdapter {
         if(cursor.columnCount < 10 || cursor.isClosed || cursor.count == 0)
             return null;
 
-        val id = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnId))
+        val id = cursor.getLong(cursor.getColumnIndex(SubstitutesContract.Table.columnId))
         val lessonBegin = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnLessonBegin))
         val duration = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnDuration))
         val course = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnCourse))

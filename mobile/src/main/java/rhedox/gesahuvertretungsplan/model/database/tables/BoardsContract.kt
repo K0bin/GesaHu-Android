@@ -10,6 +10,7 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
  */
 object BoardsContract {
     const val avatarFileName = "avatar.jpg";
+    const val namePath = "name"
 
     object Table {
         const val name = "boards";
@@ -29,6 +30,7 @@ object BoardsContract {
             .scheme("content")
             .authority(BoardsContentProvider.authority)
             .build();
+    val nameUri: Uri = Uri.withAppendedPath(uri, namePath)
 
     fun onCreate(db: SQLiteDatabase) {
         val sql = """CREATE TABLE ${Table.name}
@@ -58,5 +60,12 @@ object BoardsContract {
 
     fun clear(db: SQLiteDatabase) {
         db.execSQL("DELETE FROM ${BoardsContract.Table.name} WHERE 1;");
+    }
+
+    fun uriWithId(id: Long): Uri {
+        return Uri.withAppendedPath(uri, id.toString())
+    }
+    fun uriWithName(name: String): Uri {
+        return Uri.withAppendedPath(uri, name)
     }
 }

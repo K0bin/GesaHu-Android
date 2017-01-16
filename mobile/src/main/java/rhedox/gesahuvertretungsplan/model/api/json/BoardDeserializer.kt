@@ -8,6 +8,7 @@ import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
 import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type
 
@@ -39,15 +40,45 @@ class BoardDeserializer: JsonDeserializer<Board> {
             val description = jsonObject.get("Bezeichnung").asString
             val markStr = jsonObject.get("Note").asString
             val mark = if (markStr.isNotBlank() && markStr != "-") markStr.toInt() else null;
-            @Board.Mark.Kind val kind = jsonObject.get("Art").asString
+            val kind = jsonObject.get("Art").asString
+            val markKindStr = jsonObject.get("Notenart").asString
+            @Board.Mark.MarkKind val markKind = when (markKindStr) {
+                "Gruppennote" -> Board.Mark.MarkKindValues.groupMark
+                "Einzelnote" -> Board.Mark.MarkKindValues.mark
+                else -> Board.Mark.MarkKindValues.unknown
+            }
             val averageStr = jsonObject.get("Durchschnitt").asString
             val average = if (averageStr.isNotBlank()) averageStr.toFloat() else null
-            @Board.Mark.MarkKind val markKind = jsonObject.get("Notenart").asString
             val logo = jsonObject.get("Artlogo").asString
             val weightingStr = jsonObject.get("Artwichtung").asString
             val weighting = if (weightingStr.isNotBlank()) weightingStr.toFloat() else null
 
             return Board.Mark(date, description, mark, kind, average, markKind, logo, weighting)
+        }
+    }
+
+    class LessonDeserializer : JsonDeserializer<Board.Lesson> {
+        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Board.Lesson {
+            val jsonObject = json.asJsonObject;
+
+            val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
+            val topic = jsonObject.get("Stundenthema").asString
+            val duration = jsonObject.get("Dauer").asInt
+            val statusStr = jsonObject.get("Status").asString
+            @Board.Lesson.Status val status = when (statusStr) {
+                "anwesend" ->
+                        Board.Lesson.StatusValues.present
+                "abwensend" ->
+                        Board.Lesson.StatusValues.absent
+                "abwesend und entschuldigt" ->
+                        Board.Lesson.StatusValues.absentWithSickNote
+                else ->
+                    Board.Lesson.StatusValues.present
+            }
+            val homework = jsonObject.get("HA_Inhalt").asString
+            val homeworkDue = context.deserialize<LocalDate>(jsonObject.get("HA_Datum"), LocalDate::class.java)
+
+            return Board.Lesson(date, topic, duration, status, homework, homeworkDue)
         }
     }
 }
