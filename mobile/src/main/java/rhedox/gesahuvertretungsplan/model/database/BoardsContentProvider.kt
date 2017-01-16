@@ -23,6 +23,8 @@ class BoardsContentProvider : ContentProvider() {
 
         private const val allBoards = 1
         private const val boardById = 2
+        private const val marksByBoardName = 3
+        private const val lessonssByBoardName = 4
         init {
             uriMatcher.addURI(authority, null, allBoards)
             uriMatcher.addURI(authority, "#", boardById)
