@@ -19,7 +19,7 @@ import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.BoardName
+import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
@@ -46,7 +46,7 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
 
     private val prefs: SharedPreferences by instance()
 
-    private var boards: List<BoardName> = listOf();
+    private var boards: List<String> = listOf();
 
     init {
         inject(kodeIn)
@@ -101,7 +101,7 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
         boardsRepository.destroy()
     }
 
-    private fun onBoardsLoaded(boards: List<BoardName>) {
+    private fun onBoardsLoaded(boards: List<String>) {
         view?.setBoards(boards)
         this.boards = boards;
     }

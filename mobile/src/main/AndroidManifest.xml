@@ -112,7 +112,7 @@
             android:syncable="true"/>
         <provider
             android:name=".model.database.BoardsContentProvider"
-            android:authorities="rhedox.gesahuvertretungsplan.boardNames"
+            android:authorities="rhedox.gesahuvertretungsplan.boards"
             android:exported="true"
             android:label="@string/provider_boards"
             android:syncable="true"/>

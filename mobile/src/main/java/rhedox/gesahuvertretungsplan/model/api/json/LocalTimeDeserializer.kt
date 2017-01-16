@@ -31,5 +31,4 @@ class LocalTimeDeserializer : JsonDeserializer<LocalTime> {
 
         return LocalTime.parse(json.asString, formatter);
     }
-
 }

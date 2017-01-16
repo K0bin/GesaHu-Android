@@ -22,7 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.BoardName
+import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model.api.json
+package rhedox.gesahuvertretungsplan.model
 
 import android.support.annotation.StringDef
 import com.google.gson.annotations.SerializedName
@@ -7,23 +7,25 @@ import org.joda.time.LocalDate
 /**
  * Created by robin on 14.01.2017.
  */
-data class Board(@SerializedName("Board") val board: String,
-                 @SerializedName("Endnote") val mark: Int,
-                 @SerializedName("Endnote_Bemerkung") val markRemark: String,
-                 @SerializedName("Fehlstunden_gesamt") val missedLessons: Int,
-                 @SerializedName("Fehlstunden_entschuldigt") val missedLessonsWithSickNotes: Int,
-                 @SerializedName("Unterrichtsstunden_gesamt") val lessonsTotal: Int,
-                 @SerializedName("Noten") val marks: List<Mark>,
-                 @SerializedName("Stunden") val lessons: List<Lesson>) {
+data class Board(val name: String,
+                 val mark: Int?,
+                 val markRemark: String,
+                 val missedLessons: Int,
+                 val missedLessonsWithSickNotes: Int,
+                 val lessonsTotal: Int,
+                 val marks: List<Mark>,
+                 val lessons: List<Lesson>,
+                 val id: Int? = null) {
 
-    data class Mark(@SerializedName("Datum") val date: LocalDate,
-                    @SerializedName("Bezeichnung") val description: String,
-                    @SerializedName("Note") val mark: Int,
-                    @SerializedName("Art") val kind: Kind,
-                    @SerializedName("Durchschnitt") val average: Float,
-                    @SerializedName("Notenart") val markKind: MarkKind,
-                    @SerializedName("Artlogo") val logo: String,
-                    @SerializedName("Artwichtung") val weighting: Float) {
+    data class Mark(val date: LocalDate,
+                    val description: String,
+                    val mark: Int?,
+                    @Kind val kind: String,
+                    val average: Float?,
+                    @MarkKind val markKind: String,
+                    val logo: String,
+                    val weighting: Float?,
+                    val id: Int? = null) {
 
         @Retention(AnnotationRetention.SOURCE)
         @StringDef(KindValues.test, KindValues.monthlyOral, KindValues.testOrComplexTask)
@@ -46,9 +48,10 @@ data class Board(@SerializedName("Board") val board: String,
     data class Lesson(@SerializedName("Datum") val date: LocalDate,
                       @SerializedName("Stundenthema") val topic: String,
                       @SerializedName("Dauer") val duration: Int,
-                      @SerializedName("Status") val status: Status,
+                      @SerializedName("Status") @Status val status: String,
                       @SerializedName("HA_Inhalt") val homeWork: String,
-                      @SerializedName("HA_Datum") val homeWorkDue: LocalDate) {
+                      @SerializedName("HA_Datum") val homeWorkDue: LocalDate?,
+                      val id: Int? = null) {
 
         @Retention(AnnotationRetention.SOURCE)
         @StringDef(StatusValues.present, StatusValues.absent, StatusValues.absentWithSickNote)

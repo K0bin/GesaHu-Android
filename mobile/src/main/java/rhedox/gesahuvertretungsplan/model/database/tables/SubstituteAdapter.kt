@@ -31,6 +31,7 @@ object SubstituteAdapter {
         if(cursor.columnCount < 10 || cursor.isClosed || cursor.count == 0)
             return null;
 
+        val id = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnId))
         val lessonBegin = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnLessonBegin))
         val duration = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnDuration))
         val course = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnCourse))
@@ -41,7 +42,7 @@ object SubstituteAdapter {
         val hint = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnHint))
         val isRelevant = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnIsRelevant)) == 1
 
-        return Substitute(lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant);
+        return Substitute(lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant, id = id);
     }
 
     fun listFromCursor(cursor: Cursor): List<Substitute> {

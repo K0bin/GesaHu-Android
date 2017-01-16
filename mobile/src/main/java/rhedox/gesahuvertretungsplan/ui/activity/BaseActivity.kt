@@ -23,7 +23,7 @@ import net.danlew.android.joda.JodaTimeAndroid
 import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.intentFor
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.BoardName
+import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.mvp.BaseContract
 import rhedox.gesahuvertretungsplan.presenter.BasePresenter
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -129,10 +129,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         super.onBackPressed()
     }
 
-    override fun setBoards(boards: List<BoardName>) {
+    override fun setBoards(boards: List<String>) {
         val menu = navigationView.menu
+
         for (i in 0..boards.size-1) {
-            val item = menu.add(R.id.boardsSubheader, i + 13, Menu.NONE, boards[i].name)
+            val item = menu.add(R.id.boardsSubheader, i + 13, Menu.NONE, boards[i])
             item.isCheckable = true
         }
     }

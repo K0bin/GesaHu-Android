@@ -14,10 +14,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.model.BoardName
-import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.api.json.*
+import rhedox.gesahuvertretungsplan.util.registerTypeAdapter
 
 /**
  * Created by robin on 01.10.2016.
@@ -33,12 +34,14 @@ class GesaHu(context: Context) {
             builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
 
         val gson = GsonBuilder()
-                .registerTypeAdapter(Substitute::class.java, SubstituteDeserializer(context))
-                .registerTypeAdapter(Test::class.java, TestDeserializer(context))
-                .registerTypeAdapter(Exam::class.java, ExamDeserializer(context))
+                .registerTypeAdapter(SubstituteDeserializer(context))
+                .registerTypeAdapter(TestDeserializer(context))
+                .registerTypeAdapter(ExamDeserializer(context))
                 .registerTypeAdapter(DateTime::class.java, DateTimeDeserializer())
                 .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+                .registerTypeAdapter(LocalTimeDeserializer())
+                .registerTypeAdapter(BoardDeserializer.MarkDeserializer())
+                .registerTypeAdapter(BoardDeserializer())
                 .create()
 
         val client = builder.build()

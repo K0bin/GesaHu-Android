@@ -2,7 +2,8 @@ package rhedox.gesahuvertretungsplan.model.database.tables
 
 import android.content.ContentValues
 import android.database.Cursor
-import rhedox.gesahuvertretungsplan.model.BoardName
+import rhedox.gesahuvertretungsplan.model.api.json.BoardName
+import rhedox.gesahuvertretungsplan.model.Board
 
 /**
  * Created by robin on 19.10.2016.
@@ -14,21 +15,32 @@ object BoardAdapter {
         return values;
     }
 
-    fun fromCursor(cursor: Cursor): BoardName? {
+    fun toContentValues(board: Board): ContentValues {
+        val values = ContentValues();
+        values.put(BoardsContract.Table.columnName, board.name)
+        values.put(BoardsContract.Table.columnMark, board.mark)
+        values.put(BoardsContract.Table.columnMarkRemark, board.markRemark)
+        values.put(BoardsContract.Table.columnLessonsTotal, board.lessonsTotal)
+        values.put(BoardsContract.Table.columnMissedLessons, board.missedLessons)
+        values.put(BoardsContract.Table.columnMissedLessonsWithSickNotes, board.missedLessonsWithSickNotes)
+        return values;
+    }
+
+    fun nameFromCursor(cursor: Cursor): String? {
         if (cursor.count == 0 || cursor.columnCount < 1 || cursor.isClosed)
             return null
 
-        return BoardName(cursor.getString(cursor.getColumnIndex(BoardsContract.Table.columnName)));
+        return cursor.getString(cursor.getColumnIndex(BoardsContract.Table.columnName));
     }
 
-    fun listFromCursor(cursor: Cursor): List<BoardName> {
-        val list = mutableListOf<BoardName>();
+    fun namesFromCursor(cursor: Cursor): List<String> {
+        val list = mutableListOf<String>();
         if (cursor.count == 0 || cursor.isClosed)
             return list;
 
         cursor.moveToFirst()
         while (!cursor.isAfterLast) {
-            val board = BoardAdapter.fromCursor(cursor)
+            val board = BoardAdapter.nameFromCursor(cursor)
 
             if (board != null)
                 list.add(board);
@@ -36,5 +48,13 @@ object BoardAdapter {
             cursor.moveToNext()
         }
         return list;
+    }
+
+    fun boardFromCursor(boardCursor: Cursor, lessonsCursor: Cursor, marksCursor: Cursor) {
+
+    }
+
+    fun markFromCursor(cursor: Cursor) {
+
     }
 }

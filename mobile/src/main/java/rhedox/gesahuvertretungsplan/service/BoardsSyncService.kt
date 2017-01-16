@@ -57,12 +57,14 @@ class BoardsSyncService : Service() {
         private val gesahu = GesaHu(context);
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
+            android.os.Debug.waitForDebugger()
+
             if(Thread.interrupted()) {
                 return;
             }
 
             val password = context.accountManager.getPassword(account) ?: "";
-            val call = gesahu.boardNamess(account.name, password)
+            val call = gesahu.boards(account.name, password)
             val response = call.execute()
             if(response != null && response.isSuccessful) {
                 provider.delete(BoardsContract.uri, null, null);

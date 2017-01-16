@@ -12,12 +12,17 @@ object BoardsContract {
     const val avatarFileName = "avatar.jpg";
 
     object Table {
-        const val name = "boardNamess";
+        const val name = "boards";
         const val columnId = "ROWID";
         const val columnName = "name"
+        const val columnMark = "mark"
+        const val columnMarkRemark = "markRemark"
+        const val columnLessonsTotal = "lessonsTotal"
+        const val columnMissedLessons = "missedLessons"
+        const val columnMissedLessonsWithSickNotes = "missedLessonsWithSickNotes"
 
         val columns = setOf(
-                columnId, columnName)
+                columnId, columnName, columnMark, columnMarkRemark, columnLessonsTotal, columnMissedLessons, columnMissedLessonsWithSickNotes)
     }
 
     val uri: Uri = Uri.Builder()
@@ -28,14 +33,19 @@ object BoardsContract {
     fun onCreate(db: SQLiteDatabase) {
         val sql = """CREATE TABLE ${Table.name}
             (
-                ${Table.columnName} TEXT UNIQUE
+                ${Table.columnName} TEXT UNIQUE,
+                ${Table.columnMark} INTEGER,
+                ${Table.columnMarkRemark} TEXT,
+                ${Table.columnLessonsTotal} INTEGER,
+                ${Table.columnMissedLessons} INTEGER,
+                ${Table.columnMissedLessonsWithSickNotes} INTEGER
             );
             """;
         db.execSQL(sql);
     }
 
     fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if(newVersion >= 3 && oldVersion < 3) {
+        if(newVersion >= 4 && oldVersion < 3) {
             db.execSQL("ALTER TABLE ${Table.name} RENAME TO ${Table.name}_old")
             onCreate(db)
             db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnName}) " +
