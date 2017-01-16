@@ -23,22 +23,22 @@ public class SubstituteFormatter {
         this.context = context;
     }
 
-    public String makeSubstituteKindText(@Substitute.Companion.Kind long kind) {
+    public String makeSubstituteKindText(@Substitute.Kind long kind) {
         switch((int)kind) {
-	        case (int)Substitute.KIND_ROOM_CHANGE:
+	        case (int)Substitute.KindValues.roomChange:
                 return context.getString(R.string.roomchange);
 
-	        case (int)Substitute.KIND_DROPPED:
+	        case (int)Substitute.KindValues.dropped:
                 return context.getString(R.string.dropped);
 
-            case (int)Substitute.KIND_TEST:
+            case (int)Substitute.KindValues.test:
                 return context.getString(R.string.test);
 
-	        case (int)Substitute.KIND_REGULAR:
+	        case (int)Substitute.KindValues.regular:
                 return context.getString(R.string.regular);
 
             default:
-	        case (int)Substitute.KIND_SUBSTITUTE:
+	        case (int)Substitute.KindValues.substitute:
                 return context.getString(R.string.substitute);
         }
     }
@@ -68,19 +68,19 @@ public class SubstituteFormatter {
 
 
         switch ((int)substitute.getKind()) {
-	        case (int)Substitute.KIND_DROPPED:
+	        case (int)Substitute.KindValues.dropped:
                 return String.format(context.getString(R.string.share_dropped), dateText, substitute.getLessonText(), substitute.getSubject());
 
-	        case (int)Substitute.KIND_ROOM_CHANGE:
+	        case (int)Substitute.KindValues.roomChange:
                 return String.format(context.getString(R.string.share_room_change), dateText, substitute.getLessonText(), substitute.getSubject(), substitute.getRoom());
 
-	        case (int)Substitute.KIND_TEST:
+	        case (int)Substitute.KindValues.test:
                 return String.format(context.getString(R.string.share_test), dateText, substitute.getLessonText(), substitute.getSubject(), substitute.getRoom());
 
-	        case (int)Substitute.KIND_REGULAR:
+	        case (int)Substitute.KindValues.regular:
                 return String.format(context.getString(R.string.share_regular), substitute.getSubject(), dateText, substitute.getLessonText());
 
-	        case (int)Substitute.KIND_SUBSTITUTE:
+	        case (int)Substitute.KindValues.substitute:
             default:
                 return String.format(context.getString(R.string.share_subsitute), dateText, substitute.getLessonText(), substitute.getSubject(), substitute.getSubstitute(), substitute.getRoom());
         }

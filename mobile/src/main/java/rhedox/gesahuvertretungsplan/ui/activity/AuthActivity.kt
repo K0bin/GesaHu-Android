@@ -22,7 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.BoardName
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
@@ -35,7 +35,7 @@ import rhedox.gesahuvertretungsplan.util.Md5Util
 /**
  * Created by robin on 31.10.2016.
  */
-class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<Board>> {
+class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<BoardName>> {
 
     companion object {
         const val stateAccount = "account";
@@ -49,7 +49,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var wasLaunchedByApp = false;
 
     private lateinit var gesaHu: GesaHu;
-    private var call: Call<List<Board>>? = null;
+    private var call: Call<List<BoardName>>? = null;
 
     private lateinit var snackbar: Snackbar;
 
@@ -123,7 +123,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
 
         if (!areFieldsEmpty && call == null) {
-            call = gesaHu.boards(username, password)
+            call = gesaHu.boardNamess(username, password)
             call?.enqueue(this)
         }
     }
@@ -139,7 +139,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         login();
     }
 
-    override fun onResponse(call: Call<List<Board>>, response: Response<List<Board>>) {
+    override fun onResponse(call: Call<List<BoardName>>, response: Response<List<BoardName>>) {
         this.call = null;
         if(response.isSuccessful) {
             finishLogin()
@@ -186,7 +186,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
     }
 
-    override fun onFailure(call: Call<List<Board>>?, t: Throwable?) {
+    override fun onFailure(call: Call<List<BoardName>>?, t: Throwable?) {
         this.call = null;
         snackbar.show();
     }

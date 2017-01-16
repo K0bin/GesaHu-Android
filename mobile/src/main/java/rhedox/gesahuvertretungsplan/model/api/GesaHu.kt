@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.BoardName
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.api.json.*
@@ -70,6 +70,10 @@ class GesaHu(context: Context) {
             .appendDayOfMonth(2)
             .toFormatter()
 
+    fun boardNamess(username: String, password: String): Call<List<BoardName>> {
+        return api.boardNames(username, password)
+    }
+
     fun boards(username: String, password: String): Call<List<Board>> {
         return api.boards(username, password)
     }
@@ -96,7 +100,7 @@ class GesaHu(context: Context) {
 
     private interface GesaHuApi {
         @GET("getboards.php")
-        fun boards(@Query("username") username: String, @Query("pw") password: String): Call<List<Board>>
+        fun boardNames(@Query("username") username: String, @Query("pw") password: String): Call<List<BoardName>>
 
         @GET("getvplan.php")
         fun substitutes(@Query("username") username: String, @Query("day") date: String): Call<SubstitutesList>
@@ -112,5 +116,8 @@ class GesaHu(context: Context) {
 
         @GET("getexamdates.php")
         fun exams(@Query("username") username: String, @Query("beginn") begin: String): Call<List<Exam>>
+
+        @GET("getkursboardinfos.php")
+        fun boards(@Query("username") username: String, @Query("pw") password: String): Call<List<Board>>
     }
 }

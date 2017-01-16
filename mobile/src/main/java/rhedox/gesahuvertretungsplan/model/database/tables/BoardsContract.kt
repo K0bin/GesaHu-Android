@@ -12,7 +12,7 @@ object BoardsContract {
     const val avatarFileName = "avatar.jpg";
 
     object Table {
-        const val name = "boards";
+        const val name = "boardNamess";
         const val columnId = "ROWID";
         const val columnName = "name"
 

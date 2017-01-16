@@ -62,7 +62,7 @@ class BoardsSyncService : Service() {
             }
 
             val password = context.accountManager.getPassword(account) ?: "";
-            val call = gesahu.boards(account.name, password)
+            val call = gesahu.boardNamess(account.name, password)
             val response = call.execute()
             if(response != null && response.isSuccessful) {
                 provider.delete(BoardsContract.uri, null, null);

@@ -19,7 +19,7 @@ class BoardsContentProvider : ContentProvider() {
 
     companion object {
         val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
-        const val authority = "rhedox.gesahuvertretungsplan.boards"
+        const val authority = "rhedox.gesahuvertretungsplan.boardNamess"
 
         private const val allBoards = 1
         private const val boardById = 2

@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.BoardName
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 
@@ -28,7 +28,7 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun share(text: String) {}
     override fun goBack() {}
     override fun finish() {}
-    override fun setBoards(boards: List<Board>) {}
+    override fun setBoards(boards: List<BoardName>) {}
     override fun setAvatar(avatar: Bitmap) {}
     override fun navigateToIntro() {}
     override fun navigateToSettings() {}

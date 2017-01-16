@@ -12,7 +12,7 @@ import android.util.Log
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.BoardName
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.database.tables.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
@@ -31,7 +31,7 @@ class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnL
 
     private var loader: CursorLoader? = null
 
-    var callback: ((boards: List<Board>) -> Unit)? = null;
+    var callback: ((boards: List<BoardName>) -> Unit)? = null;
 
     init {
         observer = Observer {

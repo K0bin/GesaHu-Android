@@ -48,13 +48,13 @@ class SubstitutesDashClockExtension : DashClockExtension() {
             var title = ""
 
             when (substitute.kind.toInt()) {
-                Substitute.KIND_SUBSTITUTE.toInt() -> title = getString(R.string.substitute)
+                Substitute.KindValues.substitute.toInt() -> title = getString(R.string.substitute)
 
-                Substitute.KIND_ROOM_CHANGE.toInt() -> title = getString(R.string.roomchange)
+                Substitute.KindValues.roomChange.toInt() -> title = getString(R.string.roomchange)
 
-                Substitute.KIND_DROPPED.toInt() -> title = getString(R.string.dropped)
+                Substitute.KindValues.dropped.toInt() -> title = getString(R.string.dropped)
 
-                Substitute.KIND_TEST.toInt() -> title = getString(R.string.test)
+                Substitute.KindValues.test.toInt() -> title = getString(R.string.test)
             }
 
             if ("" != body)

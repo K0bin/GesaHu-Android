@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.mvp
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.BoardName
 
 /**
  * Created by robin on 20.10.2016.
@@ -16,7 +16,7 @@ interface BaseContract {
     }
 
     interface View {
-        fun setBoards(boards: List<Board>)
+        fun setBoards(boards: List<BoardName>)
         fun setAvatar(avatar: Bitmap)
         fun navigateToSettings()
         fun navigateToAbout()
