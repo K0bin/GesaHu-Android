@@ -21,7 +21,7 @@ object AnnouncementsContract {
 
     object Table {
         const val name = "announcements";
-        const val columnId = "ROWID";
+        const val columnId = "rowid";
         const val columnDate = "date"
         const val columnText = "text";
 

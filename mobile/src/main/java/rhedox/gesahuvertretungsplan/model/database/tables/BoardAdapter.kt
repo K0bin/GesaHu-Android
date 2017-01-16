@@ -29,9 +29,9 @@ object BoardAdapter {
         return values;
     }
 
-    fun toContentValues(lesson: Board.Lesson): ContentValues {
+    fun toContentValues(lesson: Board.Lesson, boardId: Long? = null): ContentValues {
         val values = ContentValues();
-        values.put(LessonsContract.Table.columnBoardId, lesson.boardId)
+        values.put(LessonsContract.Table.columnBoardId, boardId ?: lesson.boardId)
         values.put(LessonsContract.Table.columnId, lesson.id)
         values.put(LessonsContract.Table.columnDate, lesson.date.unixTimeStamp)
         values.put(LessonsContract.Table.columnTopic, lesson.topic)
@@ -42,9 +42,9 @@ object BoardAdapter {
         return values;
     }
 
-    fun toContentValues(lesson: Board.Mark): ContentValues {
+    fun toContentValues(lesson: Board.Mark, boardId: Long? = null): ContentValues {
         val values = ContentValues();
-        values.put(MarksContract.Table.columnBoardId, lesson.boardId)
+        values.put(MarksContract.Table.columnBoardId, boardId ?: lesson.boardId)
         values.put(MarksContract.Table.columnId, lesson.id)
         values.put(MarksContract.Table.columnDate, lesson.date.unixTimeStamp)
         values.put(MarksContract.Table.columnDescription, lesson.description)

@@ -13,7 +13,7 @@ object LessonsContract {
 
     object Table {
         const val name = "lessons";
-        const val columnId = "ROWID";
+        const val columnId = "rowid";
         const val columnBoardId = "boardId";
         const val columnDate = "date"
         const val columnTopic = "topic"

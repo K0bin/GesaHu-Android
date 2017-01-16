@@ -17,6 +17,8 @@ import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.BoardAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
+import rhedox.gesahuvertretungsplan.model.database.tables.LessonsContract
+import rhedox.gesahuvertretungsplan.model.database.tables.MarksContract
 
 /**
  * Created by robin on 30.10.2016.
@@ -67,11 +69,22 @@ class BoardsSyncService : Service() {
             val call = gesahu.boards(account.name, password)
             val response = call.execute()
             if(response != null && response.isSuccessful) {
+                //Clear tables
                 provider.delete(BoardsContract.uri, null, null);
+                provider.delete(LessonsContract.uri, null, null);
+                provider.delete(MarksContract.uri, null, null);
 
+                //Insert new data
                 val boards = response.body()
-                for(board in boards) {
-                    provider.insert(BoardsContract.uri, BoardAdapter.toContentValues(board))
+                for (board in boards) {
+                    val uri = provider.insert(BoardsContract.uri, BoardAdapter.toContentValues(board))
+                    val id = uri.lastPathSegment.toLong()
+                    for (lesson in board.lessons) {
+                        provider.insert(LessonsContract.uri, BoardAdapter.toContentValues(lesson, id))
+                    }
+                    for (mark in board.marks) {
+                        provider.insert(MarksContract.uri, BoardAdapter.toContentValues(mark, id))
+                    }
                 }
             }
 

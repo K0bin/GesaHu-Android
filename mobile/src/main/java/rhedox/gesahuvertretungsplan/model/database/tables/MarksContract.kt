@@ -12,8 +12,8 @@ object MarksContract {
     const val path = "marks"
 
     object Table {
-        const val name = "lessons";
-        const val columnId = "ROWID";
+        const val name = "marks";
+        const val columnId = "rowid";
         const val columnBoardId = "boardId";
         const val columnDate = "date"
         const val columnDescription = "description"

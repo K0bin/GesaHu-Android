@@ -14,7 +14,7 @@ object BoardsContract {
 
     object Table {
         const val name = "boards";
-        const val columnId = "ROWID";
+        const val columnId = "rowid";
         const val columnName = "name"
         const val columnMark = "mark"
         const val columnMarkRemark = "markRemark"
@@ -47,7 +47,7 @@ object BoardsContract {
     }
 
     fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if(newVersion >= 4 && oldVersion < 3) {
+        if(newVersion >= 5 && oldVersion < 5) {
             db.execSQL("ALTER TABLE ${Table.name} RENAME TO ${Table.name}_old")
             onCreate(db)
             db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnName}) " +

@@ -26,7 +26,7 @@ object SubstitutesContract {
     object Table {
         const val name = "substitutes";
 
-        const val columnId = "ROWID";
+        const val columnId = "rowid";
         const val columnDate = "date"
         const val columnLessonBegin = "lessonBegin";
         const val columnDuration = "duration";

@@ -13,7 +13,7 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
 
     companion object {
         const val name = "gesahui.db"
-        const val version = 4
+        const val version = 5
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -25,7 +25,7 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if(newVersion >= 4 && oldVersion < 4) {
+        if(newVersion >= 5 && oldVersion < 4) {
             LessonsContract.onCreate(db)
             MarksContract.onCreate(db)
         } else {

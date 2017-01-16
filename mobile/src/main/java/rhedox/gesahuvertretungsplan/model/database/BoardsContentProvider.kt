@@ -75,7 +75,7 @@ class BoardsContentProvider : ContentProvider() {
                 if(boardId != null) {
                     context.contentResolver.notifyChange(BoardsContract.uriWithId(boardId), null, false)
 
-                    val nameCursor = db.query(BoardsContract.Table.name, arrayOf(BoardsContract.Table.name), "${BoardsContract.Table.columnId} = $boardId", null, null, null, null)
+                    val nameCursor = db.query(BoardsContract.Table.name, arrayOf(BoardsContract.Table.columnName), "${BoardsContract.Table.columnId} = $boardId", null, null, null, null)
                     if(nameCursor.count != 0) {
                         nameCursor.moveToFirst()
                         context.contentResolver.notifyChange(LessonsContract.uriWithBoardName(nameCursor.getString(0)), null, false)
@@ -90,7 +90,7 @@ class BoardsContentProvider : ContentProvider() {
                 if(boardId != null) {
                     context.contentResolver.notifyChange(BoardsContract.uriWithId(boardId), null, false)
 
-                    val nameCursor = db.query(BoardsContract.Table.name, arrayOf(BoardsContract.Table.name), "${BoardsContract.Table.columnId} = $boardId", null, null, null, null)
+                    val nameCursor = db.query(BoardsContract.Table.name, arrayOf(BoardsContract.Table.columnName), "${BoardsContract.Table.columnId} = $boardId", null, null, null, null)
                     if(nameCursor.count != 0) {
                         nameCursor.moveToFirst()
                         context.contentResolver.notifyChange(MarksContract.uriWithBoardName(nameCursor.getString(0)), null, false)
@@ -98,6 +98,7 @@ class BoardsContentProvider : ContentProvider() {
                     nameCursor.close()
                 }
             }
+
             else -> insertUri = null;
         }
         if(insertUri != null) {
