@@ -26,7 +26,8 @@ data class Board(val name: String,
                     @MarkKind val markKind: Long,
                     val logo: String,
                     val weighting: Float?,
-                    val id: Long? = null) {
+                    val id: Long? = null,
+                    val boardId: Long? = null) {
 
         @Retention(AnnotationRetention.SOURCE)
         @StringDef(KindValues.test, KindValues.monthlyOral, KindValues.testOrComplexTask)
@@ -53,7 +54,8 @@ data class Board(val name: String,
                       @Status val status: Long,
                       @SerializedName("HA_Inhalt") val homeWork: String,
                       @SerializedName("HA_Datum") val homeWorkDue: LocalDate?,
-                      val id: Long? = null) {
+                      val id: Long? = null,
+                      val boardId: Long? = null) {
 
         @Retention(AnnotationRetention.SOURCE)
         @IntDef(StatusValues.present, StatusValues.absent, StatusValues.absentWithSickNote)
