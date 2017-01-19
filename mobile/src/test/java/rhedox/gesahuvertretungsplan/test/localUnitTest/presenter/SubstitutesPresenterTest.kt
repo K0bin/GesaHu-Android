@@ -21,7 +21,7 @@ import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.util.PermissionManager
@@ -33,7 +33,7 @@ class SubstitutesPresenterTest {
     val kodein = Kodein {
         bind<SharedPreferences>() with instance ( mock<SharedPreferences> {} )
         bind<BoardsRepository>() with provider { mock<BoardsRepository> {} }
-        bind<SubstitutesRepository>() with provider { mock<SubstitutesRepository> {} }
+        bind<SubstitutesRepositoryOld>() with provider { mock<SubstitutesRepositoryOld> {} }
         bind<SyncObserver>() with provider { mock<SyncObserver> {} }
         bind<AccountManager>() with instance ( mock<AccountManager> {} )
         bind<AvatarLoader>() with provider { mock<AvatarLoader> {} }

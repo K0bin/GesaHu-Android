@@ -19,9 +19,9 @@ import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.api.json.BoardName
+import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.mvp.BaseContract
+import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
@@ -31,10 +31,10 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presenter, KodeinInjected {
+open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Presenter, KodeinInjected {
     override val injector: KodeinInjector = KodeinInjector()
 
-    private var view: BaseContract.View? = null;
+    private var view: NavDrawerContract.View? = null;
     protected var account: Account? = null;
         private set
 
@@ -45,18 +45,18 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
 
     private val prefs: SharedPreferences by instance()
 
-    private var boards: List<String> = listOf();
+    private var boards: List<Board> = listOf();
 
     init {
         inject(kodeIn)
 
-        boardsRepository.callback = { onBoardsLoaded(it) }
+        boardsRepository.boardsCallback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
         checkFirstStart()
     }
 
-    override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
+    override fun attachView(view: NavDrawerContract.View, isRecreated: Boolean) {
         this.view = view;
         view.userName = account?.name ?: ""
 
@@ -99,7 +99,7 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
         boardsRepository.destroy()
     }
 
-    private fun onBoardsLoaded(boards: List<String>) {
+    private fun onBoardsLoaded(boards: List<Board>) {
         view?.setBoards(boards)
         this.boards = boards;
     }
@@ -109,8 +109,12 @@ abstract class BasePresenter(private val kodeIn: Kodein) : BaseContract.Presente
             view?.navigateToSettings()
         } else if(drawerId == R.id.about) {
             view?.navigateToAbout()
-        } else if(drawerId >= drawerId && drawerId < drawerId + boards.size) {
-            //START BOARD
+        } else {
+            for (board in boards) {
+                if (board.id == drawerId - 13L) {
+                    view?.navigateToBoard(board.id)
+                }
+            }
         }
     }
 

@@ -15,7 +15,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.mvp.BaseContract
+import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
@@ -25,7 +25,7 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : BasePresenter(kodeIn), SubstitutesContract.Presenter {
+class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : NavDrawerPresenter(kodeIn), SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
@@ -79,7 +79,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         selected = state?.selected
     }
 
-    override fun attachView(view: BaseContract.View, isRecreated: Boolean) {
+    override fun attachView(view: NavDrawerContract.View, isRecreated: Boolean) {
         super.attachView(view, false)
         Log.d("SubstitutesPresenter", "attachView")
 

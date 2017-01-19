@@ -77,7 +77,7 @@ class BoardsSyncService : Service() {
                 //Insert new data
                 val boards = response.body()
                 for (board in boards) {
-                    val uri = provider.insert(BoardsContract.uri, BoardAdapter.toContentValues(board))
+                    val uri = provider.insert(BoardsContract.uri, BoardAdapter.toContentValues(board.board))
                     val id = uri.lastPathSegment.toLong()
                     for (lesson in board.lessons) {
                         provider.insert(LessonsContract.uri, BoardAdapter.toContentValues(lesson, id))

@@ -29,7 +29,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
@@ -42,7 +42,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
+class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
     override lateinit var presenter: SubstitutesContract.Presenter
     private var isRecreated: Boolean = false
     private var pagerAdapter: SubstitutesPagerAdapter? = null
@@ -130,8 +130,8 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
             swipeRefreshLayout?.isEnabled = value
         }
 
-    private object State {
-        const val presenter = "presenter"
+    companion object {
+        const val stateBundleName = "state"
     }
 
     object Extra {
@@ -144,12 +144,12 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
 
         //Create presenter
         if(lastCustomNonConfigurationInstance != null) {
-            presenter = lastCustomNonConfigurationInstance as SubstitutesPresenter
+            presenter = lastCustomNonConfigurationInstance as SubstitutesContract.Presenter
             isRecreated = true
         } else {
             val state: SubstitutesState?;
             if(savedInstanceState != null) {
-                state = savedInstanceState.getParcelable<SubstitutesState>(State.presenter)
+                state = savedInstanceState.getParcelable<SubstitutesState>(stateBundleName)
                 isRecreated = true
             } else {
                 val seconds = intent?.extras?.getInt(Extra.date, 0) ?: 0
@@ -164,9 +164,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
             }
             presenter = SubstitutesPresenter(appKodein(), state)
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            setupTaskDescription()
 
         setContentView(R.layout.activity_main)
 
@@ -227,17 +224,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
         })
         cabDrawerAnimator.interpolator = DecelerateInterpolator()
         cabDrawerAnimator.duration = 250
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setupTaskDescription() {
-        val a = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary))
-        val primaryColor = a.getColor(0, 0)
-        a.recycle()
-
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_task)
-        val description = ActivityManager.TaskDescription(getString(R.string.app_name), bitmap, primaryColor)
-        this.setTaskDescription(description)
     }
 
     override fun onStart() {
@@ -330,6 +316,6 @@ class SubstitutesActivity : BaseActivity(), SubstitutesContract.View {
         if(outState == null) {
             return
         }
-        outState.putParcelable(State.presenter, presenter.saveState() as Parcelable)
+        outState.putParcelable(stateBundleName, presenter.saveState() as Parcelable)
     }
 }

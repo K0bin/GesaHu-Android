@@ -14,7 +14,7 @@ interface SubstitutesContract {
         val selected: Int?
     }
 
-    interface Presenter : BaseContract.Presenter {
+    interface Presenter : NavDrawerContract.Presenter {
         fun onDatePickerIconClicked();
         fun onDatePicked(date: LocalDate)
         fun onActivePageChanged(position: Int)
@@ -28,7 +28,7 @@ interface SubstitutesContract {
         fun saveState(): State
     }
 
-    interface View : BaseContract.View {
+    interface View : NavDrawerContract.View {
         fun showList(position: Int, list: List<Substitute>)
         fun showDatePicker(defaultDate: LocalDate)
         var currentTab: Int

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model.api.json
+package rhedox.gesahuvertretungsplan.model.api.json.deserializer
 
 import android.content.Context
 import com.google.gson.JsonDeserializationContext

@@ -1,76 +1,70 @@
 package rhedox.gesahuvertretungsplan.model.database
 
 import android.content.Context
-import android.content.Loader
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
-import android.support.v4.app.LoaderManager
+import android.support.annotation.IntDef
 import android.support.v4.content.CursorLoader
-import android.util.Log
-import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import org.joda.time.LocalTime
-import rhedox.gesahuvertretungsplan.model.api.json.BoardName
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.database.tables.*
-import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.tables.BoardAdapter
+import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
 import rhedox.gesahuvertretungsplan.util.Open
+import java.util.concurrent.Future
 
 /**
  * Created by robin on 29.10.2016.
  */
 @Open
-class BoardsRepository(context: Context) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
+class BoardsRepository(context: Context) {
     private val context = context.applicationContext
+    private val contentResolver = context.contentResolver
 
     private val observer: Observer;
 
-    private var loader: CursorLoader? = null
+    private val futures = mutableMapOf<Int, Future<Unit>>()
 
-    var callback: ((boards: List<String>) -> Unit)? = null;
+    private var subscribedToBoards = false
+    var boardsCallback: ((boards: List<Board>) -> Unit)? = null
+        get() = field
+        set(value) {
+            if(value != null && !subscribedToBoards) {
+                context.contentResolver.registerContentObserver(BoardsContract.uri, true, observer);
+            }
+            field = value
+        }
 
     init {
         observer = Observer {
             loadBoards()
         }
-        context.contentResolver.registerContentObserver(BoardsContract.uri, true, observer);
     }
 
     fun destroy() {
-        callback = null;
+        boardsCallback = null;
         context.contentResolver.unregisterContentObserver(observer)
 
-        if(loader == null) {
-            loader!!.unregisterListener(this)
-            if (loader!!.isStarted) {
-                loader!!.cancelLoad()
-                loader!!.stopLoading()
-                loader!!.reset()
-            }
-            loader = null;
+        for ((key, value) in futures) {
+            value.cancel(true)
         }
+        futures.clear()
     }
 
     fun loadBoards() {
-        if(loader == null) {
-            loader = CursorLoader(context.applicationContext, BoardsContract.uri, BoardsContract.Table.columns.toTypedArray(), null, null, null);
-            loader!!.registerListener(0, this)
-        } else {
-            loader!!.reset()
+        var addedToList = false
+        val key = futures.size
+        doAsync {
+            val cursor = contentResolver.query(BoardsContract.uri, BoardsContract.Table.columns.toTypedArray(), null, null, null)
+            val boards = BoardAdapter.boardsFromCursor(cursor)
+            cursor.close()
+
+            uiThread {
+                boardsCallback?.invoke(boards)
+            }
         }
-        loader!!.startLoading();
-    }
-
-    override fun onLoadComplete(loader: android.support.v4.content.Loader<Cursor>?, data: Cursor?) {
-        if(loader == null || data == null)
-            return;
-
-        callback?.invoke(BoardAdapter.namesFromCursor(data))
-        data.close()
     }
 
     class Observer(private val callback: (uri: Uri) -> Unit): ContentObserver(Handler()) {

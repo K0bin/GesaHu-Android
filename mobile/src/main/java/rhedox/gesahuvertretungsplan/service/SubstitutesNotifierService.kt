@@ -17,11 +17,12 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.api.json.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
+import rhedox.gesahuvertretungsplan.util.countRelevant
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
@@ -40,7 +41,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     private var date: LocalDate? = null;
     private var intent: Intent? = null;
 
-    private lateinit var repository: SubstitutesRepository;
+    private lateinit var repository: SubstitutesRepositoryOld;
 
     private lateinit var formatter: SubstituteFormatter;
 
@@ -49,7 +50,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
         //Color is used for the notifications
         color = ContextCompat.getColor(applicationContext, R.color.colorDefaultAccent)
-        repository = SubstitutesRepository(this)
+        repository = SubstitutesRepositoryOld(this)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
 
         formatter = SubstituteFormatter(this)
@@ -133,7 +134,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
             cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity")
 
-            cv.put("count", SubstitutesList.countRelevant(substitutes))
+            cv.put("count", substitutes.countRelevant())
 
             applicationContext.contentResolver.insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv)
 

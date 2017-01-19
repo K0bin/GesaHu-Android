@@ -14,9 +14,6 @@ import android.os.Handler
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.util.Log
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.doAsyncResult
-import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
@@ -30,40 +27,20 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
 import rhedox.gesahuvertretungsplan.util.Open
-import java.util.concurrent.Future
 
 /**
  * Created by robin on 29.10.2016.
  */
 @Open
-class SubstitutesRepository(context: Context) {
+class SubstitutesRepositoryOld(context: Context) : android.support.v4.content.Loader.OnLoadCompleteListener<Cursor> {
     private val context: Context = context.applicationContext
     private val observer: Observer;
-    private val contentResolver = context.contentResolver
 
-    private val futures = mutableMapOf<Int, Future<Unit>>();
+    private val substituteLoaders = mutableMapOf<Int, CursorLoader>()
+    private val announcementLoaders = mutableMapOf<Int, CursorLoader>()
 
-    private var subscribedToSubstitutes = false;
-    var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null
-            get() = field;
-            set(value) {
-                if(value != null && !subscribedToSubstitutes) {
-                    context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
-                    subscribedToSubstitutes = true
-                }
-                field = value
-            }
-
-    private var subscribedToAnnouncements = false;
-    var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null
-        get() = field;
-        set(value) {
-            if(value != null && !subscribedToAnnouncements) {
-                context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
-                subscribedToAnnouncements = true
-            }
-            field = value
-        }
+    var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null;
+    var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null;
 
     init {
         observer = Observer {
@@ -74,6 +51,9 @@ class SubstitutesRepository(context: Context) {
                     loadAnnouncementForDay(localDateFromUnix(it.lastPathSegment.toInt()));
             }
         }
+
+        context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
+        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
     }
 
     fun destroy() {
@@ -81,48 +61,53 @@ class SubstitutesRepository(context: Context) {
         announcementCallback = null;
         context.contentResolver.unregisterContentObserver(observer)
 
-        for ((key, value) in futures) {
-            value.cancel(true)
+        for((date, loader) in substituteLoaders) {
+            loader.unregisterListener(this)
+            if(loader.isStarted) {
+                loader.cancelLoad()
+                loader.stopLoading()
+                loader.reset()
+            }
         }
-        futures.clear()
+        substituteLoaders.clear()
     }
 
     fun loadSubstitutesForDay(date: LocalDate) {
-        var addedToList = false
-        val key = futures.size
-        val future = doAsync {
-            val cursor = contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}")
-            val list = SubstituteAdapter.listFromCursor(cursor)
-            cursor.close()
-
-            uiThread {
-                substitutesCallback?.invoke(date, list)
-                if(addedToList) {
-                    futures.remove(key)
-                }
-            }
+        val id = date.unixTimeStamp
+        var loader = substituteLoaders[id]
+        if(loader == null) {
+            loader = CursorLoader(context.applicationContext, SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}");
+            loader.registerListener(id, this)
+            substituteLoaders[id] = loader
+        } else {
+            loader.reset()
         }
-        futures.put(key, future)
-        addedToList = true;
+        loader.startLoading();
     }
 
     fun loadAnnouncementForDay(date: LocalDate) {
-        var addedToList = false
-        val key = futures.size
-        val future = doAsync {
-            val cursor = contentResolver.query(AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null)
-            val announcement = AnnouncementAdapter.fromCursor(cursor)
-            cursor.close()
-
-            uiThread {
-                announcementCallback?.invoke(date, announcement)
-                if(addedToList) {
-                    futures.remove(key)
-                }
-            }
+        val id = date.unixTimeStamp
+        var loader = announcementLoaders[id]
+        if(loader == null) {
+            loader = CursorLoader(context.applicationContext, AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null);
+            loader.registerListener(id, this)
+            announcementLoaders[id] = loader
+        } else {
+            loader.reset()
         }
-        futures.put(key, future)
-        addedToList = true;
+        loader.startLoading();
+    }
+
+    override fun onLoadComplete(loader: android.support.v4.content.Loader<Cursor>?, data: Cursor?) {
+        if(loader == null || data == null)
+            return;
+
+        if(loader == substituteLoaders[loader.id]) {
+            substitutesCallback?.invoke(localDateFromUnix(loader.id), SubstituteAdapter.listFromCursor(data))
+        } else if(loader == announcementLoaders[loader.id]) {
+            announcementCallback?.invoke(localDateFromUnix(loader.id), AnnouncementAdapter.fromCursor(data))
+        }
+        data.close()
     }
 
     fun requestUpdate(account: Account, date: LocalDate, singleDay: Boolean) {

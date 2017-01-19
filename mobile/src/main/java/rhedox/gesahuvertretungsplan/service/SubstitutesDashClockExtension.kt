@@ -7,21 +7,22 @@ import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.api.json.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
+import rhedox.gesahuvertretungsplan.util.filterRelevant
 
 /**
  * Created by robin on 11.12.2016.
  */
 class SubstitutesDashClockExtension : DashClockExtension() {
-    lateinit var repo: SubstitutesRepository;
+    lateinit var repo: SubstitutesRepositoryOld;
     var date = LocalDate()
 
     override fun onCreate() {
         super.onCreate()
 
-        repo = SubstitutesRepository(applicationContext)
+        repo = SubstitutesRepositoryOld(applicationContext)
         repo.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
     }
 
@@ -40,7 +41,7 @@ class SubstitutesDashClockExtension : DashClockExtension() {
         if(date != this.date)
             return;
 
-        val important = SubstitutesList.filterRelevant(list, true)
+        val important = list.filterRelevant(true)
         val count = important.size
 
         var body = ""

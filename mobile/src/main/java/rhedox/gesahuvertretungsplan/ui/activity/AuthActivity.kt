@@ -22,8 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
+import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.service.BoardsSyncService
@@ -123,7 +123,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
 
         if (!areFieldsEmpty && call == null) {
-            call = gesaHu.boardNamess(username, password)
+            call = gesaHu.boardNames(username, password)
             call?.enqueue(this)
         }
     }

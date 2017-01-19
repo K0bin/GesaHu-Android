@@ -8,7 +8,7 @@ import android.widget.RemoteViewsService
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 
 /**
@@ -31,7 +31,7 @@ class SubstitutesWidgetService : RemoteViewsService() {
         }
 
         override fun onDataSetChanged() {
-            list = SubstitutesRepository.loadSubstitutesForDaySync(context, date, true)
+            list = SubstitutesRepositoryOld.loadSubstitutesForDaySync(context, date, true)
         }
 
         override fun getViewAt(position: Int): RemoteViews? {

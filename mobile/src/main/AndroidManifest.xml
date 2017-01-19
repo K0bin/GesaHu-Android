@@ -36,13 +36,17 @@
         android:theme="@style/GesahuTheme">
         <activity
             android:name=".ui.activity.SubstitutesActivity"
-            android:label="@string/app_name">
+            android:label="@string/activity_substitutes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.BoardActivity"
+                  android:label="@string/activity_board">
+        </activity>
+
         <activity
             android:name=".ui.activity.AuthActivity"
             android:label="@string/login">

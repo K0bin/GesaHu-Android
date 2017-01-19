@@ -2,9 +2,9 @@ package rhedox.gesahuvertretungsplan.model.database.tables
 
 import android.content.ContentValues
 import android.database.Cursor
-import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.Lesson
+import rhedox.gesahuvertretungsplan.model.database.Mark
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
@@ -12,11 +12,6 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
  * Created by robin on 19.10.2016.
  */
 object BoardAdapter {
-    fun toContentValues(board: BoardName): ContentValues {
-        val values = ContentValues();
-        values.put(BoardsContract.Table.columnName, board.name)
-        return values;
-    }
 
     fun toContentValues(board: Board): ContentValues {
         val values = ContentValues();
@@ -29,7 +24,7 @@ object BoardAdapter {
         return values;
     }
 
-    fun toContentValues(lesson: Board.Lesson, boardId: Long? = null): ContentValues {
+    fun toContentValues(lesson: Lesson, boardId: Long? = null): ContentValues {
         val values = ContentValues();
         values.put(LessonsContract.Table.columnBoardId, boardId ?: lesson.boardId)
         values.put(LessonsContract.Table.columnId, lesson.id)
@@ -42,7 +37,7 @@ object BoardAdapter {
         return values;
     }
 
-    fun toContentValues(lesson: Board.Mark, boardId: Long? = null): ContentValues {
+    fun toContentValues(lesson: Mark, boardId: Long? = null): ContentValues {
         val values = ContentValues();
         values.put(MarksContract.Table.columnBoardId, boardId ?: lesson.boardId)
         values.put(MarksContract.Table.columnId, lesson.id)
@@ -57,21 +52,14 @@ object BoardAdapter {
         return values;
     }
 
-    fun nameFromCursor(cursor: Cursor): String? {
-        if (cursor.count == 0 || cursor.columnCount < 1 || cursor.isClosed)
-            return null
-
-        return cursor.getString(cursor.getColumnIndex(BoardsContract.Table.columnName));
-    }
-
-    fun namesFromCursor(cursor: Cursor): List<String> {
-        val list = mutableListOf<String>();
+    fun boardsFromCursor(cursor: Cursor): List<Board> {
+        val list = mutableListOf<Board>();
         if (cursor.count == 0 || cursor.isClosed)
             return list;
 
         cursor.moveToFirst()
         while (!cursor.isAfterLast) {
-            val board = BoardAdapter.nameFromCursor(cursor)
+            val board = BoardAdapter.boardFromCursors(cursor)
 
             if (board != null)
                 list.add(board);
@@ -81,7 +69,7 @@ object BoardAdapter {
         return list;
     }
 
-    fun boardFromCursors(boardCursor: Cursor, lessonsCursor: Cursor, marksCursor: Cursor): Board? {
+    fun boardFromCursors(boardCursor: Cursor): Board? {
         if (boardCursor.count == 0 || boardCursor.columnCount < 1 || boardCursor.isClosed)
             return null
 
@@ -93,14 +81,11 @@ object BoardAdapter {
         val lessonsTotal = boardCursor.getInt(boardCursor.getColumnIndex(BoardsContract.Table.columnLessonsTotal))
         val id = boardCursor.getLong(boardCursor.getColumnIndex(BoardsContract.Table.columnId))
 
-        val marks = marksFromCursor(marksCursor)
-        val lessons = lessonsFromCursor(lessonsCursor)
-
-        return Board(name, mark, markRemark, missedLessons, missedLessonsWithSickNotes, lessonsTotal, marks, lessons, id)
+        return Board(name, mark, markRemark, missedLessons, missedLessonsWithSickNotes, lessonsTotal, id)
     }
 
-    fun marksFromCursor(cursor: Cursor): List<Board.Mark> {
-        val list = mutableListOf<Board.Mark>();
+    fun marksFromCursor(cursor: Cursor): List<Mark> {
+        val list = mutableListOf<Mark>();
         if (cursor.count == 0 || cursor.isClosed)
             return list;
 
@@ -116,7 +101,7 @@ object BoardAdapter {
         return list;
     }
 
-    fun markFromCursor(cursor: Cursor): Board.Mark? {
+    fun markFromCursor(cursor: Cursor): Mark? {
         if (cursor.count == 0 || cursor.columnCount < 1 || cursor.isClosed)
             return null
 
@@ -131,11 +116,11 @@ object BoardAdapter {
         val id = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnBoardId))
         val boardsId = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnBoardId))
 
-        return Board.Mark(date, description, mark, kind, average, markKind, logo, weighting, id = id, boardId = boardsId)
+        return Mark(date, description, mark, kind, average, markKind, logo, weighting, id = id, boardId = boardsId)
     }
 
-    fun lessonsFromCursor(cursor: Cursor): List<Board.Lesson> {
-        val list = mutableListOf<Board.Lesson>();
+    fun lessonsFromCursor(cursor: Cursor): List<Lesson> {
+        val list = mutableListOf<Lesson>();
         if (cursor.count == 0 || cursor.isClosed)
             return list;
 
@@ -151,7 +136,7 @@ object BoardAdapter {
         return list;
     }
 
-    fun lessonFromCursor(cursor: Cursor): Board.Lesson? {
+    fun lessonFromCursor(cursor: Cursor): Lesson? {
         if (cursor.count == 0 || cursor.columnCount < 1 || cursor.isClosed)
             return null
 
@@ -164,6 +149,6 @@ object BoardAdapter {
         val id = cursor.getLong(cursor.getColumnIndex(LessonsContract.Table.columnBoardId))
         val boardsId = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnBoardId))
 
-        return Board.Lesson(date, topic, duration, status, homework, homeworkDue, id = id, boardId = boardsId)
+        return Lesson(date, topic, duration, status, homework, homeworkDue, id = id, boardId = boardsId)
     }
 }

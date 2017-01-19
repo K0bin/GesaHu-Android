@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.json.BoardName
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
@@ -10,6 +11,7 @@ import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
  * Created by robin on 02.01.2017.
  */
 class StubSubstitutesView : SubstitutesContract.View {
+
     override fun showList(position: Int, list: List<Substitute>) {listShown[position] = true}
     override fun showDatePicker(defaultDate: LocalDate) {}
 
@@ -28,12 +30,13 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun share(text: String) {}
     override fun goBack() {}
     override fun finish() {}
-    override fun setBoards(boards: List<String>) {}
+    override fun setBoards(boards: List<Board>) {}
     override fun setAvatar(avatar: Bitmap) {}
     override fun navigateToIntro() {}
     override fun navigateToSettings() {}
     override fun navigateToAbout() {}
     override fun navigateToAuth() {}
+    override fun navigateToBoard(boardId: Long) {}
 
     override var userName: String = ""
     override var currentDrawerId: Int = -1

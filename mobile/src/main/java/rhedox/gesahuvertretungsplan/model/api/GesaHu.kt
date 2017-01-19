@@ -6,7 +6,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
-import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormatterBuilder
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -15,9 +14,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.api.json.BoardName
-import rhedox.gesahuvertretungsplan.model.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.api.json.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.api.json.*
+import rhedox.gesahuvertretungsplan.model.api.json.deserializer.*
 import rhedox.gesahuvertretungsplan.util.registerTypeAdapter
 
 /**
@@ -40,8 +39,8 @@ class GesaHu(context: Context) {
                 .registerTypeAdapter(DateTime::class.java, DateTimeDeserializer())
                 .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
                 .registerTypeAdapter(LocalTimeDeserializer())
-                .registerTypeAdapter(BoardDeserializer.MarkDeserializer())
-                .registerTypeAdapter(BoardDeserializer.LessonDeserializer())
+                .registerTypeAdapter(MarkDeserializer())
+                .registerTypeAdapter(LessonDeserializer())
                 .registerTypeAdapter(BoardDeserializer())
                 .create()
 
@@ -74,12 +73,12 @@ class GesaHu(context: Context) {
             .appendDayOfMonth(2)
             .toFormatter()
 
-    fun boardNamess(username: String, password: String): Call<List<BoardName>> {
-        return api.boardNames(username, password)
+    fun boards(username: String, password: String): Call<List<BoardInfo>> {
+        return api.boards(username, password)
     }
 
-    fun boards(username: String, password: String): Call<List<Board>> {
-        return api.boards(username, password)
+    fun boardNames(username: String, password: String): Call<List<BoardName>> {
+        return api.boardNames(username, password)
     }
 
     fun publicSubstitutes(date: LocalDate): Call<SubstitutesList> {
@@ -122,6 +121,6 @@ class GesaHu(context: Context) {
         fun exams(@Query("username") username: String, @Query("beginn") begin: String): Call<List<Exam>>
 
         @GET("getkursboardinfos.php")
-        fun boards(@Query("username") username: String, @Query("pw") password: String): Call<List<Board>>
+        fun boards(@Query("username") username: String, @Query("pw") password: String): Call<List<BoardInfo>>
     }
 }

@@ -1,8 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -21,18 +24,20 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.jetbrains.anko.accountManager
+import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.api.json.BoardName
-import rhedox.gesahuvertretungsplan.mvp.BaseContract
-import rhedox.gesahuvertretungsplan.presenter.BasePresenter
+import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
+import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
+abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
 
     protected lateinit var toggle: ActionBarDrawerToggle
         private set
@@ -40,7 +45,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     protected var isAmoledBlackEnabled = false
             private set;
 
-    abstract val presenter: BaseContract.Presenter;
+    abstract val presenter: NavDrawerContract.Presenter;
 
     private lateinit var headerUsername: TextView;
 
@@ -68,11 +73,25 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
         analytics = FirebaseAnalytics.getInstance(this)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            setupTaskDescription()
+
         //Initialize UI
         if (isAmoledBlackEnabled)
             this.setTheme(R.style.GesahuThemeAmoled)
         else
             this.setTheme(R.style.GesahuTheme)
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun setupTaskDescription() {
+        val a = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary))
+        val primaryColor = a.getColor(0, 0)
+        a.recycle()
+
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_task)
+        val description = ActivityManager.TaskDescription(getString(R.string.app_name), bitmap, primaryColor)
+        this.setTaskDescription(description)
     }
 
     override fun onResume() {
@@ -129,11 +148,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         super.onBackPressed()
     }
 
-    override fun setBoards(boards: List<String>) {
+    override fun setBoards(boards: List<Board>) {
         val menu = navigationView.menu
 
-        for (i in 0..boards.size-1) {
-            val item = menu.add(R.id.boardsSubheader, i + 13, Menu.NONE, boards[i])
+        for (board in boards) {
+            val item = menu.add(R.id.boardsSubheader, (board.id ?: 0).toInt() + 13, Menu.NONE, board.name)
             item.isCheckable = true
         }
     }
@@ -152,9 +171,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     }
 
     override fun navigateToIntro() {
-        val intent = Intent(this, WelcomeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(intentFor<WelcomeActivity>().newTask().clearTask())
+    }
+
+    override fun navigateToBoard(boardId: Long) {
+        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId))
     }
 
     override fun navigateToAuth() {
