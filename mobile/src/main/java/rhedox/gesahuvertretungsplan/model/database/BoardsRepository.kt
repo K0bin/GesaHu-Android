@@ -55,16 +55,25 @@ class BoardsRepository(context: Context) {
 
     fun loadBoards() {
         var addedToList = false
-        val key = futures.size
-        doAsync {
+        var key = 0
+        while (futures[key] != null) {
+            key++;
+        }
+
+        val future = doAsync {
             val cursor = contentResolver.query(BoardsContract.uri, BoardsContract.Table.columns.toTypedArray(), null, null, null)
             val boards = BoardAdapter.boardsFromCursor(cursor)
             cursor.close()
 
             uiThread {
                 boardsCallback?.invoke(boards)
+                if(addedToList) {
+                    futures.remove(key)
+                }
             }
         }
+        futures.put(key, future)
+        addedToList = true;
     }
 
     class Observer(private val callback: (uri: Uri) -> Unit): ContentObserver(Handler()) {

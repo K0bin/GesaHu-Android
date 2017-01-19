@@ -89,7 +89,10 @@ class SubstitutesRepository(context: Context) {
 
     fun loadSubstitutesForDay(date: LocalDate) {
         var addedToList = false
-        val key = futures.size
+        var key = 0
+        while (futures[key] != null) {
+            key++;
+        }
         val future = doAsync {
             val cursor = contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}")
             val list = SubstituteAdapter.listFromCursor(cursor)
@@ -108,7 +111,10 @@ class SubstitutesRepository(context: Context) {
 
     fun loadAnnouncementForDay(date: LocalDate) {
         var addedToList = false
-        val key = futures.size
+        var key = 0
+        while (futures[key] != null) {
+            key++;
+        }
         val future = doAsync {
             val cursor = contentResolver.query(AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null)
             val announcement = AnnouncementAdapter.fromCursor(cursor)
