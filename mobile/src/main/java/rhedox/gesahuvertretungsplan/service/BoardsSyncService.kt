@@ -15,10 +15,7 @@ import org.jetbrains.anko.accountManager
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.tables.BoardAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
-import rhedox.gesahuvertretungsplan.model.database.tables.LessonsContract
-import rhedox.gesahuvertretungsplan.model.database.tables.MarksContract
+import rhedox.gesahuvertretungsplan.model.database.tables.*
 
 /**
  * Created by robin on 30.10.2016.
@@ -77,13 +74,13 @@ class BoardsSyncService : Service() {
                 //Insert new data
                 val boards = response.body()
                 for (board in boards) {
-                    val uri = provider.insert(BoardsContract.uri, BoardAdapter.toContentValues(board.board))
+                    val uri = provider.insert(BoardsContract.uri, BoardsAdapter.toContentValues(board.board))
                     val id = uri.lastPathSegment.toLong()
                     for (lesson in board.lessons) {
-                        provider.insert(LessonsContract.uri, BoardAdapter.toContentValues(lesson, id))
+                        provider.insert(LessonsContract.uri, LessonsAdapter.toContentValues(lesson, id))
                     }
                     for (mark in board.marks) {
-                        provider.insert(MarksContract.uri, BoardAdapter.toContentValues(mark, id))
+                        provider.insert(MarksContract.uri, MarksAdapter.toContentValues(mark, id))
                     }
                 }
             }

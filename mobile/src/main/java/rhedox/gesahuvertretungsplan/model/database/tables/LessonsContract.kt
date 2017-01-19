@@ -55,9 +55,6 @@ object LessonsContract {
         db.execSQL("DELETE FROM ${BoardsContract.Table.name} WHERE 1;");
     }
 
-    fun uriWithBoardName(name: String): Uri {
-        return Uri.withAppendedPath(BoardsContract.uriWithName(name), path)
-    }
     fun uriWithBoard(id: Long): Uri {
         return Uri.withAppendedPath(BoardsContract.uriWithId(id), path)
     }

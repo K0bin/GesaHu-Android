@@ -43,37 +43,20 @@ class SubstitutesRepository(context: Context) {
 
     private val futures = mutableMapOf<Int, Future<Unit>>();
 
-    private var subscribedToSubstitutes = false;
     var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null
-            get() = field;
-            set(value) {
-                if(value != null && !subscribedToSubstitutes) {
-                    context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
-                    subscribedToSubstitutes = true
-                }
-                field = value
-            }
-
-    private var subscribedToAnnouncements = false;
     var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null
-        get() = field;
-        set(value) {
-            if(value != null && !subscribedToAnnouncements) {
-                context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
-                subscribedToAnnouncements = true
-            }
-            field = value
-        }
 
     init {
         observer = Observer {
-            if(it.pathSegments.size > 1 && it.pathSegments[1] == "date") {
+            if(it.pathSegments.size > 1 && it.pathSegments[1] == SubstitutesContract.datePath && it.pathSegments[1] != AnnouncementsContract.datePath) {
                 if(it.pathSegments[0] == SubstitutesContract.path)
                     loadSubstitutesForDay(localDateFromUnix(it.lastPathSegment.toInt()));
                 else if(it.pathSegments[0]== AnnouncementsContract.path)
                     loadAnnouncementForDay(localDateFromUnix(it.lastPathSegment.toInt()));
             }
         }
+        context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
+        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
     }
 
     fun destroy() {
@@ -88,40 +71,38 @@ class SubstitutesRepository(context: Context) {
     }
 
     fun loadSubstitutesForDay(date: LocalDate) {
-        var addedToList = false
-        var key = 0
-        while (futures[key] != null) {
-            key++;
-        }
-        val future = doAsync {
+        load({
             val cursor = contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}")
             val list = SubstituteAdapter.listFromCursor(cursor)
             cursor.close()
-
-            uiThread {
-                substitutesCallback?.invoke(date, list)
-                if(addedToList) {
-                    futures.remove(key)
-                }
-            }
-        }
-        futures.put(key, future)
-        addedToList = true;
+            return@load list
+        }, {
+            substitutesCallback?.invoke(date, it)
+        })
     }
 
     fun loadAnnouncementForDay(date: LocalDate) {
+        load({
+            val cursor = contentResolver.query(AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null)
+            val announcement = AnnouncementAdapter.fromCursor(cursor)
+            cursor.close()
+            return@load announcement
+        }, {
+            announcementCallback?.invoke(date, it)
+        })
+    }
+
+    fun <T>load(async: () -> T, done: (data: T) -> Unit) {
         var addedToList = false
         var key = 0
         while (futures[key] != null) {
             key++;
         }
-        val future = doAsync {
-            val cursor = contentResolver.query(AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null)
-            val announcement = AnnouncementAdapter.fromCursor(cursor)
-            cursor.close()
 
+        val future = doAsync {
+            val data = async();
             uiThread {
-                announcementCallback?.invoke(date, announcement)
+                done(data)
                 if(addedToList) {
                     futures.remove(key)
                 }

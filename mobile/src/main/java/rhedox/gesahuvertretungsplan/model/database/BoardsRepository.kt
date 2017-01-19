@@ -10,9 +10,9 @@ import android.support.v4.content.CursorLoader
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.database.tables.BoardAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
+import rhedox.gesahuvertretungsplan.model.database.tables.*
 import rhedox.gesahuvertretungsplan.util.Open
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import java.util.concurrent.Future
 
 /**
@@ -27,20 +27,29 @@ class BoardsRepository(context: Context) {
 
     private val futures = mutableMapOf<Int, Future<Unit>>()
 
-    private var subscribedToBoards = false
     var boardsCallback: ((boards: List<Board>) -> Unit)? = null
-        get() = field
-        set(value) {
-            if(value != null && !subscribedToBoards) {
-                context.contentResolver.registerContentObserver(BoardsContract.uri, true, observer);
-            }
-            field = value
-        }
+    var marksCallback: ((boardId: Long, marks: List<Mark>) -> Unit)? = null
+    var lessonsCallback: ((boardId: Long, lessons: List<Lesson>) -> Unit)? = null
+
 
     init {
         observer = Observer {
-            loadBoards()
+            if(it.pathSegments.size > 0 && it.pathSegments[0] != MarksContract.path && it.pathSegments[0] != LessonsContract.path) {
+                //First path segment has to be a board id
+                if(it.pathSegments.size > 1) {
+                    //There's a second path segment -> a table other than Boards
+                    when (it.lastPathSegment) {
+                        MarksContract.path -> loadMarks(it.pathSegments[0].toLong())
+                        LessonsContract.path -> {
+                        }
+                    }
+                } else {
+                    //There's no second path segment but an id -> a board got inserted
+                    loadBoards()
+                }
+            }
         }
+        context.contentResolver.registerContentObserver(BoardsContract.uri, true, observer);
     }
 
     fun destroy() {
@@ -54,6 +63,40 @@ class BoardsRepository(context: Context) {
     }
 
     fun loadBoards() {
+        load({
+            val cursor = contentResolver.query(BoardsContract.uri, BoardsContract.Table.columns.toTypedArray(), null, null, null)
+            val boards = BoardsAdapter.boardsFromCursor(cursor)
+            cursor.close()
+            return@load boards
+        }, {
+            boardsCallback?.invoke(it)
+        })
+
+    }
+
+    fun loadMarks(boardId: Long) {
+        load({
+            val cursor = contentResolver.query(MarksContract.uriWithBoard(boardId), BoardsContract.Table.columns.toTypedArray(), null, null, null)
+            val marks = MarksAdapter.marksFromCursor(cursor)
+            cursor.close()
+            return@load marks;
+        }, {
+            marksCallback?.invoke(boardId, it)
+        })
+    }
+
+    fun loadLessons(boardId: Long) {
+        load({
+            val cursor = contentResolver.query(LessonsContract.uriWithBoard(boardId), BoardsContract.Table.columns.toTypedArray(), null, null, null)
+            val lessons = LessonsAdapter.lessonsFromCursor(cursor)
+            cursor.close()
+            return@load lessons;
+        }, {
+            lessonsCallback?.invoke(boardId, it)
+        })
+    }
+
+    fun <T>load(async: () -> T, uiThread: (data: T) -> Unit) {
         var addedToList = false
         var key = 0
         while (futures[key] != null) {
@@ -61,12 +104,9 @@ class BoardsRepository(context: Context) {
         }
 
         val future = doAsync {
-            val cursor = contentResolver.query(BoardsContract.uri, BoardsContract.Table.columns.toTypedArray(), null, null, null)
-            val boards = BoardAdapter.boardsFromCursor(cursor)
-            cursor.close()
-
+            val data = async();
             uiThread {
-                boardsCallback?.invoke(boards)
+                uiThread(data)
                 if(addedToList) {
                     futures.remove(key)
                 }
