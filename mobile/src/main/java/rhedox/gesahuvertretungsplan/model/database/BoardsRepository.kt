@@ -31,7 +31,6 @@ class BoardsRepository(context: Context) {
     var marksCallback: ((boardId: Long, marks: List<Mark>) -> Unit)? = null
     var lessonsCallback: ((boardId: Long, lessons: List<Lesson>) -> Unit)? = null
 
-
     init {
         observer = Observer {
             if(it.pathSegments.size > 0 && it.pathSegments[0] != MarksContract.path && it.pathSegments[0] != LessonsContract.path) {

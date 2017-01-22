@@ -139,7 +139,7 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
                 this.avatar = it
                 view?.avatar = it
             }
-            avatarLoader.execute();
+            avatarLoader.loadAvatar();
 
             if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && permissionManager.isCalendarWritingPermissionGranted) {
                 CalendarSyncService.setIsSyncEnabled(account!!, true)
