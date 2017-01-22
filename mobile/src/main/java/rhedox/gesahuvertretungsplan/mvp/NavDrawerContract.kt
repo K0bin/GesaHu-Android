@@ -9,14 +9,13 @@ import rhedox.gesahuvertretungsplan.model.Board
 interface NavDrawerContract {
     interface Presenter {
         fun onNavigationDrawerItemClicked(drawerId: Int)
-        fun attachView(view: View, isRecreated: Boolean)
+        fun attachView(view: View)
         fun detachView()
         fun destroy()
     }
 
     interface View {
-        fun setBoards(boards: List<Board>)
-        fun setAvatar(avatar: Bitmap)
+        fun showBoards(boards: List<Board>)
         fun navigateToSettings()
         fun navigateToAbout()
         fun navigateToIntro()
@@ -24,5 +23,6 @@ interface NavDrawerContract {
         fun navigateToBoard(boardId: Long)
         var userName: String;
         var currentDrawerId: Int;
+        var avatar: Bitmap?
     }
 }

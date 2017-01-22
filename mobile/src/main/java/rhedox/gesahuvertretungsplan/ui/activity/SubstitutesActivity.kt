@@ -44,7 +44,6 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
  */
 class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
     override lateinit var presenter: SubstitutesContract.Presenter
-    private var isRecreated: Boolean = false
     private var pagerAdapter: SubstitutesPagerAdapter? = null
             private set;
     private lateinit var cabFadeIn: Animation;
@@ -145,12 +144,10 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
         //Create presenter
         if(lastCustomNonConfigurationInstance != null) {
             presenter = lastCustomNonConfigurationInstance as SubstitutesContract.Presenter
-            isRecreated = true
         } else {
             val state: SubstitutesState?;
             if(savedInstanceState != null) {
                 state = savedInstanceState.getParcelable<SubstitutesState>(stateBundleName)
-                isRecreated = true
             } else {
                 val seconds = intent?.extras?.getInt(Extra.date, 0) ?: 0
                 val date: LocalDate?;
@@ -231,7 +228,7 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
 
     override fun onStart() {
         super.onResume()
-        presenter.attachView(this, isRecreated)
+        presenter.attachView(this)
     }
 
     override fun onStop() {

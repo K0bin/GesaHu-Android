@@ -30,7 +30,7 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun share(text: String) {}
     override fun goBack() {}
     override fun finish() {}
-    override fun setBoards(boards: List<Board>) {}
+    override fun showBoards(boards: List<Board>) {}
     override fun setAvatar(avatar: Bitmap) {}
     override fun navigateToIntro() {}
     override fun navigateToSettings() {}

@@ -67,4 +67,10 @@ class BoardActivity : NavDrawerActivity(), BoardContract.View {
         tabLayout.tabMode = TabLayout.MODE_FIXED
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        presenter.attachView(this)
+    }
 }

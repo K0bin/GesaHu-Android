@@ -13,6 +13,7 @@ import android.preference.PreferenceManager
 import android.provider.CalendarContract
 import android.support.v4.content.ContextCompat
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.os.Bundle
 import com.github.salomonbrys.kodein.*
 import org.jetbrains.anko.accountManager
@@ -35,6 +36,7 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
     private var view: NavDrawerContract.View? = null;
     protected var account: Account? = null;
         private set
+    private var avatar: Bitmap? = null;
 
     private val accountManager: AccountManager = kodeIn.instance()
     private val permissionManager: PermissionManager = kodeIn.instance()
@@ -52,9 +54,11 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
         checkFirstStart()
     }
 
-    override fun attachView(view: NavDrawerContract.View, isRecreated: Boolean) {
+    override fun attachView(view: NavDrawerContract.View) {
         this.view = view;
         view.userName = account?.name ?: ""
+        view.showBoards(this.boards)
+        view.avatar = this.avatar
 
         //Check first start again, might have returned from AuthActivity
         checkFirstStart()
@@ -96,7 +100,7 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
     }
 
     private fun onBoardsLoaded(boards: List<Board>) {
-        view?.setBoards(boards)
+        view?.showBoards(boards)
         this.boards = boards;
     }
 
@@ -122,15 +126,18 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
             return;
 
         val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
-        if (accounts.isNotEmpty())
+        if (accounts.isNotEmpty()) {
             account = accounts[0]
+            view?.userName = account!!.name
+        }
 
         if(account != null) {
             //load avatar
             val avatarLoaderProvider: () -> AvatarLoader = kodeIn.provider();
             val avatarLoader = avatarLoaderProvider.invoke()
             avatarLoader.callback = {
-                view?.setAvatar(it)
+                this.avatar = it
+                view?.avatar = it
             }
             avatarLoader.execute();
 

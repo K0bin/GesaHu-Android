@@ -79,8 +79,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         selected = state?.selected
     }
 
-    override fun attachView(view: NavDrawerContract.View, isRecreated: Boolean) {
-        super.attachView(view, false)
+    override fun attachView(view: NavDrawerContract.View) {
+        super.attachView(view)
         Log.d("SubstitutesPresenter", "attachView")
 
         this.view = view as SubstitutesContract.View

@@ -33,7 +33,7 @@ import tr.xip.errorview.ErrorView;
  * Created by Robin on 28.10.2014.
  */
 public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
-    @Nullable private List<Substitute> list = new ArrayList<Substitute>(0);
+    @NonNull private List<Substitute> list = new ArrayList<Substitute>(0);
 
     private int selected = -1;
 
@@ -95,7 +95,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         switch (getItemViewType(i)) {
             case ITEM_TYPE_SUBSTITUTE: {
-                if (list == null || list.size() <= i)
+                if (list.size() <= i)
                     return;
 
                 SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
@@ -121,7 +121,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        if(list != null && list.size() > 0)
+        if(list.size() > 0)
             return list.size();
         else
             return 1;
@@ -129,7 +129,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 
     @Override
     public @ItemType int getItemViewType(int position) {
-        if(list == null || list.size() == 0)
+        if(list.size() == 0)
             return ITEM_TYPE_EMPTY_VIEW;
 
         return ITEM_TYPE_SUBSTITUTE;
@@ -138,8 +138,8 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     /*
     * @param layoutManager The layoutManager of substitutes to display. If it's null, the RecyclerView will be cleared
      */
-    public void setSubstitutes(@Nullable List<Substitute> list) {
-        if(list == null || list.size() == 0) {
+    public void setSubstitutes(@NonNull List<Substitute> list) {
+        if(list.size() == 0) {
             clear();
         } else {
             //Get count before replacing layoutManager
@@ -164,7 +164,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 		        recyclerView.scrollToPosition(0);
         }
     }
-	@Nullable
+	@NonNull
 	public List<Substitute> getSubstitutes() {
 		return list;
 	}

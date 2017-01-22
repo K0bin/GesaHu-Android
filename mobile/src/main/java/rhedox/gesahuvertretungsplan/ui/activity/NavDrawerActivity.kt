@@ -148,7 +148,7 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         super.onBackPressed()
     }
 
-    override fun setBoards(boards: List<Board>) {
+    override fun showBoards(boards: List<Board>) {
         val menu = navigationView.menu
 
         for (board in boards) {
@@ -157,10 +157,15 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         }
     }
 
-    override fun setAvatar(avatar: Bitmap) {
-        val imageView = navigationView.getHeaderView(0).findViewById(R.id.avatarView) as CircleImageView;
-        imageView.setImageBitmap(avatar)
-    }
+    override var avatar: Bitmap? = null
+        set(value) {
+            field = value
+
+            if(field != null) {
+                val imageView = navigationView.getHeaderView(0).findViewById(R.id.avatarView) as CircleImageView;
+                imageView.setImageBitmap(avatar)
+            }
+        }
 
     override fun navigateToSettings() {
         startActivity(intentFor<PreferenceActivity>());

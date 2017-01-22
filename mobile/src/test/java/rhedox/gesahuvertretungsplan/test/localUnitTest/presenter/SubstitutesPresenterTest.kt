@@ -50,7 +50,7 @@ class SubstitutesPresenterTest {
     private fun simulateOrientationChange() {
         presenter.detachView()
         view = StubSubstitutesView()
-        presenter.attachView(view,false)
+        presenter.attachView(view)
         presenter.onActivePageChanged(3)
         presenter.onPageAttached(1)
         presenter.onPageAttached(2)
@@ -59,7 +59,7 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testFab() {
-        presenter.attachView(view, false)
+        presenter.attachView(view)
         assert(!view.isFabVisible)
         simulateOrientationChange()
         assert(!view.isFabVisible)
@@ -94,7 +94,7 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testCab() {
-        presenter.attachView(view, false)
+        presenter.attachView(view)
         assert(!view.isCabVisible)
         simulateOrientationChange()
         assert(!view.isCabVisible)
@@ -119,14 +119,14 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testTabs() {
-        presenter.attachView(view, false)
+        presenter.attachView(view)
         assert(view.currentTab == 3)
         assert(view.tabTitles[0] == "Mo. 09.05.16")
     }
 
     @Test
     fun testList() {
-        presenter.attachView(view, false)
+        presenter.attachView(view)
         presenter.onSubstitutesLoaded(date, list)
         assert(view.listShown[3])
         simulateOrientationChange()
@@ -135,7 +135,7 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testSelection() {
-        presenter.attachView(view, false)
+        presenter.attachView(view)
         presenter.onSubstitutesLoaded(date, list)
         presenter.onListItemClicked(2)
         assert(view.selected[3] == 2)
@@ -148,7 +148,7 @@ class SubstitutesPresenterTest {
     @Test
     fun testStateRestoring() {
         val restoredPresenter = SubstitutesPresenter(kodein, SubstitutesState(date, true, 2))
-        restoredPresenter.attachView(view, true)
+        restoredPresenter.attachView(view)
         restoredPresenter.onActivePageChanged(3)
         restoredPresenter.onPageAttached(1)
         restoredPresenter.onPageAttached(2)
@@ -163,7 +163,7 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testDrawer() {
-        presenter.attachView(view, false)
+        presenter.attachView(view)
         assert(view.currentDrawerId == R.id.substitutes)
     }
 }

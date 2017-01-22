@@ -25,8 +25,8 @@ class BoardPresenter(kodein: Kodein, state: BoardContract.State?) : NavDrawerPre
         view?.title = board?.name ?: "";
     }
 
-    override fun attachView(view: NavDrawerContract.View, isRecreated: Boolean) {
-        super.attachView(view, isRecreated)
+    override fun attachView(view: NavDrawerContract.View) {
+        super.attachView(view)
 
         this.view = view as BoardContract.View;
     }
