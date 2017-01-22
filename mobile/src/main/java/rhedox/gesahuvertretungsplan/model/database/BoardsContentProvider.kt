@@ -113,7 +113,7 @@ class BoardsContentProvider : ContentProvider() {
             lessons -> queryBuilder.tables = LessonsContract.Table.name
             lessonsByBoardId -> {
                 queryBuilder.tables = LessonsContract.Table.name
-                queryBuilder.appendWhere("${LessonsContract.Table.columnBoardId} = ${uri.lastPathSegment}")
+                queryBuilder.appendWhere("${LessonsContract.Table.columnBoardId} = ${uri.pathSegments.first()}")
             }
             lessonsById -> {
                 queryBuilder.tables = LessonsContract.Table.name
@@ -123,7 +123,7 @@ class BoardsContentProvider : ContentProvider() {
             marks -> queryBuilder.tables = MarksContract.Table.name
             marksByBoardId -> {
                 queryBuilder.tables = MarksContract.Table.name
-                queryBuilder.appendWhere("${MarksContract.Table.columnBoardId} = ${uri.lastPathSegment}")
+                queryBuilder.appendWhere("${MarksContract.Table.columnBoardId} = ${uri.pathSegments.first()}")
             }
             marksById -> {
                 queryBuilder.tables = MarksContract.Table.name

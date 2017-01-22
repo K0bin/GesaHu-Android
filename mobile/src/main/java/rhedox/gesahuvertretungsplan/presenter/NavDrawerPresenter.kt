@@ -31,25 +31,21 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
 /**
  * Created by robin on 20.10.2016.
  */
-open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Presenter, KodeinInjected {
-    override val injector: KodeinInjector = KodeinInjector()
-
+open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
     protected var account: Account? = null;
         private set
 
-    private val accountManager: AccountManager by instance()
-    private val permissionManager: PermissionManager by instance()
+    private val accountManager: AccountManager = kodeIn.instance()
+    private val permissionManager: PermissionManager = kodeIn.instance()
 
     protected val boardsRepository: BoardsRepository = kodeIn.instance()
 
-    private val prefs: SharedPreferences by instance()
+    private val prefs: SharedPreferences = kodeIn.instance()
 
     private var boards: List<Board> = listOf();
 
     init {
-        inject(kodeIn)
-
         boardsRepository.boardsCallback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 

@@ -2,14 +2,12 @@ package rhedox.gesahuvertretungsplan.ui.adapters;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -101,7 +99,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
                     return;
 
                 SubstituteViewHolder substituteViewHolder = (SubstituteViewHolder) viewHolder;
-                substituteViewHolder.setSubstitute(list.get(i));
+                substituteViewHolder.bindSubstitute(list.get(i));
                 substituteViewHolder.setSelected(i == selected && selected != -1, false);
             } break;
         }
@@ -140,7 +138,7 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
     /*
     * @param layoutManager The layoutManager of substitutes to display. If it's null, the RecyclerView will be cleared
      */
-    public void showList(@Nullable List<Substitute> list) {
+    public void setSubstitutes(@Nullable List<Substitute> list) {
         if(list == null || list.size() == 0) {
             clear();
         } else {
@@ -166,6 +164,11 @@ public class SubstitutesAdapter extends SelectableAdapter<RecyclerView.ViewHolde
 		        recyclerView.scrollToPosition(0);
         }
     }
+	@Nullable
+	public List<Substitute> getSubstitutes() {
+		return list;
+	}
+
     private void clear() {
 	    setSelected(-1);
 	    int previousCount = getItemCount();

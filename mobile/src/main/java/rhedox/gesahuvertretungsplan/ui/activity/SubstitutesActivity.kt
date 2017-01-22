@@ -168,6 +168,9 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
         setContentView(R.layout.activity_main)
 
         pagerAdapter = SubstitutesPagerAdapter(presenter)
+        if(savedInstanceState != null) {
+            pagerAdapter?.restoreState(savedInstanceState)
+        }
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
@@ -244,7 +247,7 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
 
     override fun showList(position: Int, list: List<Substitute>) {
         val adapter = pagerAdapter?.getAdapter(position)
-        adapter?.showList(list)
+        adapter?.substitutes = list
     }
 
     override fun showDatePicker(defaultDate: LocalDate) {
@@ -317,5 +320,6 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
             return
         }
         outState.putParcelable(stateBundleName, presenter.saveState() as Parcelable)
+        pagerAdapter?.save(outState)
     }
 }

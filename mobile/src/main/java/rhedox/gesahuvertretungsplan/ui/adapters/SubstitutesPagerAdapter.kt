@@ -22,6 +22,18 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
 
     private val layoutManagerStates = arrayOfNulls<Parcelable>(5)
 
+    object State {
+        const val layoutManagerStates = "layoutManagerStates"
+        const val state = "pagerState"
+    }
+
+    fun restoreState(bundle: Bundle) {
+        val states = bundle.getParcelableArray(State.layoutManagerStates)
+        states?.forEachIndexed { i, parcelable ->
+            layoutManagerStates[i] = parcelable
+        }
+    }
+
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val inflater = LayoutInflater.from(container.context)
         val recyclerView = inflater.inflate(R.layout.fragment_main, container, false) as RecyclerView;
@@ -59,5 +71,9 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
 
     fun getAdapter(position: Int): SubstitutesAdapter? {
         return adapters[position]
+    }
+
+    fun save(bundle: Bundle) {
+        bundle.putParcelableArray(State.layoutManagerStates, layoutManagerStates)
     }
 }

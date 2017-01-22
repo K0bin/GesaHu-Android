@@ -76,7 +76,7 @@ class BoardsRepository(context: Context) {
 
     fun loadMarks(boardId: Long) {
         load({
-            val cursor = contentResolver.query(MarksContract.uriWithBoard(boardId), BoardsContract.Table.columns.toTypedArray(), null, null, null)
+            val cursor = contentResolver.query(MarksContract.uriWithBoard(boardId), MarksContract.Table.columns.toTypedArray(), null, null, null)
             val marks = MarksAdapter.marksFromCursor(cursor)
             cursor.close()
             return@load marks;
@@ -87,7 +87,7 @@ class BoardsRepository(context: Context) {
 
     fun loadLessons(boardId: Long) {
         load({
-            val cursor = contentResolver.query(LessonsContract.uriWithBoard(boardId), BoardsContract.Table.columns.toTypedArray(), null, null, null)
+            val cursor = contentResolver.query(LessonsContract.uriWithBoard(boardId), LessonsContract.Table.columns.toTypedArray(), null, null, null)
             val lessons = LessonsAdapter.lessonsFromCursor(cursor)
             cursor.close()
             return@load lessons;
@@ -96,7 +96,7 @@ class BoardsRepository(context: Context) {
         })
     }
 
-    fun <T>load(async: () -> T, uiThread: (data: T) -> Unit) {
+    private fun <T>load(async: () -> T, uiThread: (data: T) -> Unit) {
         var addedToList = false
         var key = 0
         while (futures[key] != null) {

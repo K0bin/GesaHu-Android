@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_margin="8dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Klausur"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:id="@+id/kind"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="NA Klausur Wahrscheinlichkeitslehre und Statistik"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_below="@id/kind"
+        android:id="@+id/description"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="15"
+        android:layout_margin="4dp"
+        android:layout_alignParentRight="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:id="@+id/mark"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mark"
+        android:layout_alignParentRight="true"
+        android:id="@+id/average"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+        tools:text="Ø 10.5"/>
+
+</RelativeLayout>

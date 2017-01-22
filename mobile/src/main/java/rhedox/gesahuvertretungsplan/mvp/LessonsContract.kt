@@ -1,22 +1,24 @@
 package rhedox.gesahuvertretungsplan.mvp
 
-import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.database.Lesson
+
 
 /**
  * Created by robin on 18.01.2017.
  */
-interface BoardContract {
+interface LessonsContract {
     interface State {
         val boardId: Long;
     }
 
-    interface Presenter : NavDrawerContract.Presenter {
+    interface Presenter {
         fun saveState(): State
+        fun attachView(view: View, isRecreated: Boolean)
+        fun detachView()
+        fun destroy()
     }
 
-    interface View : NavDrawerContract.View {
-        var title: String;
+    interface View {
+        fun showList(list: List<Lesson>)
     }
 }

@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model.api.json.deserializer
+package rhedox.gesahuvertretungsplan.model.api.deserializer
 
 import android.content.Context
 import com.google.gson.JsonDeserializationContext
@@ -7,7 +7,7 @@ import com.google.gson.JsonElement
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.api.json.Test
+import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type
 
@@ -26,7 +26,7 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
         val course = Html.decode(jsonObject.get("Klasse").asString.trim())
         val year = Html.decode(jsonObject.get("Klassenstufe").asString.trim()).toInt()
         val teacher = resolver.resolveTeacher(Html.decode(jsonObject.get("Lehrer").asString.trim()))
-        val lessons = Html.decode(jsonObject.get("Stunden").asString.trim()).replace(".", "")
+        val lessons = Html.decode(jsonObject.get("Stunden").asString.trim()).replace("build/intermediates/exploded-aar/com.mikepenz/fastadapter/2.1.5/res", "")
 
         val begin: Int;
         val duration: Int;

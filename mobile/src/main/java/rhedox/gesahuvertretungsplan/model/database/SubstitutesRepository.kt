@@ -92,7 +92,7 @@ class SubstitutesRepository(context: Context) {
         })
     }
 
-    fun <T>load(async: () -> T, done: (data: T) -> Unit) {
+    private fun <T>load(async: () -> T, done: (data: T) -> Unit) {
         var addedToList = false
         var key = 0
         while (futures[key] != null) {

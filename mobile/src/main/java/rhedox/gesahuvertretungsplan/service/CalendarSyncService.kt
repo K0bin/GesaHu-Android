@@ -19,10 +19,10 @@ import org.joda.time.DurationFieldType
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.api.json.Event
+import rhedox.gesahuvertretungsplan.model.api.Event
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
-import rhedox.gesahuvertretungsplan.model.api.json.Exam
-import rhedox.gesahuvertretungsplan.model.api.json.Test
+import rhedox.gesahuvertretungsplan.model.api.Exam
+import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 import java.util.*
 

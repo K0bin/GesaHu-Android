@@ -14,9 +14,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.api.json.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.api.json.*
-import rhedox.gesahuvertretungsplan.model.api.json.deserializer.*
+import rhedox.gesahuvertretungsplan.model.api.deserializer.*
+import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.util.registerTypeAdapter
 
 /**

@@ -7,7 +7,7 @@ import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.api.json.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity
 import rhedox.gesahuvertretungsplan.util.filterRelevant

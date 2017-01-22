@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model.api.json.deserializer
+package rhedox.gesahuvertretungsplan.model.api.deserializer
 
 import android.content.Context
 import com.google.gson.JsonDeserializationContext
@@ -8,7 +8,7 @@ import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.api.json.BoardInfo
+import rhedox.gesahuvertretungsplan.model.api.BoardInfo
 import rhedox.gesahuvertretungsplan.model.database.Lesson
 import rhedox.gesahuvertretungsplan.model.database.Mark
 import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract

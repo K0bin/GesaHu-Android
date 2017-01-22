@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.model.api.json
+package rhedox.gesahuvertretungsplan.model.api
 
 import org.joda.time.LocalDate
 

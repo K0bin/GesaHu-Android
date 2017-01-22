@@ -18,7 +18,7 @@ object LessonsAdapter {
         values.put(LessonsContract.Table.columnTopic, lesson.topic)
         values.put(LessonsContract.Table.columnDuration, lesson.duration)
         values.put(LessonsContract.Table.columnStatus, lesson.status)
-        values.put(LessonsContract.Table.columnHomework, lesson.homeWork)
+        values.put(LessonsContract.Table.columnHomework, if (lesson.homeWork != "-") lesson.homeWork else "")
         values.put(LessonsContract.Table.columnHomeworkDue, lesson.homeWorkDue?.unixTimeStamp)
         return values;
     }
@@ -49,10 +49,11 @@ object LessonsAdapter {
         val duration = cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnDuration))
         val status = cursor.getLong(cursor.getColumnIndex(LessonsContract.Table.columnStatus))
         val homework = cursor.getString(cursor.getColumnIndex(LessonsContract.Table.columnHomework))
-        val homeworkDue = localDateFromUnix(cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnHomeworkDue)))
+        val homeworkDueInt = cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnHomeworkDue))
+        val homeworkDue = if (homeworkDueInt != 0) localDateFromUnix(homeworkDueInt) else null
         val id = cursor.getLong(cursor.getColumnIndex(LessonsContract.Table.columnBoardId))
-        val boardsId = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnBoardId))
+        val boardId = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnBoardId))
 
-        return Lesson(date, topic, duration, status, homework, homeworkDue, id = id, boardId = boardsId)
+        return Lesson(date, topic, duration, status, homework, homeworkDue, id = id, boardId = boardId)
     }
 }
