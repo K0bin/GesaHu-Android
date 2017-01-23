@@ -21,7 +21,7 @@ import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 /**
  * Created by robin on 19.01.2017.
  */
-class SubstituteViewHolder(private val view: View, private val presenter: SubstitutesContract.Presenter, @ColorInt private val textColor: Int, @ColorInt private val textColorRelevant: Int, circleColor: Int, circleColorRelevant: Int, @Dimension private val selectedElevation: Float) : RecyclerView.ViewHolder(view) {
+class SubstituteViewHolder(private val view: View, private val presenter: SubstitutesContract.Presenter, @ColorInt private val textColor: Int, @ColorInt private val textColorRelevant: Int, circleColor: Int, circleColorRelevant: Int, @Dimension private val selectedElevation: Float) : ModelViewHolder<Substitute>(view) {
     private val lesson = view.findViewById(R.id.lesson) as TextView
     private val subject = view.findViewById(R.id.subject) as TextView
     private val substituteTeacher = view.findViewById(R.id.substituteTeacher) as TextView
@@ -53,23 +53,21 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
         }
     }
 
-    fun bindSubstitute(substitute: Substitute?) {
-        if (substitute != null) {
-            lesson.text = substitute.lessonText
-            subject.text = substitute.title
-            teacher.text = substitute.teacher
-            substituteTeacher.text = substitute.substitute
-            room.text = substitute.room
-            hint.text = substitute.hint
-            if (substitute.isRelevant) {
-                lesson.background = circleRelevantBackground
-                subject.typeface = Typeface.DEFAULT_BOLD
-                lesson.setTextColor(textColorRelevant)
-            } else {
-                lesson.background = circleBackground
-                subject.typeface = Typeface.DEFAULT
-                lesson.setTextColor(textColor)
-            }
+    override fun bind(substitute: Substitute) {
+        lesson.text = substitute.lessonText
+        subject.text = substitute.title
+        teacher.text = substitute.teacher
+        substituteTeacher.text = substitute.substitute
+        room.text = substitute.room
+        hint.text = substitute.hint
+        if (substitute.isRelevant) {
+            lesson.background = circleRelevantBackground
+            subject.typeface = Typeface.DEFAULT_BOLD
+            lesson.setTextColor(textColorRelevant)
+        } else {
+            lesson.background = circleBackground
+            subject.typeface = Typeface.DEFAULT
+            lesson.setTextColor(textColor)
         }
     }
 

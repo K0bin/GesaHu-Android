@@ -244,7 +244,7 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
 
     override fun showList(position: Int, list: List<Substitute>) {
         val adapter = pagerAdapter?.getAdapter(position)
-        adapter?.substitutes = list
+        adapter?.list = list
     }
 
     override fun showDatePicker(defaultDate: LocalDate) {

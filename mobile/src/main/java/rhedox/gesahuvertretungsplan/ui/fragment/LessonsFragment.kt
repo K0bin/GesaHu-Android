@@ -85,6 +85,6 @@ class LessonsFragment : Fragment(), LessonsContract.View {
     }
 
     override fun showList(list: List<Lesson>) {
-        adapter.lessons = list;
+        adapter.list = list;
     }
 }

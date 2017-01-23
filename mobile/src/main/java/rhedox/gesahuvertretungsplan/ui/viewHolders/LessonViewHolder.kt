@@ -10,7 +10,7 @@ import rhedox.gesahuvertretungsplan.model.database.Lesson
 /**
  * Created by robin on 19.01.2017.
  */
-class LessonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
     val date = view.findViewById(R.id.date) as TextView
     val topic = view.findViewById(R.id.topic) as TextView
     val homework = view.findViewById(R.id.homework) as TextView
@@ -18,7 +18,7 @@ class LessonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     val formatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 
-    fun bindLesson(lesson: Lesson) {
+    override fun bind(lesson: Lesson) {
         date.text = lesson.date.toString(formatter)
         topic.text = lesson.topic
         homework.text = lesson.homeWork ?: "";
