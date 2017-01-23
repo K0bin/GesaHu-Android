@@ -22,7 +22,7 @@ import rhedox.gesahuvertretungsplan.util.localDateFromUnix
  * Created by robin on 18.01.2017.
  */
 class BoardActivity : NavDrawerActivity(), BoardContract.View {
-    override lateinit var presenter: NavDrawerContract.Presenter
+    override lateinit var presenter: BoardContract.Presenter
     private var isRecreated: Boolean = false
 
     object Extra {
@@ -48,7 +48,7 @@ class BoardActivity : NavDrawerActivity(), BoardContract.View {
             presenter = lastCustomNonConfigurationInstance as BoardContract.Presenter
             isRecreated = true
         } else {
-            val state: BoardState?;
+            val state: BoardState;
             if(savedInstanceState != null) {
                 state = savedInstanceState.getParcelable<BoardState>(BoardActivity.stateBundleName)
                 isRecreated = true
@@ -67,6 +67,12 @@ class BoardActivity : NavDrawerActivity(), BoardContract.View {
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.tabMode = TabLayout.MODE_FIXED
         tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putParcelable(stateBundleName, presenter.saveState() as Parcelable)
     }
 
     override fun onStart() {

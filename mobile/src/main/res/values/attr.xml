@@ -9,6 +9,11 @@
         <attr name="room" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="NumberCircle">
+        <attr name="outlineColor" format="color" />
+        <attr name="outlineThickness" format="dimension" />
+    </declare-styleable>
+
     <attr name="circleColor" format="reference|color"/>
     <attr name="circleImportantColor" format="reference|color"/>
     <attr name="circleTextColor" format="reference|color"/>

@@ -15,6 +15,11 @@
 
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Fix</item>
 
+		<item name="android:windowActivityTransitions">true</item>
+		<item name="android:windowEnterTransition">@transition/window_transition</item>
+		<item name="android:windowExitTransition">@transition/window_transition</item>
+		<item name="android:windowSharedElementEnterTransition">@transition/shared_element_transition</item>
+		<item name="android:windowSharedElementExitTransition">@transition/shared_element_transition</item>
 	</style>
 
 	<style name="Preference.Category.Fix">

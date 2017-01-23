@@ -31,7 +31,9 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun goBack() {}
     override fun finish() {}
     override fun showBoards(boards: List<Board>) {}
-    override fun setAvatar(avatar: Bitmap) {}
+    override var avatar: Bitmap? = null
+        get() = field
+        set(value) {field=value}
     override fun navigateToIntro() {}
     override fun navigateToSettings() {}
     override fun navigateToAbout() {}

@@ -8,6 +8,7 @@ import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
+import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 
 /**
  * Created by robin on 18.01.2017.
@@ -39,7 +40,7 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
     }
 
     override fun saveState(): LessonsContract.State {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return LessonsState(boardId)
     }
 
 }

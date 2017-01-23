@@ -43,6 +43,7 @@
 					android:id="@+id/cab"
 					android:visibility="gone">
 				</android.support.v7.widget.Toolbar>
+
 			</FrameLayout>
 			<android.support.design.widget.TabLayout
 				android:layout_width="match_parent"

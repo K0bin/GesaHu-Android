@@ -7,6 +7,7 @@ import com.github.salomonbrys.kodein.instance
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
+import rhedox.gesahuvertretungsplan.presenter.state.MarksState
 
 /**
  * Created by robin on 18.01.2017.
@@ -38,7 +39,6 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
     }
 
     override fun saveState(): MarksContract.State {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return MarksState(boardId)
     }
-
 }

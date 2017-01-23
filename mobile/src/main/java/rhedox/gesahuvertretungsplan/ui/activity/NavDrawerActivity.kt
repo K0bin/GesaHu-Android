@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.ui.activity
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,7 +11,9 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -22,7 +25,9 @@ import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.appwidget_list.*
 import net.danlew.android.joda.JodaTimeAndroid
+import android.support.v4.util.Pair;
 import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
@@ -41,6 +46,8 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
 
     protected lateinit var toggle: ActionBarDrawerToggle
         private set
+    private lateinit var listener: Listener;
+    private var drawerSelected: Int? = null;
     protected lateinit var analytics: FirebaseAnalytics;
     protected var isAmoledBlackEnabled = false
             private set;
@@ -108,7 +115,7 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
 
         headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
         navigationView.setNavigationItemSelectedListener {
-            presenter.onNavigationDrawerItemClicked(it.itemId);
+            drawerSelected = it.itemId
             drawer.closeDrawer(GravityCompat.START)
             true
         }
@@ -122,6 +129,13 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
 
         toggle = ActionBarDrawerToggle(this, drawer, R.string.drawer_open, R.string.drawer_close)
         drawer.addDrawerListener(toggle)
+        listener = Listener()
+        listener.callback = {
+            if (drawerSelected != null) {
+                presenter.onNavigationDrawerItemClicked(drawerSelected!!);
+            }
+        }
+        drawer.addDrawerListener(listener)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = 0
@@ -180,11 +194,23 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToBoard(boardId: Long) {
-        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId))
+        val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
+                                                                                  Pair<View, String>(toolbar, "toolbar"),
+                                                                                  Pair<View, String>(tabLayout, "tabbar")).toBundle()
+        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId), animBundle)
     }
 
     override fun navigateToAuth() {
         accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                 null, null, null, this, null, null);
+    }
+
+    class Listener: DrawerLayout.SimpleDrawerListener() {
+        var callback: ((drawer: NavigationView) -> Unit)? = null
+
+        override fun onDrawerClosed(drawerView: View?) {
+            super.onDrawerClosed(drawerView)
+            callback?.invoke(drawerView as NavigationView)
+        }
     }
 }

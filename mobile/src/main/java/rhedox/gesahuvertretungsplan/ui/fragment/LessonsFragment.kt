@@ -34,6 +34,8 @@ class LessonsFragment : Fragment(), LessonsContract.View {
     }
 
     companion object {
+        const val stateBundleName = "state"
+
         @JvmStatic
         fun createInstance(boardId: Long): LessonsFragment {
             val args = Bundle()
@@ -48,11 +50,13 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        var id = savedInstanceState?.getLong(Extra.boardId, -1) ?: -1;
-        if (id == -1L) {
-            id = arguments?.getLong(Extra.boardId, -1) ?: -1
+        val state: LessonsContract.State;
+        if (savedInstanceState != null) {
+            state = savedInstanceState.getParcelable<LessonsState>(stateBundleName)
+        } else {
+            val id = arguments?.getLong(Extra.boardId, -1) ?: -1
+            state = LessonsState(id)
         }
-        val state = LessonsState(id)
         presenter = LessonsPresenter(appKodein(), state)
     }
 
@@ -67,8 +71,10 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         return view
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+
+        outState.putParcelable(stateBundleName, presenter.saveState() as LessonsState)
     }
 
     override fun onStart() {
