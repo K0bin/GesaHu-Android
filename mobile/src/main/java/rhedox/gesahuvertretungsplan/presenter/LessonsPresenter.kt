@@ -27,7 +27,6 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
     }
 
     override fun attachView(view: LessonsContract.View, isRecreated: Boolean) {
-
         this.view = view;
     }
 
@@ -36,6 +35,7 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
     }
 
     override fun destroy() {
+        repository.destroy()
     }
 
     override fun saveState(): LessonsContract.State {

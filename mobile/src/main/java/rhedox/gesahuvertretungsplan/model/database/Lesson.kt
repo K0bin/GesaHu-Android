@@ -11,7 +11,7 @@ data class Lesson(val date: LocalDate,
                   val topic: String,
                   val duration: Int,
                   @Status val status: Long,
-                  @SerializedName("HA_Inhalt") val homeWork: String,
+                  @SerializedName("HA_Inhalt") val homeWork: String?,
                   @SerializedName("HA_Datum") val homeWorkDue: LocalDate?,
                   val id: Long? = null,
                   val boardId: Long? = null) {

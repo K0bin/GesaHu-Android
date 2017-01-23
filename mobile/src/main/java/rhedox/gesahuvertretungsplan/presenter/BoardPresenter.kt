@@ -37,6 +37,11 @@ class BoardPresenter(kodein: Kodein, state: BoardContract.State?) : NavDrawerPre
         this.view = null;
     }
 
+    override fun destroy() {
+        super.destroy()
+        repository.destroy()
+    }
+
     override fun saveState(): BoardContract.State {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

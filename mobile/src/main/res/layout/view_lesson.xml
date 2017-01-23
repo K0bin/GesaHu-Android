@@ -4,22 +4,39 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               xmlns:tools="http://schemas.android.com/tools"
-              android:padding="8dp"
+              android:padding="16dp"
               android:minHeight="88dp">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/status_icon"
+        tools:src="@drawable/ic_absent"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="05.01.17"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:id="@+id/date"/>
+        android:id="@+id/date"
+        android:includeFontPadding="false"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/status_icon"
+        android:layout_toStartOf="@id/status_icon"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         tools:text="NA Klausur Wahrscheinlichkeitslehre und Statistik"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:layout_below="@id/date"
         android:id="@+id/topic"
+        android:includeFontPadding="false"
         />
 
     <TextView
@@ -28,15 +45,18 @@
         android:layout_below="@id/topic"
         android:id="@+id/homework"
         tools:text="Reißzwecke 100x werfen"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+        android:includeFontPadding="false"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/topic"
         android:id="@+id/homeworkDue"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@id/status_icon"
+        android:layout_toStartOf="@id/status_icon"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+        android:includeFontPadding="false"
         tools:text="15.01.17"/>
 
 </RelativeLayout>

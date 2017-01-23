@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -59,6 +60,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         val view = inflater.inflate(R.layout.fragment_lessons, container, false) as RecyclerView
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         view.layoutManager = layoutManager
+        view.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         adapter = LessonsAdapter();
         view.adapter = adapter;
 

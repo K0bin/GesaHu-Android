@@ -37,6 +37,7 @@ class BoardActivity : NavDrawerActivity(), BoardContract.View {
         get() = field
         set(value) {
             field = value
+            supportActionBar?.title = value
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,5 +73,11 @@ class BoardActivity : NavDrawerActivity(), BoardContract.View {
         super.onStart()
 
         presenter.attachView(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        presenter.destroy()
     }
 }
