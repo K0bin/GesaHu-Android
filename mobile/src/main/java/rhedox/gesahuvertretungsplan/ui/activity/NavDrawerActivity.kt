@@ -180,8 +180,9 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         val menu = navigationView.menu
 
         for (board in boards) {
-            val item = menu.add(R.id.boardsSubheader, (board.id ?: 0).toInt() + 13, Menu.NONE, board.name)
+            val item = menu.add(R.id.boardsSubheader, (board.id ?: 0).toInt() + NavDrawerContract.DrawerIds.board, Menu.NONE, board.name)
             item.isCheckable = true
+            item.isChecked = currentDrawerId == (board.id ?: 0).toInt() + NavDrawerContract.DrawerIds.board
         }
     }
 
@@ -211,7 +212,7 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
                                                                                   Pair<View, String>(toolbar, "toolbar"),
                                                                                   Pair<View, String>(tabLayout, "tabbar")).toBundle()
-        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId).newTask().clearTask(), animBundle)
+        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId).newTask().clearTask())
     }
 
     override fun navigateToAuth() {
@@ -223,7 +224,7 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
                 Pair<View, String>(toolbar, "toolbar"),
                 Pair<View, String>(tabLayout, "tabbar")).toBundle()
-        startActivity(intentFor<SubstitutesActivity>().newTask().clearTask(), animBundle)
+        startActivity(intentFor<SubstitutesActivity>().newTask().clearTask())
     }
 
     class Listener: DrawerLayout.SimpleDrawerListener() {

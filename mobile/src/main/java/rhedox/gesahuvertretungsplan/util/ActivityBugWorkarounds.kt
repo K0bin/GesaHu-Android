@@ -16,7 +16,7 @@ import java.util.*
 fun Activity.removeActivityFromTransitionManager() {
     if (Build.VERSION.SDK_INT < 21) {
         return;
-    }
+    } else return;
     val transitionManagerClass = TransitionManager::class.java;
     try {
         val runningTransitionsField = transitionManagerClass.getDeclaredField("sRunningTransitions");

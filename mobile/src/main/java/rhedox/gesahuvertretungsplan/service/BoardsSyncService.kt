@@ -56,7 +56,7 @@ class BoardsSyncService : Service() {
         private val gesahu = GesaHu(context);
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
-            android.os.Debug.waitForDebugger()
+            //android.os.Debug.waitForDebugger()
 
             if(Thread.interrupted()) {
                 return;

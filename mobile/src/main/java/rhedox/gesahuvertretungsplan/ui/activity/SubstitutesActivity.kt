@@ -164,6 +164,8 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
 
         setContentView(R.layout.activity_main)
 
+        supportActionBar?.title = getString(R.string.activity_substitutes)
+
         pagerAdapter = SubstitutesPagerAdapter(presenter)
         if(savedInstanceState != null) {
             pagerAdapter?.restoreState(savedInstanceState)

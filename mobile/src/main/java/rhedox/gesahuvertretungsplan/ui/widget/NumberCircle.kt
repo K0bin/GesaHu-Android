@@ -131,7 +131,7 @@ class NumberCircle: View {
         ovalTextPaint.textSize = ovalRect.height() * 0.6f
         var ovalTextWidth = ovalTextPaint.measureText(ovalText)
         if (ovalTextWidth > ovalRect.width()) {
-            ovalTextPaint.textSize *= (ovalRect.width() / ovalTextWidth) * 0.8f
+            ovalTextPaint.textSize *= (ovalRect.width() / ovalTextWidth) * 0.9f
         }
         ovalTextWidth = ovalTextPaint.measureText(ovalText)
         ovalTextPaint.getTextBounds(ovalText, 0, ovalText.length, textRect)
