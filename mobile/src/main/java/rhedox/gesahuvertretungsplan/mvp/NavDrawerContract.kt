@@ -14,12 +14,20 @@ interface NavDrawerContract {
         fun destroy()
     }
 
+    object DrawerIds {
+        const val substitutes = 0;
+        const val settings = 1;
+        const val about = 2;
+        const val board = 13;
+    }
+
     interface View {
         fun showBoards(boards: List<Board>)
         fun navigateToSettings()
         fun navigateToAbout()
         fun navigateToIntro()
         fun navigateToAuth()
+        fun navigateToSubstitutes()
         fun navigateToBoard(boardId: Long)
         var userName: String;
         var currentDrawerId: Int;

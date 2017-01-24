@@ -299,7 +299,7 @@ class SubstitutesActivity : NavDrawerActivity(), SubstitutesContract.View {
         val intent = intentFor<SubstitutesActivity>()
         intent.putExtra(Extra.date, date.unixTimeStamp)
         intent.putExtra(Extra.canGoUp, true)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        //intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
     }
 

@@ -47,6 +47,8 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
 
     private var boards: List<Board> = listOf();
 
+    open protected val drawerId: Int? = null;
+
     init {
         boardsRepository.boardsCallback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
@@ -59,6 +61,10 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
         view.userName = account?.name ?: ""
         view.showBoards(this.boards)
         view.avatar = this.avatar
+
+        if (drawerId != null) {
+            view.currentDrawerId = drawerId!!
+        }
 
         //Check first start again, might have returned from AuthActivity
         checkFirstStart()
@@ -105,14 +111,17 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
     }
 
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
-        if(drawerId == R.id.settings) {
-            view?.navigateToSettings()
-        } else if(drawerId == R.id.about) {
-            view?.navigateToAbout()
-        } else {
-            for (board in boards) {
-                if (board.id == drawerId - 13L) {
-                    view?.navigateToBoard(board.id)
+        when (drawerId) {
+            this.drawerId -> return;
+
+            NavDrawerContract.DrawerIds.substitutes -> view?.navigateToSubstitutes()
+            NavDrawerContract.DrawerIds.about -> view?.navigateToAbout()
+            NavDrawerContract.DrawerIds.settings -> view?.navigateToSettings()
+            else -> {
+                for (board in boards) {
+                    if (board.id == drawerId - 13L) {
+                        view?.navigateToBoard(board.id)
+                    }
                 }
             }
         }

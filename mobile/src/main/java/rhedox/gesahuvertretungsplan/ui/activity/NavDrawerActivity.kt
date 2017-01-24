@@ -28,16 +28,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appwidget_list.*
 import net.danlew.android.joda.JodaTimeAndroid
 import android.support.v4.util.Pair;
-import org.jetbrains.anko.accountManager
-import org.jetbrains.anko.clearTask
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.newTask
+import org.jetbrains.anko.*
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
+import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
 /**
  * Created by robin on 20.10.2016.
@@ -66,7 +64,13 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         get() = field
         set(value) {
             field = value
-            val menuItem = navigationView.menu.findItem(value);
+            val menuItem: MenuItem?
+            when (value) {
+                NavDrawerContract.DrawerIds.settings -> menuItem = navigationView.menu.findItem(R.id.settings);
+                NavDrawerContract.DrawerIds.about -> menuItem = navigationView.menu.findItem(R.id.about);
+                NavDrawerContract.DrawerIds.substitutes -> menuItem = navigationView.menu.findItem(R.id.substitutes);
+                else -> menuItem = navigationView.menu.findItem(value);
+            }
             if(menuItem != null) {
                 menuItem.isChecked = true;
             }
@@ -88,6 +92,11 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
             this.setTheme(R.style.GesahuThemeAmoled)
         else
             this.setTheme(R.style.GesahuTheme)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeActivityFromTransitionManager()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -132,7 +141,12 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         listener = Listener()
         listener.callback = {
             if (drawerSelected != null) {
-                presenter.onNavigationDrawerItemClicked(drawerSelected!!);
+                when (drawerSelected) {
+                    R.id.about -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.about);
+                    R.id.settings -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.settings);
+                    R.id.substitutes -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.substitutes);
+                    else -> presenter.onNavigationDrawerItemClicked(drawerSelected!!)
+                }
             }
         }
         drawer.addDrawerListener(listener)
@@ -197,12 +211,19 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
                                                                                   Pair<View, String>(toolbar, "toolbar"),
                                                                                   Pair<View, String>(tabLayout, "tabbar")).toBundle()
-        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId), animBundle)
+        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId).newTask().clearTask(), animBundle)
     }
 
     override fun navigateToAuth() {
         accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
                 null, null, null, this, null, null);
+    }
+
+    override fun navigateToSubstitutes() {
+        val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
+                Pair<View, String>(toolbar, "toolbar"),
+                Pair<View, String>(tabLayout, "tabbar")).toBundle()
+        startActivity(intentFor<SubstitutesActivity>().newTask().clearTask(), animBundle)
     }
 
     class Listener: DrawerLayout.SimpleDrawerListener() {

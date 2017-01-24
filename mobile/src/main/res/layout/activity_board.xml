@@ -55,17 +55,12 @@
 				android:background="?attr/colorPrimary"
 				app:tabContentStart="72dp"
 				app:tabIndicatorColor="?attr/tabIndicatorColor"/>
-
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="4dp"
-				android:background="@drawable/toolbar_shadow"
-				android:visibility="?attr/toolbarShadowCompat"/>
 		</android.support.design.widget.AppBarLayout>
 
 		<android.support.v4.view.ViewPager
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:elevation="4dp"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior"
 			android:id="@+id/viewPager"/>
 
@@ -74,7 +69,7 @@
     <android.support.design.widget.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="left|start"
+        android:layout_gravity="start|left"
         android:fitsSystemWindows="true"
         app:menu="@menu/drawer"
         android:id="@+id/navigationView"

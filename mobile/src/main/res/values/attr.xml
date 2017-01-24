@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <declare-styleable name="SubstituteView">
-        <attr name="lesson" format="string" />
-        <attr name="subjectName" format="string" />
-        <attr name="regularTeacher" format="string" />
-        <attr name="substituteTeacher" format="string" />
-        <attr name="room" format="string" />
-    </declare-styleable>
-
     <declare-styleable name="NumberCircle">
         <attr name="outlineColor" format="color" />
         <attr name="outlineThickness" format="dimension" />
+        <attr name="outlineText" format="string" />
+        <attr name="outlineTextColor" format="color" />
+        <attr name="ovalColor" format="color" />
+        <attr name="ovalText" format="string" />
+        <attr name="ovalTextColor" format="color" />
     </declare-styleable>
 
     <attr name="circleColor" format="reference|color"/>

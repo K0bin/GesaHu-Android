@@ -17,6 +17,8 @@ class BoardPresenter(kodein: Kodein, state: BoardContract.State) : NavDrawerPres
     private val repository: BoardsRepository = kodein.instance()
     private var board: Board? = null
 
+    override val drawerId: Int? = NavDrawerContract.DrawerIds.board + boardId.toInt()
+
     init {
         repository.boardsCallback = { onBoardsLoaded(it) }
         repository.loadBoards()

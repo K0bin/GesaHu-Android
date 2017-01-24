@@ -31,7 +31,7 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
         val begin: Int;
         val duration: Int;
 
-        val lessonParts = lessons.split('-')
+        val lessonParts = lessons.replace(".", "").split('-')
         if(lessonParts.isNotEmpty()) {
             begin = lessonParts[0].toInt()
             if (lessonParts.size > 1) {

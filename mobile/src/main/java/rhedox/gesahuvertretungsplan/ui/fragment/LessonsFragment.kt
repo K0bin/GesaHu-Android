@@ -46,6 +46,16 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         }
     }
 
+    override var lessonsTotal: Int
+        get() = adapter.lessonsTotal
+        set(value) {adapter.lessonsTotal = value}
+    override var lessonsMissed: Int
+        get() = adapter.lessonsMissed
+        set(value) {adapter.lessonsMissed = value}
+    override var lessonsMissedWithSickNote: Int
+        get() = adapter.lessonsMissedWithSickNote
+        set(value) {adapter.lessonsMissedWithSickNote = value}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -61,12 +71,13 @@ class LessonsFragment : Fragment(), LessonsContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_lessons, container, false) as RecyclerView
+        val view = inflater.inflate(R.layout.fragment_lessons, container, false)
+        val recycler = view.findViewById(R.id.recycler) as RecyclerView
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        view.layoutManager = layoutManager
-        view.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recycler.layoutManager = layoutManager
+        recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         adapter = LessonsAdapter();
-        view.adapter = adapter;
+        recycler.adapter = adapter;
 
         return view
     }

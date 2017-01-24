@@ -5,7 +5,8 @@
               android:layout_height="wrap_content"
               xmlns:tools="http://schemas.android.com/tools"
               android:padding="16dp"
-              android:minHeight="88dp">
+              android:minHeight="88dp"
+              android:elevation="0dp">
 
     <ImageView
         android:layout_width="24dp"

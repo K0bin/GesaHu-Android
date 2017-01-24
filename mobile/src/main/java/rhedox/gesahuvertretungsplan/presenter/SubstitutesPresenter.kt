@@ -44,6 +44,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
     private val connectivityManager: ConnectivityManager = kodeIn.instance()
     private val formatter: SubstituteFormatter = kodeIn.instance()
 
+    override var drawerId: Int? = 0
+
     /**
      * Determines whether or not the view was started by the date picker and is sitting on top of another SubstitutesActivity
      */
@@ -101,7 +103,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
 
         view.isBackButtonVisible = canGoUp
         view.isSwipeRefreshEnabled = account != null;
-        view.currentDrawerId = R.id.substitutes;
 
         Log.d("SubstitutesPresenter", "viewattached selected $selected")
     }
