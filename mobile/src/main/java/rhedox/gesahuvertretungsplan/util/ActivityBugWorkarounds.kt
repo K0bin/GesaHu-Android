@@ -2,8 +2,8 @@ package rhedox.gesahuvertretungsplan.util
 
 import android.app.Activity
 import android.os.Build
-import android.support.transition.Transition
-import android.support.transition.TransitionManager
+import android.transition.Transition
+import android.transition.TransitionManager
 import android.util.ArrayMap
 import android.view.ViewGroup
 import java.lang.ref.WeakReference
