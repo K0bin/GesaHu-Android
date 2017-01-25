@@ -11,13 +11,13 @@ import rhedox.gesahuvertretungsplan.presenter.state.BoardState
 /**
  * Created by robin on 18.01.2017.
  */
-class BoardPresenter(kodein: Kodein, state: BoardContract.State) : NavDrawerPresenter(kodein), BoardContract.Presenter {
+class BoardPresenter(kodein: Kodein, state: BoardContract.State) : BoardContract.Presenter {
     private var view: BoardContract.View? = null
     val boardId = state.boardId;
     private val repository: BoardsRepository = kodein.instance()
     private var board: Board? = null
 
-    override val drawerId: Int? = NavDrawerContract.DrawerIds.board + boardId.toInt()
+    val drawerId: Int? = NavDrawerContract.DrawerIds.board + boardId.toInt()
 
     init {
         repository.boardsCallback = { onBoardsLoaded(it) }
@@ -32,21 +32,16 @@ class BoardPresenter(kodein: Kodein, state: BoardContract.State) : NavDrawerPres
         }
     }
 
-    override fun attachView(view: NavDrawerContract.View) {
-        super.attachView(view)
-
+    override fun attachView(view: BoardContract.View) {
         this.view = view as BoardContract.View;
         this.view?.title = this.board?.name ?: "";
     }
 
     override fun detachView() {
-        super.detachView()
-
         this.view = null;
     }
 
     override fun destroy() {
-        super.destroy()
         repository.destroy()
     }
 

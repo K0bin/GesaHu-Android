@@ -32,22 +32,22 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
 /**
  * Created by robin on 20.10.2016.
  */
-open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Presenter {
+class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
-    protected var account: Account? = null;
+    private var account: Account? = null;
         private set
     private var avatar: Bitmap? = null;
 
     private val accountManager: AccountManager = kodeIn.instance()
     private val permissionManager: PermissionManager = kodeIn.instance()
 
-    protected val boardsRepository: BoardsRepository = kodeIn.instance()
+    private val boardsRepository: BoardsRepository = kodeIn.instance()
 
     private val prefs: SharedPreferences = kodeIn.instance()
 
     private var boards: List<Board> = listOf();
 
-    open protected val drawerId: Int? = null;
+    private var drawerId: Int? = null;
 
     init {
         boardsRepository.boardsCallback = { onBoardsLoaded(it) }
@@ -125,6 +125,7 @@ open class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Pr
                 }
             }
         }
+        this.drawerId = drawerId
     }
 
     /**

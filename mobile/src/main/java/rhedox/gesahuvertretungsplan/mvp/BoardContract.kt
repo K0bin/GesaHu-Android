@@ -12,11 +12,14 @@ interface BoardContract {
         val boardId: Long;
     }
 
-    interface Presenter : NavDrawerContract.Presenter {
+    interface Presenter {
+        fun attachView(view: View)
+        fun detachView()
         fun saveState(): State
+        fun destroy();
     }
 
-    interface View : NavDrawerContract.View {
+    interface View {
         var title: String;
     }
 }

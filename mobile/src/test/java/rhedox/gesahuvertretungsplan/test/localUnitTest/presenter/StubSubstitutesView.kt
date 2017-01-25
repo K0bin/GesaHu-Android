@@ -30,7 +30,7 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun share(text: String) {}
     override fun goBack() {}
     override fun finish() {}
-    override fun showBoards(boards: List<Board>) {}
+    /*override fun showBoards(boards: List<Board>) {}
     override var avatar: Bitmap? = null
         get() = field
         set(value) {field=value}
@@ -41,7 +41,7 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun navigateToBoard(boardId: Long) {}
 
     override var userName: String = ""
-    override var currentDrawerId: Int = -1
+    override var currentDrawerId: Int = -1*/
 
     var listShown = arrayOf<Boolean>(false, false, false, false, false)
     var selected = arrayOfNulls<Int>(5)

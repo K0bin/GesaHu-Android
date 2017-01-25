@@ -15,9 +15,7 @@ import android.widget.RemoteViews;
 
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
-import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter;
 import rhedox.gesahuvertretungsplan.service.SubstitutesWidgetService;
-import rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 import rhedox.gesahuvertretungsplan.util.JodaTimeUtils;
 
@@ -65,10 +63,10 @@ public class SubstitutesWidgetProvider extends AppWidgetProvider {
             remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
             remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
-            Intent onClickIntent = new Intent(context, SubstitutesActivity.class);
+            /*Intent onClickIntent = new Intent(context, SubstitutesActivity.class);
             onClickIntent.putExtra(SubstitutesActivity.Extra.date, JodaTimeUtils.getUnixTimeStamp(SchoolWeek.nextFromNow()));
             PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
-            remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
+            remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);*/
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);
         }

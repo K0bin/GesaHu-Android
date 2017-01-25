@@ -25,7 +25,7 @@ import java.util.*
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : NavDrawerPresenter(kodeIn), SubstitutesContract.Presenter {
+class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
@@ -44,7 +44,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
     private val connectivityManager: ConnectivityManager = kodeIn.instance()
     private val formatter: SubstituteFormatter = kodeIn.instance()
 
-    override var drawerId: Int? = 0
+    private var drawerId: Int? = 0
 
     /**
      * Determines whether or not the view was started by the date picker and is sitting on top of another SubstitutesActivity
@@ -69,23 +69,22 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         }
 
         syncObserver.callback = {
-            if (account != null) {
+            /*if (account != null) {
                 if (view is Activity) {
                     (view as Activity).runOnUiThread {
                         view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
                     }
                 }
-            }
+            }*/
         }
 
         selected = state?.selected
     }
 
-    override fun attachView(view: NavDrawerContract.View) {
-        super.attachView(view)
+    override fun attachView(view: SubstitutesContract.View) {
         Log.d("SubstitutesPresenter", "attachView")
 
-        this.view = view as SubstitutesContract.View
+        this.view = view
 
         view.currentTab = currentPage
         view.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
@@ -102,13 +101,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         )
 
         view.isBackButtonVisible = canGoUp
-        view.isSwipeRefreshEnabled = account != null;
+        //view.isSwipeRefreshEnabled = account != null;
 
         Log.d("SubstitutesPresenter", "viewattached selected $selected")
     }
 
     override fun detachView() {
-        super.detachView()
         this.view = null;
         Log.d("SubstitutesPresenter", "view detached")
     }
@@ -130,8 +128,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
             view?.showList(position, substitutes)
         }
 
-        if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+        /*if(account != null)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)*/
     }
 
     fun onAnnouncementLoaded(date:LocalDate, text: String) {
@@ -145,8 +143,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
             view?.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
         }
 
-        if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+        /*if(account != null)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)*/
     }
 
     override fun onDatePickerIconClicked() {
@@ -189,12 +187,13 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
     }
 
     override fun onRefresh() {
-        if (account != null) {
+        /*if (account != null) {
             val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
             repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
+        */
     }
 
     override fun onActivePageChanged(position: Int) {

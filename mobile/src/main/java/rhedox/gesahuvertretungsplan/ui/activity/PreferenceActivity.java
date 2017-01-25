@@ -47,7 +47,7 @@ public class PreferenceActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Display the fragment as the activity_main content.
+        // Display the fragment as the fragment_substitutes content.
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new PreferenceFragment())
                 .commit();

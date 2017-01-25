@@ -1,64 +1,110 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.animation.ValueAnimator
 import android.annotation.TargetApi
-import android.app.Activity
 import android.app.ActivityManager
-import android.app.ActivityOptions
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.util.DisplayMetrics
-import android.util.Log
-import android.view.*
+import android.support.v7.graphics.drawable.DrawerArrowDrawable
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
+import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.appwidget_list.*
-import net.danlew.android.joda.JodaTimeAndroid
-import android.support.v4.util.Pair;
-import org.jetbrains.anko.*
+import org.jetbrains.anko.accountManager
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
+import rhedox.gesahuvertretungsplan.ui.fragment.BoardFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
+import rhedox.gesahuvertretungsplan.ui.fragment.SubstitutesFragment
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
 /**
  * Created by robin on 20.10.2016.
  */
-abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
+class MainActivity : AppCompatActivity(), NavDrawerContract.View {
+    private lateinit var cabFadeIn: Animation;
+    private lateinit var cabFadeOut: Animation;
+    private lateinit var cabDrawerAnimator: ValueAnimator;
+    private lateinit var cabDrawerIcon: DrawerArrowDrawable;
 
-    protected lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var toggle: ActionBarDrawerToggle
         private set
     private lateinit var listener: Listener;
     private var drawerSelected: Int? = null;
-    protected lateinit var analytics: FirebaseAnalytics;
-    protected var isAmoledBlackEnabled = false
+    private lateinit var analytics: FirebaseAnalytics;
+    private var isAmoledBlackEnabled = false
             private set;
 
-    abstract val presenter: NavDrawerContract.Presenter;
+    private lateinit var presenter: NavDrawerContract.Presenter;
 
     private lateinit var headerUsername: TextView;
+
+    private lateinit var currentFragment: Fragment;
 
     override var userName: String
         get() = headerUsername.text.toString();
         set(value) {
             headerUsername.text = value
         }
+
+    var isCabVisible: Boolean = false
+        get() = field
+        set(value) {
+            if(field != value) {
+                field = value;
+
+                if(value) {
+                    cab.clearAnimation()
+                    cab.startAnimation(cabFadeIn)
+                    //if(!isBackButtonVisible)
+                    //    cabDrawerAnimator.start()
+                    //else
+                    //    cabDrawerAnimator.end()
+                } else {
+                    cab.clearAnimation()
+                    cab.startAnimation(cabFadeOut)
+                    //if(!isBackButtonVisible)
+                    //    cabDrawerAnimator.reverse()
+                }
+            }
+        }
+
+    var isFabVisible: Boolean = false
+        get() = field
+        set(value) {
+            if(value != field) {
+                if(value)
+                    fab.show()
+                else
+                    fab.hide()
+
+                field = value
+                fab.isEnabled = value
+            }
+        }
+
 
     override var currentDrawerId: Int = -1
         get() = field
@@ -84,19 +130,84 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
 
         analytics = FirebaseAnalytics.getInstance(this)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setupTaskDescription()
+        }
 
-        //Initialize UI
+        //Restore presenter
+        if (lastCustomNonConfigurationInstance != null) {
+            presenter = lastCustomNonConfigurationInstance as NavDrawerPresenter
+        } else {
+            presenter = NavDrawerPresenter(appKodein())
+        }
+
+        //Setup view
         if (isAmoledBlackEnabled)
             this.setTheme(R.style.GesahuThemeAmoled)
         else
             this.setTheme(R.style.GesahuTheme)
+
+        setContentView(R.layout.activity_main)
+        setupDrawerLayout()
+
+        headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
+        navigationView.setNavigationItemSelectedListener {
+            drawerSelected = it.itemId
+            drawer.closeDrawer(GravityCompat.START)
+            true
+        }
+
+        setupCab()
+
+        //Show initial fragment
+        currentFragment = SubstitutesFragment.newInstance()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment).commit()
+    }
+
+    fun setupCab() {
+        cabDrawerIcon = DrawerArrowDrawable(this)
+        cabDrawerIcon.color = Color.WHITE
+        cab.navigationIcon = cabDrawerIcon
+        cabFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        cabFadeIn.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {cab.visibility = View.VISIBLE}
+            override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
+        })
+        cabFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        cabFadeOut.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {cab.visibility = View.GONE}
+            override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
+        })
+        cabDrawerAnimator = ValueAnimator.ofFloat(0f, 1f)
+        cabDrawerAnimator.addUpdateListener(ValueAnimator.AnimatorUpdateListener { valueAnimator ->
+            val slideOffset = valueAnimator.animatedValue as Float
+            cabDrawerIcon.progress = slideOffset
+        })
+        cabDrawerAnimator.interpolator = DecelerateInterpolator()
+        cabDrawerAnimator.duration = 250
+    }
+
+    fun resetUi() {
+        fab.hide()
+        cab.visibility = View.GONE
+        cab.menu.clear()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         removeActivityFromTransitionManager()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.attachView(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.detachView()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -115,18 +226,6 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
         val menuItem = navigationView.menu.findItem(currentDrawerId);
         if(menuItem != null) {
             menuItem.isChecked = true;
-        }
-    }
-
-    override fun setContentView(layoutResID: Int) {
-        super.setContentView(layoutResID)
-        setupDrawerLayout()
-
-        headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
-        navigationView.setNavigationItemSelectedListener {
-            drawerSelected = it.itemId
-            drawer.closeDrawer(GravityCompat.START)
-            true
         }
     }
 
@@ -159,6 +258,10 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         toggle.syncState()
+    }
+
+    override fun onRetainCustomNonConfigurationInstance(): Any {
+        return presenter
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -209,10 +312,11 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToBoard(boardId: Long) {
-        val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
-                                                                                  Pair<View, String>(toolbar, "toolbar"),
-                                                                                  Pair<View, String>(tabLayout, "tabbar")).toBundle()
-        startActivity(intentFor<BoardActivity>(BoardActivity.Extra.boardId to boardId).newTask().clearTask())
+        resetUi()
+
+        val fragment = BoardFragment.newInstance(boardId)
+        supportFragmentManager.beginTransaction().remove(currentFragment).replace(R.id.fragment_container, fragment).commit()
+        this.currentFragment = fragment;
     }
 
     override fun navigateToAuth() {
@@ -221,10 +325,11 @@ abstract class NavDrawerActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToSubstitutes() {
-        val animBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Pair<View, String>(appbarLayout, "appbar"),
-                Pair<View, String>(toolbar, "toolbar"),
-                Pair<View, String>(tabLayout, "tabbar")).toBundle()
-        startActivity(intentFor<SubstitutesActivity>().newTask().clearTask())
+        resetUi()
+
+        val fragment = SubstitutesFragment.newInstance()
+        supportFragmentManager.beginTransaction().remove(currentFragment).replace(R.id.fragment_container, fragment).commit()
+        this.currentFragment = fragment;
     }
 
     class Listener: DrawerLayout.SimpleDrawerListener() {
