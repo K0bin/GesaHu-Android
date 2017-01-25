@@ -114,7 +114,7 @@ class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Present
         when (drawerId) {
             this.drawerId -> return;
 
-            NavDrawerContract.DrawerIds.substitutes -> view?.navigateToSubstitutes()
+            NavDrawerContract.DrawerIds.substitutes -> view?.navigateToSubstitutes(null)
             NavDrawerContract.DrawerIds.about -> view?.navigateToAbout()
             NavDrawerContract.DrawerIds.settings -> view?.navigateToSettings()
             else -> {

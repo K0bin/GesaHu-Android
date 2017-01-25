@@ -18,7 +18,7 @@ import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
-import rhedox.gesahuvertretungsplan.ui.adapters.LessonsAdapter
+import rhedox.gesahuvertretungsplan.ui.adapter.LessonsAdapter
 
 /**
  * Created by robin on 19.01.2017.

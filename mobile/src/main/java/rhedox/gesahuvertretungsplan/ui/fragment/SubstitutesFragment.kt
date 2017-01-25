@@ -1,7 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.TabLayout
@@ -9,7 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.*
 import com.github.salomonbrys.kodein.android.appKodein
-import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
@@ -17,19 +16,21 @@ import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
+import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesPagerAdapter
+import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 24.01.2017.
  */
-class SubstitutesFragment : Fragment(), SubstitutesContract.View {
+class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingActionButtonListener, ContextualActionBarListener {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
         private set;
-    private lateinit var mainActivity: MainActivity;
+    private var mainActivity: MainActivity? = null;
 
     private object State {
         const val presenterState = "presenterState"
@@ -64,9 +65,9 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     }
 
     override var isFabVisible: Boolean
-        get() = mainActivity.isFabVisible
+        get() = mainActivity?.isFabVisible ?: false
         set(value) {
-            mainActivity.isFabVisible = value
+            mainActivity?.isFabVisible = value
         }
 
     override var currentTab: Int
@@ -75,18 +76,10 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
             viewPager?.currentItem = value
         }
 
-    override var isBackButtonVisible: Boolean = false;
-        get() = field
+    override var isAppBarExpanded: Boolean
+        get() = mainActivity?.isAppBarLayoutExpanded ?: false
         set(value) {
-            field = value
-            //toggle.isDrawerIndicatorEnabled = !value
-        }
-
-    override var isAppBarExpanded: Boolean = true
-        get() = field
-        set(value) {
-            field = value
-            activity.appbarLayout.setExpanded(value)
+            mainActivity?.isAppBarLayoutExpanded = value
         }
 
     override var tabTitles: Array<String> = arrayOf("", "", "", "", "")
@@ -106,9 +99,9 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         }
 
     override var isCabVisible: Boolean
-        get() = mainActivity.isCabVisible
+        get() = mainActivity?.isCabVisible ?: false
         set(value) {
-            mainActivity.isCabVisible = value
+            mainActivity?.isCabVisible = value
         }
 
     override var isSwipeRefreshEnabled: Boolean
@@ -141,7 +134,13 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        mainActivity = context as MainActivity
+        mainActivity = context as? MainActivity
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        mainActivity = null;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -156,12 +155,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
             pagerAdapter?.restoreState(savedInstanceState)
         }
         viewPager.adapter = pagerAdapter
-
-        activity.tabLayout.setupWithViewPager(viewPager)
-        activity.tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
-        activity.tabLayout.visibility = View.VISIBLE
-        activity.tabLayout.setSelectedTabIndicatorColor(Color.WHITE)
-
+        mainActivity?.setupTabBarForFragment(viewPager, TabLayout.MODE_SCROLLABLE);
         isFabVisible = false
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -177,23 +171,21 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
                 presenter.onActivePageChanged(position)
             }
         })
-        activity.fab.setOnClickListener { presenter.onFabClicked() }
 
-
-        activity.cab.inflateMenu(R.menu.menu_cab_main)
-        activity.cab.setOnMenuItemClickListener {
-            if(it.itemId == R.id.action_share) {
-                true
-            }
-            false
-        }
-        activity.cab.setNavigationOnClickListener {
-            presenter.onCabClosed()
-            isCabVisible = false
-        }
-
+        mainActivity?.setupCabForFragment(R.menu.menu_cab_main)
         presenter.attachView(this)
     }
+
+    override fun onFabClicked() { presenter.onFabClicked() }
+
+    override fun onItemClicked(id: Int) {
+        if(id == R.id.action_share) {
+            true
+        }
+        presenter.onShareButtonClicked()
+    }
+
+    override fun onCabClosed() { presenter.onCabClosed() }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
@@ -231,18 +223,10 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        mainActivity?.navigateToSubstitutes(date)
     }
 
     override fun share(text: String) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun goBack() {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun finish() {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        activity.share(text, "")
     }
 }

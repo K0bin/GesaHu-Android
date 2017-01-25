@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.adapters
+package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.content.Context
 import android.support.annotation.ColorInt
@@ -9,8 +9,8 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.ui.anko.SubstituteView
-import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolders.SubstituteViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.SubstituteViewHolder
 import tr.xip.errorview.ErrorView
 
 /**

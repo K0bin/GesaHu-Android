@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.adapters
+package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.os.Bundle
 import android.os.Parcelable

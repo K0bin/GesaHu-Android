@@ -8,9 +8,15 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
+import android.support.design.widget.TabLayout
+import android.support.transition.TransitionManager
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
+import android.support.v4.view.ViewPropertyAnimatorCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -18,6 +24,7 @@ import android.support.v7.graphics.drawable.DrawerArrowDrawable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewParent
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
@@ -26,15 +33,15 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.accountManager
-import org.jetbrains.anko.clearTask
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.newTask
+import org.jetbrains.anko.*
+import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
+import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
+import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
 import rhedox.gesahuvertretungsplan.ui.fragment.BoardFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.SubstitutesFragment
@@ -48,6 +55,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     private lateinit var cabFadeOut: Animation;
     private lateinit var cabDrawerAnimator: ValueAnimator;
     private lateinit var cabDrawerIcon: DrawerArrowDrawable;
+
+    //Animate TabLayout
+    private lateinit var tabLayoutAnimator: ValueAnimator;
+    private lateinit var tabLayoutFadeIn: Animation;
+    private lateinit var tabLayoutFadeOut: Animation;
+    private var viewPager: ViewPager? = null
 
     private lateinit var toggle: ActionBarDrawerToggle
         private set
@@ -105,6 +118,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
             }
         }
 
+    var isAppBarLayoutExpanded: Boolean = true
+        get() = field
+        set(value) {
+            appbarLayout.setExpanded(value)
+        }
+
 
     override var currentDrawerId: Int = -1
         get() = field
@@ -157,7 +176,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
             true
         }
 
+        fab.onClick {
+            (currentFragment as? FloatingActionButtonListener)?.onFabClicked()
+        }
+
         setupCab()
+        setupTabBar()
 
         //Show initial fragment
         currentFragment = SubstitutesFragment.newInstance()
@@ -187,12 +211,68 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
         })
         cabDrawerAnimator.interpolator = DecelerateInterpolator()
         cabDrawerAnimator.duration = 250
+
+        cab.setOnMenuItemClickListener {
+            (currentFragment as? ContextualActionBarListener)?.onItemClicked(it.itemId)
+            false
+        }
+        cab.setNavigationOnClickListener {
+            isCabVisible = false
+            (currentFragment as? ContextualActionBarListener)?.onCabClosed()
+        }
+    }
+
+    fun setupTabBar() {
+        tabLayoutFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+        tabLayoutFadeIn.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {
+                tabLayout.visibility = View.VISIBLE
+                if (this@MainActivity.viewPager != null) {
+                    tabLayout.setupWithViewPager(this@MainActivity.viewPager)
+                }
+            }
+            override fun onAnimationEnd(animation: Animation?) {}
+        })
+        tabLayoutFadeIn.interpolator = DecelerateInterpolator()
+        tabLayoutFadeIn.duration = 2500
+
+        tabLayoutFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+        tabLayoutFadeOut.setAnimationListener(object: Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                tabLayout.visibility = View.GONE
+                if (this@MainActivity.viewPager != null) {
+                    tabLayout.startAnimation(tabLayoutFadeIn)
+                } else {
+                    tabLayout.setupWithViewPager(null)
+                }
+            }
+        })
+        tabLayoutFadeOut.interpolator = DecelerateInterpolator()
+        tabLayoutFadeOut.duration = 2500
     }
 
     fun resetUi() {
-        fab.hide()
-        cab.visibility = View.GONE
+        isFabVisible = false
+        isCabVisible = false
         cab.menu.clear()
+        tabLayout.startAnimation(tabLayoutFadeOut)
+    }
+
+    fun setupTabBarForFragment(viewPager: ViewPager, mode: Int) {
+        tabLayout.tabMode = mode
+        this.viewPager = viewPager
+        if (tabLayout.alpha == 1f && tabLayout.visibility == View.VISIBLE) {
+            tabLayout.setupWithViewPager(viewPager)
+        } else {
+            tabLayout.startAnimation(tabLayoutFadeIn)
+        }
+    }
+
+    fun setupCabForFragment(menuId: Int) {
+        cab.inflateMenu(menuId)
     }
 
     override fun onDestroy() {
@@ -300,7 +380,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
         }
 
     override fun navigateToSettings() {
-        startActivity(intentFor<PreferenceActivity>());
+        resetUi()
+
+        val fragment = PreferenceFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
     }
 
     override fun navigateToAbout() {
@@ -314,8 +399,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     override fun navigateToBoard(boardId: Long) {
         resetUi()
 
+        //tabLayout.visibility = View.VISIBLE
         val fragment = BoardFragment.newInstance(boardId)
-        supportFragmentManager.beginTransaction().remove(currentFragment).replace(R.id.fragment_container, fragment).commit()
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slidein, R.anim.slideout)
+                .replace(R.id.fragment_container, fragment)
+                .commit()
         this.currentFragment = fragment;
     }
 
@@ -324,11 +413,15 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
                 null, null, null, this, null, null);
     }
 
-    override fun navigateToSubstitutes() {
+    override fun navigateToSubstitutes(date: LocalDate?) {
         resetUi()
 
-        val fragment = SubstitutesFragment.newInstance()
-        supportFragmentManager.beginTransaction().remove(currentFragment).replace(R.id.fragment_container, fragment).commit()
+        //tabLayout.visibility = View.VISIBLE
+        val fragment = SubstitutesFragment.newInstance(date)
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slidein, R.anim.slideout)
+                .replace(R.id.fragment_container, fragment)
+                .commit()
         this.currentFragment = fragment;
     }
 

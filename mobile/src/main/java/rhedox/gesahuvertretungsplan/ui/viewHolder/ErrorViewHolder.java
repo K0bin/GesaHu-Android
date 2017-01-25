@@ -1,9 +1,8 @@
-package rhedox.gesahuvertretungsplan.ui.viewHolders;
+package rhedox.gesahuvertretungsplan.ui.viewHolder;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
 
 import rhedox.gesahuvertretungsplan.R;

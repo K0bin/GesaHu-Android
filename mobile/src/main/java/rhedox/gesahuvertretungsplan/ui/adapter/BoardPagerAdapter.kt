@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.adapters
+package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager

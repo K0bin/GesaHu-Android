@@ -1,9 +1,9 @@
-package rhedox.gesahuvertretungsplan.ui.adapters
+package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import rhedox.gesahuvertretungsplan.ui.viewHolders.ModelViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.ModelViewHolder
 
 /**
  * Created by robin on 23.01.2017.

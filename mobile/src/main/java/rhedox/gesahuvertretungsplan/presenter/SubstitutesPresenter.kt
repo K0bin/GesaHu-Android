@@ -46,11 +46,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
 
     private var drawerId: Int? = 0
 
-    /**
-     * Determines whether or not the view was started by the date picker and is sitting on top of another SubstitutesActivity
-     */
-    private val canGoUp: Boolean;
-
     init {
         val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
@@ -58,7 +53,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
 
         currentPage = Math.max(0, Math.min(_date.dayOfWeek - DateTimeConstants.MONDAY, 4))
         this.date = getFirstDayOfWeek(_date)
-        this.canGoUp = state?.canGoUp ?: false
 
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
         repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
@@ -99,8 +93,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
                 date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE. dd.MM.yy", Locale.GERMANY),
                 date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE. dd.MM.yy", Locale.GERMANY)
         )
-
-        view.isBackButtonVisible = canGoUp
         //view.isSwipeRefreshEnabled = account != null;
 
         Log.d("SubstitutesPresenter", "viewattached selected $selected")
@@ -225,12 +217,14 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
                 view!!.setSelected(position, selected)
         }
     }
+
     override fun onCabClosed() {
         view!!.setSelected(currentPage, null)
         selected = null;
         view!!.isCabVisible = false
         view!!.isFabVisible = announcements[currentPage].isNotBlank()
     }
+
     override fun onShareButtonClicked() {
         val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
         val substitutesOfDay = substitutes[currentPage]
@@ -241,17 +235,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         }
     }
 
-    override fun onBackPressed() {
-        if(selected != null) {
-            selected = null;
-            view?.setSelected(currentPage, null)
-            view?.isCabVisible = false;
-        } else {
-            view?.goBack()
-        }
-    }
-
     override fun saveState(): SubstitutesContract.State {
-        return SubstitutesState(date, canGoUp, selected)
+        return SubstitutesState(date, selected)
     }
 }

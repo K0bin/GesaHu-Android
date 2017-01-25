@@ -53,7 +53,7 @@
                 app:tabGravity="fill"
                 android:background="?attr/colorPrimary"
                 app:tabContentStart="72dp"
-                app:tabIndicatorColor="?attr/tabIndicatorColor"
+                app:tabIndicatorColor="@android:color/white"
                 android:transitionName="tabbar"
                 android:visibility="gone"/>
 

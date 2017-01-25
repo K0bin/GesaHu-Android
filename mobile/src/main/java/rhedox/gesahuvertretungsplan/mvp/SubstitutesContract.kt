@@ -10,7 +10,6 @@ import rhedox.gesahuvertretungsplan.model.Substitute
 interface SubstitutesContract {
     interface State {
         val date: LocalDate?
-        val canGoUp: Boolean?
         val selected: Int?
     }
 
@@ -24,7 +23,6 @@ interface SubstitutesContract {
         fun onListItemClicked(listEntry: Int)
         fun onRefresh()
         fun onCabClosed()
-        fun onBackPressed()
         fun attachView(view: View)
         fun detachView()
         fun destroy()
@@ -36,7 +34,6 @@ interface SubstitutesContract {
         fun showDatePicker(defaultDate: LocalDate)
         var currentTab: Int
         var isFabVisible: Boolean
-        var isBackButtonVisible: Boolean
         var isAppBarExpanded: Boolean
         var tabTitles: Array<String>
         var isRefreshing: Boolean
@@ -46,7 +43,5 @@ interface SubstitutesContract {
         fun showDialog(text: String)
         fun openSubstitutesForDate(date: LocalDate)
         fun share(text: String)
-        fun goBack()
-        fun finish()
     }
 }

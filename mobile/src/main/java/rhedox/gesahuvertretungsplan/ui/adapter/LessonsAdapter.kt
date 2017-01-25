@@ -1,14 +1,14 @@
-package rhedox.gesahuvertretungsplan.ui.adapters
+package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.ui.viewHolders.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolders.LessonViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolders.LessonsCardViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolders.ModelViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.LessonViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.LessonsCardViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.ModelViewHolder
 import tr.xip.errorview.ErrorView
 
 /**

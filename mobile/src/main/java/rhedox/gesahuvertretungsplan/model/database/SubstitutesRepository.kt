@@ -28,7 +28,7 @@ import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
-import rhedox.gesahuvertretungsplan.ui.adapters.SubstitutesAdapter
+import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesAdapter
 import rhedox.gesahuvertretungsplan.util.Open
 import java.util.concurrent.Future
 

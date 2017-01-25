@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.viewHolders
+package rhedox.gesahuvertretungsplan.ui.viewHolder
 
 import android.animation.Animator
 import android.animation.AnimatorInflater

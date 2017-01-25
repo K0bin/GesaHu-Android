@@ -1,4 +1,4 @@
-package rhedox.gesahuvertretungsplan.ui.viewHolders
+package rhedox.gesahuvertretungsplan.ui.viewHolder
 
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
