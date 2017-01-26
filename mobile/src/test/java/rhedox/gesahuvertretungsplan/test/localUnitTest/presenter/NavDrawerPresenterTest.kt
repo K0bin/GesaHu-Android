@@ -33,30 +33,34 @@ class NavDrawerPresenterTest {
         bind<ConnectivityManager>() with provider { mock<ConnectivityManager> {} }
     }
 
-    val presenter = NavDrawerPresenter(kodein)
-    var view = StubNavDrawerView()
-
-    private fun simulateOrientationChange() {
+    private fun simulateOrientationChange(presenter: NavDrawerPresenter): StubNavDrawerView {
         presenter.detachView()
-        view = StubNavDrawerView()
+        val view = StubNavDrawerView()
         presenter.attachView(view)
+        return view
     }
 
     @Test
     fun testBoards() {
+        val presenter = NavDrawerPresenter(kodein)
+        var view = StubNavDrawerView()
         presenter.attachView(view)
         presenter.onBoardsLoaded(listOf(Board("Englisch", 15, "irgendwas", 2, 2, 28)))
         assert(view.boards[0].name == "Englisch" && view.boards[0].mark == 15)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(view.boards[0].name == "Englisch" && view.boards[0].mark == 15)
+        presenter.detachView()
     }
 
     @Test
     fun testIntro() {
+        val presenter = NavDrawerPresenter(kodein)
+        var view = StubNavDrawerView()
         presenter.attachView(view)
         assert(view.currentView == StubNavDrawerView.ViewValues.intro)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(view.currentView == StubNavDrawerView.ViewValues.intro)
+        presenter.detachView()
     }
 
     @Test
@@ -67,12 +71,21 @@ class NavDrawerPresenterTest {
                 on { getBoolean("pref_previously_started", false) } doReturn true
             } )
         }
-        val authPresenter = NavDrawerPresenter(kodein)
-        authPresenter.attachView(view)
+        val presenter = NavDrawerPresenter(kodein)
+        var view = StubNavDrawerView()
+        presenter.attachView(view)
         assert(view.currentView == StubNavDrawerView.ViewValues.auth)
-        authPresenter.detachView()
-        view = StubNavDrawerView()
-        authPresenter.attachView(view)
+        view = simulateOrientationChange(presenter)
         assert(view.currentView == StubNavDrawerView.ViewValues.auth)
+    }
+
+    @Test
+    fun testBoard() {
+        val presenter = NavDrawerPresenter(kodein)
+        val view = StubNavDrawerView()
+        presenter.onBoardsLoaded(listOf(Board("Englisch", 15, "irgendwas", 2, 2, 28, 1)))
+        presenter.attachView(view)
+        presenter.onNavigationDrawerItemClicked(14)
+        assert(view.currentView == StubNavDrawerView.ViewValues.board)
     }
 }

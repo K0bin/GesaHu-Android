@@ -45,46 +45,48 @@ class SubstitutesPresenterTest {
         bind<SubstituteFormatter>() with provider { mock<SubstituteFormatter> {} }
     }
 
-    var view = StubSubstitutesView()
     val date: LocalDate = LocalDate(2016,5,12)
-    val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
     val list = listOf(Substitute(0,0, "", "", "", "", "", "", false), Substitute(0,0, "", "", "", "", "", "", false), Substitute(0,0, "", "", "", "", "", "", false))
     val announcement = "hi"
 
-    private fun simulateOrientationChange() {
+    private fun simulateOrientationChange(presenter: SubstitutesPresenter): StubSubstitutesView {
         presenter.detachView()
-        view = StubSubstitutesView()
+        val view = StubSubstitutesView()
         presenter.attachView(view)
         presenter.onActivePageChanged(3)
         presenter.onPageAttached(1)
         presenter.onPageAttached(2)
         presenter.onPageAttached(3)
+        return view;
     }
 
     @Test
     fun testFab() {
+        val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
+        var view = StubSubstitutesView()
+
         presenter.attachView(view)
         assert(!view.isFabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(!view.isFabVisible)
 
         //Simulate loading empty announcement
         presenter.onAnnouncementLoaded(date, "")
         assert(!view.isFabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(!view.isFabVisible)
 
         //Simulate loading announcement
         presenter.onAnnouncementLoaded(date, announcement)
         assert(view.isFabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(view.isFabVisible)
 
         //Simulate selecting a substitute
         presenter.onSubstitutesLoaded(date, list)
         presenter.onListItemClicked(2)
         assert(!view.isFabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(!view.isFabVisible)
         presenter.onListItemClicked(2)
         assert(view.isFabVisible)
@@ -98,20 +100,22 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testCab() {
+        val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
+        var view = StubSubstitutesView()
         presenter.attachView(view)
         assert(!view.isCabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(!view.isCabVisible)
 
         //Simulate selecting and deselecting
         presenter.onSubstitutesLoaded(date, list)
         presenter.onListItemClicked(2)
         assert(view.isCabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(view.isCabVisible)
         presenter.onListItemClicked(2)
         assert(!view.isCabVisible)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(!view.isCabVisible)
 
         //Simulate swiping
@@ -123,6 +127,8 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testTabs() {
+        val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
+        val view = StubSubstitutesView()
         presenter.attachView(view)
         assert(view.currentTab == 3)
         assert(view.tabTitles[0] == "Mo. 09.05.16")
@@ -130,20 +136,24 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testList() {
+        val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
+        var view = StubSubstitutesView()
         presenter.attachView(view)
         presenter.onSubstitutesLoaded(date, list)
         assert(view.listShown[3])
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(view.listShown[3])
     }
 
     @Test
     fun testSelection() {
+        val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
+        var view = StubSubstitutesView()
         presenter.attachView(view)
         presenter.onSubstitutesLoaded(date, list)
         presenter.onListItemClicked(2)
         assert(view.selected[3] == 2)
-        simulateOrientationChange()
+        view = simulateOrientationChange(presenter)
         assert(view.selected[3] == 2)
         presenter.onActivePageChanged(2)
         assert(view.selected[3] == null)
@@ -151,22 +161,17 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testStateRestoring() {
-        val restoredPresenter = SubstitutesPresenter(kodein, SubstitutesState(date, 2))
-        restoredPresenter.attachView(view)
-        restoredPresenter.onActivePageChanged(3)
-        restoredPresenter.onPageAttached(1)
-        restoredPresenter.onPageAttached(2)
-        restoredPresenter.onPageAttached(3)
+        val presenter = SubstitutesPresenter(kodein, SubstitutesState(date, 2))
+        val view = StubSubstitutesView()
+        presenter.attachView(view)
+        presenter.onActivePageChanged(3)
+        presenter.onPageAttached(1)
+        presenter.onPageAttached(2)
+        presenter.onPageAttached(3)
         assert(view.currentTab == 3)
         assert(view.tabTitles[0] == "Mo. 09.05.16")
         assert(view.selected[3] == 2)
         assert(!view.isFabVisible)
         assert(view.isCabVisible)
-    }
-
-    @Test
-    fun testDrawer() {
-        presenter.attachView(view)
-        //assert(view.currentDrawerId == R.id.substitutes)
     }
 }
