@@ -51,11 +51,6 @@ import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
  * Created by robin on 20.10.2016.
  */
 class MainActivity : AppCompatActivity(), NavDrawerContract.View {
-    private lateinit var cabFadeIn: Animation;
-    private lateinit var cabFadeOut: Animation;
-    private lateinit var cabDrawerAnimator: ValueAnimator;
-    private lateinit var cabDrawerIcon: DrawerArrowDrawable;
-
     //Animate TabLayout
     private lateinit var tabLayoutAnimator: ValueAnimator;
     private lateinit var tabLayoutFadeIn: Animation;
@@ -89,17 +84,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
                 field = value;
 
                 if(value) {
-                    cab.clearAnimation()
-                    cab.startAnimation(cabFadeIn)
-                    //if(!isBackButtonVisible)
-                    //    cabDrawerAnimator.start()
-                    //else
-                    //    cabDrawerAnimator.end()
+                    cab.show()
                 } else {
-                    cab.clearAnimation()
-                    cab.startAnimation(cabFadeOut)
-                    //if(!isBackButtonVisible)
-                    //    cabDrawerAnimator.reverse()
+                    cab.hide()
                 }
             }
         }
@@ -189,29 +176,6 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     fun setupCab() {
-        cabDrawerIcon = DrawerArrowDrawable(this)
-        cabDrawerIcon.color = Color.WHITE
-        cab.navigationIcon = cabDrawerIcon
-        cabFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-        cabFadeIn.setAnimationListener(object: Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {cab.visibility = View.VISIBLE}
-            override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
-        })
-        cabFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
-        cabFadeOut.setAnimationListener(object: Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {cab.visibility = View.GONE}
-            override fun onAnimationStart(animation: Animation) {cab.visibility = View.VISIBLE}
-        })
-        cabDrawerAnimator = ValueAnimator.ofFloat(0f, 1f)
-        cabDrawerAnimator.addUpdateListener(ValueAnimator.AnimatorUpdateListener { valueAnimator ->
-            val slideOffset = valueAnimator.animatedValue as Float
-            cabDrawerIcon.progress = slideOffset
-        })
-        cabDrawerAnimator.interpolator = DecelerateInterpolator()
-        cabDrawerAnimator.duration = 250
-
         cab.setOnMenuItemClickListener {
             (currentFragment as? ContextualActionBarListener)?.onItemClicked(it.itemId)
             false

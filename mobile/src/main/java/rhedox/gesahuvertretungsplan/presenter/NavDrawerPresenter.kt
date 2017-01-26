@@ -105,7 +105,7 @@ class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Present
         boardsRepository.destroy()
     }
 
-    private fun onBoardsLoaded(boards: List<Board>) {
+    fun onBoardsLoaded(boards: List<Board>) {
         view?.showBoards(boards)
         this.boards = boards;
     }

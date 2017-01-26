@@ -21,10 +21,7 @@ import com.squareup.leakcanary.RefWatcher
 import net.danlew.android.joda.JodaTimeAndroid
 import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.connectivityManager
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SyncObserver
+import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.util.PermissionManager
@@ -37,10 +34,10 @@ class App : Application(), KodeinAware {
         bind<SharedPreferences>() with instance(PreferenceManager.getDefaultSharedPreferences(applicationContext))
         bind<BoardsRepository>() with provider { BoardsRepository(applicationContext) }
         bind<SyncObserver>() with provider { SyncObserver() }
-        bind<AccountManager>() with instance (applicationContext.accountManager)
         bind<AvatarLoader>() with provider { AvatarLoader(applicationContext) }
         bind<PermissionManager>() with instance(PermissionManager(applicationContext))
         bind<ConnectivityManager>() with instance(applicationContext.connectivityManager)
+        bind<AccountManager>() with instance(applicationContext.accountManager)
 
         //Substitute
         bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }

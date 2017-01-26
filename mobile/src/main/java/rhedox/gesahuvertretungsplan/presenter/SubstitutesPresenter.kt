@@ -1,5 +1,7 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
@@ -18,6 +20,7 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.util.*
@@ -44,6 +47,15 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
     private val connectivityManager: ConnectivityManager = kodeIn.instance()
     private val formatter: SubstituteFormatter = kodeIn.instance()
 
+    private val accountManager: AccountManager = kodeIn.instance()
+    private val account: Account? = null
+        get() {
+            if (field == null) {
+                field = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)?.firstOrNull()
+            }
+            return field;
+        }
+
     private var drawerId: Int? = 0
 
     init {
@@ -63,13 +75,13 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
         }
 
         syncObserver.callback = {
-            /*if (account != null) {
+            if (account != null) {
                 if (view is Activity) {
                     (view as Activity).runOnUiThread {
                         view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
                     }
                 }
-            }*/
+            }
         }
 
         selected = state?.selected
@@ -120,8 +132,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
             view?.showList(position, substitutes)
         }
 
-        /*if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)*/
+        if(account != null)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
 
     fun onAnnouncementLoaded(date:LocalDate, text: String) {
@@ -135,8 +147,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
             view?.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
         }
 
-        /*if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)*/
+        if(account != null)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
     }
 
     override fun onDatePickerIconClicked() {
@@ -179,13 +191,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
     }
 
     override fun onRefresh() {
-        /*if (account != null) {
+        if (account != null) {
             val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
             repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
-        */
     }
 
     override fun onActivePageChanged(position: Int) {

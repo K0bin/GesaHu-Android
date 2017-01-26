@@ -33,7 +33,7 @@
                     app:popupTheme="?attr/toolbarPopupTheme"
                     android:transitionName="toolbar" />
 
-                <android.support.v7.widget.Toolbar
+                <rhedox.gesahuvertretungsplan.ui.widget.ContextualActionBar
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
@@ -42,7 +42,7 @@
                     app:title="@string/main_cab_title"
                     android:id="@+id/cab"
                     android:visibility="gone">
-                </android.support.v7.widget.Toolbar>
+                </rhedox.gesahuvertretungsplan.ui.widget.ContextualActionBar>
             </FrameLayout>
             <android.support.design.widget.TabLayout
                 android:layout_width="match_parent"

@@ -17,7 +17,6 @@ class StubSubstitutesView : SubstitutesContract.View {
 
     override var currentTab: Int = -1
     override var isFabVisible: Boolean = false
-    override var isBackButtonVisible: Boolean = false
     override var isAppBarExpanded: Boolean = false
     override var tabTitles: Array<String> = arrayOf("","","","","")
     override var isRefreshing: Boolean = false
@@ -28,21 +27,7 @@ class StubSubstitutesView : SubstitutesContract.View {
     override fun showDialog(text: String) {}
     override fun openSubstitutesForDate(date: LocalDate) {}
     override fun share(text: String) {}
-    override fun goBack() {}
-    override fun finish() {}
-    /*override fun showBoards(boards: List<Board>) {}
-    override var avatar: Bitmap? = null
-        get() = field
-        set(value) {field=value}
-    override fun navigateToIntro() {}
-    override fun navigateToSettings() {}
-    override fun navigateToAbout() {}
-    override fun navigateToAuth() {}
-    override fun navigateToBoard(boardId: Long) {}
 
-    override var userName: String = ""
-    override var currentDrawerId: Int = -1*/
-
-    var listShown = arrayOf<Boolean>(false, false, false, false, false)
+    var listShown = arrayOf(false, false, false, false, false)
     var selected = arrayOfNulls<Int>(5)
 }

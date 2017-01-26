@@ -19,8 +19,10 @@ import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
@@ -33,17 +35,19 @@ class SubstitutesPresenterTest {
     val kodein = Kodein {
         bind<SharedPreferences>() with instance ( mock<SharedPreferences> {} )
         bind<BoardsRepository>() with provider { mock<BoardsRepository> {} }
-        bind<SubstitutesRepositoryOld>() with provider { mock<SubstitutesRepositoryOld> {} }
+        bind<SubstitutesRepository>() with provider { mock<SubstitutesRepository> {} }
         bind<SyncObserver>() with provider { mock<SyncObserver> {} }
         bind<AccountManager>() with instance ( mock<AccountManager> {} )
         bind<AvatarLoader>() with provider { mock<AvatarLoader> {} }
         bind<PermissionManager>() with provider { mock<PermissionManager> {} }
         bind<ConnectivityManager>() with provider { mock<ConnectivityManager> {} }
+
+        bind<SubstituteFormatter>() with provider { mock<SubstituteFormatter> {} }
     }
 
     var view = StubSubstitutesView()
     val date: LocalDate = LocalDate(2016,5,12)
-    val presenter = SubstitutesPresenter(kodein, SubstitutesState(date, false))
+    val presenter = SubstitutesPresenter(kodein, SubstitutesState(date))
     val list = listOf(Substitute(0,0, "", "", "", "", "", "", false), Substitute(0,0, "", "", "", "", "", "", false), Substitute(0,0, "", "", "", "", "", "", false))
     val announcement = "hi"
 
@@ -147,13 +151,12 @@ class SubstitutesPresenterTest {
 
     @Test
     fun testStateRestoring() {
-        val restoredPresenter = SubstitutesPresenter(kodein, SubstitutesState(date, true, 2))
+        val restoredPresenter = SubstitutesPresenter(kodein, SubstitutesState(date, 2))
         restoredPresenter.attachView(view)
         restoredPresenter.onActivePageChanged(3)
         restoredPresenter.onPageAttached(1)
         restoredPresenter.onPageAttached(2)
         restoredPresenter.onPageAttached(3)
-        assert(view.isBackButtonVisible)
         assert(view.currentTab == 3)
         assert(view.tabTitles[0] == "Mo. 09.05.16")
         assert(view.selected[3] == 2)
