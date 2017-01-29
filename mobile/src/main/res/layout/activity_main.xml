@@ -12,14 +12,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:fitsSystemWindows="false"
-        android:id="@+id/coordinator">
+        android:id="@+id/coordinator"
+        android:animateLayoutChanges="true">
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/appbarLayout"
             android:transitionName="appbar"
             android:elevation="4dp"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:animateLayoutChanges="true">
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,12 +58,6 @@
                 app:tabIndicatorColor="@android:color/white"
                 android:transitionName="tabbar"
                 android:visibility="gone"/>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:background="@drawable/toolbar_shadow"
-                android:visibility="?attr/toolbarShadowCompat"/>
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout

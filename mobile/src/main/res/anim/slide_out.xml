@@ -4,5 +4,5 @@
     android:shareInterpolator="false">
     <translate android:fromXDelta="0%" android:toXDelta="101%"
         android:fromYDelta="0%" android:toYDelta="0%"
-        android:duration="1500"/>
+               android:duration="@android:integer/config_shortAnimTime"/>
 </set>

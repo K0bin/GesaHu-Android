@@ -24,6 +24,7 @@ import org.jetbrains.anko.connectivityManager
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 
 /**
@@ -82,6 +83,9 @@ class App : Application(), KodeinAware {
                     .build()
             StrictMode.setThreadPolicy(threadPolicy)
         }
+
+        val pref: SharedPreferences = kodein.instance()
+        PreferenceFragment.applyDarkTheme(pref)
     }
 
     companion object {
