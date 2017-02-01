@@ -1,43 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               xmlns:tools="http://schemas.android.com/tools"
-              android:layout_margin="8dp"
+              android:padding="16dp"
+              android:minHeight="88dp"
               android:elevation="0dp">
-    <TextView
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Klausur"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:id="@+id/kind"/>
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
 
-    <TextView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="01.01.17"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:id="@+id/date"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="NA Klausur Wahrscheinlichkeitslehre und Statistik"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:id="@+id/description"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Klausur"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:id="@+id/kind"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="NA Klausur Wahrscheinlichkeitslehre und Statistik"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:layout_below="@id/kind"
-        android:id="@+id/description"
-        />
+        android:orientation="vertical"
+        android:layout_gravity="end|center_vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="15"
-        android:layout_margin="4dp"
-        android:layout_alignParentRight="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:id="@+id/mark"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="15"
+            android:layout_gravity="end"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:id="@+id/mark"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mark"
-        android:layout_alignParentRight="true"
-        android:id="@+id/average"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-        tools:text="Ø 10.5"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/average"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+            tools:text="Ø 10.5"/>
+    </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

@@ -8,8 +8,10 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.util.Log
 import com.github.salomonbrys.kodein.*
+import org.jetbrains.anko.support.v4.act
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
@@ -76,10 +78,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
 
         syncObserver.callback = {
             if (account != null) {
-                if (view is Activity) {
-                    (view as Activity).runOnUiThread {
-                        view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
-                    }
+                (view as? Fragment)?.activity?.runOnUiThread {
+                    view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
                 }
             }
         }

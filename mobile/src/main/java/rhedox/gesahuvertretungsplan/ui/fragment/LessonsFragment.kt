@@ -35,6 +35,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
 
     companion object {
         const val stateBundleName = "state"
+        const val layoutManagerBundleName = "layoutManager"
 
         @JvmStatic
         fun createInstance(boardId: Long): LessonsFragment {
@@ -74,6 +75,9 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         val view = inflater.inflate(R.layout.fragment_lessons, container, false)
         val recycler = view.findViewById(R.id.recycler) as RecyclerView
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        if (savedInstanceState != null) {
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(layoutManagerBundleName))
+        }
         recycler.layoutManager = layoutManager
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         adapter = LessonsAdapter();
@@ -86,6 +90,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         super.onSaveInstanceState(outState)
 
         outState.putParcelable(stateBundleName, presenter.saveState() as LessonsState)
+        outState.putParcelable(layoutManagerBundleName, layoutManager.onSaveInstanceState())
     }
 
     override fun onStart() {

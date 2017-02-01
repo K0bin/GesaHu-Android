@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.ui.adapter
 import android.content.Context
 import android.support.annotation.ColorInt
 import android.support.annotation.Dimension
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
@@ -16,7 +17,7 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 23.01.2017.
  */
-class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, context: Context) : ListAdapter<Substitute>(true), SelectableAdapter {
+class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, context: Context) : ListAdapter<Substitute>(hasEmptyView = true), SelectableAdapter {
     private var recyclerView: RecyclerView? = null
     private var selected: Int? = null
 

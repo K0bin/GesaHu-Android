@@ -4,6 +4,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinInjected
 import com.github.salomonbrys.kodein.KodeinInjector
 import com.github.salomonbrys.kodein.instance
+import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
@@ -18,12 +19,23 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
     private val boardId = state.boardId;
 
     init {
+        repository.boardsCallback = { boards ->
+            val board = boards.find { it.id == boardId }
+            if (board != null) {
+                onBoardLoaded(board)
+            }
+        }
         repository.marksCallback = { boardId, marks -> if (boardId == this.boardId) onMarksLoaded(marks) }
+        repository.loadBoards()
         repository.loadMarks(boardId)
     }
 
-    fun onMarksLoaded(marks: List<Mark>) {
+    fun onBoardLoaded(board: Board) {
+        view?.mark = board.mark ?: 0
+    }
 
+    fun onMarksLoaded(marks: List<Mark>) {
+        view?.showList(marks)
     }
 
     override fun attachView(view: MarksContract.View, isRecreated: Boolean) {

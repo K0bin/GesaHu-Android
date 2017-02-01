@@ -33,7 +33,7 @@ public class ErrorViewHolder extends RecyclerView.ViewHolder {
         //Set width & margin
         RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         float margin = context.getResources().getDimension(R.dimen.errorView_margin_top);
-        params.setMargins(0, (int)margin, 0, 0);
+        params.setMargins(0, (int)margin, 0, (int)margin);
         itemView.setLayoutParams(params);
         itemView.setConfig(emptyConfig);
     }

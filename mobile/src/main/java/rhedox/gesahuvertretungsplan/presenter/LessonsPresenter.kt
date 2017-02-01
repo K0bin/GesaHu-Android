@@ -21,7 +21,12 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
 
     init {
         repository.lessonsCallback = { boardId, lessons -> if (boardId == this.boardId) onLessonsLoaded(lessons) }
-        repository.boardsCallback = { it -> onBoardsLoaded(it)}
+        repository.boardsCallback = { boards ->
+            val board = boards.find { it.id == boardId }
+            if (board != null) {
+                onBoardLoaded(board)
+            }
+        }
         repository.loadLessons(boardId)
         repository.loadBoards()
     }
@@ -30,14 +35,10 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
         view?.showList(lessons)
     }
 
-    fun onBoardsLoaded(boards: List<Board>) {
-        val board = boards.find { it.id == boardId }
-
-        if (board != null) {
-            view?.lessonsMissed = board.missedLessons
-            view?.lessonsMissedWithSickNote = board.missedLessonsWithSickNotes
-            view?.lessonsTotal = board.lessonsTotal
-        }
+    fun onBoardLoaded(board: Board) {
+        view?.lessonsMissed = board.missedLessons
+        view?.lessonsMissedWithSickNote = board.missedLessonsWithSickNotes
+        view?.lessonsTotal = board.lessonsTotal
     }
 
     override fun attachView(view: LessonsContract.View, isRecreated: Boolean) {

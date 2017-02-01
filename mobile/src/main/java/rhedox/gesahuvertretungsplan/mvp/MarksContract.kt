@@ -1,5 +1,8 @@
 package rhedox.gesahuvertretungsplan.mvp
 
+import rhedox.gesahuvertretungsplan.model.database.Lesson
+import rhedox.gesahuvertretungsplan.model.database.Mark
+
 
 /**
  * Created by robin on 18.01.2017.
@@ -17,5 +20,7 @@ interface MarksContract {
     }
 
     interface View {
+        var mark: Int
+        fun showList(list: List<Mark>)
     }
 }

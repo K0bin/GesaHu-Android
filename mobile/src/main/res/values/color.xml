@@ -19,4 +19,9 @@
     <color name="intro_slide_4">#ff3F51B5</color>
     <color name="intro_slide_5">#ffF44336</color>
     <color name="intro_slide_6">#ff2196F3</color>
+
+    <!-- NumberCircles -->
+    <color name="mark_good">#FF2E7D32</color>
+    <color name="mark_average">#FFEF6C00</color>
+    <color name="mark_bad">#FFC62828</color>
 </resources>

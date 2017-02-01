@@ -4,6 +4,7 @@ import android.accounts.AccountManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.StrictMode
 import android.preference.PreferenceManager
@@ -26,6 +27,12 @@ import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
+import android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+
+
 
 /**
  * Created by Robin on 29.06.2015.
@@ -101,6 +108,11 @@ class App : Application(), KodeinAware {
                 return (context.applicationContext as App).refWatcher
             else
                 return null
+        }
+
+        fun checkNightMode(context: Context): Boolean {
+            val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            return currentNightMode == Configuration.UI_MODE_NIGHT_YES
         }
     }
 

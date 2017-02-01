@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.animation.LayoutTransition
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.app.ActivityManager
@@ -47,7 +48,6 @@ import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
  * Created by robin on 20.10.2016.
  */
 class MainActivity : AppCompatActivity(), NavDrawerContract.View {
-
     private lateinit var toggle: ActionBarDrawerToggle
         private set
     private lateinit var listener: Listener;
@@ -178,27 +178,23 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     fun setupTabBar() {
-
         tabLayout.pivotY = 0f
         tabLayout.visibility = View.VISIBLE
     }
 
-    fun resetUi(keepTabBar: Boolean = false) {
+    fun resetUi() {
         isFabVisible = false
         isCabVisible = false
         cab.menu.clear()
 
-        if (!keepTabBar) {
-            tabLayout.visibility = View.GONE
-        }
+        tabLayout.visibility = View.GONE
         tabLayout.setupWithViewPager(null)
     }
 
     fun setupTabBarForFragment(viewPager: ViewPager, mode: Int) {
         tabLayout.tabMode = mode
-        tabLayout.setupWithViewPager(viewPager)
         tabLayout.visibility = View.VISIBLE
-
+        tabLayout.setupWithViewPager(viewPager)
     }
 
     fun setupCabForFragment(menuId: Int) {
@@ -327,7 +323,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToBoard(boardId: Long) {
-        resetUi(true)
+        resetUi()
 
         tabLayout.visibility = View.VISIBLE
         val fragment = BoardFragment.newInstance(boardId)
@@ -344,7 +340,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
-        resetUi(true)
+        resetUi()
 
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()

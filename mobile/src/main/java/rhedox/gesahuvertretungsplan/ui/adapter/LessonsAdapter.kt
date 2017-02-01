@@ -14,7 +14,7 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class LessonsAdapter : ListAdapter<Lesson>(true) {
+class LessonsAdapter : ListAdapter<Lesson>(true, true) {
     var lessonsMissed = 0
         get() = field
         set(value) {
@@ -36,12 +36,8 @@ class LessonsAdapter : ListAdapter<Lesson>(true) {
 
     var cardVH: LessonsCardViewHolder? = null
 
-    object ItemTypeValues {
-        const val card = 3;
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == ItemTypeValues.card) {
+        if (viewType == ItemTypeValues.topHeader) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.view_lesson_card, parent, false)
             cardVH = LessonsCardViewHolder(view)
             return cardVH!!;
@@ -55,24 +51,9 @@ class LessonsAdapter : ListAdapter<Lesson>(true) {
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == ItemTypeValues.card) {
+    override fun bindTopHeader(holder: RecyclerView.ViewHolder, position: Int) {
+        if (getItemViewType(position) == ItemTypeValues.topHeader) {
             (holder as LessonsCardViewHolder).bind(lessonsTotal, lessonsMissedWithSickNote, lessonsMissed)
-        } else if (getItemViewType(position) == ListAdapter.ItemTypeValues.view) {
-            if (getItemViewType(position) == ListAdapter.ItemTypeValues.view) {
-                (holder as ModelViewHolder<Lesson>).bind(list[position - 1])
-            }
         }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        if (position == 0) {
-            return ItemTypeValues.card;
-        }
-        return super.getItemViewType(position)
-    }
-
-    override fun getItemCount(): Int {
-        return super.getItemCount() + 1
     }
 }
