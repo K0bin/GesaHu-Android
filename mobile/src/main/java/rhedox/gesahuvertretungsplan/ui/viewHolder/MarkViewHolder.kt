@@ -20,11 +20,23 @@ class MarkViewHolder(view: View): ModelViewHolder<Mark>(view) {
 
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 
+    val markKindTest: String = view.context.getString(R.string.mark_kind_test)
+    val markKindMonthlyOral: String = view.context.getString(R.string.mark_kind_monthlyOral)
+    val markKindTestOrComplexTask: String = view.context.getString(R.string.mark_kind_testOrComplexTask)
+    val markKindOral: String = view.context.getString(R.string.mark_kind_oral)
+
     @SuppressLint("SetTextI18n")
     override fun bind(model: Mark) {
         description.text = model.description
         average.text = "Ø ${model.average}"
         mark.text = model.mark.toString()
         date.text = model.date.toString(formatter)
+        kind.text = when (model.kind) {
+            Mark.KindValues.test -> markKindTest
+            Mark.KindValues.testOrComplexTask -> markKindTestOrComplexTask
+            Mark.KindValues.monthlyOral -> markKindMonthlyOral
+            Mark.KindValues.oral-> markKindOral
+            else -> ""
+        }
     }
 }

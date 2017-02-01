@@ -19,12 +19,13 @@ data class Mark(val date: LocalDate,
                 val boardId: Long? = null) {
 
     @Retention(AnnotationRetention.SOURCE)
-    @StringDef(KindValues.test, KindValues.monthlyOral, KindValues.testOrComplexTask)
+    @StringDef(KindValues.test, KindValues.monthlyOral, KindValues.testOrComplexTask, KindValues.oral)
     annotation class Kind
     object KindValues {
         const val test = "Klausur";
         const val monthlyOral = "mündliche monatliche Kursnote"
         const val testOrComplexTask = "Klausur/komplexe HA"
+        const val oral = "Mündlich"
     }
 
     @Retention(AnnotationRetention.SOURCE)

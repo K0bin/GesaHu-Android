@@ -49,6 +49,13 @@
     <string name="lessons_missed">Verpasst</string>
     <string name="lessons_missed_with_sick_note">Entschuldigt</string>
     <string name="mark">Note</string>
+    <string name="mark_kind_test">Klausur</string>
+    <string name="mark_kind_monthlyOral">mündliche monatliche Kursnote</string>
+    <string name="mark_kind_testOrComplexTask">Klausur/komplexe HA</string>
+    <string name="mark_kind_oral">Mündlich</string>
+    <string name="mark_mark_kind_unknown">Unbekannt</string>
+    <string name="mark_mark_kind_group">Gruppennote</string>
+    <string name="mark_mark_kind_mark">Einzelnote</string>
 
     <string name="notification_summary" formatted="false">%s in der %s. Stunde</string>
     <string name="notification_summary_day_hint">Vertretungsstunden für den ganzen Tag</string>
