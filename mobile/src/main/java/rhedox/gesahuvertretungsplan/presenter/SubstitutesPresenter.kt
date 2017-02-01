@@ -58,8 +58,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
             return field;
         }
 
-    private var drawerId: Int? = 0
-
     init {
         val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
@@ -105,7 +103,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesContract.State?) : 
                 date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE. dd.MM.yy", Locale.GERMANY),
                 date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE. dd.MM.yy", Locale.GERMANY)
         )
-        //view.isSwipeRefreshEnabled = account != null;
+        view.isSwipeRefreshEnabled = account != null;
 
         Log.d("SubstitutesPresenter", "viewattached selected $selected")
     }

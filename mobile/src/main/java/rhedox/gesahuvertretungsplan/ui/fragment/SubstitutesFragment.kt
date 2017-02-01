@@ -176,6 +176,12 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
         presenter.attachView(this)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        mainActivity?.title = getString(R.string.activity_substitutes)
+    }
+
     override fun onFabClicked() { presenter.onFabClicked() }
 
     override fun onItemClicked(id: Int) {

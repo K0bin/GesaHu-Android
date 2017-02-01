@@ -13,7 +13,7 @@ interface LessonsContract {
 
     interface Presenter {
         fun saveState(): State
-        fun attachView(view: View, isRecreated: Boolean)
+        fun attachView(view: View)
         fun detachView()
         fun destroy()
     }

@@ -18,6 +18,8 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
     private var view: LessonsContract.View? = null
     private val repository: BoardsRepository = kodein.instance();
     private val boardId = state.boardId;
+    private var board: Board? = null
+    private var lessons: List<Lesson> = listOf()
 
     init {
         repository.lessonsCallback = { boardId, lessons -> if (boardId == this.boardId) onLessonsLoaded(lessons) }
@@ -33,16 +35,25 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
 
     fun onLessonsLoaded(lessons: List<Lesson>) {
         view?.showList(lessons)
+        this.lessons = lessons;
     }
 
     fun onBoardLoaded(board: Board) {
+        this.board = board;
+
         view?.lessonsMissed = board.missedLessons
         view?.lessonsMissedWithSickNote = board.missedLessonsWithSickNotes
         view?.lessonsTotal = board.lessonsTotal
     }
 
-    override fun attachView(view: LessonsContract.View, isRecreated: Boolean) {
+    override fun attachView(view: LessonsContract.View) {
         this.view = view;
+
+        view.lessonsMissed = board?.missedLessons ?: 0
+        view.lessonsMissedWithSickNote = board?.missedLessonsWithSickNotes ?: 0
+        view.lessonsTotal = board?.lessonsTotal ?: 0
+
+        view.showList(lessons)
     }
 
     override fun detachView() {

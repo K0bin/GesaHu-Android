@@ -25,10 +25,6 @@ import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
 class BoardFragment : Fragment(), BoardContract.View {
     private var mainActivity: MainActivity? = null
 
-    override var title: String
-        get() = throw UnsupportedOperationException()
-        set(value) {}
-
     private object Arguments {
         const val boardId = "boardId"
     }
@@ -47,6 +43,13 @@ class BoardFragment : Fragment(), BoardContract.View {
 
     private lateinit var presenter: BoardContract.Presenter;
     private var boardId: Long = 0L;
+
+    override var title: String = ""
+        get() = field
+        set(value) {
+            field = value
+            mainActivity?.title = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +102,12 @@ class BoardFragment : Fragment(), BoardContract.View {
         super.onDestroyView()
 
         presenter.detachView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        mainActivity?.title = title
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

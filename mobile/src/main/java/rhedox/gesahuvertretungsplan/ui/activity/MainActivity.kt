@@ -102,6 +102,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
             appbarLayout.setExpanded(value)
         }
 
+    var title: String
+    get() = supportActionBar?.title?.toString() ?: ""
+    set(value) {
+        supportActionBar?.title = value
+    }
+
 
     override var currentDrawerId: Int = -1
         get() = field

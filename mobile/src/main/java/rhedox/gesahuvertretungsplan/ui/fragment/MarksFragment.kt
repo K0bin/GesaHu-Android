@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -16,6 +17,7 @@ import rhedox.gesahuvertretungsplan.mvp.MarksContract
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.LessonsAdapter
 import rhedox.gesahuvertretungsplan.ui.adapter.MarksAdapter
 
@@ -76,7 +78,15 @@ class MarksFragment : Fragment(), MarksContract.View {
         adapter = MarksAdapter();
         recycler.adapter = adapter;
 
+        presenter.attachView(this)
+
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        presenter.detachView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -84,16 +94,6 @@ class MarksFragment : Fragment(), MarksContract.View {
 
         outState.putParcelable(stateBundleName, presenter.saveState() as MarksState)
         outState.putParcelable(layoutManagerBundleName, layoutManager.onSaveInstanceState())
-    }
-
-    override fun onStart() {
-        super.onStart()
-        presenter.attachView(this, false)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter.detachView()
     }
 
     override fun onDestroy() {

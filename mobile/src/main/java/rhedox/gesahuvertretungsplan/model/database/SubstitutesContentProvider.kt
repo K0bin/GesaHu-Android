@@ -141,7 +141,7 @@ class SubstitutesContentProvider : ContentProvider() {
     }
 
     override fun bulkInsert(uri: Uri?, values: Array<ContentValues>?): Int {
-        if(values == null || values.size == 0)
+        if(values == null || values.isEmpty())
             return 0;
 
         val uriType = uriMatcher.match(uri);

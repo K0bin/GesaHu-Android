@@ -72,7 +72,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         if(account == null && !intent.getBooleanExtra(argIsNewAccount, true)) {
             val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
-            if (accounts.size > 0) {
+            if (accounts.isNotEmpty()) {
                 account = accounts[0]
                 username = account!!.name;
                 password = accountManager.getPassword(account) ?: ""

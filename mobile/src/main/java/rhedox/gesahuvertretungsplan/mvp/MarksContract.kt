@@ -14,13 +14,13 @@ interface MarksContract {
 
     interface Presenter {
         fun saveState(): State
-        fun attachView(view: View, isRecreated: Boolean)
+        fun attachView(view: View)
         fun detachView()
         fun destroy()
     }
 
     interface View {
-        var mark: Int
         fun showList(list: List<Mark>)
+        var mark: Int
     }
 }

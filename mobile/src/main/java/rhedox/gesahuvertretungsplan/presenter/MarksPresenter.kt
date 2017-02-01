@@ -17,6 +17,8 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
     private var view: MarksContract.View? = null
     private val repository: BoardsRepository = kodein.instance();
     private val boardId = state.boardId;
+    private var board: Board? = null
+    private var marks: List<Mark> = listOf()
 
     init {
         repository.boardsCallback = { boards ->
@@ -32,14 +34,19 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
 
     fun onBoardLoaded(board: Board) {
         view?.mark = board.mark ?: 0
+        this.board = board;
     }
 
     fun onMarksLoaded(marks: List<Mark>) {
         view?.showList(marks)
+        this.marks = marks;
     }
 
-    override fun attachView(view: MarksContract.View, isRecreated: Boolean) {
+    override fun attachView(view: MarksContract.View) {
         this.view = view;
+
+        view.mark = board?.mark ?: 0
+        view.showList(marks)
     }
 
     override fun detachView() {
