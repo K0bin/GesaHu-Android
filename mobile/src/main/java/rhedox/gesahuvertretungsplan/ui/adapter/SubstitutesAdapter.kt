@@ -5,11 +5,11 @@ import android.support.annotation.ColorInt
 import android.support.annotation.Dimension
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.ui.anko.SubstituteView
 import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
 import rhedox.gesahuvertretungsplan.ui.viewHolder.SubstituteViewHolder
 import tr.xip.errorview.ErrorView
@@ -28,7 +28,6 @@ class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, c
     @ColorInt private val circleColorRelevant: Int
 
     @Dimension private val selectedElevation: Float = context.resources.getDimension(R.dimen.touch_raise)
-    private val ankoComponent: SubstituteView = SubstituteView(context)
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(intArrayOf(R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor))
@@ -43,11 +42,19 @@ class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, c
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             ItemTypeValues.view -> {
-                val view = ankoComponent.createView(parent)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.view_substitute, parent, false)
                 return SubstituteViewHolder(view, presenter, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation)
             }
 
             else -> return ErrorViewHolder(ErrorView(parent.context))
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+
+        if (holder is SubstituteViewHolder) {
+            holder.setSelected(position == selected, false)
         }
     }
 

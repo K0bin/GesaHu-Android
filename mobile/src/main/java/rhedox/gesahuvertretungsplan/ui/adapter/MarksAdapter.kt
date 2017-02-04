@@ -31,7 +31,7 @@ class MarksAdapter : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == ItemTypeValues.topHeader) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.view_mark_card, parent, false)
-            cardVH = MarksCardViewHolder(view, colorGood, colorAverage, colorBad)
+            cardVH = MarksCardViewHolder(view)
             return cardVH!!;
         }
 

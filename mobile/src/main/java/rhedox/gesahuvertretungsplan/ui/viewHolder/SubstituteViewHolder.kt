@@ -40,7 +40,7 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
         backgroundAnimator = ObjectAnimator.ofObject(view, "backgroundColor", ArgbEvaluator(), 0, selectedColor)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            elevationAnimator = ObjectAnimator.ofFloat(view, "elevation", 0f, view.context.resources.getDimension(R.dimen.touch_raise))
+            elevationAnimator = ObjectAnimator.ofFloat(view, "elevation", 0f, selectedElevation)
         } else {
             elevationAnimator = null;
         }
