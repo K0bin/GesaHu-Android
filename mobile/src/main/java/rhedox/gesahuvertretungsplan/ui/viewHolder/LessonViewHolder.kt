@@ -24,26 +24,7 @@ class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
     val homeworkDue = view.findViewById(R.id.homeworkDue) as TextView
     val statusIcon = view.findViewById(R.id.status_icon) as ImageView
 
-    val absentDrawable: Drawable;
-    val presentDrawable: Drawable;
-    val sickNoteDrawable: Drawable;
-
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
-
-    init {
-        val absent = ContextCompat.getDrawable(view.context, R.drawable.ic_absent)
-        absentDrawable = DrawableCompat.wrap(absent)
-        DrawableCompat.setTint(absentDrawable, if (App.checkNightMode(view.context)) Color.WHITE else Color.BLACK)
-
-        val present = ContextCompat.getDrawable(view.context, R.drawable.ic_present)
-        presentDrawable = DrawableCompat.wrap(present)
-        DrawableCompat.setTint(presentDrawable, if (App.checkNightMode(view.context)) Color.WHITE else Color.BLACK)
-
-
-        val sickNote = ContextCompat.getDrawable(view.context, R.drawable.ic_sick_note)
-        sickNoteDrawable = DrawableCompat.wrap(sickNote)
-        DrawableCompat.setTint(sickNoteDrawable, if (App.checkNightMode(view.context)) Color.WHITE else Color.BLACK)
-    }
 
     override fun bind(lesson: Lesson) {
         date.text = lesson.date.toString(formatter)
@@ -53,6 +34,6 @@ class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
         homework.visibility = if (lesson.homeWork.isNullOrBlank()) View.GONE else View.VISIBLE
         homeworkDue.visibility =if (lesson.homeWorkDue == null) View.GONE else View.VISIBLE
 
-        statusIcon.setImageDrawable(if (lesson.status == Lesson.StatusValues.present) presentDrawable else if(lesson.status == Lesson.StatusValues.absentWithSickNote) sickNoteDrawable else absentDrawable)
+        statusIcon.setImageResource(if (lesson.status == Lesson.StatusValues.present) R.drawable.ic_present else if(lesson.status == Lesson.StatusValues.absentWithSickNote) R.drawable.ic_sick_note else R.drawable.ic_absent)
     }
 }

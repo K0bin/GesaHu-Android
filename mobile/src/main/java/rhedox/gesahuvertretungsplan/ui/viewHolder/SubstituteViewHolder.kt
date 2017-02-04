@@ -1,7 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolder
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
+import android.animation.*
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -10,6 +9,7 @@ import android.support.annotation.Dimension
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import butterknife.*
@@ -31,22 +31,26 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
 
     private var circleRelevantBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
     private var circleBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
-    @ColorInt private val windowColor: Int = ContextCompat.getColor(view.context, R.color.windowBackground)
     @ColorInt private val selectedColor: Int = ContextCompat.getColor(view.context, R.color.selected)
 
-    private val backgroundAnimatorSelect: Animator = AnimatorInflater.loadAnimator(view.context, R.animator.substitute_select)
-    private val backgroundAnimatorUnselect: Animator = AnimatorInflater.loadAnimator(view.context, R.animator.substitute_unselect)
+    private val backgroundAnimator: ObjectAnimator;
+    private val elevationAnimator: ObjectAnimator?;
 
     init {
+        backgroundAnimator = ObjectAnimator.ofObject(view, "backgroundColor", ArgbEvaluator(), 0, selectedColor)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            elevationAnimator = ObjectAnimator.ofFloat(view, "elevation", 0f, view.context.resources.getDimension(R.dimen.touch_raise))
+        } else {
+            elevationAnimator = null;
+        }
+
         view.isClickable = true
 
         circleBackground = DrawableCompat.wrap(circleBackground)
         DrawableCompat.setTint(circleBackground, circleColor)
         circleRelevantBackground = DrawableCompat.wrap(circleRelevantBackground)
         DrawableCompat.setTint(circleRelevantBackground, circleColorRelevant)
-
-        backgroundAnimatorSelect.setTarget(view)
-        backgroundAnimatorUnselect.setTarget(view)
 
         view.onClick {
             presenter.onListItemClicked(this.adapterPosition)
@@ -75,11 +79,11 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
         view.isActivated = selected
         if (animate) {
             if (selected) {
-                backgroundAnimatorUnselect.cancel()
-                backgroundAnimatorSelect.start()
+                backgroundAnimator.start()
+                elevationAnimator?.start()
             } else {
-                backgroundAnimatorSelect.cancel()
-                backgroundAnimatorUnselect.start()
+                backgroundAnimator.reverse()
+                elevationAnimator?.reverse()
             }
         } else {
             if (selected) {
@@ -88,7 +92,7 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
                     view.elevation = selectedElevation
                 }
             } else {
-                view.setBackgroundColor(windowColor)
+                view.setBackgroundColor(0)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     view.elevation = 0f
                 }

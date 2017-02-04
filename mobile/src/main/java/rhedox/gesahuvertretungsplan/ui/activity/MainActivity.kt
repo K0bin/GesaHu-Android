@@ -86,13 +86,13 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
         get() = field
         set(value) {
             if(value != field) {
-                if(value)
+                if(value) {
                     fab.show()
-                else
+                } else {
                     fab.hide()
+                }
 
                 field = value
-                fab.isEnabled = value
             }
         }
 
