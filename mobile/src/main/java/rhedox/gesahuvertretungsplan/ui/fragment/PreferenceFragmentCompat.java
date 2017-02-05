@@ -22,8 +22,6 @@ public abstract class PreferenceFragmentCompat extends android.support.v7.prefer
     private static final String DIALOG_FRAGMENT_TAG =
             "android.support.v7.preference.PreferenceFragment.DIALOG";
 
-
-
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
 
