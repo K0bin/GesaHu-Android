@@ -31,7 +31,8 @@ class BoardDeserializer: JsonDeserializer<BoardInfo> {
         val markRemark = jsonObject.get("Endnote_Bemerkung").asString
         val missedLessons = jsonObject.get("Fehlstunden_gesamt").asInt
         val missedLessonsWithSickNotes = jsonObject.get("Fehlstunden_entschuldigt").asInt
-        val totalLessons = jsonObject.get("Unterrichtsstunden_gesamt").asInt
+        val totalLessonsStr = jsonObject.get("Unterrichtsstunden_gesamt").asString
+        val totalLessons = if (totalLessonsStr.isNotBlank()) totalLessonsStr.toInt() else 0
 
         val board = Board(name, mark, markRemark, missedLessons, missedLessonsWithSickNotes, totalLessons)
 
