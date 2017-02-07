@@ -50,13 +50,20 @@ class ContextualActionBar : Toolbar {
         //cabDrawerAnimator.duration = 250
     }
 
-    fun hide() {
+    fun hide(isBackButtonVisible: Boolean = false) {
         clearAnimation()
         startAnimation(cabFadeOut)
+
+        if (!isBackButtonVisible) {
+            cabDrawerAnimator.reverse()
+        }
     }
 
-    fun show() {
+    fun show(isBackButtonVisible: Boolean = false) {
         clearAnimation()
         startAnimation(cabFadeIn)
+        if (!isBackButtonVisible) {
+            cabDrawerAnimator.start()
+        }
     }
 }

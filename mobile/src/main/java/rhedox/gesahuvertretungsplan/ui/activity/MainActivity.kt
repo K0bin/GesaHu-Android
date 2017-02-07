@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = PreferenceContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, PreferenceContainerFragment.tag)
                 .commit()
     }
 
@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = AboutContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, AboutContainerFragment.tag)
                 .commit()
         this.currentFragment = fragment;
         title = getString(R.string.action_about)
@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = BoardFragment.newInstance(boardId)
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, BoardFragment.tag)
                 .commit()
         this.currentFragment = fragment;
     }
@@ -276,7 +276,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, SubstitutesFragment.tag)
                 .commit()
         this.currentFragment = fragment;
     }

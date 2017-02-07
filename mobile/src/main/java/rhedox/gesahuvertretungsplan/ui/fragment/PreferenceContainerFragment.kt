@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.main.fragment_preference_container.toolbar;
  */
 class PreferenceContainerFragment : Fragment() {
     companion object {
+        const val tag: String = "preferenceContainerFragment"
+
         @JvmStatic
         fun newInstance(): PreferenceContainerFragment {
             return PreferenceContainerFragment()
