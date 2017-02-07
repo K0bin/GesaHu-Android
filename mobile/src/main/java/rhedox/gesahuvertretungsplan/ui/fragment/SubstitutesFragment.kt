@@ -42,8 +42,6 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         const val date = "date"
     }
     companion object {
-        const val tag: String = "substitutesFragment"
-
         @JvmStatic
         fun newInstance(date: LocalDate? = null): SubstitutesFragment {
             val fragment = SubstitutesFragment();

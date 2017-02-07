@@ -85,6 +85,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
             }
         }
 
+    companion object {
+        const val currentFragmentTag = "pageFragment"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -121,8 +125,13 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         }
 
         //Show initial fragment
-        currentFragment = SubstitutesFragment.newInstance()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment).commit()
+        val fragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
+        if (fragment != null) {
+            currentFragment = fragment
+        } else {
+            currentFragment = SubstitutesFragment.newInstance()
+            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment, currentFragmentTag).commit()
+        }
     }
 
     override fun onDestroy() {
@@ -240,7 +249,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = PreferenceContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment, PreferenceContainerFragment.tag)
+                .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
     }
 
@@ -248,7 +257,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = AboutContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment, AboutContainerFragment.tag)
+                .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
         title = getString(R.string.action_about)
@@ -262,7 +271,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = BoardFragment.newInstance(boardId)
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment, BoardFragment.tag)
+                .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
     }
@@ -276,7 +285,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment, SubstitutesFragment.tag)
+                .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
     }

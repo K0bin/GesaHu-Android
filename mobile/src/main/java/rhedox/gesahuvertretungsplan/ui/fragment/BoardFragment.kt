@@ -31,8 +31,6 @@ class BoardFragment : Fragment(), BoardContract.View {
         const val presenterState = "presenterState"
     }
     companion object {
-        const val tag: String = "boardFragment"
-
         @JvmStatic
         fun newInstance(boardId: Long): BoardFragment {
             val fragment = BoardFragment()
