@@ -24,8 +24,6 @@ import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
  * Created by robin on 24.01.2017.
  */
 class BoardFragment : Fragment(), BoardContract.View {
-    private var drawerActivity: DrawerActivity? = null
-
     private object Arguments {
         const val boardId = "boardId"
     }
@@ -50,7 +48,7 @@ class BoardFragment : Fragment(), BoardContract.View {
         get() = field
         set(value) {
             field = value
-            drawerActivity?.supportActionBar?.title = value
+            (activity as? DrawerActivity)?.supportActionBar?.title = value
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,18 +73,6 @@ class BoardFragment : Fragment(), BoardContract.View {
         presenter.destroy()
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        drawerActivity = context as? DrawerActivity
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-
-        drawerActivity = null;
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_board, container, false);
     }
@@ -98,6 +84,7 @@ class BoardFragment : Fragment(), BoardContract.View {
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.tabMode = TabLayout.MODE_FIXED
 
+        val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
         drawerActivity?.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -109,13 +96,14 @@ class BoardFragment : Fragment(), BoardContract.View {
     override fun onDestroyView() {
         super.onDestroyView()
 
+        (activity as? DrawerActivity)?.setSupportActionBar(null)
         presenter.detachView()
     }
 
     override fun onStart() {
         super.onStart()
 
-        drawerActivity?.supportActionBar?.title = title
+        (activity as? DrawerActivity)?.supportActionBar?.title = title
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

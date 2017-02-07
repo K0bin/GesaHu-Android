@@ -26,20 +26,6 @@ class AboutContainerFragment : Fragment() {
         }
     }
 
-    var drawerActivity: DrawerActivity? = null;
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is DrawerActivity) {
-            drawerActivity = context;
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        drawerActivity = null;
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_preference_container, container, false)
         childFragmentManager.beginTransaction().replace(R.id.child_fragment_container, createFragment(context)).commit()
@@ -49,11 +35,17 @@ class AboutContainerFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.action_about)
         drawerActivity?.supportActionBar?.setHomeButtonEnabled(true)
         drawerActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         drawerActivity?.syncDrawer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as? DrawerActivity)?.setSupportActionBar(null)
     }
 
     private fun createFragment(context: Context): Fragment {

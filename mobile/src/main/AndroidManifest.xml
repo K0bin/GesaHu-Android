@@ -49,10 +49,6 @@
             android:label="@string/login">
         </activity>
         <activity
-            android:name=".ui.activity.PreferenceActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
-        <activity
             android:name=".ui.activity.WelcomeActivity"
             android:label="@string/title_activity_welcome">
         </activity>

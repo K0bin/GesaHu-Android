@@ -48,7 +48,7 @@ import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 /**
  * Created by robin on 20.10.2016.
  */
-class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity {
+class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
     private lateinit var toggle: ActionBarDrawerToggle
         private set
     private lateinit var listener: Listener;

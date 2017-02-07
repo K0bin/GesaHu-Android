@@ -22,6 +22,7 @@ import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
 import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
+import rhedox.gesahuvertretungsplan.ui.activity.NavigationActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
@@ -33,7 +34,6 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
         private set;
-    private var drawerActivity: DrawerActivity? = null;
 
     private object State {
         const val presenterState = "presenterState"
@@ -150,18 +150,6 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         presenter = SubstitutesPresenter(appKodein(), state)
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-        drawerActivity = context as? DrawerActivity
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-
-        drawerActivity = null;
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_substitutes, container, false)
     }
@@ -198,6 +186,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
             presenter.onFabClicked()
         }
 
+        val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.activity_substitutes)
         drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
@@ -240,7 +229,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     override fun onDestroyView() {
         super.onDestroyView()
 
-        drawerActivity?.setSupportActionBar(null)
+        (activity as? DrawerActivity)?.setSupportActionBar(null)
         presenter.detachView()
     }
 
@@ -259,8 +248,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {
-        //TODO
-        //drawerActivity?.navigateToSubstitutes(date)
+        (activity as? NavigationActivity)?.navigateToSubstitutes(date)
     }
 
     override fun share(text: String) {
