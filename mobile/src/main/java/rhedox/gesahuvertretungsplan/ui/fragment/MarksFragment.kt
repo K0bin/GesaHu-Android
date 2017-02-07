@@ -39,7 +39,7 @@ class MarksFragment : Fragment(), MarksContract.View {
         const val layoutManagerBundleName = "layoutManager"
 
         @JvmStatic
-        fun createInstance(boardId: Long): MarksFragment {
+        fun newInstance(boardId: Long): MarksFragment {
             val args = Bundle()
             args.putLong(Extra.boardId, boardId)
             val fragment = MarksFragment()

@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
-import butterknife.*
 import org.jetbrains.anko.onClick
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute

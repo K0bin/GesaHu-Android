@@ -13,16 +13,13 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class MarksAdapter : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = false) {
+class MarksAdapter : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = true) {
     var mark = 0
         get() = field
         set(value) {
             field = value
-            cardVH?.bind(mark)
-            hasTopHeader = mark != 0
+            notifyItemChanged(0)
         }
-
-    var cardVH: MarksCardViewHolder? = null
 
     private var colorGood = 0;
     private var colorAverage = 0;
@@ -31,8 +28,7 @@ class MarksAdapter : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == ItemTypeValues.topHeader) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.view_mark_card, parent, false)
-            cardVH = MarksCardViewHolder(view)
-            return cardVH!!;
+            return MarksCardViewHolder(view)
         }
 
         if(viewType == ListAdapter.ItemTypeValues.view) {
@@ -52,8 +48,8 @@ class MarksAdapter : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = false
     }
 
     override fun bindTopHeader(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == ItemTypeValues.topHeader) {
-            (holder as MarksCardViewHolder).bind(mark)
+        if (holder is MarksCardViewHolder) {
+            holder.bind(mark)
         }
     }
 }

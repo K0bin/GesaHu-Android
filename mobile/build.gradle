@@ -12,8 +12,8 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4012
-        versionName "4 ALPHA"
+        versionCode 4013
+        versionName "4 BETA"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
         jackOptions {
@@ -79,8 +79,6 @@ dependencies {
         transitive = true
     }
     compile 'com.github.xiprox.errorview:library:2.+'
-    compile 'com.jakewharton:butterknife:+'
-    apt 'com.jakewharton:butterknife-compiler:+'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:+'
     //debugCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'

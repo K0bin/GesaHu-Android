@@ -62,6 +62,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         val keyDate = "date"
         val argumentDate = "ArgumentDate"
 
+        @JvmStatic
         fun newInstance(date: LocalDate): DatePickerFragment {
             val bundle = Bundle()
             bundle.putLong(argumentDate, date.toDateTimeAtCurrentTime().millis)

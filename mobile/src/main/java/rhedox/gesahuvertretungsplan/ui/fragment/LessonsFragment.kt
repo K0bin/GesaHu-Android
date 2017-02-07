@@ -40,7 +40,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         const val layoutManagerBundleName = "layoutManager"
 
         @JvmStatic
-        fun createInstance(boardId: Long): LessonsFragment {
+        fun newInstance(boardId: Long): LessonsFragment {
             val args = Bundle()
             args.putLong(Extra.boardId, boardId)
             val fragment = LessonsFragment()

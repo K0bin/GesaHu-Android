@@ -14,33 +14,30 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class LessonsAdapter : ListAdapter<Lesson>(true, true) {
+class LessonsAdapter : ListAdapter<Lesson>(hasEmptyView = true, hasTopHeader = true) {
     var lessonsMissed = 0
         get() = field
         set(value) {
             field = value
-            cardVH?.bind(lessonsTotal, lessonsMissedWithSickNote, lessonsMissed)
+            notifyItemChanged(0)
         }
     var lessonsMissedWithSickNote = 0
         get() = field
         set(value) {
             field = value
-            cardVH?.bind(lessonsTotal, lessonsMissedWithSickNote, lessonsMissed)
+            notifyItemChanged(0)
         }
     var lessonsTotal = 0
         get() = field
         set(value) {
             field = value
-            cardVH?.bind(lessonsTotal, lessonsMissedWithSickNote, lessonsMissed)
+            notifyItemChanged(0)
         }
-
-    var cardVH: LessonsCardViewHolder? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == ItemTypeValues.topHeader) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.view_lesson_card, parent, false)
-            cardVH = LessonsCardViewHolder(view)
-            return cardVH!!;
+            return LessonsCardViewHolder(view)
         }
 
         if(viewType == ListAdapter.ItemTypeValues.view) {
@@ -52,8 +49,8 @@ class LessonsAdapter : ListAdapter<Lesson>(true, true) {
     }
 
     override fun bindTopHeader(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == ItemTypeValues.topHeader) {
-            (holder as LessonsCardViewHolder).bind(lessonsTotal, lessonsMissedWithSickNote, lessonsMissed)
+        if (holder is LessonsCardViewHolder) {
+            holder.bind(lessonsTotal, lessonsMissedWithSickNote, lessonsMissed)
         }
     }
 }

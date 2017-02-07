@@ -16,6 +16,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState
+import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
 
@@ -23,7 +24,7 @@ import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
  * Created by robin on 24.01.2017.
  */
 class BoardFragment : Fragment(), BoardContract.View {
-    private var mainActivity: MainActivity? = null
+    private var drawerActivity: DrawerActivity? = null
 
     private object Arguments {
         const val boardId = "boardId"
@@ -32,6 +33,7 @@ class BoardFragment : Fragment(), BoardContract.View {
         const val presenterState = "presenterState"
     }
     companion object {
+        @JvmStatic
         fun newInstance(boardId: Long): BoardFragment {
             val fragment = BoardFragment()
             val arguments = Bundle()
@@ -48,7 +50,7 @@ class BoardFragment : Fragment(), BoardContract.View {
         get() = field
         set(value) {
             field = value
-            mainActivity?.title = value
+            drawerActivity?.supportActionBar?.title = value
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,13 +78,13 @@ class BoardFragment : Fragment(), BoardContract.View {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        mainActivity = context as? MainActivity
+        drawerActivity = context as? DrawerActivity
     }
 
     override fun onDetach() {
         super.onDetach()
 
-        mainActivity = null;
+        drawerActivity = null;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -93,7 +95,13 @@ class BoardFragment : Fragment(), BoardContract.View {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager.adapter = BoardPagerAdapter(boardId, childFragmentManager)
-        mainActivity?.setupTabBarForFragment(viewPager, TabLayout.MODE_FIXED)
+        tabLayout.setupWithViewPager(viewPager)
+        tabLayout.tabMode = TabLayout.MODE_FIXED
+
+        drawerActivity?.setSupportActionBar(toolbar)
+        drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+        drawerActivity?.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        drawerActivity?.syncDrawer()
 
         presenter.attachView(this)
     }
@@ -107,7 +115,7 @@ class BoardFragment : Fragment(), BoardContract.View {
     override fun onStart() {
         super.onStart()
 
-        mainActivity?.title = title
+        drawerActivity?.supportActionBar?.title = title
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

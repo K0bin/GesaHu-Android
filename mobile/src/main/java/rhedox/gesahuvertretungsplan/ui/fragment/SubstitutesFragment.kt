@@ -6,10 +6,12 @@ import android.os.Parcelable
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
 import android.view.*
 import com.github.salomonbrys.kodein.android.appKodein
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
+import org.jetbrains.anko.onClick
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
@@ -18,6 +20,7 @@ import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
 import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
+import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
@@ -26,11 +29,11 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 24.01.2017.
  */
-class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingActionButtonListener, ContextualActionBarListener {
+class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
         private set;
-    private var mainActivity: MainActivity? = null;
+    private var drawerActivity: DrawerActivity? = null;
 
     private object State {
         const val presenterState = "presenterState"
@@ -39,6 +42,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
         const val date = "date"
     }
     companion object {
+        @JvmStatic
         fun newInstance(date: LocalDate? = null): SubstitutesFragment {
             val fragment = SubstitutesFragment();
             val arguments = Bundle()
@@ -64,10 +68,17 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
         picker.show(fragmentManager, "Datepicker")
     }
 
-    override var isFabVisible: Boolean
-        get() = mainActivity?.isFabVisible ?: false
+    override var isFabVisible: Boolean = false
+        get() = field
         set(value) {
-            mainActivity?.isFabVisible = value
+            if(value != field) {
+                if(value) {
+                    fab.show()
+                } else {
+                    fab.hide()
+                }
+                field = value
+            }
         }
 
     override var currentTab: Int
@@ -76,10 +87,11 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
             viewPager?.currentItem = value
         }
 
-    override var isAppBarExpanded: Boolean
-        get() = mainActivity?.isAppBarLayoutExpanded ?: false
+    override var isAppBarExpanded: Boolean = true
+        get() = field
         set(value) {
-            mainActivity?.isAppBarLayoutExpanded = value
+            appbarLayout.setExpanded(value)
+            field = value
         }
 
     override var tabTitles: Array<String> = arrayOf("", "", "", "", "")
@@ -98,10 +110,17 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
                 swipeRefreshLayout.clearAnimation();
         }
 
-    override var isCabVisible: Boolean
-        get() = mainActivity?.isCabVisible ?: false
+    override var isCabVisible: Boolean = false
+        get() = field
         set(value) {
-            mainActivity?.isCabVisible = value
+            if(field != value) {
+                if(value) {
+                    cab.show()
+                } else {
+                    cab.hide()
+                }
+                field = value;
+            }
         }
 
     override var isSwipeRefreshEnabled: Boolean
@@ -134,13 +153,13 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        mainActivity = context as? MainActivity
+        drawerActivity = context as? DrawerActivity
     }
 
     override fun onDetach() {
         super.onDetach()
 
-        mainActivity = null;
+        drawerActivity = null;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -155,7 +174,8 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
             pagerAdapter?.restoreState(savedInstanceState)
         }
         viewPager.adapter = pagerAdapter
-        mainActivity?.setupTabBarForFragment(viewPager, TabLayout.MODE_SCROLLABLE);
+        tabLayout.setupWithViewPager(viewPager)
+        tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         isFabVisible = false
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -172,26 +192,35 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
             }
         })
 
-        mainActivity?.setupCabForFragment(R.menu.menu_cab_main)
+        setupCab()
+
+        fab.onClick {
+            presenter.onFabClicked()
+        }
+
+        drawerActivity?.setSupportActionBar(toolbar)
+        drawerActivity?.supportActionBar?.title = getString(R.string.activity_substitutes)
+        drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+        drawerActivity?.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        drawerActivity?.syncDrawer()
+
         presenter.attachView(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        mainActivity?.title = getString(R.string.activity_substitutes)
-    }
-
-    override fun onFabClicked() { presenter.onFabClicked() }
-
-    override fun onItemClicked(id: Int) {
-        if(id == R.id.action_share) {
-            true
+    fun setupCab() {
+        cab.inflateMenu(R.menu.menu_cab_main)
+        cab.setOnMenuItemClickListener {
+            if(id == R.id.action_share) {
+                true
+            }
+            presenter.onShareButtonClicked()
+            false
         }
-        presenter.onShareButtonClicked()
+        cab.setNavigationOnClickListener {
+            isCabVisible = false
+            presenter.onCabClosed()
+        }
     }
-
-    override fun onCabClosed() { presenter.onCabClosed() }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
@@ -211,6 +240,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
     override fun onDestroyView() {
         super.onDestroyView()
 
+        drawerActivity?.setSupportActionBar(null)
         presenter.detachView()
     }
 
@@ -229,7 +259,8 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, FloatingAction
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {
-        mainActivity?.navigateToSubstitutes(date)
+        //TODO
+        //drawerActivity?.navigateToSubstitutes(date)
     }
 
     override fun share(text: String) {

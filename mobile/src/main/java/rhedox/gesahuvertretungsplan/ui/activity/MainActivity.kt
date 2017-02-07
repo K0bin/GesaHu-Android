@@ -4,6 +4,7 @@ import android.animation.LayoutTransition
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.app.ActivityManager
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -18,9 +19,11 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.*
 import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBar
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.drawable.DrawerArrowDrawable
+import android.support.v7.widget.Toolbar
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -39,15 +42,13 @@ import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
 import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
-import rhedox.gesahuvertretungsplan.ui.fragment.BoardFragment
-import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
-import rhedox.gesahuvertretungsplan.ui.fragment.SubstitutesFragment
+import rhedox.gesahuvertretungsplan.ui.fragment.*
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
 /**
  * Created by robin on 20.10.2016.
  */
-class MainActivity : AppCompatActivity(), NavDrawerContract.View {
+class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity {
     private lateinit var toggle: ActionBarDrawerToggle
         private set
     private lateinit var listener: Listener;
@@ -67,47 +68,6 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
         set(value) {
             headerUsername.text = value
         }
-
-    var isCabVisible: Boolean = false
-        get() = field
-        set(value) {
-            if(field != value) {
-                field = value;
-
-                if(value) {
-                    cab.show()
-                } else {
-                    cab.hide()
-                }
-            }
-        }
-
-    var isFabVisible: Boolean = false
-        get() = field
-        set(value) {
-            if(value != field) {
-                if(value) {
-                    fab.show()
-                } else {
-                    fab.hide()
-                }
-
-                field = value
-            }
-        }
-
-    var isAppBarLayoutExpanded: Boolean = true
-        get() = field
-        set(value) {
-            appbarLayout.setExpanded(value)
-        }
-
-    var title: String
-    get() = supportActionBar?.title?.toString() ?: ""
-    set(value) {
-        supportActionBar?.title = value
-    }
-
 
     override var currentDrawerId: Int = -1
         get() = field
@@ -160,51 +120,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
             true
         }
 
-        fab.onClick {
-            (currentFragment as? FloatingActionButtonListener)?.onFabClicked()
-        }
-
-        setupCab()
-        setupTabBar()
-
         //Show initial fragment
         currentFragment = SubstitutesFragment.newInstance()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment).commit()
-    }
-
-    fun setupCab() {
-        cab.setOnMenuItemClickListener {
-            (currentFragment as? ContextualActionBarListener)?.onItemClicked(it.itemId)
-            false
-        }
-        cab.setNavigationOnClickListener {
-            isCabVisible = false
-            (currentFragment as? ContextualActionBarListener)?.onCabClosed()
-        }
-    }
-
-    fun setupTabBar() {
-        tabLayout.pivotY = 0f
-        tabLayout.visibility = View.VISIBLE
-    }
-
-    fun resetUi() {
-        isFabVisible = false
-        isCabVisible = false
-        cab.menu.clear()
-
-        tabLayout.visibility = View.GONE
-        tabLayout.setupWithViewPager(null)
-    }
-
-    fun setupTabBarForFragment(viewPager: ViewPager, mode: Int) {
-        tabLayout.tabMode = mode
-        tabLayout.visibility = View.VISIBLE
-        tabLayout.setupWithViewPager(viewPager)
-    }
-
-    fun setupCabForFragment(menuId: Int) {
-        cab.inflateMenu(menuId)
     }
 
     override fun onDestroy() {
@@ -242,12 +160,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     private fun setupDrawerLayout() {
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setHomeButtonEnabled(true)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
         toggle = ActionBarDrawerToggle(this, drawer, R.string.drawer_open, R.string.drawer_close)
+        toggle.drawerArrowDrawable.color = Color.WHITE
+        toggle.setHomeAsUpIndicator(null)
+        toggle.isDrawerIndicatorEnabled = true
         drawer.addDrawerListener(toggle)
         listener = Listener()
         listener.callback = {
@@ -267,9 +183,18 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
         }
     }
 
+    override fun syncDrawer() {
+        toggle.syncState()
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         toggle.syncState()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        toggle.onConfigurationChanged(newConfig)
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
@@ -312,16 +237,21 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
         }
 
     override fun navigateToSettings() {
-        resetUi()
-
-        val fragment = PreferenceFragment.newInstance()
+        val fragment = PreferenceContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment)
                 .commit()
     }
 
     override fun navigateToAbout() {
-        AboutLibs.start(this)
+        val fragment = AboutContainerFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.fragment_container, fragment)
+                .commit()
+        this.currentFragment = fragment;
+        title = getString(R.string.action_about)
     }
 
     override fun navigateToIntro() {
@@ -329,12 +259,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToBoard(boardId: Long) {
-        resetUi()
-
-        tabLayout.visibility = View.VISIBLE
         val fragment = BoardFragment.newInstance(boardId)
         supportFragmentManager.beginTransaction()
-                //.setCustomAnimations(R.anim.slide_in, R.anim.slide_out)
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment)
                 .commit()
         this.currentFragment = fragment;
@@ -346,11 +273,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View {
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
-        resetUi()
-
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
-                //.setCustomAnimations(R.anim.slide_in, R.anim.slide_out)
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment)
                 .commit()
         this.currentFragment = fragment;

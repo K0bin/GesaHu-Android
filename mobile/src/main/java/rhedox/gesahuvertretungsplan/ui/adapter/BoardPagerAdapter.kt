@@ -12,8 +12,8 @@ import rhedox.gesahuvertretungsplan.ui.fragment.MarksFragment
 class BoardPagerAdapter(private val boardId: Long, fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
     override fun getItem(position: Int): Fragment {
         when (position) {
-            0 -> return LessonsFragment.createInstance(boardId)
-            1 -> return MarksFragment.createInstance(boardId)
+            0 -> return LessonsFragment.newInstance(boardId)
+            1 -> return MarksFragment.newInstance(boardId)
             else -> return Fragment()
         }
     }
