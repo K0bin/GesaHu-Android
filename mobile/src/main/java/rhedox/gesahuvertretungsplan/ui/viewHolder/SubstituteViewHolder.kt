@@ -76,7 +76,7 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
 
     fun setSelected(selected: Boolean, animate: Boolean) {
         view.isActivated = selected
-        if (animate) {
+        if (animate && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (selected) {
                 backgroundAnimator.start()
                 elevationAnimator?.start()

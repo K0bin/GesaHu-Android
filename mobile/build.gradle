@@ -29,6 +29,7 @@ android {
                     'proguard/proguard-androidannotations.pro',
                     'proguard/proguard-anko.pro',
                     'proguard/proguard-facebook-stetho.pro',
+                    'proguard/proguard-firebase.pro',
                     'proguard/proguard-google-play-services.pro',
                     'proguard/proguard-gson.pro',
                     'proguard/proguard-joda-time.pro',
