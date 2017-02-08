@@ -25,7 +25,24 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg',
+                    'proguard/proguard-androidannotations.pro',
+                    'proguard/proguard-anko.pro',
+                    'proguard/proguard-facebook-stetho.pro',
+                    'proguard/proguard-google-play-services.pro',
+                    'proguard/proguard-gson.pro',
+                    'proguard/proguard-joda-time.pro',
+                    'proguard/proguard-joda-time-android.pro',
+                    'proguard/proguard-jsoup.pro',
+                    'proguard/proguard-kodein.pro',
+                    'proguard/proguard-kotlin.pro',
+                    'proguard/proguard-sqlite.pro',
+                    'proguard/proguard-square-okhttp3.pro',
+                    'proguard/proguard-square-okio.pro',
+                    'proguard/proguard-square-retrofit2.pro',
+                    'proguard/proguard-support-design.pro',
+                    'proguard/proguard-support-v7-appcompat.pro',
+                    'proguard/proguard-support-v7-cardview.pro'
         }
         debug {
             shrinkResources false
