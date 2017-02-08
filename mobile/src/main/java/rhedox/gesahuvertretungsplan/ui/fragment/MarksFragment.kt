@@ -75,7 +75,7 @@ class MarksFragment : Fragment(), MarksContract.View {
         }
         recycler.layoutManager = layoutManager
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        adapter = MarksAdapter();
+        adapter = MarksAdapter(context);
         recycler.adapter = adapter;
 
         presenter.attachView(this)

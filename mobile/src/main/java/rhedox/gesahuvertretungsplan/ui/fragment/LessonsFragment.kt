@@ -82,7 +82,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         }
         recycler.layoutManager = layoutManager
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        adapter = LessonsAdapter();
+        adapter = LessonsAdapter(context);
         recycler.adapter = adapter;
 
         presenter.attachView(this)

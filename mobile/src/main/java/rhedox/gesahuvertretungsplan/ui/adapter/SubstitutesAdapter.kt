@@ -29,14 +29,27 @@ class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, c
 
     @Dimension private val selectedElevation: Float = context.resources.getDimension(R.dimen.touch_raise)
 
+    //EmptyView
+    val config: ErrorView.Config;
+
     init {
-        val typedArray = context.theme.obtainStyledAttributes(intArrayOf(R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor))
+        val typedArray = context.theme.obtainStyledAttributes(intArrayOf(R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.textPrimary, R.attr.textSecondary))
         textColor = typedArray.getColor(2, 0)
         textColorRelevant = typedArray.getColor(3, 0)
         circleColorRelevant = typedArray.getColor(1, 0)
         circleColor = typedArray.getColor(0, 0)
+        val errorTitleColor = typedArray.getColor(4, 0)
+        val errorMessageColor = typedArray.getColor(5, 0)
         typedArray.recycle()
 
+        config = ErrorView.Config.create()
+                .title(context.getString(R.string.no_substitutes))
+                .titleColor(errorTitleColor)
+                .image(R.drawable.no_substitutes)
+                .subtitle(context.getString(R.string.no_substitutes_hint))
+                .subtitleColor(errorMessageColor)
+                .retryVisible(false)
+                .build()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -46,8 +59,12 @@ class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, c
                 return SubstituteViewHolder(view, presenter, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation)
             }
 
-            else -> return ErrorViewHolder(ErrorView(parent.context))
+            else -> return ErrorViewHolder(ErrorView(parent.context));
         }
+    }
+
+    override fun bindEmptyView(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as? ErrorViewHolder)?.bind(config)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

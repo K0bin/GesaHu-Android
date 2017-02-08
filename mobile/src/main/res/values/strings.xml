@@ -95,6 +95,11 @@
     <string name="no_substitutes">Keine Vertretungsstunden</string>
     <string name="no_substitutes_hint">Alles nach Plan</string>
 
+    <string name="no_lessons">Keine Stunden</string>
+    <string name="no_lessons_hint">Eventuell trägt dein Lehrer keine Stunden ein.</string>
+    <string name="no_marks">Keine Noten</string>
+    <string name="no_marks_hint">Eventuell trägt dein Lehrer keine Noten ein.</string>
+
     <string name="positive_button">Festlegen</string>
     <string name="negative_button">Abbrechen</string>
 
