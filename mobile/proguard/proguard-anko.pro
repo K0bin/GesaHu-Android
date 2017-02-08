@@ -1,0 +1,1 @@
+-dontwarn org.jetbrains.anko.internals.AnkoInternals

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="define_kodein"></string>
+	<!-- Author section -->
+	<string name="library_kodein_author">Salomon BRYS</string>
+	<!-- Library section -->
+	<string name="library_kodein_libraryName">Kodein</string>
+	<string name="library_kodein_libraryDescription">Painless Kotlin Dependency Injection</string>
+	<string name="library_kodein_libraryWebsite">https://salomonbrys.github.io/Kodein/</string>
+	<string name="library_kodein_libraryVersion">3.2.0</string>
+	<!-- OpenSource section -->
+	<string name="library_kodein_isOpenSource">true</string>
+	<string name="library_kodein_repositoryLink">https://github.com/SalomonBrys/Kodein</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_kodein_classPath"></string>
+	<!-- License section -->
+    <string name="library_kodein_licenseId">mit</string>
+</resources>

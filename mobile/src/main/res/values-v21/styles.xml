@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="GesahuBase" parent="Theme.AppCompat.DayNight.NoActionBar">
+	<style name="GesahuBase" parent="@style/PreferenceFixTheme.DayNight.NoActionBar">
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 		<item name="colorAccent">@color/colorDefaultAccent</item>
-		<item name="toolbarShadowCompat">2</item>
 
 		<item name="circleImportantColor">?attr/colorAccent</item>
 		<item name="circleImportantTextColor">@android:color/white</item>
@@ -12,42 +11,5 @@
 		<item name="tabIndicatorColor">?attr/colorAccent</item>
 
 		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
-
-		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Fix</item>
-
 	</style>
-
-	<style name="Preference.Category.Fix">
-		<item name="android:layout">@layout/preference_category</item>
-		<!-- The title should not dim if the category is disabled, instead only the preference children should dim. -->
-		<item name="android:shouldDisableView">false</item>
-		<item name="android:selectable">false</item>
-		<item name="android:layout_margin">0dp</item>
-		<item name="android:layout_height">2dp</item>
-	</style>
-
-	<style name="PreferenceThemeOverlay.Fix" parent="@style/PreferenceThemeOverlay.v14.Material">
-		<item name="preferenceCategoryStyle">@style/Preference.Category.Fix</item>
-		<item name="preferenceScreenStyle">@style/Preference.PreferenceScreen.Material</item>
-		<item name="preferenceStyle">@style/Preference.Material</item>
-		<item name="preferenceInformationStyle">@style/Preference.Information.Material</item>
-		<item name="checkBoxPreferenceStyle">@style/Preference.CheckBoxPreference.Material</item>
-		<item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.Material</item>
-		<item name="switchPreferenceStyle">@style/Preference.SwitchPreference.Material</item>
-		<item name="dialogPreferenceStyle">@style/Preference.DialogPreference.Material</item>
-		<item name="editTextPreferenceStyle">@style/Preference.DialogPreference.EditTextPreference.Material</item>
-		<item name="preferenceFragmentListStyle">@style/PreferenceFragmentList.Material</item>
-	</style>
-
-	<!--Preference AppCompat bugfix
-
-	<style name="Preference_TextAppearanceMaterialBody2">
-		<item name="android:textSize">14sp</item>
-		<item name="android:fontFamily">sans-serif-medium</item>
-		<item name="android:textStyle">bold</item>
-		<item name="android:textColor">?android:attr/textColorPrimary</item>
-	</style>-->
-
-
-
 </resources>

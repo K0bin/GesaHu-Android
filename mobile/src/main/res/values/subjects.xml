@@ -2,6 +2,7 @@
 <resources>
 
     <string name="subjects_m">Mathematik</string>
+    <string name="subjects_ma">Mathematik</string>
     <string name="subjects_e">Englisch</string>
     <string name="subjects_d">Deutsch</string>
     <string name="subjects_al">Arbeitslehre</string>

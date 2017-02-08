@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="false"
+    android:id="@+id/coordinator">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appbarLayout"
+        android:transitionName="appbar"
+        android:background="@android:color/transparent"
+        android:animateLayoutChanges="true">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+            <android.support.v7.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/toolbar"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="?attr/toolbarPopupTheme"
+                android:transitionName="toolbar" />
+
+            <rhedox.gesahuvertretungsplan.ui.widget.ContextualActionBar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="?attr/toolbarPopupTheme"
+                app:title="@string/main_cab_title"
+                android:id="@+id/cab"
+                android:visibility="gone">
+            </rhedox.gesahuvertretungsplan.ui.widget.ContextualActionBar>
+        </FrameLayout>
+        <android.support.design.widget.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:id="@+id/tabLayout"
+            app:tabMode="scrollable"
+            app:tabGravity="fill"
+            android:background="?attr/colorPrimary"
+            app:tabContentStart="72dp"
+            app:tabIndicatorColor="@android:color/white"
+            android:transitionName="tabbar"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:maxWidth="400dp"
+        android:id="@+id/swipeRefreshLayout"
+        android:elevation="0dp">
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewPager"/>
+    </rhedox.gesahuvertretungsplan.ui.widget.SwipeRefreshLayoutFix>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_announcement"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|right"
+        app:layout_anchorGravity="bottom|right|end"
+        android:layout_margin="16dp"
+        android:id="@+id/fab"
+        app:layout_behavior="rhedox.gesahuvertretungsplan.ui.behavior.ScrollAwareFabBehavior"
+        android:visibility="gone"
+        />
+</android.support.design.widget.CoordinatorLayout>

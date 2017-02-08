@@ -4,17 +4,8 @@
     tools:context=".MainActivity">
 
     <item android:id="@+id/action_load"
-		  android:icon="@drawable/ic_date"
-		app:srcCompat="@drawable/ic_date"
+        android:icon="@drawable/ic_date"
         android:title="@string/action_date"
         app:showAsAction="always"
         android:orderInCategory="2"/>
-
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/action_about"
-        android:title="@string/action_about"
-        app:showAsAction="never" />
 </menu>

@@ -1,1 +1,1 @@
-include ':mobile', ':appintro'
+include ':mobile'

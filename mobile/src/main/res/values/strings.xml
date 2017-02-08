@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GesaHu VP</string>
-    <string name="app_name_long">GesaHu Vertretungsplan</string>
+    <string name="app_name">GesaHu</string>
+    <string name="app_name_long">GesaHu</string>
     <string name="title_activity_single_day">Einzelner Tag</string>
     <string name="title_activity_about">Über</string>
-	<string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <string name="activity_substitutes">Vertretungsstunden</string>
+    <string name="activity_board">Board</string>
+
+    <string name="provider_substitutes">Vertretungsstunden</string>
+    <string name="provider_boards">Boards</string>
 
     <string name="action_settings">Einstellungen</string>
     <string name="action_date">Datum auswählen</string>
@@ -15,11 +21,41 @@
     <string name="lesson">Vertretungsstunde</string>
     <string name="lessons">Vertretungsstunden</string>
 
+    <string name="drawer_open">Menü anzeigen</string>
+    <string name="drawer_close">Menü verstecken</string>
+    <string name="drawer_substitutes">Vertretungsplan</string>
+    <string name="drawer_boards">Boards</string>
+
+    <string name="login_account_exists">Es ist bereits ein GesaHu Account eingerichtet.</string>
+    <string name="login_account_name">GesaHu</string>
+    <string name="login_explaination">Du musst dich nur einmal anmelden.</string>
+    <string name="login">Anmelden</string>
+    <string name="done">Fertig</string>
+    <string name="login_failed">Anmelden fehlgeschlagen</string>
+    <string name="login_403">Falscher Nutzername oder falsches Passwort!</string>
+    <string name="login_required">Du musst dich anmelden, um alle Features der App zu verwenden.</string>
+    <string name="login_username_hint">Benutzername</string>
+    <string name="login_username_empty">Nutzername darf nicht leer sein</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_password_empty">Password darf nicht leer sein</string>
+
     <string name="substitute">Vertretungsstunde</string>
     <string name="roomchange">Raumänderung</string>
     <string name="dropped">Freistunde</string>
-	<string name="test">Klausur</string>
-	<string name="regular">Regulärer Unterricht</string>
+    <string name="test">Klausur</string>
+    <string name="regular">Regulärer Unterricht</string>
+
+    <string name="lessons_total">Stunden</string>
+    <string name="lessons_missed">Verpasst</string>
+    <string name="lessons_missed_with_sick_note">Entschuldigt</string>
+    <string name="mark">Note</string>
+    <string name="mark_kind_test">Klausur</string>
+    <string name="mark_kind_monthlyOral">mündliche monatliche Kursnote</string>
+    <string name="mark_kind_testOrComplexTask">Klausur/komplexe HA</string>
+    <string name="mark_kind_oral">Mündlich</string>
+    <string name="mark_mark_kind_unknown">Unbekannt</string>
+    <string name="mark_mark_kind_group">Gruppennote</string>
+    <string name="mark_mark_kind_mark">Einzelnote</string>
 
     <string name="notification_summary" formatted="false">%s in der %s. Stunde</string>
     <string name="notification_summary_day_hint">Vertretungsstunden für den ganzen Tag</string>
@@ -29,14 +65,14 @@
     <string name="inbox_style">+%s weitere</string>
 
     <string name="share">Teilen</string>
-	<string name="share_dropped" formatted="false">Wir haben %s %s. %s frei!</string>
-	<string name="share_room_change" formatted="false">Wir haben %s %s. %s in Raum %s.</string>
-	<string name="share_subsitute" formatted="false">Wir haben %s %s. %s bei %s in Raum %s.</string>
-	<string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
-	<string name="share_regular" formatted="false">%s %s %s findet statt.</string>
+    <string name="share_dropped" formatted="false">Wir haben %s %s. %s frei!</string>
+    <string name="share_room_change" formatted="false">Wir haben %s %s. %s in Raum %s.</string>
+    <string name="share_subsitute" formatted="false">Wir haben %s %s. %s bei %s in Raum %s.</string>
+    <string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
+    <string name="share_regular" formatted="false">%s %s %s findet statt.</string>
 
-	<string name="main_cab_title">Teile eine Stunde!</string>
-	<string name="failed">Da hat etwas nicht funktioniert!</string>
+    <string name="main_cab_title">Teile eine Stunde!</string>
+    <string name="failed">Da hat etwas nicht funktioniert!</string>
     <string name="today">heute</string>
     <string name="tomorrow">morgen</string>
     <string name="date_prefix">am</string>
@@ -59,26 +95,33 @@
     <string name="no_substitutes">Keine Vertretungsstunden</string>
     <string name="no_substitutes_hint">Alles nach Plan</string>
 
+    <string name="no_lessons">Keine Stunden</string>
+    <string name="no_lessons_hint">Eventuell trägt dein Lehrer keine Stunden ein.</string>
+    <string name="no_marks">Keine Noten</string>
+    <string name="no_marks_hint">Eventuell trägt dein Lehrer keine Noten ein.</string>
+
     <string name="positive_button">Festlegen</string>
     <string name="negative_button">Abbrechen</string>
 
     <string name="about_text">Zeigt den &lt;b>GesaHu Vertretungsplan&lt;/b> in einem für Smartphones optimierten Layout an.&lt;br>Entwickelt von Robin Kertels&lt;br>mit Feedback von Felix Bastian</string>
 
     <string name="logo_content_description">Icon</string>
-	<string name="title_activity_welcome">Willkommen</string>
+    <string name="title_activity_welcome">Willkommen</string>
 
-	<string name="title_section1">Section 1</string>
-	<string name="title_section2">Section 2</string>
-	<string name="title_section3">Section 3</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 
-	<string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello world!</string>
 
     <string name="feature_design">Mobile-freundliches Design</string>
-	<string name="feature_design_description">GesaHu VP für Android zeigt dir deine Vertretungsstunden in einem für Handys oder Tablets angepasstem Design an.</string>
-	<string name="feature_highlight">Relevante Stunden</string>
-	<string name="feature_highlight_description">Die App kann für dich relevante Vertretungsstunden farblich hervorheben oder alle anderen ausblenden.</string>
-	<string name="feature_notify">Benachrichtigungen</string>
-	<string name="feature_notify_description">Die App kann dich einmal am Tag oder vor jeder Stunde benachrichtigen, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
+    <string name="feature_design_description">GesaHu für Android bietet die wichtigsten Features der GesaHu Webseite in einem für Handys oder Tablets angepasstem Design.</string>
+    <string name="feature_notify">Benachrichtigungen</string>
+    <string name="feature_notify_description">Die App benachrichtigt dich einmal am Tag und vor jeder Stunde, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
+    <string name="feature_calendar">Kalender</string>
+    <string name="feature_calendar_description">Die App trägt Schultermine, Klausuren und Prüfungen automatisch in deinen Kalender ein.</string>
+    <string name="feature_boards">Boards</string>
+    <string name="feature_boards_description">Du kannst mit der GesaHu App deine Boards und Noten einsehen.</string>
 
     <string name="widget_counter_name">Gesahu VP Zähler</string>
     <string name="widget_list_name">Gesahu VP Liste</string>
@@ -100,5 +143,33 @@
 
     <string name="school_class">Schulklasse</string>
     <string name="school_year">Schuljahr</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- calendar names -->
+    <string name="calendar_event_name">Schultermine</string>
+    <string name="calendar_test_name">Klausuren</string>
+    <string name="calendar_exam_name">Prüfungen</string>
+
+    <string name="calendar_test_title" formatted="false">Klausur in %s %s (%s) bei %s</string>
+    <string name="calendar_exam_title" formatted="false">Prüfung in %s %s bei %s</string>
+    <string name="calendar_exam_description" formatted="false">Prüfling: %s\nPrüfer: %s\nVorsitz: %s\nProtokollant: %s\nRaum: %s\nZuschauer erlaubt: %s</string>
+    <string name="calendar_author" formatted="false">Ersteller: %s</string>
+    <string name="calendar_location" formatted="false">Ort: %s</string>
+    <string name="calendar_event_description" formatted="false">Kategorie: %s</string>
+    <string name="bool_true_lower">ja</string>
+    <string name="bool_false_lower">nein</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 
 </resources>

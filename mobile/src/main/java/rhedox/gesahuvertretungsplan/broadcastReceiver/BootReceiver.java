@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 
 import org.joda.time.LocalTime;
@@ -26,29 +27,29 @@ public class BootReceiver extends BroadcastReceiver {
             String mode = prefs.getString(PreferenceFragment.PREF_NOTIFICATION_MODE, null);
             LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
 
-            if(!"none".equals(mode)) {
-                @AlarmReceiver.NotificationFrequency int notificationFrequency;
+            if(!"NONE".equals(mode)) {
+                @SubstitutesAlarmReceiver.NotificationFrequency long notificationFrequency;
                 if("per_lesson".equals(mode))
-                    notificationFrequency = AlarmReceiver.PER_LESSON;
+                    notificationFrequency = SubstitutesAlarmReceiver.PER_LESSON;
                 else if("both".equals(mode))
-                    notificationFrequency = AlarmReceiver.BOTH;
+                    notificationFrequency = SubstitutesAlarmReceiver.BOTH;
                 else
-                    notificationFrequency = AlarmReceiver.DAILY;
+                    notificationFrequency = SubstitutesAlarmReceiver.DAILY;
 
-                AlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
+                SubstitutesAlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
             }
         }
     }
 
     @RequiresPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
-    public static void create(Context context) {
+    public static void create(@NonNull Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
 
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
-    public static void cancel(Context context) {
+    public static void cancel(@NonNull Context context) {
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
 

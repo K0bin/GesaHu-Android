@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="circle">#4C4C4C</color>
-    <color name="circleDark">#B2B2B2</color>
-
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorDefaultAccent">#448aff</color>
 
-    <color name="windowBackgroundDark">#FF303030</color>
-    <color name="windowBackgroundLight">#FFFAFAFA</color>
-
-
-    <color name="cardBackgroundDark">#FF404040</color>
-    <color name="cardBackgroundLight">#FFFeFeFe</color>
-
     <color name="preference_fallback_accent_color">#448aff</color>
+    <color name="widgetBackgroundDark">#FF303030</color>
+    <color name="widgetBackgroundLight">#FFFAFAFA</color>
 
-    <color name="selected_light">#ffBCBCBC</color>
-	<color name="selected_dark">#ff424242</color>
-	<color name="activated_light">#ffEBEBEB</color>
-	<color name="activated_dark">#ff4B4B4B</color>
+    <color name="calendar_event_color">#81C784</color>
+    <color name="calendar_test_color">#FDD835</color>
+    <color name="calendar_exam_color">#B71C1C</color>
 
     <!-- Intro -->
     <color name="intro_slide_1">#ff4CAF50</color>
@@ -28,4 +19,9 @@
     <color name="intro_slide_4">#ff3F51B5</color>
     <color name="intro_slide_5">#ffF44336</color>
     <color name="intro_slide_6">#ff2196F3</color>
+
+    <!-- NumberCircles -->
+    <color name="mark_good">#FF2E7D32</color>
+    <color name="mark_average">#FFEF6C00</color>
+    <color name="mark_bad">#FFC62828</color>
 </resources>

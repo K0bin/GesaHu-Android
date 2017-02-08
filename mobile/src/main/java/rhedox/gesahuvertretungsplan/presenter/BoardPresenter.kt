@@ -1,0 +1,51 @@
+package rhedox.gesahuvertretungsplan.presenter
+
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
+import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.mvp.BoardContract
+import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
+import rhedox.gesahuvertretungsplan.presenter.state.BoardState
+
+/**
+ * Created by robin on 18.01.2017.
+ */
+class BoardPresenter(kodein: Kodein, state: BoardContract.State) : BoardContract.Presenter {
+    private var view: BoardContract.View? = null
+    val boardId = state.boardId;
+    private val repository: BoardsRepository = kodein.instance()
+    private var board: Board? = null
+
+    val drawerId: Int? = NavDrawerContract.DrawerIds.board + boardId.toInt()
+
+    init {
+        repository.boardsCallback = { onBoardsLoaded(it) }
+        repository.loadBoards()
+    }
+
+    fun onBoardsLoaded(boards: List<Board>) {
+        val board = boards.find({ it.id == boardId })
+        if (board != null) {
+            this.board = board;
+            view?.title = board.name;
+        }
+    }
+
+    override fun attachView(view: BoardContract.View) {
+        this.view = view as BoardContract.View;
+        this.view?.title = this.board?.name ?: "";
+    }
+
+    override fun detachView() {
+        this.view = null;
+    }
+
+    override fun destroy() {
+        repository.destroy()
+    }
+
+    override fun saveState(): BoardContract.State {
+        return BoardState(boardId)
+    }
+}

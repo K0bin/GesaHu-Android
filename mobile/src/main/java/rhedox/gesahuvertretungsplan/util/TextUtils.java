@@ -1,15 +1,15 @@
 package rhedox.gesahuvertretungsplan.util;
 
 /**
- * Created by Robin on 23.07.2015.
+ * Created by robin on 07.10.2016.
  */
+
 public final class TextUtils {
-	private TextUtils() {}
+	private TextUtils() {
 
-    public static boolean isEmpty(String string) {
-        //return android.text.TextUtils.isEmpty(string) || android.text.TextUtils.getTrimmedLength(string) == 0;
+	}
 
-        return string == null || string.trim().length() == 0;
-    }
-
+	public static boolean isEmpty(String text){
+		return text == null || text.trim().length() == 0;
+	}
 }
