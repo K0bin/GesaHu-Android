@@ -37,7 +37,7 @@ class MarksAdapter(context: Context) : ListAdapter<Mark>(hasEmptyView = true, ha
         config = ErrorView.Config.create()
                 .title(context.getString(R.string.no_marks))
                 .titleColor(errorTitleColor)
-                .image(R.drawable.no_substitutes)
+                .image(R.drawable.ic_rip)
                 .subtitle(context.getString(R.string.no_marks_hint))
                 .subtitleColor(errorMessageColor)
                 .retryVisible(false)

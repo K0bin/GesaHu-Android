@@ -43,7 +43,7 @@ class LessonsAdapter(context: Context) : ListAdapter<Lesson>(hasEmptyView = true
         config = ErrorView.Config.create()
                 .title(context.getString(R.string.no_lessons))
                 .titleColor(errorTitleColor)
-                .image(R.drawable.no_substitutes)
+                .image(R.drawable.ic_rip)
                 .subtitle(context.getString(R.string.no_lessons_hint))
                 .subtitleColor(errorMessageColor)
                 .retryVisible(false)
