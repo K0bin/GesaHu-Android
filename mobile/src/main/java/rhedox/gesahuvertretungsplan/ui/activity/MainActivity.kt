@@ -43,6 +43,8 @@ import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
 import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
 import rhedox.gesahuvertretungsplan.ui.fragment.*
+import rhedox.gesahuvertretungsplan.util.dateTimeFromUnix
+import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
 /**
@@ -89,6 +91,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         const val currentFragmentTag = "pageFragment"
     }
 
+    object Extra {
+        const val date = "date"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -126,10 +132,12 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
 
         //Show initial fragment
         val fragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
-        if (fragment != null) {
+        val timestamp: Int? = intent?.getIntExtra(Extra.date, 0);
+        val date = localDateFromUnix(timestamp)
+        if (fragment != null && date == null) {
             currentFragment = fragment
         } else {
-            currentFragment = SubstitutesFragment.newInstance()
+            currentFragment = SubstitutesFragment.newInstance(date)
             supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment, currentFragmentTag).commit()
         }
     }

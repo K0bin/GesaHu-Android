@@ -9,6 +9,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.filterRelevant
 
 /**
@@ -70,7 +71,7 @@ class SubstitutesDashClockExtension : DashClockExtension() {
                     .status(Integer.toString(count))
                     .expandedTitle(getString(R.string.app_name))
                     .expandedBody(body)
-                    //.clickIntent(Intent(this, SubstitutesActivity::class.java))
+                    .clickIntent(Intent(this, MainActivity::class.java))
                     )
         } else
             publishUpdate(ExtensionData()

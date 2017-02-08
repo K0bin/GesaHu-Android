@@ -180,9 +180,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         finish();
 
         if(wasLaunchedByApp) {
-            /*val intent = Intent(this, SubstitutesActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)*/
+            startActivity(intent)
         }
     }
 

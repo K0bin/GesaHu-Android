@@ -20,6 +20,7 @@ import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 import rhedox.gesahuvertretungsplan.util.countRelevant
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
@@ -88,10 +89,10 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
                 val builder = NotificationCompat.Builder(applicationContext)
                 //Open app on click on notification
-                /*val launchIntent = Intent(applicationContext, SubstitutesActivity::class.java)
-                launchIntent.putExtra(SubstitutesActivity.Extra.date, date.unixTimeStamp)
+                val launchIntent = Intent(applicationContext, MainActivity::class.java)
+                launchIntent.putExtra(MainActivity.Extra.date, date.unixTimeStamp)
                 val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + titles.size, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                builder.setContentIntent(launchPending)*/
+                builder.setContentIntent(launchPending)
 
                 //Expanded style
                 val bigTextStyle = NotificationCompat.BigTextStyle()
@@ -131,7 +132,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         try {
             val cv = ContentValues()
 
-            cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.SubstitutesActivity")
+            cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity")
 
             cv.put("count", substitutes.countRelevant())
 
@@ -159,12 +160,12 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         val builder = NotificationCompat.Builder(applicationContext)
 
         //Open app on click on notification
-        /*val launchIntent = Intent(applicationContext, SubstitutesActivity::class.java)
+        val launchIntent = Intent(applicationContext, MainActivity::class.java)
         if (date != null) {
-            launchIntent.putExtra(SubstitutesActivity.Extra.date, date.unixTimeStamp)
+            launchIntent.putExtra(MainActivity.Extra.date, date.unixTimeStamp)
         }
         val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + notificationLines.size + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(launchPending)*/
+        builder.setContentIntent(launchPending)
 
         //Normal notification
         builder.setContentText(String.format("%s %s", Integer.toString(notificationLines.size), applicationContext.getString(R.string.lessons)))
