@@ -1,19 +1,19 @@
-## GesaHu-Android
+# GesaHu-Android
 Erlaubt einen einfachen Zugriff auf viele Features der GesaHu Webseite.
 
-# Vertretungsplan
+## Vertretungsplan
 Zeigt den Vertretungsplan in einer übersichtlichen Liste und hebt relevante Stunden hervor.
 
 Optional kann die App täglich zu einer einstellbaren Uhrzeit oder nach jeder Stunde bei Vertretungsstunden benachrichtigen. Dazu wird ein Alarm erstellt, der zur angegebenen Zeit einen Broadcast Receiver ausführt.
 
-# Kalender
+## Kalender
 Schreibt relevante Schultermine wie Klausuren und Prüfungen automatisch in den Gerätekalender.
 Implementiert als SyncAdapter
 
-# Boards
+## Boards
 Zeigt Stunden und Noten eines Kursboards an.
 
-# Code
+## Code
 Die App ist überwiegend in Kotlin geschrieben und auf dem Model-View-Presenter Entwurfsmuster aufgebaut.
 Verwendete Libraries:
 * [OkHttp](http://square.github.io/okhttp/)
@@ -27,5 +27,5 @@ Verwendete Libraries:
 * [ErrorView](https://github.com/xiprox/ErrorView)
 * [AboutLibraries](https://github.com/mikepenz/AboutLibraries)
 
-# Playstore
+## Playstore
 <a href="https://play.google.com/store/apps/details?id=rhedox.gesahuvertretungsplan"><img alt="Play Store badge" src="https://play.google.com/intl/en_us/badges/images/generic/de-play-badge.png" width="185"></img></a>
