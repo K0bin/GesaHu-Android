@@ -13,10 +13,12 @@ import android.provider.CalendarContract
 import android.support.annotation.ColorInt
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import com.google.firebase.crash.FirebaseCrash
 import org.jetbrains.anko.accountManager
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalTime
+import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.Event
@@ -24,6 +26,8 @@ import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Exam
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.PermissionManager
+import java.io.IOException
+import java.net.SocketTimeoutException
 import java.util.*
 
 /**
@@ -101,7 +105,14 @@ class CalendarSyncService : Service() {
             val password = context.accountManager.getPassword(account) ?: "";
 
             val testCall = gesaHu.tests(account.name, start)
-            val testResponse = testCall.execute()
+            var testResponse: Response<List<Test>>? = null
+            try {
+                testResponse = testCall.execute()
+            } catch (e: Exception) {
+                if (e !is IOException && e !is SocketTimeoutException) {
+                    FirebaseCrash.report(e)
+                }
+            }
             if(Thread.interrupted()) {
                 return;
             }
@@ -117,7 +128,14 @@ class CalendarSyncService : Service() {
             }
 
             val eventCall = gesaHu.events(account.name, password, start, end)
-            val eventResponse = eventCall.execute()
+            var eventResponse: Response<List<Event>>? = null
+            try {
+                eventResponse = eventCall.execute()
+            } catch (e: Exception) {
+                if (e !is IOException && e !is SocketTimeoutException) {
+                    FirebaseCrash.report(e)
+                }
+            }
             if(Thread.interrupted()) {
                 return;
             }
@@ -133,7 +151,14 @@ class CalendarSyncService : Service() {
             }
 
             val examCall = gesaHu.exams(account.name, start)
-            val examResponse = examCall.execute()
+            var examResponse: Response<List<Exam>>? = null
+            try {
+                examResponse = examCall.execute()
+            } catch (e: Exception) {
+                if (e !is IOException && e !is SocketTimeoutException) {
+                    FirebaseCrash.report(e)
+                }
+            }
             if(Thread.interrupted()) {
                 return;
             }

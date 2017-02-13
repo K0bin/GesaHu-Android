@@ -7,11 +7,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import com.google.firebase.crash.FirebaseCrash
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
+import retrofit2.Response
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
+import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
@@ -20,6 +24,7 @@ import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.io.IOException
+import java.net.SocketTimeoutException
 
 /**
  * Created by robin on 18.10.2016.
@@ -114,7 +119,14 @@ class SubstitutesSyncService : Service() {
             val call = gesaHu.substitutes(username, date)
 
             try {
-                val response = call.execute();
+                var response: Response<SubstitutesList>? = null
+                try {
+                    response = call.execute()
+                } catch (e: Exception) {
+                    if (e !is IOException && e !is SocketTimeoutException) {
+                        FirebaseCrash.report(e)
+                    }
+                }
                 if (response != null && response.isSuccessful) {
                     val substitutesList = response.body();
                     provider.delete(SubstitutesContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);

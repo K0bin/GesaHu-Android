@@ -39,8 +39,7 @@ class BoardsRepository(context: Context) {
                     //There's a second path segment -> a table other than Boards
                     when (it.lastPathSegment) {
                         MarksContract.path -> loadMarks(it.pathSegments[0].toLong())
-                        LessonsContract.path -> {
-                        }
+                        LessonsContract.path -> loadLessons(it.pathSegments[0].toLong())
                     }
                 } else {
                     //There's no second path segment but an id -> a board got inserted

@@ -9,13 +9,19 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log.d
+import com.google.firebase.crash.FirebaseCrash
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jetbrains.anko.accountManager
+import retrofit2.Response
+import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.api.BoardInfo
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.*
+import java.io.IOException
+import java.net.SocketTimeoutException
 
 /**
  * Created by robin on 30.10.2016.
@@ -64,7 +70,17 @@ class BoardsSyncService : Service() {
 
             val password = context.accountManager.getPassword(account) ?: "";
             val call = gesahu.boards(account.name, password)
-            val response = call.execute()
+            var response: Response<List<BoardInfo>>? = null
+            try {
+                response = call.execute()
+            } catch (e: Exception) {
+                if (e !is IOException && e !is SocketTimeoutException) {
+                    FirebaseCrash.report(e)
+                }
+            }
+            if(Thread.interrupted()) {
+                return;
+            }
             if(response != null && response.isSuccessful) {
                 //Clear tables
                 provider.delete(BoardsContract.uri, null, null);
