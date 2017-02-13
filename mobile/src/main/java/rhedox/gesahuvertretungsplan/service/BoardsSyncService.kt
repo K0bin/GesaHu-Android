@@ -4,16 +4,14 @@ import android.accounts.Account
 import android.app.Service
 import android.content.*
 import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.util.Log.d
 import com.google.firebase.crash.FirebaseCrash
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jetbrains.anko.accountManager
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.BoardInfo
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
@@ -74,7 +72,7 @@ class BoardsSyncService : Service() {
             try {
                 response = call.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException) {
+                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 }
             }

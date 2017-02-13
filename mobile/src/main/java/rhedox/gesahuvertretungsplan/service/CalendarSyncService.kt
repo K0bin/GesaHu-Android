@@ -19,6 +19,7 @@ import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalTime
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.Event
@@ -109,7 +110,7 @@ class CalendarSyncService : Service() {
             try {
                 testResponse = testCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException) {
+                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 }
             }
@@ -132,7 +133,7 @@ class CalendarSyncService : Service() {
             try {
                 eventResponse = eventCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException) {
+                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 }
             }
@@ -155,7 +156,7 @@ class CalendarSyncService : Service() {
             try {
                 examResponse = examCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException) {
+                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 }
             }

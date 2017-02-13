@@ -12,6 +12,7 @@ import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
@@ -123,7 +124,7 @@ class SubstitutesSyncService : Service() {
                 try {
                     response = call.execute()
                 } catch (e: Exception) {
-                    if (e !is IOException && e !is SocketTimeoutException) {
+                    if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                         FirebaseCrash.report(e)
                     }
                 }
