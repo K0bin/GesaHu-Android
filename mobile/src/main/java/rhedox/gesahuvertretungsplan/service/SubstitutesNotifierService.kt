@@ -18,7 +18,7 @@ import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
@@ -41,7 +41,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     private var date: LocalDate? = null;
     private var intent: Intent? = null;
 
-    private lateinit var repository: SubstitutesRepositoryOld;
+    private lateinit var repository: SubstitutesRepository;
 
     private lateinit var formatter: SubstituteFormatter;
 
@@ -50,7 +50,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
         //Color is used for the notifications
         color = ContextCompat.getColor(applicationContext, R.color.colorDefaultAccent)
-        repository = SubstitutesRepositoryOld(this)
+        repository = SubstitutesRepository(this)
         repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
 
         formatter = SubstituteFormatter(this)

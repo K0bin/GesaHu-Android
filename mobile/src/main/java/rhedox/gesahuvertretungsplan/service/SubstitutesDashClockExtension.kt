@@ -8,7 +8,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepositoryOld
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.filterRelevant
 
@@ -16,13 +16,13 @@ import rhedox.gesahuvertretungsplan.util.filterRelevant
  * Created by robin on 11.12.2016.
  */
 class SubstitutesDashClockExtension : DashClockExtension() {
-    lateinit var repo: SubstitutesRepositoryOld;
+    lateinit var repo: SubstitutesRepository;
     var date = LocalDate()
 
     override fun onCreate() {
         super.onCreate()
 
-        repo = SubstitutesRepositoryOld(applicationContext)
+        repo = SubstitutesRepository(applicationContext)
         repo.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
     }
 

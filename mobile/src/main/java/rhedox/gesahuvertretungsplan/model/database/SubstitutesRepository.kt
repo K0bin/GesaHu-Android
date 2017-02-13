@@ -48,7 +48,7 @@ class SubstitutesRepository(context: Context) {
 
     init {
         observer = Observer {
-            if(it.pathSegments.size > 1 && it.pathSegments[1] == SubstitutesContract.datePath && it.pathSegments[1] != AnnouncementsContract.datePath) {
+            if(it.pathSegments.size > 1 && (it.pathSegments[1] == SubstitutesContract.datePath || it.pathSegments[1] == AnnouncementsContract.datePath)) {
                 if(it.pathSegments[0] == SubstitutesContract.path)
                     loadSubstitutesForDay(localDateFromUnix(it.lastPathSegment.toInt()));
                 else if(it.pathSegments[0]== AnnouncementsContract.path)
