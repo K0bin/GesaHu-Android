@@ -9,7 +9,7 @@ import org.joda.time.LocalDate
  */
 data class Mark(val date: LocalDate,
                 val description: String,
-                val mark: Int?,
+                val mark: String?,
                 @Kind val kind: String,
                 val average: Float?,
                 @MarkKind val markKind: Long,

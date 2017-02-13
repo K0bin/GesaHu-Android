@@ -9,7 +9,7 @@ import org.joda.time.LocalDate
  * Created by robin on 14.01.2017.
  */
 data class Board(val name: String,
-                 val mark: Int?,
+                 val mark: String?,
                  val markRemark: String,
                  val missedLessons: Int,
                  val missedLessonsWithSickNotes: Int,

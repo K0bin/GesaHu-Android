@@ -41,7 +41,7 @@ object MarksContract {
                 ${Table.columnBoardId} INTEGER,
                 ${Table.columnDescription} TEXT,
                 ${Table.columnKind} TEXT,
-                ${Table.columnMark} INTEGER,
+                ${Table.columnMark} TEXT,
                 ${Table.columnAverage} REAL,
                 ${Table.columnMarkKind} INTEGER,
                 ${Table.columnLogo} TEXT,
@@ -53,6 +53,15 @@ object MarksContract {
     }
 
     fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if (newVersion >= 6 && oldVersion < 6) {
+            db.execSQL("ALTER TABLE ${Table.name} RENAME TO ${Table.name}_old")
+            onCreate(db)
+            db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnBoardId}, ${Table.columnDate}, ${Table.columnDescription}, ${Table.columnKind}, ${Table.columnMark}, ${Table.columnAverage}, ${Table.columnMarkKind}, ${Table.columnLogo}, ${Table.columnWeighting}) " +
+                    "SELECT ${Table.columnId}, ${Table.columnBoardId}, ${Table.columnDate}, ${Table.columnDescription}, ${Table.columnKind}, ${Table.columnMark}, ${Table.columnAverage}, ${Table.columnMarkKind}, ${Table.columnLogo}, ${Table.columnWeighting} " +
+                    "FROM ${Table.name}_old")
+
+            db.execSQL("DROP TABLE ${Table.name}_old")
+        }
     }
 
     fun clear(db: SQLiteDatabase) {

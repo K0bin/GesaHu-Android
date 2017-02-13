@@ -34,7 +34,7 @@ object BoardsContract {
         val sql = """CREATE TABLE ${Table.name}
             (
                 ${Table.columnName} TEXT UNIQUE,
-                ${Table.columnMark} INTEGER,
+                ${Table.columnMark} TEXT,
                 ${Table.columnMarkRemark} TEXT,
                 ${Table.columnLessonsTotal} INTEGER,
                 ${Table.columnMissedLessons} INTEGER,
@@ -50,6 +50,16 @@ object BoardsContract {
             onCreate(db)
             db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnName}) " +
                     "SELECT ${Table.columnId}, ${Table.columnName} " +
+                    "FROM ${Table.name}_old")
+
+            db.execSQL("DROP TABLE ${Table.name}_old")
+        }
+
+        if (newVersion >= 6 && oldVersion < 6) {
+            db.execSQL("ALTER TABLE ${Table.name} RENAME TO ${Table.name}_old")
+            onCreate(db)
+            db.execSQL("INSERT INTO ${Table.name} (${Table.columnId}, ${Table.columnName}, ${Table.columnMark}, ${Table.columnMarkRemark}, ${Table.columnLessonsTotal}, ${Table.columnMissedLessons}, ${Table.columnMissedLessonsWithSickNotes}) " +
+                    "SELECT ${Table.columnId}, ${Table.columnName}, ${Table.columnMark}, ${Table.columnMarkRemark}, ${Table.columnLessonsTotal}, ${Table.columnMissedLessons}, ${Table.columnMissedLessonsWithSickNotes} " +
                     "FROM ${Table.name}_old")
 
             db.execSQL("DROP TABLE ${Table.name}_old")

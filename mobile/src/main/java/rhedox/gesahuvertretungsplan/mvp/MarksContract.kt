@@ -21,6 +21,6 @@ interface MarksContract {
 
     interface View {
         fun showList(list: List<Mark>)
-        var mark: Int
+        var mark: String
     }
 }

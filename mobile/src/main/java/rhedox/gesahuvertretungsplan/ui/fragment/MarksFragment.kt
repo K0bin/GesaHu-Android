@@ -48,7 +48,7 @@ class MarksFragment : Fragment(), MarksContract.View {
         }
     }
 
-    override var mark: Int
+    override var mark: String
         get() = adapter.mark
         set(value) { adapter.mark = value }
 

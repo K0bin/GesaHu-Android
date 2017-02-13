@@ -15,16 +15,12 @@ import tr.xip.errorview.ErrorView
  * Created by robin on 19.01.2017.
  */
 class MarksAdapter(context: Context) : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = true) {
-    var mark = 0
+    var mark = ""
         get() = field
         set(value) {
             field = value
             notifyItemChanged(0)
         }
-
-    private var colorGood = 0;
-    private var colorAverage = 0;
-    private var colorBad = 0;
 
     private val config: ErrorView.Config;
 
@@ -56,14 +52,6 @@ class MarksAdapter(context: Context) : ListAdapter<Mark>(hasEmptyView = true, ha
         } else {
             return ErrorViewHolder(ErrorView(parent.context))
         }
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-
-        colorBad = ContextCompat.getColor(recyclerView.context, R.color.mark_bad)
-        colorAverage = ContextCompat.getColor(recyclerView.context, R.color.mark_average)
-        colorGood = ContextCompat.getColor(recyclerView.context, R.color.mark_good)
     }
 
     override fun bindTopHeader(holder: RecyclerView.ViewHolder, position: Int) {

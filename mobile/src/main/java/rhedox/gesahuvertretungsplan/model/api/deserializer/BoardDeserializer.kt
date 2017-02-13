@@ -27,7 +27,7 @@ class BoardDeserializer: JsonDeserializer<BoardInfo> {
         val lessons = context.deserialize<Array<Lesson>>(jsonObject.get("Stunden"), Array<Lesson>::class.java).toList()
         val name = jsonObject.get("Board").asString
         val markStr = jsonObject.get("Endnote").asString
-        val mark = if (markStr.isNotBlank() && markStr != "-") markStr.toInt() else null
+        val mark = if (markStr.isNotBlank() && markStr != "-") markStr else null
         val markRemark = jsonObject.get("Endnote_Bemerkung").asString
         val missedLessons = jsonObject.get("Fehlstunden_gesamt").asInt
         val missedLessonsWithSickNotes = jsonObject.get("Fehlstunden_entschuldigt").asInt

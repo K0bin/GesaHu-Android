@@ -15,5 +15,5 @@ class StubMarksView : MarksContract.View {
     override fun showList(list: List<Mark>) {
         this.list = list;
     }
-    override var mark: Int = 0
+    override var mark: String = ""
 }

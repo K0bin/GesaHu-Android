@@ -48,7 +48,7 @@ object MarksAdapter {
 
         val date = localDateFromUnix(cursor.getInt(cursor.getColumnIndex(MarksContract.Table.columnDate)))
         val description = cursor.getString(cursor.getColumnIndex(MarksContract.Table.columnDescription))
-        val mark = cursor.getInt(cursor.getColumnIndex(MarksContract.Table.columnMark))
+        val mark = cursor.getString(cursor.getColumnIndex(MarksContract.Table.columnMark))
         val kind = cursor.getString(cursor.getColumnIndex(MarksContract.Table.columnKind))
         val average = cursor.getFloat(cursor.getColumnIndex(MarksContract.Table.columnAverage))
         val markKind = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnMarkKind))

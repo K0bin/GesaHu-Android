@@ -46,10 +46,10 @@ class NavDrawerPresenterTest {
         val presenter = NavDrawerPresenter(kodein)
         var view = StubNavDrawerView()
         presenter.attachView(view)
-        presenter.onBoardsLoaded(listOf(Board("Englisch", 15, "irgendwas", 2, 2, 28)))
-        assert(view.boards[0].name == "Englisch" && view.boards[0].mark == 15)
+        presenter.onBoardsLoaded(listOf(Board("Englisch", "15", "irgendwas", 2, 2, 28)))
+        assert(view.boards[0].name == "Englisch" && view.boards[0].mark == "15")
         view = simulateOrientationChange(presenter)
-        assert(view.boards[0].name == "Englisch" && view.boards[0].mark == 15)
+        assert(view.boards[0].name == "Englisch" && view.boards[0].mark == "15")
         presenter.detachView()
     }
 
@@ -84,7 +84,7 @@ class NavDrawerPresenterTest {
     fun testBoard() {
         val presenter = NavDrawerPresenter(kodein)
         val view = StubNavDrawerView()
-        presenter.onBoardsLoaded(listOf(Board("Englisch", 15, "irgendwas", 2, 2, 28, 1)))
+        presenter.onBoardsLoaded(listOf(Board("Englisch", "15", "irgendwas", 2, 2, 28, 1)))
         presenter.attachView(view)
         presenter.onNavigationDrawerItemClicked(14)
         assert(view.currentView == StubNavDrawerView.ViewValues.board)

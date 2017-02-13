@@ -13,7 +13,7 @@ class SqLiteHelper(context: Context) : SQLiteOpenHelper(context, name, null, ver
 
     companion object {
         const val name = "gesahui.db"
-        const val version = 5
+        const val version = 6
     }
 
     override fun onCreate(db: SQLiteDatabase) {

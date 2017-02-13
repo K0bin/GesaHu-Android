@@ -17,7 +17,7 @@ class MarkDeserializer: JsonDeserializer<Mark> {
         val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
         val description = jsonObject.get("Bezeichnung").asString
         val markStr = jsonObject.get("Note").asString
-        val mark = if (markStr.isNotBlank() && markStr != "-") markStr.toInt() else null;
+        val mark = if (markStr.isNotBlank() && markStr != "-") markStr else null;
         val kind = jsonObject.get("Art").asString
         val markKindStr = jsonObject.get("Notenart").asString
         @Mark.MarkKind val markKind = when (markKindStr) {

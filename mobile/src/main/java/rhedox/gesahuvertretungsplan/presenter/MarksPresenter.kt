@@ -33,7 +33,7 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
     }
 
     fun onBoardLoaded(board: Board) {
-        view?.mark = board.mark ?: 0
+        view?.mark = board.mark ?: ""
         this.board = board;
     }
 
@@ -45,7 +45,7 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
     override fun attachView(view: MarksContract.View) {
         this.view = view;
 
-        view.mark = board?.mark ?: 0
+        view.mark = board?.mark ?: ""
         view.showList(marks)
     }
 

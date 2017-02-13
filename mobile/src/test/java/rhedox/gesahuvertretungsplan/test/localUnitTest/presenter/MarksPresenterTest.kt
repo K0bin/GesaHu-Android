@@ -51,10 +51,10 @@ class MarksPresenterTest {
         val presenter = MarksPresenter(kodein, MarksState(0))
         var view = StubMarksView()
         presenter.attachView(view)
-        presenter.onBoardLoaded(Board("", 15, "", 15, 2, 99))
-        assert(view.mark == 15)
+        presenter.onBoardLoaded(Board("", "15", "", 15, 2, 99))
+        assert(view.mark == "15")
         view = simulateOrientationChange(presenter)
-        assert(view.mark == 15)
+        assert(view.mark == "15")
     }
 
     @Test
@@ -63,22 +63,22 @@ class MarksPresenterTest {
         var view = StubMarksView()
         presenter.attachView(view)
         presenter.onMarksLoaded(listOf(
-                Mark(LocalDate(),"mark1", 12, Mark.KindValues.test, null, Mark.MarkKindValues.groupMark, "", 0.1f),
-                Mark(LocalDate(),"mark2", 13, Mark.KindValues.testOrComplexTask, null, Mark.MarkKindValues.mark, "", 0.9f)
+                Mark(LocalDate(),"mark1", "12", Mark.KindValues.test, null, Mark.MarkKindValues.groupMark, "", 0.1f),
+                Mark(LocalDate(),"mark2", "13", Mark.KindValues.testOrComplexTask, null, Mark.MarkKindValues.mark, "", 0.9f)
         ))
-        assert(view.list[0].mark == 12)
+        assert(view.list[0].mark == "12")
         assert(view.list[0].description == "mark1")
         assert(view.list[0].kind == Mark.KindValues.test)
         assert(view.list[0].markKind == Mark.MarkKindValues.groupMark)
-        assert(view.list[1].mark == 13)
+        assert(view.list[1].mark == "13")
         assert(view.list[1].description == "mark2")
         assert(view.list[1].markKind == Mark.MarkKindValues.mark)
         view = simulateOrientationChange(presenter)
-        assert(view.list[0].mark == 12)
+        assert(view.list[0].mark == "12")
         assert(view.list[0].description == "mark1")
         assert(view.list[0].kind == Mark.KindValues.test)
         assert(view.list[0].markKind == Mark.MarkKindValues.groupMark)
-        assert(view.list[1].mark == 13)
+        assert(view.list[1].mark == "13")
         assert(view.list[1].description == "mark2")
         assert(view.list[1].markKind == Mark.MarkKindValues.mark)
     }

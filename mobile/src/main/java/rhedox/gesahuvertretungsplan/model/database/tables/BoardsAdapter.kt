@@ -46,7 +46,7 @@ object BoardsAdapter {
             return null
 
         val name = boardCursor.getString(boardCursor.getColumnIndex(BoardsContract.Table.columnName))
-        val mark = boardCursor.getInt(boardCursor.getColumnIndex(BoardsContract.Table.columnMark))
+        val mark = boardCursor.getString(boardCursor.getColumnIndex(BoardsContract.Table.columnMark))
         val markRemark = boardCursor.getString(boardCursor.getColumnIndex(BoardsContract.Table.columnMarkRemark))
         val missedLessons = boardCursor.getInt(boardCursor.getColumnIndex(BoardsContract.Table.columnMissedLessons))
         val missedLessonsWithSickNotes = boardCursor.getInt(boardCursor.getColumnIndex(BoardsContract.Table.columnMissedLessonsWithSickNotes))

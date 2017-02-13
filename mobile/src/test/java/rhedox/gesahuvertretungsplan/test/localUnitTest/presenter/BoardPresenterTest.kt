@@ -46,8 +46,8 @@ class BoardPresenterTest {
         var view = StubBoardView()
         presenter.attachView(view)
         presenter.onBoardsLoaded(listOf(
-                Board("Mathe LK", 15, "", 15, 2, 99, 0L),
-                Board("Deutsch LK", 13, "", 78, 55, 66, 1L)
+                Board("Mathe LK", "15", "", 15, 2, 99, 0L),
+                Board("Deutsch LK", "13", "", 78, 55, 66, 1L)
         ))
         assert(view.title == "Mathe LK")
         view = simulateOrientationChange(presenter)
