@@ -24,11 +24,13 @@ class AboutContainerFragment : Fragment() {
         fun newInstance(): AboutContainerFragment {
             return AboutContainerFragment()
         }
+
+        const val fragmentTag = "aboutFragment"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_preference_container, container, false)
-        childFragmentManager.beginTransaction().replace(R.id.child_fragment_container, createFragment(context)).commit()
+        val view = inflater.inflate(R.layout.fragment_about_container, container, false)
+        childFragmentManager.beginTransaction().replace(R.id.about_fragment_container, createFragment(context), fragmentTag).commit()
         return view;
     }
 

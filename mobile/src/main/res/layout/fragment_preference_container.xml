@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/child_fragment_container"
+        android:id="@+id/preference_fragment_container"
         android:name="rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment"/>
 
 </LinearLayout>

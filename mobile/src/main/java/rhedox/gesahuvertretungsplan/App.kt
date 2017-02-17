@@ -57,6 +57,10 @@ class App : Application(), KodeinAware {
     override fun onCreate() {
         super.onCreate()
 
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+
         JodaTimeAndroid.init(this)
 
         //Debug
