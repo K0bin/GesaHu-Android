@@ -1,7 +1,9 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.preference.PreferenceManager
@@ -11,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
+import com.mikepenz.aboutlibraries.LibsConfiguration
+import com.mikepenz.aboutlibraries.entity.Library
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import kotlinx.android.synthetic.main.fragment_preference_container.toolbar;
@@ -69,6 +73,29 @@ class AboutContainerFragment : Fragment() {
                 .withAboutSpecial2(context.getString(R.string.special2))
                 .withAboutSpecial2Description(context.getString(R.string.special2_description))
                 .withAboutSpecial1(context.getString(R.string.special1))
+                .withAboutSpecial3(context.getString(R.string.special3))
+                .withListener(object: LibsConfiguration.LibsListener {
+                    override fun onExtraClicked(v: View?, specialButton: Libs.SpecialButton?): Boolean {
+                        if (specialButton == Libs.SpecialButton.SPECIAL1) {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://gesahui.de")))
+                            return true
+                        } else if (specialButton == Libs.SpecialButton.SPECIAL3) {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/K0bin/GesaHu-Android/wiki/Privacy-policy")))
+                            return true
+                        }
+                        return false
+                    }
+
+                    override fun onIconClicked(v: View?) {}
+                    override fun onLibraryAuthorClicked(v: View?, library: Library?): Boolean { return false }
+                    override fun onIconLongClicked(v: View?): Boolean { return false }
+                    override fun onLibraryBottomLongClicked(v: View?, library: Library?): Boolean { return false }
+                    override fun onLibraryBottomClicked(v: View?, library: Library?): Boolean { return false }
+                    override fun onLibraryContentClicked(v: View?, library: Library?): Boolean { return false }
+                    override fun onLibraryAuthorLongClicked(v: View?, library: Library?): Boolean { return false }
+                    override fun onLibraryContentLongClicked(v: View?, library: Library?): Boolean { return false }
+
+                })
                 .supportFragment()
     }
 }

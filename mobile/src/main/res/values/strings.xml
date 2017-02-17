@@ -136,10 +136,7 @@
     <!-- <string name="special2_description">Danke an Kenneth Wolfram für die Idee zu den Benachrichtigungen&lt;br>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>-->
     <string name="special2_description">Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>
 
-    <string name="special3">Gönnen!</string>
-    <string name="special3_tap">Du hast es dir %d Mal gegönnt.</string>
-    <string name="special_mode_activated">Gönnermodus aktiviert!</string>
-    <string name="special_mode_deactivated">Gönnermodus deaktiviert!</string>
+    <string name="special3">Datenschutz</string>
 
     <string name="school_class">Schulklasse</string>
     <string name="school_year">Schuljahr</string>
