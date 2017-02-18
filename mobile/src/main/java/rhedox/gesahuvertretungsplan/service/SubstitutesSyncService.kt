@@ -72,6 +72,8 @@ class SubstitutesSyncService : Service() {
         }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
+            //android.os.Debug.waitForDebugger();
+
             if(Thread.interrupted()) {
                 return;
             }

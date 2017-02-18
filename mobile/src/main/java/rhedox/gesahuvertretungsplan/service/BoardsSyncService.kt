@@ -103,7 +103,7 @@ class BoardsSyncService : Service() {
                 return;
             }
             val okHttp = OkHttpClient();
-            val hasAvatar = loadImage(okHttp, "http://gesahui.de/home/schoolboard/userbilder/${account.name.toUpperCase()}.jpg")
+            val hasAvatar = loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder/${account.name.toUpperCase()}.jpg")
 
             if(!hasAvatar && !Thread.interrupted()) {
                 val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpicture),  null, null);
@@ -113,7 +113,7 @@ class BoardsSyncService : Service() {
                         return;
                 }
                 if(future.result) {
-                    loadImage(okHttp, "http://gesahui.de/home/schoolboard/userbilder_original/${account.name.toUpperCase()}.jpg")
+                    loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder_original/${account.name.toUpperCase()}.jpg")
                 }
             }
         }
