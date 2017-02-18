@@ -249,7 +249,7 @@ class CalendarSyncService : Service() {
             } else {
                 values.put(CalendarContract.Events.DTEND, event.begin.millis)
             }
-            values.put(CalendarContract.Events.ALL_DAY, event.isWholeDay)
+            values.put(CalendarContract.Events.ALL_DAY, if (event.isWholeDay) 1 else 0)
 
             values.put(CalendarContract.Events.TITLE, event.description)
             var description = context.getString(R.string.calendar_event_description, event.category);
