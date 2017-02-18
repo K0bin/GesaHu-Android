@@ -135,6 +135,7 @@ class BoardsSyncService : Service() {
                     return true;
                 }
             }
+            avatarResponse?.close()
             return false;
         }
 
