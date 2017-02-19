@@ -94,6 +94,7 @@ class GesaHuAccountService : Service() {
             val intent = Intent(context, AuthActivity::class.java)
             intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response)
             intent.putExtra(AuthActivity.argIsNewAccount, true)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             bundle.putParcelable(AccountManager.KEY_INTENT, intent)
             return bundle;
         }

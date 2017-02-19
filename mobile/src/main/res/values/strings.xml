@@ -28,7 +28,7 @@
 
     <string name="login_account_exists">Es ist bereits ein GesaHu Account eingerichtet.</string>
     <string name="login_account_name">GesaHu</string>
-    <string name="login_explaination">Du musst dich nur einmal anmelden.</string>
+    <string name="login_explaination">Du musst dich nur einmal anmelden.\n\nDeine Anmeldedaten werden nur für die GesaHu Webseite benutzt und sonst nicht übertragen.</string>
     <string name="login">Anmelden</string>
     <string name="done">Fertig</string>
     <string name="login_failed">Anmelden fehlgeschlagen</string>
@@ -119,7 +119,7 @@
     <string name="feature_notify">Benachrichtigungen</string>
     <string name="feature_notify_description">Die App benachrichtigt dich einmal am Tag und vor jeder Stunde, wenn du Vertretungsstunden hast. Dadurch bist du bei Freistunden immer informiert!</string>
     <string name="feature_calendar">Kalender</string>
-    <string name="feature_calendar_description">Die App trägt Schultermine, Klausuren und Prüfungen automatisch in deinen Kalender ein.</string>
+    <string name="feature_calendar_description">Die App trägt Schultermine, Klausuren und Prüfungen automatisch in deinen Kalender ein.\n\nDein Kalender wird nicht ausgelesen oder übertragen.</string>
     <string name="feature_boards">Boards</string>
     <string name="feature_boards_description">Du kannst mit der GesaHu App deine Boards und Noten einsehen.</string>
 
