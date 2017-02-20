@@ -1,17 +1,22 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_lessons.*
 import kotlinx.android.synthetic.main.fragment_substitutes.*
+import org.jetbrains.anko.displayMetrics
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
@@ -23,7 +28,7 @@ import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
 /**
  * Created by robin on 24.01.2017.
  */
-class BoardFragment : Fragment(), BoardContract.View {
+class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     private object Arguments {
         const val boardId = "boardId"
     }
@@ -43,12 +48,26 @@ class BoardFragment : Fragment(), BoardContract.View {
 
     private lateinit var presenter: BoardContract.Presenter;
     private var boardId: Long = 0L;
+    private var elevationAnimator: ObjectAnimator? = null
 
     override var title: String = ""
         get() = field
         set(value) {
             field = value
             (activity as? DrawerActivity)?.supportActionBar?.title = value
+        }
+
+    override var hasAppBarElevation: Boolean = false
+        get() = field
+        set(value) {
+            if (value != field) {
+                if (value) {
+                    elevationAnimator?.start()
+                } else {
+                    elevationAnimator?.reverse()
+                }
+            }
+            field = value;
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +98,13 @@ class BoardFragment : Fragment(), BoardContract.View {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val elevation = context.displayMetrics.density * 4f;
+            elevationAnimator = ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
+        } else {
+            elevationAnimator = null;
+        }
 
         viewPager.adapter = BoardPagerAdapter(boardId, childFragmentManager)
         tabLayout.setupWithViewPager(viewPager)

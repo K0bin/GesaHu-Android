@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
+import kotlinx.android.synthetic.main.fragment_lessons.*
+import org.jetbrains.anko.displayMetrics
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
@@ -84,6 +86,15 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         adapter = LessonsAdapter(context);
         recycler.adapter = adapter;
+
+        val cardHeight = context.resources.getDimension(R.dimen.topCardHeight);
+        recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalScroll = recycler.computeVerticalScrollOffset();
+                (parentFragment as? AppBarFragment)?.hasAppBarElevation = totalScroll >= cardHeight
+            }
+        })
 
         presenter.attachView(this)
 

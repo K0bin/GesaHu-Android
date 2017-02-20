@@ -22,4 +22,6 @@
     <dimen name="list_fab_bottom">72dp</dimen>
 
     <dimen name="errorView_margin_top">32dp</dimen>
+
+    <dimen name="topCardHeight">45dp</dimen>
 </resources>

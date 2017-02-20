@@ -78,6 +78,15 @@ class MarksFragment : Fragment(), MarksContract.View {
         adapter = MarksAdapter(context);
         recycler.adapter = adapter;
 
+        val cardHeight = context.resources.getDimension(R.dimen.topCardHeight);
+        recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalScroll = recycler.computeVerticalScrollOffset();
+                (parentFragment as? AppBarFragment)?.hasAppBarElevation = totalScroll >= cardHeight
+            }
+        })
+
         presenter.attachView(this)
 
         return view
