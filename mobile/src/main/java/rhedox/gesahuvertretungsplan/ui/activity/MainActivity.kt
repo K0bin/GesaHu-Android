@@ -229,8 +229,8 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START)
-
-        super.onBackPressed()
+        else
+            super.onBackPressed()
     }
 
     override fun showBoards(boards: List<Board>) {

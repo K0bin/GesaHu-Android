@@ -112,6 +112,8 @@ class CalendarSyncService : Service() {
             } catch (e: Exception) {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
+                } else {
+                    Log.e("CalendarSync", e.message)
                 }
             }
             if(Thread.interrupted()) {
@@ -135,6 +137,8 @@ class CalendarSyncService : Service() {
             } catch (e: Exception) {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
+                } else {
+                    Log.e("CalendarSync", e.message)
                 }
             }
             if(Thread.interrupted()) {
@@ -158,6 +162,8 @@ class CalendarSyncService : Service() {
             } catch (e: Exception) {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
+                } else {
+                    Log.e("CalendarSync", e.message)
                 }
             }
             if(Thread.interrupted()) {

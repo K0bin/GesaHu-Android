@@ -121,35 +121,33 @@ class SubstitutesSyncService : Service() {
         fun loadSubstitutesForDay(provider: ContentProviderClient, date: LocalDate, username: String): Boolean {
             val call = gesaHu.substitutes(username, date)
 
+            var response: Response<SubstitutesList>? = null
             try {
-                var response: Response<SubstitutesList>? = null
-                try {
-                    response = call.execute()
-                } catch (e: Exception) {
-                    if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
-                        FirebaseCrash.report(e)
-                    }
+                response = call.execute()
+            } catch (e: Exception) {
+                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
+                    FirebaseCrash.report(e)
+                } else {
+                    Log.e("SubstitutesSync", e.message)
                 }
-                if (response != null && response.isSuccessful) {
-                    val substitutesList = response.body();
-                    provider.delete(SubstitutesContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
-                    provider.delete(AnnouncementsContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
+            }
+            if (response != null && response.isSuccessful) {
+                val substitutesList = response.body();
+                provider.delete(SubstitutesContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
+                provider.delete(AnnouncementsContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
 
-                    val substituteInserts = mutableListOf<ContentValues>()
-                    for (substitute in substitutesList.substitutes) {
-                        substituteInserts.add(SubstituteAdapter.toContentValues(substitute, substitutesList.date))
-                    }
-                    if(substitutesList.announcement.isNotEmpty() && substitutesList.announcement.trim() != "keine") {
-                        Log.d("SubstitutesSync", "Inserted an announcement.")
-                        provider.insert(AnnouncementsContract.uri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
-                    }
-
-                    val count = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())
-                    Log.d("SubstitutesSync", "Inserted $count substitutes.")
-                    return true;
+                val substituteInserts = mutableListOf<ContentValues>()
+                for (substitute in substitutesList.substitutes) {
+                    substituteInserts.add(SubstituteAdapter.toContentValues(substitute, substitutesList.date))
                 }
-            } catch (e: IOException) {
-                Log.e("GesaHu Substitutes Sync", e.message)
+                if(substitutesList.announcement.isNotEmpty() && substitutesList.announcement.trim() != "keine") {
+                    Log.d("SubstitutesSync", "Inserted an announcement.")
+                    provider.insert(AnnouncementsContract.uri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
+                }
+
+                val count = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())
+                Log.d("SubstitutesSync", "Inserted $count substitutes.")
+                return true;
             }
             return false;
         }

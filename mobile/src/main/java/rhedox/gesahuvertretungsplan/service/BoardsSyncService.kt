@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.*
 import android.net.Uri
 import android.os.*
+import android.util.Log
 import android.util.Log.d
 import com.google.firebase.crash.FirebaseCrash
 import okhttp3.OkHttpClient
@@ -74,6 +75,8 @@ class BoardsSyncService : Service() {
             } catch (e: Exception) {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
+                } else {
+                    Log.e("BoardsSync", e.message)
                 }
             }
             if(Thread.interrupted()) {
