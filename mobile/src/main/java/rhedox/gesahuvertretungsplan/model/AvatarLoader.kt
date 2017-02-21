@@ -27,8 +27,10 @@ class AvatarLoader(context: Context) {
                 val stream = file.inputStream();
                 val bitmap = BitmapFactory.decodeStream(stream)
                 stream.close()
-                uiThread {
-                    callback?.invoke(bitmap)
+                if (bitmap != null) {
+                    uiThread {
+                        callback?.invoke(bitmap)
+                    }
                 }
             }
         }
