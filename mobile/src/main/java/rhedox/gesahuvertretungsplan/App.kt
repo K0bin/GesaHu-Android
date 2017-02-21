@@ -31,7 +31,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
-
+import android.util.Log
 
 
 /**
@@ -59,6 +59,14 @@ class App : Application(), KodeinAware {
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
+        }
+
+        //Disable Firebase crash reporting
+        if (BuildConfig.DEBUG) {
+            Thread.setDefaultUncaughtExceptionHandler { paramThread, paramThrowable ->
+                Log.wtf("Alert", paramThrowable.message, paramThrowable)
+                System.exit(2) //Prevents the service/app from freezing
+            }
         }
 
         JodaTimeAndroid.init(this)
