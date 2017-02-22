@@ -23,6 +23,7 @@ class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
     val homework = view.findViewById(R.id.homework) as TextView
     val homeworkDue = view.findViewById(R.id.homeworkDue) as TextView
     val statusIcon = view.findViewById(R.id.status_icon) as ImageView
+    val homeworkIcon = view.findViewById(R.id.homeworkIcon) as ImageView
 
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 
@@ -35,5 +36,11 @@ class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
         homeworkDue.visibility =if (lesson.homeWorkDue == null) View.GONE else View.VISIBLE
 
         statusIcon.setImageResource(if (lesson.status == Lesson.StatusValues.present) R.drawable.ic_present else if(lesson.status == Lesson.StatusValues.absentWithSickNote) R.drawable.ic_sick_note else R.drawable.ic_absent)
+        statusIcon.contentDescription = statusIcon.context.getString(if (lesson.status == Lesson.StatusValues.present) R.string.description_present else if(lesson.status == Lesson.StatusValues.absentWithSickNote) R.string.description_sickNote else R.string.description_absent);
+        if (lesson.homeWork.isNullOrBlank()) {
+            homeworkIcon.visibility = View.GONE
+        } else {
+            homeworkIcon.visibility = View.VISIBLE
+        }
     }
 }

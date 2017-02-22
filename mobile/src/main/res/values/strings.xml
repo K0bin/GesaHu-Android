@@ -60,6 +60,11 @@
     <string name="mark_mark_kind_group">Gruppennote</string>
     <string name="mark_mark_kind_mark">Einzelnote</string>
 
+    <string name="description_homework">Hausaufgaben</string>
+    <string name="description_absent">Abwesend</string>
+    <string name="description_present">Anwesend</string>
+    <string name="description_sickNote">Entschuldigt</string>
+
     <string name="notification_summary" formatted="false">%s in der %s. Stunde</string>
     <string name="notification_summary_day_hint">Vertretungsstunden für den ganzen Tag</string>
     <string name="notification_summary_day">Tagesübersicht</string>

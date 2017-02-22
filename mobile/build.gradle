@@ -7,12 +7,12 @@ apply plugin: "kotlin-allopen"
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4018
+        versionCode 4020
         versionName "4.0.3"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true

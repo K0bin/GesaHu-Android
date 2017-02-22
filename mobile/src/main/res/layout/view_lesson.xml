@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -40,10 +41,23 @@
         android:includeFontPadding="false"
         />
 
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:contentDescription="@string/description_homework"
+        android:layout_below="@id/topic"
+        app:srcCompat="@drawable/ic_home"
+        android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="2dp"
+        android:id="@+id/homeworkIcon"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/topic"
+        android:layout_toRightOf="@id/homeworkIcon"
+        android:layout_toEndOf="@id/homeworkIcon"
+        android:layout_alignBottom="@id/homeworkIcon"
         android:id="@+id/homework"
         tools:text="Reißzwecke 100x werfen"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
