@@ -114,7 +114,8 @@
             android:label="@string/provider_boards"
             android:syncable="true"/>
 
-        <service android:name=".service.GesaHuAccountService">
+        <service android:name=".service.GesaHuAccountService"
+                 android:process=":auth">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>

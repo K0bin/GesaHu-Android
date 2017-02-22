@@ -106,19 +106,7 @@ class BoardsSyncService : Service() {
                 return;
             }
             val okHttp = OkHttpClient();
-            val hasAvatar = loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder/${account.name.toUpperCase()}.jpg")
-
-            if(!hasAvatar && !Thread.interrupted()) {
-                val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpicture),  null, null);
-                while(!future.isDone) {
-                    //Block thread
-                    if(Thread.interrupted())
-                        return;
-                }
-                if(future.result) {
-                    loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder_original/${account.name.toUpperCase()}.jpg")
-                }
-            }
+            loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder/${account.name.toUpperCase()}.jpg")
         }
 
         private fun loadImage(okHttp: OkHttpClient, url: String): Boolean {

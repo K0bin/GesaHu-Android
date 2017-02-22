@@ -17,14 +17,22 @@ import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
 
 
 class GesaHuAccountService : Service() {
-    private lateinit var authenticator: GesaHuAuthenticator;
+    companion object {
+        private var authenticator: GesaHuAuthenticator? = null;
+    }
+
     override fun onCreate() {
         super.onCreate()
-        authenticator = GesaHuAuthenticator(this)
+
+        synchronized(Companion) {
+            if (authenticator == null) {
+                authenticator = GesaHuAuthenticator(this)
+            }
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return authenticator.iBinder;
+        return authenticator!!.iBinder;
     }
 
     //Authenticator stub because the authenticator api is designed for OAuth
