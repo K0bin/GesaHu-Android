@@ -128,6 +128,13 @@ class CalendarSyncService : Service() {
                 tests.forEach {
                     insert(it, calendars[testCalendarName]!!)
                 }
+            } else if (testResponse != null && testResponse.code() == 403) {
+                BoardsSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsSyncEnabled(account, false)
+                SubstitutesSyncService.setIsSyncEnabled(account, false)
+
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return;
             }
 
             val eventCall = gesaHu.events(account.name, password, start, end)
@@ -153,6 +160,13 @@ class CalendarSyncService : Service() {
                 events.forEach {
                     insert(it, calendars[eventCalendarName]!!)
                 }
+            } else if (eventResponse != null && eventResponse.code() == 403) {
+                BoardsSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsSyncEnabled(account, false)
+                SubstitutesSyncService.setIsSyncEnabled(account, false)
+
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return;
             }
 
             val examCall = gesaHu.exams(account.name, start)
@@ -178,6 +192,13 @@ class CalendarSyncService : Service() {
                 exams.forEach {
                     insert(it, calendars[examCalendarName]!!)
                 }
+            } else if (examResponse != null && examResponse.code() == 403) {
+                BoardsSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsSyncEnabled(account, false)
+                SubstitutesSyncService.setIsSyncEnabled(account, false)
+
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return;
             }
         }
 

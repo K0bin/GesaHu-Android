@@ -77,15 +77,13 @@ class SubstitutesSyncService : Service() {
             if(Thread.interrupted()) {
                 return;
             }
-            val username = account.name ?: "";
-
             val hasDate = extras?.containsKey(extraDate) ?: false
             val singleDay = extras?.getBoolean(extraSingleDay, false) ?: false
             val date = if(hasDate) localDateFromUnix(extras!!.getInt(extraDate)) else SchoolWeek.nextFromNow()
 
             if(hasDate && singleDay) {
                 Log.d("SubstitutesSync", "Sync triggered for $date")
-                loadSubstitutesForDay(provider, date, username)
+                loadSubstitutesForDay(provider, account, date)
             } else {
                 Log.d("SubstitutesSync", "Sync triggered for week starting with $date")
                 val ignorePast = (extras?.getBoolean(extraIgnorePast, false) ?: false) && date > LocalDate.now();
@@ -106,7 +104,10 @@ class SubstitutesSyncService : Service() {
                     if(ignorePast && day < LocalDate.now())
                         continue
                     Log.d("SubstitutesSync", "Synced $day")
-                    loadSubstitutesForDay(provider, day, username)
+                    val isSuccessful = loadSubstitutesForDay(provider,account, day)
+                    if (!isSuccessful) {
+                        return;
+                    }
                 }
             }
         }
@@ -118,8 +119,8 @@ class SubstitutesSyncService : Service() {
             provider.delete(AnnouncementsContract.uri, "date < ${oldest.unixTimeStamp}", null);
         }
 
-        fun loadSubstitutesForDay(provider: ContentProviderClient, date: LocalDate, username: String): Boolean {
-            val call = gesaHu.substitutes(username, date)
+        fun loadSubstitutesForDay(provider: ContentProviderClient, account: Account, date: LocalDate): Boolean {
+            val call = gesaHu.substitutes(account.name ?: "", date)
 
             var response: Response<SubstitutesList>? = null
             try {
@@ -148,6 +149,13 @@ class SubstitutesSyncService : Service() {
                 val count = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())
                 Log.d("SubstitutesSync", "Inserted $count substitutes.")
                 return true;
+            } else if (response != null && response.code() == 403) {
+                BoardsSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsSyncEnabled(account, false)
+                SubstitutesSyncService.setIsSyncEnabled(account, false)
+
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return false;
             }
             return false;
         }

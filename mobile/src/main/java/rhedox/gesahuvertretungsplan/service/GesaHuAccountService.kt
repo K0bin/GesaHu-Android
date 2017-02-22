@@ -1,12 +1,16 @@
 package rhedox.gesahuvertretungsplan.service
 
 import android.accounts.*
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
 import org.jetbrains.anko.accountManager
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.notificationManager
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
@@ -35,12 +39,27 @@ class GesaHuAccountService : Service() {
         return authenticator!!.iBinder;
     }
 
-    //Authenticator stub because the authenticator api is designed for OAuth
+    //Authenticator
     class GesaHuAuthenticator(private val context: Context) : AbstractAccountAuthenticator(context) {
 
         companion object {
             @JvmField
             val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
+
+            const val requestCode = 10;
+
+            fun askForLogin(context: Context) {
+                val intent = context.intentFor<AuthActivity>(AuthActivity.argIsNewAccount to false)
+
+                val notification = Notification.Builder(context)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(context.getString(R.string.notification_ask_for_login_title))
+                        .setContentText(context.getString(R.string.notification_ask_for_login_body))
+                        .setContentIntent(PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                        .build()
+
+                context.notificationManager.notify(accountType.hashCode(), notification)
+            }
         }
 
         object Feature {

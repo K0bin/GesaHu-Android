@@ -39,7 +39,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
     companion object {
         const val stateAccount = "account";
-        const val argIsNewAccount ="isNewAccout"
+        const val argIsNewAccount ="isNewAccount"
         const val launchedByApp ="wasLaunchedByApp"
     }
 
@@ -75,13 +75,8 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             if (accounts.isNotEmpty()) {
                 account = accounts[0]
                 username = account!!.name;
-                password = accountManager.getPassword(account) ?: ""
+                usernameEdit.setText(username)
             }
-        }
-        if(account != null) {
-            usernameEdit.setText(username)
-            if(password != "")
-                passwordEdit.setText(password)
         }
         gesaHu = GesaHu(this);
 
@@ -131,8 +126,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
 
-        if(account != null && outState != null)
+        if(account != null && outState != null) {
             outState.putParcelable(stateAccount, account)
+        }
     }
 
     override fun onClick(v: View?) {

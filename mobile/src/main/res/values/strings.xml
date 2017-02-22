@@ -45,6 +45,9 @@
     <string name="test">Klausur</string>
     <string name="regular">Regulärer Unterricht</string>
 
+    <string name="notification_ask_for_login_title">Login fehlgeschlagen</string>
+    <string name="notification_ask_for_login_body">Bitte aktualisiere dein Passwort</string>
+
     <string name="lessons_total">Stunden</string>
     <string name="lessons_missed">Verpasst</string>
     <string name="lessons_missed_with_sick_note">Entschuldigt</string>

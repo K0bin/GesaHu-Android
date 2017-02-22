@@ -100,6 +100,13 @@ class BoardsSyncService : Service() {
                         provider.insert(MarksContract.uri, MarksAdapter.toContentValues(mark, id))
                     }
                 }
+            } else if (response != null && response.code() == 403) {
+                BoardsSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsSyncEnabled(account, false)
+                SubstitutesSyncService.setIsSyncEnabled(account, false)
+
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return;
             }
 
             if(Thread.interrupted()) {
