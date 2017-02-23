@@ -39,6 +39,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
+import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
 import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
@@ -89,6 +90,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
 
     companion object {
         const val currentFragmentTag = "pageFragment"
+        const val state = "presenter"
     }
 
     object Extra {
@@ -108,10 +110,11 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         }
 
         //Restore presenter
+        val state = savedInstanceState?.getParcelable<NavDrawerState>(MainActivity.state) ?: NavDrawerState()
         if (lastCustomNonConfigurationInstance != null) {
             presenter = lastCustomNonConfigurationInstance as NavDrawerPresenter
         } else {
-            presenter = NavDrawerPresenter(appKodein())
+            presenter = NavDrawerPresenter(appKodein(), state)
         }
 
         //Setup view
@@ -145,6 +148,11 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun onDestroy() {
         super.onDestroy()
         removeActivityFromTransitionManager()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(state, presenter.saveState() as NavDrawerState)
     }
 
     override fun onStart() {

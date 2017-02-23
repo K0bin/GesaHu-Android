@@ -23,6 +23,7 @@ import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
+import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
@@ -32,7 +33,7 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
 /**
  * Created by robin on 20.10.2016.
  */
-class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Presenter {
+class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerContract.State) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
     private var account: Account? = null;
         private set
@@ -53,6 +54,8 @@ class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Present
         boardsRepository.boardsCallback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
+        drawerId = state.selectedDrawerId
+
         checkFirstStart()
     }
 
@@ -71,6 +74,10 @@ class NavDrawerPresenter(private val kodeIn: Kodein) : NavDrawerContract.Present
 
         //Introduce new features to the user (needs View)
         updateApp()
+    }
+
+    override fun saveState(): NavDrawerContract.State {
+        return NavDrawerState(drawerId)
     }
 
     private fun checkFirstStart() {

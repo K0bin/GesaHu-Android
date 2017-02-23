@@ -8,11 +8,16 @@ import rhedox.gesahuvertretungsplan.model.Board
  * Created by robin on 20.10.2016.
  */
 interface NavDrawerContract {
+    interface State {
+        val selectedDrawerId: Int?;
+    }
+
     interface Presenter {
         fun onNavigationDrawerItemClicked(drawerId: Int)
         fun attachView(view: View)
         fun detachView()
         fun destroy()
+        fun saveState(): State
     }
 
     object DrawerIds {

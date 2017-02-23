@@ -31,7 +31,7 @@ class BoardPresenter(kodein: Kodein, state: BoardContract.State) : BoardContract
     }
 
     override fun attachView(view: BoardContract.View) {
-        this.view = view as BoardContract.View;
+        this.view = view;
         this.view?.title = this.board?.name ?: "";
     }
 
