@@ -72,6 +72,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         get() = field
         set(value) {
             if(value != field) {
+                fab.isEnabled = value
                 if(value) {
                     fab.show()
                 } else {

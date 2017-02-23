@@ -12,6 +12,19 @@ public class ScrollAwareFabBehavior extends FloatingActionButton.Behavior {
         super();
     }
 
+    private FloatingActionButton.OnVisibilityChangedListener listener = new FloatingActionButton.OnVisibilityChangedListener() {
+        @Override
+        public void onShown(FloatingActionButton fab) {
+            super.onShown(fab);
+        }
+
+        @Override
+        public void onHidden(FloatingActionButton fab) {
+            super.onHidden(fab);
+            fab.setVisibility(View.INVISIBLE);
+        }
+    };
+
     @Override
     public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final FloatingActionButton child,
                                        final View directTargetChild, final View target, final int nestedScrollAxes) {
@@ -27,10 +40,13 @@ public class ScrollAwareFabBehavior extends FloatingActionButton.Behavior {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
         if (dyConsumed > 0) {
             // User scrolled down and the FAB is currently visible -> hide the FAB
-            child.hide();
+            child.hide(listener);
         } else if (dyConsumed < 0 && child.isEnabled()) {
             // User scrolled up and the FAB is currently not visible -> show the FAB
             child.show();
         }
     }
 }
+
+//Listener workaround to this bug: https://code.google.com/p/android/issues/detail?id=230298
+
