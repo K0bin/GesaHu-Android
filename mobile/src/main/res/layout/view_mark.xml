@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="NA Klausur Wahrscheinlichkeitslehre und Statistik"
+            tools:text="NA Klausur Wahrscheinlichkeitslehre und Statistik\nZweite Zeile"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:id="@+id/description"
             />
@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Klausur"
+            tools:text="Klausur\nZweite Zeile laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanger Text"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:id="@+id/kind"/>
     </LinearLayout>
