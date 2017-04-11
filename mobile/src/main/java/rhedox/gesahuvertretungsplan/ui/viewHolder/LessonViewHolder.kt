@@ -33,7 +33,7 @@ class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
         homework.text = lesson.homeWork ?: "";
         homeworkDue.text = lesson.homeWorkDue?.toString(formatter) ?: ""
         homework.visibility = if (lesson.homeWork.isNullOrBlank()) View.GONE else View.VISIBLE
-        homeworkDue.visibility =if (lesson.homeWorkDue == null) View.GONE else View.VISIBLE
+        homeworkDue.visibility = if (lesson.homeWorkDue == null) View.GONE else View.VISIBLE
         homeworkIcon.visibility = if (lesson.homeWork.isNullOrBlank()) View.GONE else View.VISIBLE
 
         statusIcon.setImageResource(if (lesson.status == Lesson.StatusValues.present) R.drawable.ic_present else if(lesson.status == Lesson.StatusValues.absentWithSickNote) R.drawable.ic_sick_note else R.drawable.ic_absent)

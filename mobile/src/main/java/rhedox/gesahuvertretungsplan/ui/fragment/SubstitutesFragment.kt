@@ -71,15 +71,13 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     override var isFabVisible: Boolean = false
         get() = field
         set(value) {
-            if(value != field) {
-                fab.isEnabled = value
-                if(value) {
-                    fab.show()
-                } else {
-                    fab.hide()
-                }
-                field = value
+            fab.isEnabled = value
+            if(value) {
+                fab.show()
+            } else {
+                fab.hide()
             }
+            field = value
         }
 
     override var currentTab: Int
