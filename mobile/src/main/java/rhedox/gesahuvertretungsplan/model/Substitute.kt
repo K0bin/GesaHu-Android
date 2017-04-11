@@ -26,10 +26,8 @@ data class Substitute(val lessonBegin: Int,
     @Kind val kind: Long;
 
     val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString();
-        get() = field
 
     val title: String = course + " " + subject;
-        get() = field
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(KindValues.substitute, KindValues.dropped, KindValues.roomChange, KindValues.test, KindValues.regular, flag = false)

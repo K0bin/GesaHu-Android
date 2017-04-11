@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
-import org.jetbrains.anko.onClick
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
@@ -51,7 +50,7 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
         circleRelevantBackground = DrawableCompat.wrap(circleRelevantBackground)
         DrawableCompat.setTint(circleRelevantBackground, circleColorRelevant)
 
-        view.onClick {
+        view.setOnClickListener {
             presenter.onListItemClicked(this.adapterPosition)
         }
     }

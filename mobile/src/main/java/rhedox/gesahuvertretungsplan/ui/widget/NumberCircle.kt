@@ -46,7 +46,7 @@ class NumberCircle: View {
             outlinePaint.color = value
         }
     var outlineText: String = "";
-    var outlineThickness: Float = 1 * context.displayMetrics.density;
+    var outlineThickness: Float = 1 * context.displayMetrics.density
         get() = field
         set(value) {
             field = value

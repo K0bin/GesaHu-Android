@@ -11,7 +11,6 @@ import android.view.*
 import com.github.salomonbrys.kodein.android.appKodein
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
-import org.jetbrains.anko.onClick
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
@@ -181,7 +180,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
 
         setupCab()
 
-        fab.onClick {
+        fab.setOnClickListener {
             presenter.onFabClicked()
         }
 

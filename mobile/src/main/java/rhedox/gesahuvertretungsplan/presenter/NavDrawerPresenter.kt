@@ -35,7 +35,7 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
  */
 class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerContract.State) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
-    private var account: Account? = null;
+    private var account: Account? = null
         private set
     private var avatar: Bitmap? = null;
 

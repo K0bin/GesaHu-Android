@@ -17,6 +17,7 @@ import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
+import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 
 /**
@@ -43,7 +44,7 @@ class NavDrawerPresenterTest {
 
     @Test
     fun testBoards() {
-        val presenter = NavDrawerPresenter(kodein)
+        val presenter = NavDrawerPresenter(kodein, NavDrawerState(null))
         var view = StubNavDrawerView()
         presenter.attachView(view)
         presenter.onBoardsLoaded(listOf(Board("Englisch", "15", "irgendwas", 2, 2, 28)))
@@ -55,7 +56,7 @@ class NavDrawerPresenterTest {
 
     @Test
     fun testIntro() {
-        val presenter = NavDrawerPresenter(kodein)
+        val presenter = NavDrawerPresenter(kodein, NavDrawerState(null))
         var view = StubNavDrawerView()
         presenter.attachView(view)
         assert(view.currentView == StubNavDrawerView.ViewValues.intro)
@@ -72,7 +73,7 @@ class NavDrawerPresenterTest {
                 on { getBoolean("pref_previously_started", false) } doReturn true
             } )
         }
-        val presenter = NavDrawerPresenter(kodein)
+        val presenter = NavDrawerPresenter(kodein, NavDrawerState(null))
         var view = StubNavDrawerView()
         presenter.attachView(view)
         assert(view.currentView == StubNavDrawerView.ViewValues.auth)
@@ -82,7 +83,7 @@ class NavDrawerPresenterTest {
 
     @Test
     fun testBoard() {
-        val presenter = NavDrawerPresenter(kodein)
+        val presenter = NavDrawerPresenter(kodein, NavDrawerState(null))
         val view = StubNavDrawerView()
         presenter.onBoardsLoaded(listOf(Board("Englisch", "15", "irgendwas", 2, 2, 28, 1)))
         presenter.attachView(view)

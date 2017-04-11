@@ -125,6 +125,7 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.+'
     testCompile 'junit:junit:4.12'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile 'com.nhaarman:mockito-kotlin:1.4.0'
     testCompile 'joda-time:joda-time:+'
     /*testCompile 'org.robolectric:robolectric:3.+'
