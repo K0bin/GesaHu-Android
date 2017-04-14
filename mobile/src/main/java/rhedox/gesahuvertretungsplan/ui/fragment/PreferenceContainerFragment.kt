@@ -31,9 +31,11 @@ class PreferenceContainerFragment : Fragment() {
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.action_settings)
-        drawerActivity?.supportActionBar?.setHomeButtonEnabled(true)
-        drawerActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        drawerActivity?.syncDrawer()
+        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
+            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+            drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            drawerActivity.syncDrawer()
+        }
     }
 
     override fun onDestroyView() {

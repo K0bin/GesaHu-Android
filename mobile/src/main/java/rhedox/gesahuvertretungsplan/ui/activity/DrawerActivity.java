@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
  */
 
 public interface DrawerActivity {
+	boolean getIsPermanentDrawer();
 	@Nullable ActionBar getSupportActionBar();
 	void setSupportActionBar(@Nullable Toolbar toolbar);
 	void syncDrawer();

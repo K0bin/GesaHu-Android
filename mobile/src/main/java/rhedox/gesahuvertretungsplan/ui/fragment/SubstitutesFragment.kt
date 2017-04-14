@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.content.Context
+import android.graphics.Point
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.TabLayout
@@ -11,6 +12,8 @@ import android.view.*
 import com.github.salomonbrys.kodein.android.appKodein
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
+import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.windowManager
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
@@ -187,9 +190,17 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.activity_substitutes)
-        drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
-        drawerActivity?.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        drawerActivity?.syncDrawer()
+        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
+            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+            drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            drawerActivity.syncDrawer()
+        }
+
+        val size = Point();
+        context.windowManager.defaultDisplay.getSize(size)
+        if (size.x * context.displayMetrics.density >= 1024) {
+            tabLayout.tabMode = TabLayout.MODE_FIXED
+        }
 
         presenter.attachView(this)
     }

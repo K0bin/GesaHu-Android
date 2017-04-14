@@ -8,8 +8,10 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
+import android.support.design.internal.ScrimInsetsFrameLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
@@ -52,7 +54,7 @@ import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
  * Created by robin on 20.10.2016.
  */
 class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
-    private lateinit var toggle: ActionBarDrawerToggle
+    private var toggle: ActionBarDrawerToggle? = null
         private set
     private lateinit var listener: Listener;
     private var drawerSelected: Int? = null;
@@ -87,6 +89,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
                 menuItem.isChecked = true;
             }
         }
+
+    override fun getIsPermanentDrawer(): Boolean {
+        return drawer == null;
+    }
 
     companion object {
         const val currentFragmentTag = "pageFragment"
@@ -129,7 +135,8 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
         navigationView.setNavigationItemSelectedListener {
             drawerSelected = it.itemId
-            drawer.closeDrawer(GravityCompat.START)
+            onDrawerItemSelected(drawerSelected!!)
+            drawer?.closeDrawer(GravityCompat.START)
             true
         }
 
@@ -185,41 +192,52 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     }
 
     private fun setupDrawerLayout() {
-        toggle = ActionBarDrawerToggle(this, drawer, R.string.drawer_open, R.string.drawer_close)
-        toggle.drawerArrowDrawable.color = Color.WHITE
-        toggle.setHomeAsUpIndicator(null)
-        toggle.isDrawerIndicatorEnabled = true
-        drawer.addDrawerListener(toggle)
-        listener = Listener()
-        listener.callback = {
-            if (drawerSelected != null) {
-                when (drawerSelected) {
-                    R.id.about -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.about);
-                    R.id.settings -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.settings);
-                    R.id.substitutes -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.substitutes);
-                    else -> presenter.onNavigationDrawerItemClicked(drawerSelected!!)
+        if (toggle != null && drawer != null) {
+            toggle = ActionBarDrawerToggle(this, drawer, R.string.drawer_open, R.string.drawer_close)
+            toggle!!.drawerArrowDrawable.color = Color.WHITE
+            toggle!!.setHomeAsUpIndicator(null)
+            toggle!!.isDrawerIndicatorEnabled = true
+            drawer!!.addDrawerListener(toggle!!)
+
+            listener = Listener()
+            listener.callback = {
+                if (drawerSelected != null) {
+                    onDrawerItemSelected(drawerSelected!!)
                 }
             }
+            drawer!!.addDrawerListener(listener)
         }
-        drawer.addDrawerListener(listener)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = 0
+
+            if (drawer == null) {
+                rootLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            }
+        }
+    }
+
+    private fun onDrawerItemSelected(id: Int) {
+        when (id) {
+            R.id.about -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.about);
+            R.id.settings -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.settings);
+            R.id.substitutes -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.substitutes);
+            else -> presenter.onNavigationDrawerItemClicked(drawerSelected!!)
         }
     }
 
     override fun syncDrawer() {
-        toggle.syncState()
+        toggle?.syncState()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        toggle.syncState()
+        toggle?.syncState()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        toggle.onConfigurationChanged(newConfig)
+        toggle?.onConfigurationChanged(newConfig)
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
@@ -227,7 +245,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (toggle.onOptionsItemSelected(item)) {
+        if (toggle?.onOptionsItemSelected(item) ?: false) {
             return true
         }
         return super.onOptionsItemSelected(item)

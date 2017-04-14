@@ -105,7 +105,7 @@ dependencies {
     compile 'com.github.paolorotolo:appintro:4.+'
     compile 'de.hdodenhof:circleimageview:2.+'
     compile 'com.squareup.retrofit2:converter-gson:+'
-    compile 'com.facebook.stetho:stetho:1.4.+'
+    compile 'com.facebook.stetho:stetho:1.5.+'
     compile 'org.jetbrains.anko:anko-sdk15:+'
     compile 'org.jetbrains.anko:anko-support-v4:+'
     compile 'org.jetbrains.anko:anko-appcompat-v7:+'

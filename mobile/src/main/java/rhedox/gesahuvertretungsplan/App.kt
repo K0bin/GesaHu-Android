@@ -80,7 +80,10 @@ class App : Application(), KodeinAware {
             StrictMode.setVmPolicy(policy)
 
             val threadPolicy = StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
+                    //.detectAll()
+                    .detectDiskWrites()
+                    .detectCustomSlowCalls()
+                    .detectNetwork()
                     .penaltyLog()
                     .build()
             StrictMode.setThreadPolicy(threadPolicy)
@@ -108,9 +111,6 @@ class App : Application(), KodeinAware {
     }
 
     companion object {
-        @JvmStatic
-        val PREFERENCES_LOGIN = "rhedox.gesahuvertretungsplan.login"
-
         @JvmStatic
         val ANALYTICS = true
 
