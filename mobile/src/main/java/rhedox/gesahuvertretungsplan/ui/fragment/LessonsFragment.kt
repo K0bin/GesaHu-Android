@@ -89,7 +89,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
 
         val size = Point()
         context.windowManager.defaultDisplay.getSize(size)
-        val isTablet = size.x >= (1024 * context.displayMetrics.density);
+        val isTablet = size.x >= (680 * context.displayMetrics.density);
 
         adapter = LessonsAdapter(context, isTablet);
         recycler.adapter = adapter;
