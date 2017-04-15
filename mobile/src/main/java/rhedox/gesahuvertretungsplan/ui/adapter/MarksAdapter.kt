@@ -14,12 +14,19 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class MarksAdapter(context: Context) : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = true) {
+class MarksAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Mark>(hasEmptyView = true) {
     var mark = ""
         get() = field
         set(value) {
-            field = value
-            notifyItemChanged(0)
+            if (field != value) {
+                field = value
+                if (field.isBlank() && isTablet) {
+                    hasTopHeader = false
+                } else {
+                    hasTopHeader = true
+                    notifyItemChanged(0)
+                }
+            }
         }
 
     private val config: ErrorView.Config;

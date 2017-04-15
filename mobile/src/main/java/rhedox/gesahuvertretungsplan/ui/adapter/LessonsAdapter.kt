@@ -12,24 +12,42 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class LessonsAdapter(context: Context) : ListAdapter<Lesson>(hasEmptyView = true, hasTopHeader = true) {
+class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Lesson>(hasEmptyView = true) {
     var lessonsMissed = 0
         get() = field
         set(value) {
-            field = value
-            notifyItemChanged(0)
+            if (field != value) {
+                field = value
+                if (lessonsTotal == 0 && lessonsMissed == 0 && lessonsMissedWithSickNote == 0 && isTablet) {
+                    hasTopHeader = false
+                } else {
+                    notifyItemChanged(0)
+                }
+            }
         }
     var lessonsMissedWithSickNote = 0
         get() = field
         set(value) {
-            field = value
-            notifyItemChanged(0)
+            if (field != value) {
+                field = value
+                if (lessonsTotal == 0 && lessonsMissed == 0 && lessonsMissedWithSickNote == 0 && isTablet) {
+                    hasTopHeader = false
+                } else {
+                    notifyItemChanged(0)
+                }
+            }
         }
     var lessonsTotal = 0
         get() = field
         set(value) {
-            field = value
-            notifyItemChanged(0)
+            if (field != value) {
+                field = value
+                if (lessonsTotal == 0 && lessonsMissed == 0 && lessonsMissedWithSickNote == 0 && isTablet) {
+                    hasTopHeader = false
+                } else {
+                    notifyItemChanged(0)
+                }
+            }
         }
 
     private val config: ErrorView.Config;

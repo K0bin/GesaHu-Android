@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.content.Context
+import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
 import kotlinx.android.synthetic.main.fragment_lessons.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.windowManager
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
@@ -84,7 +86,12 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         }
         recycler.layoutManager = layoutManager
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        adapter = LessonsAdapter(context);
+
+        val size = Point()
+        context.windowManager.defaultDisplay.getSize(size)
+        val isTablet = size.x >= (1024 * context.displayMetrics.density);
+
+        adapter = LessonsAdapter(context, isTablet);
         recycler.adapter = adapter;
 
         val cardHeight = context.resources.getDimension(R.dimen.topCardHeight);
