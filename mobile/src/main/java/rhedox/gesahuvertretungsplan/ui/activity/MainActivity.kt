@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     }
 
     private fun setupDrawerLayout() {
-        if (toggle != null && drawer != null) {
+        if (drawer != null) {
             toggle = ActionBarDrawerToggle(this, drawer, R.string.drawer_open, R.string.drawer_close)
             toggle!!.drawerArrowDrawable.color = Color.WHITE
             toggle!!.setHomeAsUpIndicator(null)

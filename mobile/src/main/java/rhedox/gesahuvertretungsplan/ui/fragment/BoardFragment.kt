@@ -102,7 +102,7 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
             val elevation = context.displayMetrics.density * 4f;
             elevationAnimator = ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
         } else {

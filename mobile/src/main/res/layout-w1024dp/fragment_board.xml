@@ -5,15 +5,13 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:fitsSystemWindows="false"
+	android:fitsSystemWindows="true"
 	android:id="@+id/coordinator">
 	<android.support.design.widget.AppBarLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/appbarLayout"
-        app:elevation="0dp"
-        android:elevation="0dp"
-		android:transitionName="appbar"
+        android:transitionName="appbar"
 		android:background="@android:color/transparent"
 		android:animateLayoutChanges="true">
 		<FrameLayout
