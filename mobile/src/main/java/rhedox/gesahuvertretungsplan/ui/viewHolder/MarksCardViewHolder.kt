@@ -14,14 +14,14 @@ import rhedox.gesahuvertretungsplan.ui.widget.NumberCircle
  * Created by robin on 24.01.2017.
  */
 class MarksCardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private val card = view.findViewById(R.id.marks_card) as CardView
+    private val card = view.findViewById(R.id.marks_card)
     private val mark = view.findViewById(R.id.mark) as NumberCircle
 
     fun bind(mark: String) {
         this.mark.outlineText = mark
 
         if (mark.isNullOrBlank()) {
-            card.visibility == View.GONE
+            card.visibility = View.GONE
         } else {
             card.visibility = View.VISIBLE
         }

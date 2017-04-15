@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:visibility="gone"
+              xmlns:tools="http://schemas.android.com/tools"
+              tools:visibility="visible"
+              android:id="@+id/lessons_card">
+
+        <rhedox.gesahuvertretungsplan.ui.widget.NumberCircle
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_margin="8dp"
+            android:id="@+id/lessons_total"
+            app:outlineThickness="2dp"
+            app:ovalText="@string/lessons_total"
+            app:ovalColor="@color/mark_good"
+            app:outlineColor="@color/mark_good"
+            app:ovalTextColor="@android:color/white"
+            app:outlineTextColor="?android:attr/textColorPrimary"
+            />
+
+        <rhedox.gesahuvertretungsplan.ui.widget.NumberCircle
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_margin="8dp"
+            android:id="@+id/lessons_missed_with_sick_note"
+            app:outlineThickness="2dp"
+            app:ovalColor="@color/mark_average"
+            app:outlineColor="@color/mark_average"
+            app:ovalText="@string/lessons_missed_with_sick_note"
+            app:ovalTextColor="@android:color/white"
+            app:outlineTextColor="?android:attr/textColorPrimary"
+            />
+
+        <rhedox.gesahuvertretungsplan.ui.widget.NumberCircle
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_margin="8dp"
+            android:id="@+id/lessons_missed"
+            app:outlineThickness="2dp"
+            app:ovalColor="@color/mark_bad"
+            app:outlineColor="@color/mark_bad"
+            app:ovalText="@string/lessons_missed"
+            app:ovalTextColor="@android:color/white"
+            app:outlineTextColor="?android:attr/textColorPrimary"
+            />
+</LinearLayout>

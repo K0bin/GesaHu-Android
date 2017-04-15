@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start|left"
         android:background="@color/cardBackground"
-        app:itemBackground="@color/cardBackground"
+        app:itemBackground="@drawable/tablet_drawer_item_background"
         app:menu="@menu/drawer"
         android:id="@+id/navigationView"
         app:headerLayout="@layout/view_navigation_header"

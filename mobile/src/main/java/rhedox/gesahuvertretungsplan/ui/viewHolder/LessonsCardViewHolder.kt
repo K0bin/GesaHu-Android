@@ -10,7 +10,7 @@ import rhedox.gesahuvertretungsplan.ui.widget.NumberCircle
  * Created by robin on 24.01.2017.
  */
 class LessonsCardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private val card = view.findViewById(R.id.lessons_card) as CardView
+    private val card = view.findViewById(R.id.lessons_card)
     private val lessonsTotal = view.findViewById(R.id.lessons_total) as NumberCircle
     private val lessonsMissedWithSickNote = view.findViewById(R.id.lessons_missed_with_sick_note) as NumberCircle
     private val lessonsMissed = view.findViewById(R.id.lessons_missed) as NumberCircle

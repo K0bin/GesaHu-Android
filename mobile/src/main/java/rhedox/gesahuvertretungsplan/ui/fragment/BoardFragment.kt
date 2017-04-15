@@ -50,6 +50,9 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     private var boardId: Long = 0L;
     private var elevationAnimator: ObjectAnimator? = null
 
+    private lateinit var marksFragment: MarksFragment;
+    private lateinit var lessonsFragment: LessonsFragment;
+
     override var title: String = ""
         get() = field
         set(value) {
@@ -106,9 +109,28 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
             elevationAnimator = null;
         }
 
-        viewPager.adapter = BoardPagerAdapter(boardId, childFragmentManager)
-        tabLayout.setupWithViewPager(viewPager)
-        tabLayout.tabMode = TabLayout.MODE_FIXED
+        val _lessonsFragment = childFragmentManager.findFragmentByTag("lessons");
+        if (_lessonsFragment != null) {
+            lessonsFragment = _lessonsFragment as LessonsFragment
+        } else {
+            lessonsFragment = LessonsFragment.newInstance(boardId)
+        }
+        val _marksFragment = childFragmentManager.findFragmentByTag("marks");
+        if (_marksFragment != null) {
+            marksFragment = _marksFragment as MarksFragment
+        } else {
+            marksFragment = MarksFragment.newInstance(boardId)
+        }
+
+        if (viewPager != null) {
+            viewPager.adapter = BoardPagerAdapter(lessonsFragment, marksFragment, childFragmentManager)
+            tabLayout.setupWithViewPager(viewPager)
+        } else {
+            childFragmentManager.beginTransaction()
+                    .replace(R.id.marksContainer, marksFragment, "marks")
+                    .replace(R.id.lessonsContainer, lessonsFragment, "lessons")
+                    .commit();
+        }
 
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
@@ -135,6 +157,9 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState
+        childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commit();
+
         super.onSaveInstanceState(outState)
 
         outState.putParcelable(State.presenterState, presenter.saveState() as Parcelable)
