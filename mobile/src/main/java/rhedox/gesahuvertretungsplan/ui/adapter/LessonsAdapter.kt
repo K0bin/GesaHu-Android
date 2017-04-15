@@ -12,7 +12,7 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Lesson>(hasEmptyView = true) {
+class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Lesson>(hasEmptyView = true, hasTopHeader = !isTablet) {
     var lessonsMissed = 0
         get() = field
         set(value) {
@@ -21,6 +21,7 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
                 if (lessonsTotal == 0 && lessonsMissed == 0 && lessonsMissedWithSickNote == 0 && isTablet) {
                     hasTopHeader = false
                 } else {
+                    hasTopHeader = true
                     notifyItemChanged(0)
                 }
             }
@@ -33,6 +34,7 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
                 if (lessonsTotal == 0 && lessonsMissed == 0 && lessonsMissedWithSickNote == 0 && isTablet) {
                     hasTopHeader = false
                 } else {
+                    hasTopHeader = true
                     notifyItemChanged(0)
                 }
             }
@@ -45,6 +47,7 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
                 if (lessonsTotal == 0 && lessonsMissed == 0 && lessonsMissedWithSickNote == 0 && isTablet) {
                     hasTopHeader = false
                 } else {
+                    hasTopHeader = true
                     notifyItemChanged(0)
                 }
             }

@@ -14,7 +14,7 @@ import tr.xip.errorview.ErrorView
 /**
  * Created by robin on 19.01.2017.
  */
-class MarksAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Mark>(hasEmptyView = true) {
+class MarksAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = !isTablet) {
     var mark = ""
         get() = field
         set(value) {

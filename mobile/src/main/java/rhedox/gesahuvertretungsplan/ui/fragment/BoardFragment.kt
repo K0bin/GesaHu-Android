@@ -146,6 +146,7 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     override fun onDestroyView() {
         super.onDestroyView()
 
+        elevationAnimator = null;
         (activity as? DrawerActivity)?.setSupportActionBar(null)
         presenter.detachView()
     }
