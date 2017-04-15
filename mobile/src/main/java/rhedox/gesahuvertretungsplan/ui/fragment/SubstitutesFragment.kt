@@ -166,6 +166,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         isFabVisible = false
+        isCabVisible = false
 
         swipeRefreshLayout.setOnRefreshListener {
             presenter.onRefresh()
