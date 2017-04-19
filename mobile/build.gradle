@@ -115,6 +115,7 @@ dependencies {
     compile 'org.jetbrains.anko:anko-cardview-v7:+'
     compile 'com.github.salomonbrys.kodein:kodein:+'
     compile 'com.github.salomonbrys.kodein:kodein-android:+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
 
     //compile 'com.pushtorefresh.storio:content-resolver:1.12.1'
