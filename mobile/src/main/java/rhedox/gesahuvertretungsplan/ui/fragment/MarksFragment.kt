@@ -81,7 +81,7 @@ class MarksFragment : Fragment(), MarksContract.View {
 
         val size = Point()
         context.windowManager.defaultDisplay.getSize(size)
-        val isTablet = size.x >= (680 * context.displayMetrics.density);
+        val isTablet = size.x >= (680 / context.displayMetrics.density);
 
         adapter = MarksAdapter(context, isTablet);
         recycler.adapter = adapter;

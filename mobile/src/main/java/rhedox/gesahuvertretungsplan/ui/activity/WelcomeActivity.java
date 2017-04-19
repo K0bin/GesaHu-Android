@@ -48,7 +48,6 @@ public class WelcomeActivity extends AppIntro {
 	public void onDonePressed(Fragment currentFragment) {
 		super.onDonePressed(currentFragment);
 
-		finish();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, true);
@@ -57,5 +56,6 @@ public class WelcomeActivity extends AppIntro {
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		startActivity(intent);
+		finish();
 	}
 }

@@ -46,7 +46,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var account: Account? = null;
     private var username: String = "";
     private var password: String = "";
-    private var wasLaunchedByApp = false;
 
     private lateinit var gesaHu: GesaHu;
     private var call: Call<List<BoardName>>? = null;
@@ -68,7 +67,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         if(savedInstanceState != null) {
             account = savedInstanceState.getParcelable<Account>(stateAccount);
         }
-        wasLaunchedByApp = intent.getBooleanExtra(launchedByApp, false)
 
         if(account == null && !intent.getBooleanExtra(argIsNewAccount, true)) {
             val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
@@ -173,13 +171,11 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, GesaHuAccountService.GesaHuAuthenticator.accountType);
 
         setResult(Activity.RESULT_OK, res)
-        finish();
 
-        if(wasLaunchedByApp) {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish();
     }
 
     override fun onFailure(call: Call<List<BoardName>>?, t: Throwable?) {

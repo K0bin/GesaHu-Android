@@ -199,7 +199,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
 
         val size = Point();
         context.windowManager.defaultDisplay.getSize(size)
-        if (size.x * context.displayMetrics.density >= 1024) {
+        if (size.x / context.displayMetrics.density >= 1024) {
             tabLayout.tabMode = TabLayout.MODE_FIXED
         }
 
