@@ -147,6 +147,7 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
 
         val db = database.writableDatabase;
+        db.beginTransaction()
         val dateUris = mutableListOf<Uri>();
         var changed = 0;
 
@@ -185,6 +186,9 @@ class SubstitutesContentProvider : ContentProvider() {
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
+        db.setTransactionSuccessful()
+        db.endTransaction()
+
         for(dateUri in dateUris)
             context.contentResolver.notifyChange(dateUri, null, false);
 

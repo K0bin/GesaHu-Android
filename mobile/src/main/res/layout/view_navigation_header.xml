@@ -1,48 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?attr/colorPrimary">
+
     <View
-        app:layout_widthPercent="100%"
-        app:layout_aspectRatio="178%" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="h,16:9"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:id="@+id/view"/>
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="92dp"
-        android:layout_marginLeft="92dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginEnd="8dp"
-        android:scaleType="centerInside"
+        android:layout_marginLeft="96dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="0dp"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/logo_content_description"
-        android:src="@drawable/logogesahu"/>
+        android:scaleType="centerInside"
+        android:src="@drawable/logogesahu"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintHorizontal_bias="0.519"
+        app:layout_constraintLeft_toLeftOf="@+id/view"
+        app:layout_constraintRight_toRightOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:layout_constraintVertical_bias="0.0"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
         app:srcCompat="@drawable/ic_person"
         android:background="@drawable/avatar_view_background"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="60dp"
         android:layout_gravity="bottom"
         android:id="@+id/avatarView"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="60dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="@+id/view"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="56dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
         android:layout_gravity="bottom"
         android:gravity="center_vertical"
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:fontFamily="sans-serif-medium"
-        android:id="@+id/headerUsername"/>
+        android:id="@+id/headerUsername"
+        tools:text="SUser213"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
-</android.support.percent.PercentFrameLayout>
+</android.support.constraint.ConstraintLayout>

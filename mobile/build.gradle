@@ -85,7 +85,7 @@ dependencies {
     compile 'com.android.support:design:25.+'
     compile 'com.android.support:preference-v7:25.+'
     compile 'com.android.support:preference-v14:25.+'
-    compile 'com.android.support:percent:25.+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.takisoft.fix:preference-v7:25.+'
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
     debugCompile 'net.danlew:android.joda:2.+'
@@ -115,7 +115,6 @@ dependencies {
     compile 'org.jetbrains.anko:anko-cardview-v7:+'
     compile 'com.github.salomonbrys.kodein:kodein:+'
     compile 'com.github.salomonbrys.kodein:kodein-android:+'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
 
     //compile 'com.pushtorefresh.storio:content-resolver:1.12.1'
