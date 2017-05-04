@@ -45,5 +45,10 @@
 # Needed when building against Marshmallow SDK.
 -dontwarn android.app.Notification
 
+# Ensure that proguard will not strip GcmListenerService.handleIntent()
+-keepclassmembers class com.google.android.gms.gcm.GcmListenerService {
+    public void handleIntent(android.content.Intent);
+}
+
 # Needed for isDeviceProtectedStorage when building against a pre-Nougat SDK.
 -dontwarn android.content.Context

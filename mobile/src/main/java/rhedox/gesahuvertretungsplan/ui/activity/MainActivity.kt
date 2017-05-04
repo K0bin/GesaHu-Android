@@ -253,7 +253,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
 
 
     override fun onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START))
+        if (drawer?.isDrawerOpen(GravityCompat.START) ?: false)
             drawer.closeDrawer(GravityCompat.START)
         else
             super.onBackPressed()
