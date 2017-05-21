@@ -125,7 +125,7 @@ class CalendarSyncService : Service() {
                 }
 
                 val tests = testResponse.body()
-                tests.forEach {
+                tests?.forEach {
                     insert(it, calendars[testCalendarName]!!)
                 }
             } else if (testResponse != null && testResponse.code() == 403) {
@@ -157,7 +157,7 @@ class CalendarSyncService : Service() {
                 }
 
                 val events = eventResponse.body()
-                events.forEach {
+                events?.forEach {
                     insert(it, calendars[eventCalendarName]!!)
                 }
             } else if (eventResponse != null && eventResponse.code() == 403) {
@@ -189,7 +189,7 @@ class CalendarSyncService : Service() {
                 }
 
                 val exams = examResponse.body()
-                exams.forEach {
+                exams?.forEach {
                     insert(it, calendars[examCalendarName]!!)
                 }
             } else if (examResponse != null && examResponse.code() == 403) {

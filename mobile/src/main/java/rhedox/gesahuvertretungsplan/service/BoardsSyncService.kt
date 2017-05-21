@@ -73,7 +73,7 @@ class BoardsSyncService : Service() {
             try {
                 response = call.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
+                if (e !is IOException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 } else {
                     Log.e("BoardsSync", e.message)
@@ -89,7 +89,7 @@ class BoardsSyncService : Service() {
                 provider.delete(MarksContract.uri, null, null);
 
                 //Insert new data
-                val boards = response.body()
+                val boards = response.body() ?: return
                 for (board in boards) {
                     val uri = provider.insert(BoardsContract.uri, BoardsAdapter.toContentValues(board.board))
                     val id = uri.lastPathSegment.toLong()
@@ -134,7 +134,7 @@ class BoardsSyncService : Service() {
                     .build()
             val avatarResponse = okHttp.newCall(avatarRequest).execute()
             if(avatarResponse != null && avatarResponse.isSuccessful) {
-                val bytes = avatarResponse.body().bytes();
+                val bytes = avatarResponse.body()?.bytes();
 
                 if(bytes != null) {
                     val fos = context.openFileOutput(BoardsContract.avatarFileName, Context.MODE_PRIVATE)

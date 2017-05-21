@@ -133,7 +133,8 @@ class SubstitutesSyncService : Service() {
                 }
             }
             if (response != null && response.isSuccessful) {
-                val substitutesList = response.body();
+                val substitutesList = response.body() ?: return false;
+
                 provider.delete(SubstitutesContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
                 provider.delete(AnnouncementsContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
 

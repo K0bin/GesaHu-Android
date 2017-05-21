@@ -32,6 +32,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.util.Log
+import com.google.firebase.FirebaseApp
 
 
 /**
@@ -60,6 +61,7 @@ class App : Application(), KodeinAware {
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
         }
+        FirebaseApp.initializeApp(this)
 
         //Disable Firebase crash reporting
         if (BuildConfig.DEBUG) {
