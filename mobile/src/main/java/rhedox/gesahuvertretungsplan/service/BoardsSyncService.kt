@@ -132,7 +132,11 @@ class BoardsSyncService : Service() {
             val avatarRequest = Request.Builder()
                     .url(url)
                     .build()
-            val avatarResponse = okHttp.newCall(avatarRequest).execute()
+            val avatarCall = okHttp.newCall(avatarRequest)
+            var avatarResponse: okhttp3.Response? = null;
+            try {
+                avatarResponse = avatarCall.execute()
+            } catch (e: IOException) {}
             if(avatarResponse != null && avatarResponse.isSuccessful) {
                 val bytes = avatarResponse.body()?.bytes();
 

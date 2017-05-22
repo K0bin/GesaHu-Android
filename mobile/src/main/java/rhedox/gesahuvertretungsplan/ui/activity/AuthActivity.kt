@@ -170,6 +170,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username)
         res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, GesaHuAccountService.GesaHuAuthenticator.accountType);
 
+        setAccountAuthenticatorResult(res.extras)
         setResult(Activity.RESULT_OK, res)
 
         val intent = Intent(this, MainActivity::class.java)
