@@ -7,9 +7,9 @@ import org.joda.time.*
  */
 object SchoolWeek {
     val startHours = intArrayOf(  8,  8,  9, 10, 11, 12, 14, 14, 15, 16)
-    val startMinutes = intArrayOf(0, 50, 50, 40, 40, 30, 0, 45, 45, 30)
-    val endHours = intArrayOf(   8,  9, 10, 11, 12, 13, 14, 15, 16, 17)
-    val endMinutes = intArrayOf(45, 35, 35, 25, 35, 15, 45, 30, 25, 15)
+    val startMinutes = intArrayOf(0, 50, 50, 40, 40, 30,  0, 45, 45, 30)
+    val endHours = intArrayOf(    8,  9, 10, 11, 12, 13, 14, 15, 16, 17)
+    val endMinutes = intArrayOf( 45, 35, 35, 25, 35, 15, 45, 30, 25, 15)
 
     /**
      * Finds the next monday

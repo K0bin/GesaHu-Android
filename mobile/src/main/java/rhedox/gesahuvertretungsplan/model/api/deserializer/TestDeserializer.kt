@@ -28,8 +28,8 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
         val teacher = resolver.resolveTeacher(Html.decode(jsonObject.get("Lehrer").asString.trim()))
         val lessons = Html.decode(jsonObject.get("Stunden").asString.trim()).replace("build/intermediates/exploded-aar/com.mikepenz/fastadapter/2.1.5/res", "")
 
-        val begin: Int;
-        val duration: Int;
+        val begin: Int?;
+        val duration: Int?;
 
         val lessonParts = lessons.replace(".", "").replace('/', ',').split('-')
         if(lessonParts.isNotEmpty() && lessonParts[0].isNotBlank()) {
@@ -41,8 +41,8 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
                 duration = 1;
             }
         } else {
-            begin = -1;
-            duration = -1;
+            begin = null;
+            duration = null;
         }
 
         return Test(remark, date, subject, course, year, teacher, begin, duration)

@@ -110,7 +110,7 @@ class CalendarSyncService : Service() {
             try {
                 testResponse = testCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
+                if (e !is IOException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 } else {
                     Log.e("CalendarSync", e.message)
@@ -142,7 +142,7 @@ class CalendarSyncService : Service() {
             try {
                 eventResponse = eventCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
+                if (e !is IOException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 } else {
                     Log.e("CalendarSync", e.message)
@@ -296,8 +296,13 @@ class CalendarSyncService : Service() {
 
         private fun insert(test: Test, calendarId: Long) {
             val values = ContentValues()
-            values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(SchoolWeek.lessonStart(test.lessonStart)).millis)
-            values.put(CalendarContract.Events.DTEND, test.date.toDateTime(SchoolWeek.lessonEnd(if(test.duration >= 1) test.lessonStart + test.duration - 1 else test.lessonStart)).millis)
+            if (test.lessonStart != null && test.duration != null) {
+                values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(SchoolWeek.lessonStart(test.lessonStart)).millis)
+                values.put(CalendarContract.Events.DTEND, test.date.toDateTime(SchoolWeek.lessonEnd(if (test.duration >= 1) test.lessonStart + test.duration - 1 else test.lessonStart)).millis)
+                values.put(CalendarContract.Events.ALL_DAY, 0);
+            } else {
+                values.put(CalendarContract.Events.ALL_DAY, 1);
+            }
             values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_test_title, test.subject, test.course, test.year.toString(), test.teacher))
             values.put(CalendarContract.Events.DESCRIPTION, test.remark)
             values.put(CalendarContract.Events.CALENDAR_ID, calendarId);

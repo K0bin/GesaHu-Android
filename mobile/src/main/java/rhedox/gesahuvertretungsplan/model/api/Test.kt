@@ -11,5 +11,5 @@ data class Test(val remark: String,
                 val course: String,
                 val year: Int,
                 val teacher: String,
-                val lessonStart: Int,
-                val duration: Int)
+                val lessonStart: Int?,
+                val duration: Int?)
