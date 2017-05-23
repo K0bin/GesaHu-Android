@@ -315,7 +315,7 @@ class CalendarSyncService : Service() {
         private fun insert(exam: Exam, calendarId: Long) {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, exam.date.toDateTime(exam.time).millis)
-            values.put(CalendarContract.Events.DTEND, exam.date.toDateTime(exam.time).withFieldAdded(DurationFieldType.minutes(), 90).millis)
+            values.put(CalendarContract.Events.DTEND, exam.date.toDateTime(exam.time).millis + (exam.duration?.millis ?: 90L * 60L * 1000L))
             values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_exam_title, exam.subject, exam.course, exam.examiner))
             values.put(CalendarContract.Events.DESCRIPTION, context.getString(R.string.calendar_exam_description, exam.examinee, exam.examiner, exam.chair, exam.recorder, exam.room, if(exam.allowAudience) context.getString(R.string.bool_true_lower) else context.getString(R.string.bool_false_lower)))
             values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
