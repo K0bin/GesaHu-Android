@@ -108,13 +108,11 @@
         <provider
             android:name=".model.database.SubstitutesContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.substitutes"
-            android:exported="true"
             android:label="@string/provider_substitutes"
             android:syncable="true"/>
         <provider
             android:name=".model.database.BoardsContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.boards"
-            android:exported="true"
             android:label="@string/provider_boards"
             android:syncable="true"/>
 

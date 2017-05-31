@@ -47,9 +47,9 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
         val begin: LocalTime
         val duration: Duration?
         if (timeParts.isNotEmpty() && timeParts[0].isNotBlank()) {
-            begin = LocalTime.parse(timeParts[0], formatter)
+            begin = LocalTime.parse(timeParts[0].replace('.', ':'), formatter)
             if (timeParts.size > 1 && timeParts[1].isNotBlank()) {
-                val end = LocalTime.parse(timeParts[1], formatter)
+                val end = LocalTime.parse(timeParts[1].replace('.', ':'), formatter)
                 val durationMillis = end.millisOfDay - begin.millisOfDay;
                 duration = Duration(durationMillis)
             } else {

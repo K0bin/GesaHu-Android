@@ -95,6 +95,7 @@ class BoardsContentProvider : ContentProvider() {
         if(boardsUri != null) {
             context.contentResolver.notifyChange(insertUri, null, false)
         }
+        db.close();
         return insertUri
     }
 
@@ -158,6 +159,7 @@ class BoardsContentProvider : ContentProvider() {
             marksById -> rowsDeleted = db.delete(MarksContract.Table.name, "${MarksContract.Table.columnId} = '${uri.lastPathSegment}'", null)
             marksByBoardId -> rowsDeleted = db.delete(MarksContract.Table.name, "${MarksContract.Table.columnBoardId} = '${uri.lastPathSegment}'", null)
         }
+        db.close()
         return rowsDeleted
     }
 

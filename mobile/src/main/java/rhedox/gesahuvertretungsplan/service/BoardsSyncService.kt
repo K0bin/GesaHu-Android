@@ -134,19 +134,17 @@ class BoardsSyncService : Service() {
                     .build()
             val avatarCall = okHttp.newCall(avatarRequest)
             var avatarResponse: okhttp3.Response? = null;
+            var bytes: ByteArray? = null
             try {
                 avatarResponse = avatarCall.execute()
+                bytes = avatarResponse.body()?.bytes();
             } catch (e: IOException) {}
-            if(avatarResponse != null && avatarResponse.isSuccessful) {
-                val bytes = avatarResponse.body()?.bytes();
+            if(avatarResponse != null && avatarResponse.isSuccessful && bytes != null) {
+                val fos = context.openFileOutput(BoardsContract.avatarFileName, Context.MODE_PRIVATE)
+                fos.write(bytes)
+                fos.close()
 
-                if(bytes != null) {
-                    val fos = context.openFileOutput(BoardsContract.avatarFileName, Context.MODE_PRIVATE)
-                    fos.write(bytes)
-                    fos.close()
-
-                    return true;
-                }
+                return true;
             }
             avatarResponse?.close()
             return false;

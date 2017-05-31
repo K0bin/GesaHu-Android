@@ -102,6 +102,7 @@ class SubstitutesContentProvider : ContentProvider() {
         val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
         context.sendBroadcast(intent)
 
+        db.close()
         return rowsDeleted;
     }
 
@@ -129,7 +130,10 @@ class SubstitutesContentProvider : ContentProvider() {
                 dateUri = AnnouncementsContract.uriWithSeconds(seconds);
             }
 
-            else -> throw IllegalArgumentException("Unknown URI: $uri");
+            else -> {
+                db.close()
+                throw IllegalArgumentException("Unknown URI: $uri");
+            }
         }
         context.contentResolver.notifyChange(insertUri, null, false);
         context.contentResolver.notifyChange(dateUri, null, false);
@@ -137,6 +141,7 @@ class SubstitutesContentProvider : ContentProvider() {
         val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
         context.sendBroadcast(intent)
 
+        db.close()
         return insertUri;
     }
 
@@ -184,7 +189,10 @@ class SubstitutesContentProvider : ContentProvider() {
                     changed++;
                 }
 
-            else -> throw IllegalArgumentException("Unknown URI: $uri");
+            else -> {
+                db.close()
+                throw IllegalArgumentException("Unknown URI: $uri");
+            }
         }
         db.setTransactionSuccessful()
         db.endTransaction()
@@ -195,6 +203,7 @@ class SubstitutesContentProvider : ContentProvider() {
         val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
         context.sendBroadcast(intent)
 
+        db.close()
         return changed;
     }
 

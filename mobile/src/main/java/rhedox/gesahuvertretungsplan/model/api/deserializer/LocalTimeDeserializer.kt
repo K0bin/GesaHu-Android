@@ -29,6 +29,6 @@ class LocalTimeDeserializer : JsonDeserializer<LocalTime> {
         if(json == null || json.asString.isNullOrBlank())
             return null
 
-        return LocalTime.parse(json.asString, formatter);
+        return LocalTime.parse(json.asString.replace('.', ':'), formatter);
     }
 }
