@@ -109,15 +109,16 @@
             android:name=".model.database.SubstitutesContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.substitutes"
             android:label="@string/provider_substitutes"
-            android:syncable="true"/>
+            android:syncable="true"
+            android:exported="true" />
         <provider
             android:name=".model.database.BoardsContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.boards"
             android:label="@string/provider_boards"
-            android:syncable="true"/>
+            android:syncable="true"
+            android:exported="true" />
 
-        <service android:name=".service.GesaHuAccountService"
-                 android:process=":auth">
+        <service android:name=".service.GesaHuAccountService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -128,8 +129,7 @@
         </service>
         <service
             android:name=".service.SubstitutesSyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
@@ -140,8 +140,7 @@
         </service>
         <service
             android:name=".service.BoardsSyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
@@ -152,8 +151,7 @@
         </service>
         <service
             android:name=".service.CalendarSyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>

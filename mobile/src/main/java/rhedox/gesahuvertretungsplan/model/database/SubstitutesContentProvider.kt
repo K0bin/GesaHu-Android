@@ -1,16 +1,12 @@
 package rhedox.gesahuvertretungsplan.model.database
 
 import android.content.ContentProvider
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
-import org.joda.time.DateTime
 import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesWidgetProvider
-import rhedox.gesahuvertretungsplan.model.database.SqLiteHelper
-import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
 
@@ -19,7 +15,7 @@ import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
  */
 class SubstitutesContentProvider : ContentProvider() {
 
-    private lateinit var database: SqLiteHelper;
+    private lateinit var database: SubstitutesOpenHelper;
 
     companion object {
         val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
@@ -76,7 +72,7 @@ class SubstitutesContentProvider : ContentProvider() {
     }
 
     override fun onCreate(): Boolean {
-        database = SqLiteHelper(context)
+        database = SubstitutesOpenHelper(context)
         return true;
     }
 
@@ -101,8 +97,6 @@ class SubstitutesContentProvider : ContentProvider() {
 
         val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
         context.sendBroadcast(intent)
-
-        db.close()
         return rowsDeleted;
     }
 
@@ -131,7 +125,6 @@ class SubstitutesContentProvider : ContentProvider() {
             }
 
             else -> {
-                db.close()
                 throw IllegalArgumentException("Unknown URI: $uri");
             }
         }
@@ -140,8 +133,6 @@ class SubstitutesContentProvider : ContentProvider() {
 
         val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
         context.sendBroadcast(intent)
-
-        db.close()
         return insertUri;
     }
 
@@ -190,7 +181,6 @@ class SubstitutesContentProvider : ContentProvider() {
                 }
 
             else -> {
-                db.close()
                 throw IllegalArgumentException("Unknown URI: $uri");
             }
         }
@@ -202,8 +192,6 @@ class SubstitutesContentProvider : ContentProvider() {
 
         val intent = SubstitutesWidgetProvider.getRefreshBroadcastIntent(context)
         context.sendBroadcast(intent)
-
-        db.close()
         return changed;
     }
 

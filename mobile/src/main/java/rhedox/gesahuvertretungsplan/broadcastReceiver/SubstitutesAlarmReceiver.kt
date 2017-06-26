@@ -101,7 +101,7 @@ class SubstitutesAlarmReceiver : WakefulBroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val service = Intent(context, SubstitutesNotifierService::class.java)
-        service.putExtra(SubstitutesNotifierService.EXTRA_LESSON, intent.getIntExtra(EXTRA_LESSON, -1))
+        service.putExtra(SubstitutesNotifierService.extraLesson, intent.getIntExtra(EXTRA_LESSON, -1))
         startWakefulService(context, service)
     }
 }

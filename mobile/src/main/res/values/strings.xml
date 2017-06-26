@@ -21,6 +21,8 @@
     <string name="lesson">Vertretungsstunde</string>
     <string name="lessons">Vertretungsstunden</string>
 
+    <string name="notification_channel_substitutes">Vertretungsstunden</string>
+
     <string name="drawer_open">Menü anzeigen</string>
     <string name="drawer_close">Menü verstecken</string>
     <string name="drawer_substitutes">Vertretungsplan</string>

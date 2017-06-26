@@ -11,5 +11,6 @@
 		<item name="tabIndicatorColor">?attr/colorAccent</item>
 
 		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
+		<item name="cardBackgroundColor">@color/cardBackground</item>
 	</style>
 </resources>

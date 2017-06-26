@@ -24,4 +24,8 @@
     <dimen name="errorView_margin_top">32dp</dimen>
 
     <dimen name="topCardHeight">45dp</dimen>
+
+    <dimen name="dialogElevation">8dp</dimen>
+
+    <dimen name="dialogWidth">0dp</dimen>
 </resources>

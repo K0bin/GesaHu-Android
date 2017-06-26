@@ -11,5 +11,12 @@
 		<item name="tabIndicatorColor">?attr/colorAccent</item>
 
 		<item name="android:activatedBackgroundIndicator">?android:attr/selectableItemBackground</item>
+		<item name="cardBackgroundColor">@color/cardBackground</item>
+	</style>
+
+	<style name="AnnouncementDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+		<item name="colorAccent">@color/colorDefaultAccent</item>
+		<item name="android:windowIsFloating">false</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
 	</style>
 </resources>

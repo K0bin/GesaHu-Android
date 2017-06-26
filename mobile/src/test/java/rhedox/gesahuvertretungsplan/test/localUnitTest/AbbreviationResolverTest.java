@@ -55,11 +55,9 @@ public class AbbreviationResolverTest {
         when(context.getResources()).thenReturn(resources);
         when(context.getResources().getIdentifier("teachers_ro", "string", null)).thenReturn(R.string.teachers_ro);
         when(context.getResources().getIdentifier("teachers_ke", "string", null)).thenReturn(R.string.teachers_ke);
-        when(context.getResources().getIdentifier("teachers_xham", "string", null)).thenReturn(R.string.teachers_xham);
         when(context.getResources().getIdentifier("teachers_rue", "string", null)).thenReturn(R.string.teachers_rue);
         when(context.getString(R.string.teachers_ro)).thenReturn("Rosch");
         when(context.getString(R.string.teachers_ke)).thenReturn("Keneder");
-        when(context.getString(R.string.teachers_xham)).thenReturn("X-Schinken");
         when(context.getString(R.string.teachers_rue)).thenReturn("Rück");
 
         AbbreviationResolver resolve = new AbbreviationResolver(context);

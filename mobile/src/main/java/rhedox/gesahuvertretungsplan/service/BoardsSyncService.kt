@@ -76,7 +76,9 @@ class BoardsSyncService : Service() {
                 if (e !is IOException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 } else {
-                    Log.e("BoardsSync", e.message)
+                    if (e.message != null) {
+                        Log.e("BoardsSync", e.message)
+                    }
                 }
             }
             if(Thread.interrupted()) {

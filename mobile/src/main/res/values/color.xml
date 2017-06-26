@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorDefaultAccent">#448aff</color>
 
+    <color name="dialog_background">#B4000000</color>
+
     <color name="preference_fallback_accent_color">#448aff</color>
     <color name="widgetBackgroundDark">#FF303030</color>
     <color name="widgetBackgroundLight">#FFFAFAFA</color>

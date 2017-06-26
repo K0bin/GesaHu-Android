@@ -1,15 +1,15 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.app.IntentService
-import android.app.Notification
-import android.app.PendingIntent
+import android.app.*
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.WakefulBroadcastReceiver
+import org.jetbrains.anko.notificationManager
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
@@ -17,9 +17,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 import rhedox.gesahuvertretungsplan.util.countRelevant
@@ -30,9 +28,10 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
  */
 class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
-        const val EXTRA_LESSON = "lesson";
-        const val REQUEST_CODE_BASE = 64
-        const val GROUP_KEY = "gesahuvpsubstitutes"
+        const val extraLesson = "lesson";
+        const val requestCodeBase = 64
+        const val groupKey = "gesahuvpsubstitutes"
+        const val substitutesChannel = "substitutes"
     }
 
     private var color: Int = 0;
@@ -57,7 +56,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     }
 
     override fun onHandleIntent(intent: Intent) {
-        lesson = intent.getIntExtra(EXTRA_LESSON, -1)
+        lesson = intent.getIntExtra(extraLesson, -1)
 
         if (lesson != -1 && (DateTime.now().dayOfWeek == DateTimeConstants.SATURDAY || DateTime.now().dayOfWeek == DateTimeConstants.SUNDAY)) {
             if (lesson == 1)
@@ -71,9 +70,16 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     }
 
     fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
-        val notificationManager = NotificationManagerCompat.from(applicationContext)
+        val notificationManagerCompat = NotificationManagerCompat.from(applicationContext)
+        val notificationManager = applicationContext.notificationManager
 
-        notificationManager.cancelAll()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (notificationManager.getNotificationChannel(substitutesChannel) == null) {
+                notificationManager.createNotificationChannel(NotificationChannel(substitutesChannel, applicationContext.getString(R.string.notification_channel_substitutes), NotificationManager.IMPORTANCE_DEFAULT))
+            }
+        }
+
+        notificationManagerCompat.cancelAll()
 
         //Store titles for summary notification
         val titles = mutableListOf<String>()
@@ -91,7 +97,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
                 //Open app on click on notification
                 val launchIntent = Intent(applicationContext, MainActivity::class.java)
                 launchIntent.putExtra(MainActivity.Extra.date, date.unixTimeStamp)
-                val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + titles.size, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                val launchPending = PendingIntent.getActivity(applicationContext, requestCodeBase + titles.size, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 builder.setContentIntent(launchPending)
 
                 //Expanded style
@@ -106,7 +112,8 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
                 builder.setContentTitle(title)
                 builder.setContentText(body)
                 builder.setContentInfo(substitutes[i].lessonText)
-                builder.setGroup(GROUP_KEY)
+                builder.setGroup(groupKey)
+                builder.setChannelId(substitutesChannel)
 
                 //Only relevant for JELLY_BEAN and higher
                 val pending = SubstituteShareUtils.makePendingShareIntent(applicationContext, LocalDate.now(), substitutes[i])
@@ -119,14 +126,14 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 builder.color = color
 
-                notificationManager.notify(i, builder.build())
+                notificationManagerCompat.notify(i, builder.build())
             }
         }
 
         //Notification group summary
         val summary = makeSummaryNotification(lesson, date, titles)
         if (summary != null)
-            notificationManager.notify(titles.size + 13, summary)
+            notificationManagerCompat.notify(titles.size + 13, summary)
 
         //TeslaUnread
         try {
@@ -164,7 +171,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         if (date != null) {
             launchIntent.putExtra(MainActivity.Extra.date, date.unixTimeStamp)
         }
-        val launchPending = PendingIntent.getActivity(applicationContext, REQUEST_CODE_BASE + notificationLines.size + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val launchPending = PendingIntent.getActivity(applicationContext, requestCodeBase + notificationLines.size + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(launchPending)
 
         //Normal notification
@@ -205,7 +212,7 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
         //N + Wear summary
         builder.setGroupSummary(true)
-        builder.setGroup(GROUP_KEY)
+        builder.setGroup(groupKey)
 
         return builder.build()
     }

@@ -1,7 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
+import android.animation.*
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Point
+import android.graphics.PointF
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.TabLayout
@@ -9,7 +13,11 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.*
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
 import com.github.salomonbrys.kodein.android.appKodein
+import io.codetail.animation.arcanimator.ArcAnimator
+import io.codetail.animation.arcanimator.Side
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
@@ -28,14 +36,28 @@ import rhedox.gesahuvertretungsplan.ui.activity.NavigationActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
+import android.graphics.Color.argb
+import android.support.v4.content.res.TypedArrayUtils.getResourceId
+import android.content.res.TypedArray
+import android.graphics.Color
+import android.support.v4.content.ContextCompat
+import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.util.Log
+import android.util.TypedValue
+import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.backgroundColor
 
 /**
  * Created by robin on 24.01.2017.
  */
-class SubstitutesFragment : Fragment(), SubstitutesContract.View {
+class SubstitutesFragment : Fragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
         private set;
+
+    private val fabPosition = PointF()
+    private val fabSize = Point()
+    private var fabElevation = 0f
 
     private object State {
         const val presenterState = "presenterState"
@@ -70,14 +92,17 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
         picker.show(fragmentManager, "Datepicker")
     }
 
+    private var isFabMeasured = false;
     override var isFabVisible: Boolean = false
         get() = field
         set(value) {
-            fab.isEnabled = value
-            if(value) {
-                fab.show()
-            } else {
-                fab.hide()
+            if (isFabMeasured) {
+                fab.isEnabled = value
+                if (value) {
+                    fab.show()
+                } else {
+                    fab.hide()
+                }
             }
             field = value
         }
@@ -203,7 +228,38 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
             tabLayout.tabMode = TabLayout.MODE_FIXED
         }
 
+
+        fab.post {
+            fabSize.x = fab.width
+            fabSize.y = fab.height
+
+            val window = IntArray(2)
+            fab.getLocationInWindow(window)
+
+            fabPosition.x = window[0].toFloat()
+            fabPosition.y = window[1] - (24f * context.displayMetrics.density)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                fabElevation = fab.elevation
+            }
+            isFabMeasured = true
+            //Execute current fab state
+            isFabVisible = isFabVisible
+        }
+
         presenter.attachView(this)
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        if (isFabVisible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fab.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onShow(dialog: DialogInterface?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fab.visibility = View.INVISIBLE
+        }
     }
 
     fun setupCab() {
@@ -254,7 +310,16 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View {
     }
 
     override fun showDialog(text: String) {
-        AnnouncementFragment.newInstance(text).show(fragmentManager, AnnouncementFragment.TAG)
+        val announcementFragment = AnnouncementFragment.newInstance("")
+        announcementFragment.showListener = this
+        announcementFragment.dismissListener = this
+        announcementFragment.fabPosition.x = fabPosition.x
+        announcementFragment.fabPosition.y = fabPosition.y
+        announcementFragment.fabSize.x = fabSize.x.toFloat()
+        announcementFragment.fabSize.y = fabSize.y.toFloat()
+        announcementFragment.fabElevation = fabElevation
+        announcementFragment.text = text;
+        announcementFragment.show(fragmentManager, AnnouncementFragment.TAG)
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {

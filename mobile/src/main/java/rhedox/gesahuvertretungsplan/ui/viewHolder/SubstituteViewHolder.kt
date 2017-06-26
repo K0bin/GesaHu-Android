@@ -20,12 +20,12 @@ import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
  * Created by robin on 19.01.2017.
  */
 class SubstituteViewHolder(private val view: View, private val presenter: SubstitutesContract.Presenter, @ColorInt private val textColor: Int, @ColorInt private val textColorRelevant: Int, circleColor: Int, circleColorRelevant: Int, @Dimension private val selectedElevation: Float) : ModelViewHolder<Substitute>(view) {
-    private val lesson = view.findViewById(R.id.lesson) as TextView
-    private val subject = view.findViewById(R.id.subject) as TextView
-    private val substituteTeacher = view.findViewById(R.id.substituteTeacher) as TextView
-    private val teacher = view.findViewById(R.id.teacher) as TextView
-    private val room = view.findViewById(R.id.room) as TextView
-    private val hint = view.findViewById(R.id.hint) as TextView
+    private val lesson = view.findViewById<TextView>(R.id.lesson)
+    private val subject = view.findViewById<TextView>(R.id.subject)
+    private val substituteTeacher = view.findViewById<TextView>(R.id.substituteTeacher)
+    private val teacher = view.findViewById<TextView>(R.id.teacher)
+    private val room = view.findViewById<TextView>(R.id.room)
+    private val hint = view.findViewById<TextView>(R.id.hint)
 
     private var circleRelevantBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
     private var circleBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)

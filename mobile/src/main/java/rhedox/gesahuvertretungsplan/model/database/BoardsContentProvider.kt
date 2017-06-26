@@ -4,7 +4,6 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
-import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import rhedox.gesahuvertretungsplan.model.database.tables.*
@@ -13,7 +12,7 @@ import rhedox.gesahuvertretungsplan.model.database.tables.*
  * Created by robin on 30.10.2016.
  */
 class BoardsContentProvider : ContentProvider() {
-    private lateinit var database: SQLiteOpenHelper
+    private lateinit var database: BoardsOpenHelper
 
     companion object {
         val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
@@ -43,7 +42,7 @@ class BoardsContentProvider : ContentProvider() {
     }
 
     override fun onCreate(): Boolean {
-        database = SqLiteHelper(context)
+        database = BoardsOpenHelper(context)
         return true
     }
 
@@ -95,7 +94,6 @@ class BoardsContentProvider : ContentProvider() {
         if(boardsUri != null) {
             context.contentResolver.notifyChange(insertUri, null, false)
         }
-        db.close();
         return insertUri
     }
 
@@ -159,7 +157,6 @@ class BoardsContentProvider : ContentProvider() {
             marksById -> rowsDeleted = db.delete(MarksContract.Table.name, "${MarksContract.Table.columnId} = '${uri.lastPathSegment}'", null)
             marksByBoardId -> rowsDeleted = db.delete(MarksContract.Table.name, "${MarksContract.Table.columnBoardId} = '${uri.lastPathSegment}'", null)
         }
-        db.close()
         return rowsDeleted
     }
 

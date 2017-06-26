@@ -18,12 +18,12 @@ import rhedox.gesahuvertretungsplan.model.database.Lesson
  * Created by robin on 19.01.2017.
  */
 class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
-    val date = view.findViewById(R.id.date) as TextView
-    val topic = view.findViewById(R.id.topic) as TextView
-    val homework = view.findViewById(R.id.homework) as TextView
-    val homeworkDue = view.findViewById(R.id.homeworkDue) as TextView
-    val statusIcon = view.findViewById(R.id.status_icon) as ImageView
-    val homeworkIcon = view.findViewById(R.id.homeworkIcon) as ImageView
+    val date = view.findViewById<TextView>(R.id.date)
+    val topic = view.findViewById<TextView>(R.id.topic)
+    val homework = view.findViewById<TextView>(R.id.homework)
+    val homeworkDue = view.findViewById<TextView>(R.id.homeworkDue)
+    val statusIcon = view.findViewById<ImageView>(R.id.status_icon)
+    val homeworkIcon = view.findViewById<ImageView>(R.id.homeworkIcon)
 
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 

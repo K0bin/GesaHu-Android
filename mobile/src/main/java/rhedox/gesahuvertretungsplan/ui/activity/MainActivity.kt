@@ -16,7 +16,6 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
 import android.support.transition.TransitionManager
-import android.support.v4.animation.ValueAnimatorCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.*
@@ -132,7 +131,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         setContentView(R.layout.activity_main)
         setupDrawerLayout()
 
-        headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername) as TextView
+        headerUsername = navigationView.getHeaderView(0).findViewById<TextView>(R.id.headerUsername)
         navigationView.setNavigationItemSelectedListener {
             drawerSelected = it.itemId
             onDrawerItemSelected(drawerSelected!!)
@@ -274,7 +273,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
             field = value
 
             if(field != null) {
-                val imageView = navigationView.getHeaderView(0).findViewById(R.id.avatarView) as CircleImageView;
+                val imageView = navigationView.getHeaderView(0).findViewById<CircleImageView>(R.id.avatarView);
                 imageView.setImageBitmap(avatar)
             }
         }

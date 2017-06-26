@@ -129,7 +129,9 @@ class SubstitutesSyncService : Service() {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     FirebaseCrash.report(e)
                 } else {
-                    Log.e("SubstitutesSync", e.message)
+                    if (e.message != null) {
+                        Log.e("SubstitutesSync", e.message)
+                    }
                 }
             }
             if (response != null && response.isSuccessful) {

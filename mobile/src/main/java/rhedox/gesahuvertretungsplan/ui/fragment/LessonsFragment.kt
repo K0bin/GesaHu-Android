@@ -79,7 +79,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_lessons, container, false)
-        val recycler = view.findViewById(R.id.recycler) as RecyclerView
+        val recycler = view.findViewById<RecyclerView>(R.id.recycler)
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         if (savedInstanceState != null) {
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(layoutManagerBundleName))

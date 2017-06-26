@@ -12,11 +12,11 @@ import rhedox.gesahuvertretungsplan.model.database.Mark
  * Created by robin on 30.01.2017.
  */
 class MarkViewHolder(view: View): ModelViewHolder<Mark>(view) {
-    val kind = view.findViewById(R.id.kind) as TextView
-    val date = view.findViewById(R.id.date) as TextView
-    val description = view.findViewById(R.id.description) as TextView
-    val mark = view.findViewById(R.id.mark) as TextView
-    val average = view.findViewById(R.id.average) as TextView
+    val kind = view.findViewById<TextView>(R.id.kind)
+    val date = view.findViewById<TextView>(R.id.date)
+    val description = view.findViewById<TextView>(R.id.description)
+    val mark = view.findViewById<TextView>(R.id.mark)
+    val average = view.findViewById<TextView>(R.id.average)
 
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 
