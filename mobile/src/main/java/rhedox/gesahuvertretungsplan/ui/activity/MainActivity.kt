@@ -1,34 +1,20 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
-import android.animation.LayoutTransition
-import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
-import android.support.design.internal.ScrimInsetsFrameLayout
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
-import android.support.transition.TransitionManager
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.*
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBar
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.graphics.drawable.DrawerArrowDrawable
-import android.support.v7.widget.Toolbar
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -42,10 +28,7 @@ import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
-import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
-import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
 import rhedox.gesahuvertretungsplan.ui.fragment.*
-import rhedox.gesahuvertretungsplan.util.dateTimeFromUnix
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
@@ -281,7 +264,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun navigateToSettings() {
         val fragment = PreferenceContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
     }
@@ -289,7 +272,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun navigateToAbout() {
         val fragment = AboutContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -303,7 +286,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun navigateToBoard(boardId: Long) {
         val fragment = BoardFragment.newInstance(boardId)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -317,7 +300,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun navigateToSubstitutes(date: LocalDate?) {
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;

@@ -1,7 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.animation.*
-import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Point
 import android.graphics.PointF
@@ -11,13 +9,8 @@ import android.os.Parcelable
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.view.*
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Animation
 import com.github.salomonbrys.kodein.android.appKodein
-import io.codetail.animation.arcanimator.ArcAnimator
-import io.codetail.animation.arcanimator.Side
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
@@ -28,24 +21,11 @@ import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
-import rhedox.gesahuvertretungsplan.ui.`interface`.ContextualActionBarListener
-import rhedox.gesahuvertretungsplan.ui.`interface`.FloatingActionButtonListener
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.ui.activity.NavigationActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
-import android.graphics.Color.argb
-import android.support.v4.content.res.TypedArrayUtils.getResourceId
-import android.content.res.TypedArray
-import android.graphics.Color
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.util.Log
-import android.util.TypedValue
-import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.backgroundColor
 
 /**
  * Created by robin on 24.01.2017.
@@ -319,7 +299,7 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, DialogInterfac
         announcementFragment.fabSize.y = fabSize.y.toFloat()
         announcementFragment.fabElevation = fabElevation
         announcementFragment.text = text;
-        announcementFragment.show(fragmentManager, AnnouncementFragment.TAG)
+        announcementFragment.show(fragmentManager, AnnouncementFragment.tag)
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {

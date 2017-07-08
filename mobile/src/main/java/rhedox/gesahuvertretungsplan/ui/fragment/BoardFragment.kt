@@ -9,6 +9,7 @@ import android.os.Parcelable
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,6 +77,7 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
+        Log.d("Board", "Create")
 
         val state: BoardContract.State;
         if (savedInstanceState != null) {
@@ -101,6 +103,7 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("Board", "ViewCreated")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
             val elevation = context.displayMetrics.density * 4f;
@@ -158,8 +161,10 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState
-        childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commit();
+        //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
+        if (activity?.isChangingConfigurations ?: false) {
+            childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commit();
+        }
 
         super.onSaveInstanceState(outState)
 

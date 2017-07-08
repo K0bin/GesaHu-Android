@@ -10,8 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.transition.ArcMotion
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
@@ -68,6 +66,8 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
     var text: String = ""
 
+    var toDismiss = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -80,10 +80,12 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         dialogElevation = context.resources.getDimension(R.dimen.dialogElevation)
         longDuration = context.resources.getInteger(android.R.integer.config_longAnimTime).toLong()
         shortDuration = context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+
+        toDismiss = savedInstanceState?.getBoolean(stateDismiss, false) ?: false
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val announcement = arguments?.getString(ARGUMENTS_ANNOUNCEMENT)
+        val announcement = arguments?.getString(argumentAnnouncement)
         if (announcement != null) {
             val dialog = Dialog(context, R.style.AnnouncementDialog)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -146,6 +148,13 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (toDismiss) {
+            dismiss()
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun animate(view: View, isVisible: Boolean) {
         if (dialogPosition == null || dialogSize == null || dialogCenter == null) {
@@ -157,8 +166,8 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
             view.y = dialogPosition!!.y
             view.visibility = View.VISIBLE
         } else {
-            view.x = fabPosition.x - dialogSize!!.x * revealPositionFraction
-            view.y = fabPosition.y - dialogSize!!.y * revealPositionFraction
+            view.x = fabCenter.x - dialogSize!!.x * revealPositionFraction
+            view.y = fabCenter.y - dialogSize!!.y * revealPositionFraction
             view.visibility = View.INVISIBLE
         }
 
@@ -215,7 +224,11 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
             override fun onAnimationRepeat(anim: com.nineoldandroids.animation.Animator?) {}
             override fun onAnimationEnd(anim: com.nineoldandroids.animation.Animator?) {
                 if (!isVisible) {
-                    dismiss()
+                    if (isResumed) {
+                        dismiss()
+                    } else {
+                        toDismiss = true;
+                    }
                 }
                 isAnimating = false;
             }
@@ -223,7 +236,6 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
             override fun onAnimationStart(anim: com.nineoldandroids.animation.Animator?) {
                 isAnimating = true;
             }
-
         })
         animation.addListener(object: Animator.AnimatorListener {
             override fun onAnimationRepeat(anim: Animator?) {}
@@ -238,7 +250,6 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
                     view.visibility = View.VISIBLE
                 }
             }
-
         })
 
         animation.start()
@@ -250,16 +261,24 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
+        toDismiss = false
         dismissListener?.onDismiss(dialog)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putBoolean(stateDismiss, toDismiss)
+    }
+
     companion object {
-        val TAG = "AnnouncementDialogFragment"
-        val ARGUMENTS_ANNOUNCEMENT = "Argument_Announcement"
+        const val tag = "AnnouncementDialogFragment"
+        const val argumentAnnouncement = "Argument_Announcement"
+        const val stateDismiss = "dismiss"
 
         fun newInstance(announcement: String): AnnouncementFragment {
             val args = Bundle()
-            args.putString(AnnouncementFragment.ARGUMENTS_ANNOUNCEMENT, announcement)
+            args.putString(AnnouncementFragment.argumentAnnouncement, announcement)
 
             val fragment = AnnouncementFragment()
             fragment.arguments = args
