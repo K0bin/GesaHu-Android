@@ -34,6 +34,7 @@ import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
+import rhedox.gesahuvertretungsplan.util.fixInputMethod
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
@@ -140,6 +141,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
     override fun onDestroy() {
         super.onDestroy()
+
+        //Fix Android memory leaks
+        fixInputMethod()
         removeActivityFromTransitionManager()
     }
 
@@ -268,7 +272,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToSettings() {
         val fragment = PreferenceContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
     }
@@ -276,7 +280,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToAbout() {
         val fragment = AboutContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -290,7 +294,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToBoard(boardId: Long) {
         val fragment = BoardFragment.newInstance(boardId)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -304,7 +308,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToSubstitutes(date: LocalDate?) {
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out)
+                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
