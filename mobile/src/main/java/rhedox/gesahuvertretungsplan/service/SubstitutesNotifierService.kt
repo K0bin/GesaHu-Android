@@ -75,7 +75,9 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (notificationManager.getNotificationChannel(substitutesChannel) == null) {
-                notificationManager.createNotificationChannel(NotificationChannel(substitutesChannel, applicationContext.getString(R.string.notification_channel_substitutes), NotificationManager.IMPORTANCE_DEFAULT))
+                val channel = NotificationChannel(substitutesChannel, applicationContext.getString(R.string.notification_channel_substitutes), NotificationManager.IMPORTANCE_DEFAULT)
+                channel.description = applicationContext.getString(R.string.notification_channel_substitutes_description)
+                notificationManager.createNotificationChannel(channel)
             }
         }
 

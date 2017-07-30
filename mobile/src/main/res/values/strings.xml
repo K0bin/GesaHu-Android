@@ -22,6 +22,7 @@
     <string name="lessons">Vertretungsstunden</string>
 
     <string name="notification_channel_substitutes">Vertretungsstunden</string>
+    <string name="notification_channel_substitutes_description">GesaHu benachrichtigt dich auf diesem Kanal über anstehende relevante Vertretungsstunden.</string>
 
     <string name="drawer_open">Menü anzeigen</string>
     <string name="drawer_close">Menü verstecken</string>
