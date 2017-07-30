@@ -27,13 +27,8 @@ import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
-import android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.util.Log
 import com.google.firebase.FirebaseApp
-
 
 /**
  * Created by Robin on 29.06.2015.

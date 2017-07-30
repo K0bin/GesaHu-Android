@@ -300,7 +300,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     override fun navigateToSubstitutes(date: LocalDate?) {
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                .setCustomAnimations(if (date == null) R.anim.slide_in_from_left else R.anim.fade_in, if (date == null) R.anim.slide_out_to_right else R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;

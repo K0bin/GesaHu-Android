@@ -6,12 +6,12 @@ apply plugin: "kotlin-allopen"
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 4038
+        versionCode 4039
         versionName "4.2"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
@@ -122,8 +122,8 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.+'
     compile 'com.squareup.okhttp3:okhttp:3.+'
     compile 'com.github.xiprox.errorview:library:2.+'
-    compile 'com.google.firebase:firebase-crash:10.2.4'
-    compile 'com.google.firebase:firebase-core:10.2.4'
+    compile 'com.google.firebase:firebase-crash:11.0.4'
+    compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.github.paolorotolo:appintro:4.+'
     compile 'de.hdodenhof:circleimageview:2.+'
     compile 'com.squareup.retrofit2:converter-gson:+'

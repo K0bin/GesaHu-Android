@@ -210,6 +210,9 @@ class SubstitutesFragment : Fragment(), SubstitutesContract.View, DialogInterfac
 
 
         fab.post {
+            if (fab == null) {
+                return@post
+            }
             fabSize.x = fab.width
             fabSize.y = fab.height
 
