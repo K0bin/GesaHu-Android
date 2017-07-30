@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'android-apt'
 apply plugin: "kotlin-allopen"
 
 android {
@@ -11,8 +10,8 @@ android {
         applicationId "rhedox.gesahuvertretungsplan"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 4039
-        versionName "4.2"
+        versionCode 4040
+        versionName "4.2.1"
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -116,6 +115,7 @@ dependencies {
     compile 'com.android.support:preference-v7:26.0.+'
     compile 'com.android.support:preference-v14:26.0.+'
     compile 'com.android.support.constraint:constraint-layout:1.1.+'
+    compile 'com.google.android.gms:play-services-auth:11.0.4'
     compile 'com.takisoft.fix:preference-v7:25.+'
     compile 'com.google.android.apps.dashclock:dashclock-api:+'
     compile 'com.squareup.retrofit2:retrofit:2.+'

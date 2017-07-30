@@ -1,24 +1,14 @@
 package rhedox.gesahuvertretungsplan.presenter
 
-import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.app.Activity
 import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
-import android.preference.PreferenceManager
-import android.provider.CalendarContract
-import android.support.v4.content.ContextCompat
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.os.Bundle
-import com.github.salomonbrys.kodein.*
-import org.jetbrains.anko.accountManager
+import android.provider.CalendarContract
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
@@ -26,7 +16,6 @@ import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
-import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 
@@ -150,8 +139,7 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerContract.St
 
         if(account != null) {
             //load avatar
-            val avatarLoaderProvider: () -> AvatarLoader = kodeIn.provider();
-            val avatarLoader = avatarLoaderProvider.invoke()
+            val avatarLoader: AvatarLoader = kodeIn.instance();
             avatarLoader.callback = {
                 this.avatar = it
                 view?.avatar = it

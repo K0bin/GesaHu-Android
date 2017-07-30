@@ -10,7 +10,12 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.*
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.android.KodeinSupportFragment
 import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.bind
+import com.github.salomonbrys.kodein.provider
+import com.github.salomonbrys.kodein.singleton
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
@@ -18,6 +23,8 @@ import org.jetbrains.anko.windowManager
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
@@ -30,7 +37,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 24.01.2017.
  */
-class SubstitutesFragment : Fragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
+class SubstitutesFragment : KodeinSupportFragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
         private set;

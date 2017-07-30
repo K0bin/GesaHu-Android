@@ -10,24 +10,27 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
-import android.support.v4.view.*
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
+import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
 import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
-import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
@@ -35,7 +38,7 @@ import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 /**
  * Created by robin on 20.10.2016.
  */
-class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
+class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
     private var toggle: ActionBarDrawerToggle? = null
         private set
     private lateinit var listener: Listener;
@@ -293,8 +296,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     }
 
     override fun navigateToAuth() {
-        accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
-                null, null, null, this, null, null);
+        /*accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
+                null, null, null, this, null, null);*/
+        startActivity(intentFor<AuthActivity>())
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {

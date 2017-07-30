@@ -4,18 +4,20 @@ import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.credentials.CredentialRequest
+import com.google.android.gms.common.api.GoogleApiClient
 import kotlinx.android.synthetic.main.activity_auth.*
 import org.jetbrains.anko.accountManager
 import retrofit2.Call
@@ -24,8 +26,6 @@ import retrofit2.Response
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.BoardName
-import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.service.BoardsSyncService
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -35,8 +35,7 @@ import rhedox.gesahuvertretungsplan.util.Md5Util
 /**
  * Created by robin on 31.10.2016.
  */
-class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<BoardName>> {
-
+class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<BoardName>>, GoogleApiClient.ConnectionCallbacks {
     companion object {
         const val stateAccount = "account";
         const val argIsNewAccount ="isNewAccount"
@@ -45,17 +44,26 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
     private var account: Account? = null;
     private var username: String = "";
+    private var passwordMd5: String = "";
     private var password: String = "";
 
     private lateinit var gesaHu: GesaHu;
     private var call: Call<List<BoardName>>? = null;
 
     private lateinit var snackbar: Snackbar;
+    private lateinit var client: GoogleApiClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_auth)
+
+        client = GoogleApiClient.Builder(this)
+                        .addApi(Auth.CREDENTIALS_API)
+                        .enableAutoManage(this, {})
+                        .build()
+
+        client.registerConnectionCallbacks(this)
 
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = Color.parseColor("#ffe0e0e0");
@@ -78,7 +86,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
         gesaHu = GesaHu(this);
 
-        passwordEdit.setOnEditorActionListener { textView, actionId, keyEvent ->
+        passwordEdit.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {
                 login();
                 true
@@ -90,33 +98,49 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         snackbar = Snackbar.make(usernameLayout, getString(R.string.login_required), Snackbar.LENGTH_SHORT)
     }
 
+    override fun onConnected(connectionHint: Bundle?) {
+        val request = CredentialRequest.Builder()
+                .setPasswordLoginSupported(true)
+                .build()
+
+        Auth.CredentialsApi.request(client, request).setResultCallback {
+            if (it.status.isSuccess) {
+                passwordEdit.setText(it.credential.password)
+                usernameEdit.setText(it.credential.id)
+                login()
+            }
+        }
+    }
+
+    override fun onConnectionSuspended(cause: Int) {
+    }
+
     fun login() {
         var areFieldsEmpty = false
-        if (passwordEdit.text == null || passwordEdit.text.toString().isNullOrBlank()) {
-            if(password.isNullOrBlank()) {
-                passwordLayout.error = getString(R.string.login_password_empty)
-                passwordLayout.isErrorEnabled = true
-                areFieldsEmpty = true;
-            }
+        if (passwordEdit.text?.toString().isNullOrBlank()) {
+            passwordLayout.error = getString(R.string.login_password_empty)
+            passwordLayout.isErrorEnabled = true
+            areFieldsEmpty = true;
         } else {
+            passwordLayout.isErrorEnabled = false
+            password = passwordEdit.text.toString()
+            passwordMd5 = Md5Util.Md5(password)
+        }
+
+        if (usernameEdit.text?.toString().isNullOrBlank()) {
+            usernameLayout.error = getString(R.string.login_username_empty)
+            usernameLayout.isErrorEnabled = true
+            areFieldsEmpty = true;
+        } else {
+            usernameLayout.isErrorEnabled = false
             username = usernameEdit.text.toString()
             if(username.length > 2) {
                 username = username.substring(0, 2).toUpperCase() + username.substring(2, username.length)
             }
         }
 
-        if (usernameEdit.text == null || usernameEdit.text.toString().isNullOrBlank()) {
-            if(username.isNullOrBlank()) {
-                usernameLayout.error = getString(R.string.login_username_empty)
-                usernameLayout.isErrorEnabled = true
-                areFieldsEmpty = true;
-            }
-        } else {
-            password = Md5Util.Md5(passwordEdit.text.toString())
-        }
-
         if (!areFieldsEmpty && call == null) {
-            call = gesaHu.boardNames(username, password)
+            call = gesaHu.boardNames(username, passwordMd5)
             call?.enqueue(this)
         }
     }
@@ -148,9 +172,27 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     fun finishLogin() {
         if(account == null) {
             account = Account(username, GesaHuAccountService.GesaHuAuthenticator.accountType);
-            accountManager.addAccountExplicitly(account, password, Bundle());
+            accountManager.addAccountExplicitly(account, passwordMd5, Bundle());
         } else {
-            accountManager.setPassword(account, password);
+            accountManager.setPassword(account, passwordMd5);
+        }
+
+        val credential = com.google.android.gms.auth.api.credentials.Credential.Builder(username)
+                .setPassword(passwordEdit.text.toString())
+                .build()
+
+        Auth.CredentialsApi.save(client, credential).setResultCallback {
+            if (it.isSuccess) {
+                // Credentials were saved
+            } else {
+                if (it.hasResolution()) {
+                    // Try to resolve the save request. This will prompt the user if
+                    // the credential is new.
+                    try {
+                        it.startResolutionForResult(this, 1);
+                    } catch (e: IntentSender.SendIntentException ) {}
+                }
+            }
         }
 
         usernameEdit.isFocusable = false;

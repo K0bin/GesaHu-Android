@@ -45,7 +45,7 @@ class App : Application(), KodeinAware {
 
         //Substitute
         bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
-        bind<SubstituteFormatter>() with singleton { SubstituteFormatter(applicationContext)}
+        bind<SubstituteFormatter>() with singleton { SubstituteFormatter(applicationContext) }
     }
 
     private var refWatcher: RefWatcher? = null
@@ -108,9 +108,6 @@ class App : Application(), KodeinAware {
     }
 
     companion object {
-        @JvmStatic
-        val ANALYTICS = true
-
         @JvmStatic
         fun getRefWatcher(context: Context): RefWatcher? {
             if (BuildConfig.DEBUG)
