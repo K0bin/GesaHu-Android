@@ -68,7 +68,9 @@
             android:singleLine="true"
             android:nextFocusDown="@+id/passwordEdit"
             android:nextFocusRight="@+id/passwordEdit"
-            android:nextFocusForward="@+id/passwordEdit"/>
+            android:nextFocusForward="@+id/passwordEdit"
+            android:autofillHints="username"
+            android:importantForAutofill="yes"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +100,9 @@
             android:nextFocusRight="@+id/login"
             android:nextFocusForward="@+id/login"
             android:nextFocusUp="@id/usernameEdit"
-            android:nextFocusLeft="@id/usernameEdit" />
+            android:nextFocusLeft="@id/usernameEdit"
+            android:autofillHints="password"
+            android:importantForAutofill="yes"/>
 
     </android.support.design.widget.TextInputLayout>
 
