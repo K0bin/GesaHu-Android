@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_preference_container.toolbar;
 /**
  * Created by robin on 07.02.2017.
  */
-class PreferenceContainerFragment : Fragment() {
+class PreferenceContainerFragment : AnimationFragment() {
     companion object {
         @JvmStatic
         fun newInstance(): PreferenceContainerFragment {

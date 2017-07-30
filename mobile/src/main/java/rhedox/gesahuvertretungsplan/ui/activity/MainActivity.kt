@@ -148,6 +148,10 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
+        if (isChangingConfigurations) {
+            //supportFragmentManager.beginTransaction().detach(currentFragment).commit();
+        }
         super.onSaveInstanceState(outState)
         outState.putParcelable(state, presenter.saveState() as NavDrawerState)
     }
@@ -270,17 +274,21 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         }
 
     override fun navigateToSettings() {
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = PreferenceContainerFragment.newInstance()
+        fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
+        currentFragment = fragment
     }
 
     override fun navigateToAbout() {
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = AboutContainerFragment.newInstance()
+        fragment.useSlideAnimation = true;
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -292,9 +300,10 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     }
 
     override fun navigateToBoard(boardId: Long) {
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = BoardFragment.newInstance(boardId)
+        fragment.useSlideAnimation = true;
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -306,7 +315,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = SubstitutesFragment.newInstance(date)
+        fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)

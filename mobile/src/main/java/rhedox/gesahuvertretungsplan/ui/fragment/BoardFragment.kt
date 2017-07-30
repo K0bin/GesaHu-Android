@@ -30,7 +30,7 @@ import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
 /**
  * Created by robin on 24.01.2017.
  */
-class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
+class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     private object Arguments {
         const val boardId = "boardId"
     }

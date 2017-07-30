@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_preference_container.toolbar;
 /**
  * Created by robin on 07.02.2017.
  */
-class AboutContainerFragment : Fragment() {
+class AboutContainerFragment : AnimationFragment() {
     companion object {
         @JvmStatic
         fun newInstance(): AboutContainerFragment {
@@ -34,7 +34,7 @@ class AboutContainerFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_about_container, container, false)
-        childFragmentManager.beginTransaction().replace(R.id.about_fragment_container, createFragment(context), fragmentTag).commit()
+        childFragmentManager.beginTransaction().replace(R.id.about_fragment_container, createFragment(context.applicationContext), fragmentTag).commit()
         return view;
     }
 

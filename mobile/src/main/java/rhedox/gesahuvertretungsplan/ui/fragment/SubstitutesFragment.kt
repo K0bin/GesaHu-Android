@@ -38,7 +38,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 24.01.2017.
  */
-class SubstitutesFragment : KodeinSupportFragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
+class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
         private set;
