@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
+import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.fragment_lessons.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.windowManager
@@ -63,6 +64,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         get() = adapter.lessonsMissedWithSickNote
         set(value) {adapter.lessonsMissedWithSickNote = value}
 
+    @AddTrace(name = "LessonsFragCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -77,6 +79,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         presenter = LessonsPresenter(appKodein(), state)
     }
 
+    @AddTrace(name = "LessonsFragCreateView", enabled = true)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_lessons, container, false)
         val recycler = view.findViewById<RecyclerView>(R.id.recycler)

@@ -16,6 +16,7 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.provider
 import com.github.salomonbrys.kodein.singleton
+import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
@@ -142,6 +143,7 @@ class SubstitutesFragment : KodeinSupportFragment(), SubstitutesContract.View, D
             swipeRefreshLayout?.isEnabled = value
         }
 
+    @AddTrace(name = "SubFragCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -163,6 +165,7 @@ class SubstitutesFragment : KodeinSupportFragment(), SubstitutesContract.View, D
         presenter = SubstitutesPresenter(appKodein(), state)
     }
 
+    @AddTrace(name = "SubFragCreateView", enabled = true)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_substitutes, container, false)
     }

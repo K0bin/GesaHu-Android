@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
+import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.windowManager
 import rhedox.gesahuvertretungsplan.R
@@ -55,6 +56,7 @@ class MarksFragment : Fragment(), MarksContract.View {
         get() = adapter.mark
         set(value) { adapter.mark = value }
 
+    @AddTrace(name = "MarksFragCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -69,6 +71,7 @@ class MarksFragment : Fragment(), MarksContract.View {
         presenter = MarksPresenter(appKodein(), state)
     }
 
+    @AddTrace(name = "MarksFragCreateView", enabled = true)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_lessons, container, false)
         val recycler = view.findViewById<RecyclerView>(R.id.recycler)

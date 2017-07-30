@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
+import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_lessons.*
 import kotlinx.android.synthetic.main.fragment_substitutes.*
@@ -74,6 +75,7 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
             field = value;
         }
 
+    @AddTrace(name = "BoardFragCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -97,6 +99,7 @@ class BoardFragment : Fragment(), BoardContract.View, AppBarFragment {
         presenter.destroy()
     }
 
+    @AddTrace(name = "BoardFragCreateView", enabled = true)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_board, container, false);
     }

@@ -22,6 +22,7 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
@@ -31,6 +32,7 @@ import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
@@ -120,7 +122,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         headerUsername = navigationView.getHeaderView(0).findViewById<TextView>(R.id.headerUsername)
         navigationView.setNavigationItemSelectedListener {
             drawerSelected = it.itemId
-            onDrawerItemSelected(drawerSelected!!)
             drawer?.closeDrawer(GravityCompat.START)
             true
         }
@@ -267,7 +268,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToSettings() {
         val fragment = PreferenceContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
     }
@@ -275,7 +276,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToAbout() {
         val fragment = AboutContainerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
@@ -289,22 +290,21 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToBoard(boardId: Long) {
         val fragment = BoardFragment.newInstance(boardId)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
     }
 
     override fun navigateToAuth() {
-        /*accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
-                null, null, null, this, null, null);*/
-        startActivity(intentFor<AuthActivity>())
+        accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
+                null, null, null, this, null, null);
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
         val fragment = SubstitutesFragment.newInstance(date)
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(if (date == null) R.anim.slide_in_from_left else R.anim.fade_in, if (date == null) R.anim.slide_out_to_right else R.anim.fade_out)
+                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
