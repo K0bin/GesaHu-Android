@@ -24,7 +24,8 @@ class SupervisionDeserializer(context: Context) : JsonDeserializer<Supervision> 
         val teacher = resolver.resolveTeacher(teacherAbbr);
         val substituteAbbr = Html.decode(jsonObject.get("Vertretungslehrer").asString.trim());
         val substitute = resolver.resolveTeacher(substituteAbbr);
-        val location = Html.decode(jsonObject.get("Ort").asString.trim());
+        val _location = Html.decode(jsonObject.get("Ort").asString.trim());
+        val location = if (_location == "---") "" else _location
         val isRelevant = jsonObject.get("relevant").asString.toLowerCase() == "true";
 
         return Supervision(time, teacher, substitute, location, isRelevant);

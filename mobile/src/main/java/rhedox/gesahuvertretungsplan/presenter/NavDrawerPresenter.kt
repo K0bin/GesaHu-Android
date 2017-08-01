@@ -22,7 +22,7 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
 /**
  * Created by robin on 20.10.2016.
  */
-class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerContract.State) : NavDrawerContract.Presenter {
+class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
     private var account: Account? = null
         private set
@@ -65,7 +65,7 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerContract.St
         updateApp()
     }
 
-    override fun saveState(): NavDrawerContract.State {
+    override fun saveState(): NavDrawerState {
         return NavDrawerState(drawerId)
     }
 
@@ -113,6 +113,7 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerContract.St
             NavDrawerContract.DrawerIds.substitutes -> view?.navigateToSubstitutes(null)
             NavDrawerContract.DrawerIds.about -> view?.navigateToAbout()
             NavDrawerContract.DrawerIds.settings -> view?.navigateToSettings()
+            NavDrawerContract.DrawerIds.supervisions -> view?.navigateToSupervisions()
             else -> {
                 for (board in boards) {
                     if (board.id == drawerId - 13L) {

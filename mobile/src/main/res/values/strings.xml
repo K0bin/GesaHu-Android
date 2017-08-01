@@ -7,6 +7,7 @@
     <string name="title_activity_settings">Einstellungen</string>
 
     <string name="activity_substitutes">Vertretungsstunden</string>
+    <string name="activity_supervisions">Aufsicht</string>
     <string name="activity_board">Board</string>
 
     <string name="provider_substitutes">Vertretungsstunden</string>
@@ -28,6 +29,7 @@
     <string name="drawer_open">Menü anzeigen</string>
     <string name="drawer_close">Menü verstecken</string>
     <string name="drawer_substitutes">Vertretungsplan</string>
+    <string name="drawer_supervisions">Aufsicht</string>
     <string name="drawer_boards">Boards</string>
 
     <string name="login_account_exists">Es ist bereits ein GesaHu Account eingerichtet.</string>
@@ -82,6 +84,8 @@
     <string name="share_subsitute" formatted="false">Wir haben %s %s. %s bei %s in Raum %s.</string>
     <string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
     <string name="share_regular" formatted="false">%s %s %s findet statt.</string>
+
+    <string name="share_supervision" formatted="false">Es gibt eine %s Aufsichtsvertretung: Im Zeitraum %s wird %s ersetzt durch %s. Ort: %s</string>
 
     <string name="main_cab_title">Teile eine Stunde!</string>
     <string name="failed">Da hat etwas nicht funktioniert!</string>

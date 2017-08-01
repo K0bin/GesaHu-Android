@@ -149,7 +149,7 @@ class SubstitutesSyncService : Service() {
                 }
                 val supervisionInserts = mutableListOf<ContentValues>()
                 for (supervision in substitutesList.supervisions) {
-                    substituteInserts.add(SupervisionAdapter.toContentValues(supervision, substitutesList.date))
+                    supervisionInserts.add(SupervisionAdapter.toContentValues(supervision, substitutesList.date))
                 }
 
                 val substituteCount = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())

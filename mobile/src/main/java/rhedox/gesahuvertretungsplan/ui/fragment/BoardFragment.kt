@@ -81,7 +81,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         retainInstance = true
         Log.d("Board", "Create")
 
-        val state: BoardContract.State;
+        val state: BoardState;
         if (savedInstanceState != null) {
             state = savedInstanceState.getParcelable<BoardState>(State.presenterState)
             boardId = state.boardId

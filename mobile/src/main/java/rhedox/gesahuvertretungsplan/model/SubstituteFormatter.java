@@ -43,6 +43,32 @@ public class SubstituteFormatter {
         }
     }
 
+    public String makeShareText(@Nullable LocalDate date, @NonNull Supervision supervision) {
+        String dateText = "";
+
+        if(date != null) {
+            if (date.equals(LocalDate.now()))
+                dateText = context.getString(R.string.today);
+            else if (date.equals(LocalDate.now().plusDays(1)))
+                dateText = context.getString(R.string.tomorrow);
+            else {
+
+                if(date.getWeekOfWeekyear() == LocalDate.now().getWeekOfWeekyear()) {
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern("EEEE");
+                    dateText = context.getString(R.string.date_prefix) + " " + date.toString(fmt);
+                } else if(date.getWeekOfWeekyear() == LocalDate.now().getWeekOfWeekyear() + 1) {
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern("EEEE");
+                    dateText = context.getString(R.string.next_week) + " " + date.toString(fmt);
+                } else {
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.");
+                    dateText = context.getString(R.string.date_prefix) + " " + date.toString(fmt);
+                }
+            }
+        }
+
+        return String.format(context.getString(R.string.share_supervision), dateText, supervision.getTime(), supervision.getTeacher(), supervision.getSubstitute(), supervision.getLocation());
+    }
+
     public String makeShareText(@Nullable LocalDate date, @NonNull Substitute substitute) {
         String dateText = "";
 

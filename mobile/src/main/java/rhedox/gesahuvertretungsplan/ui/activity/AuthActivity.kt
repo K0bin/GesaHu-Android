@@ -141,6 +141,8 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 autoLockSignInSuccessful = true;
                 login()
             }
+        } else if (requestCode == SignInRequestCodes.save) {
+            finishActivity()
         }
     }
 
@@ -172,6 +174,13 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
 
         if (!areFieldsEmpty && call == null) {
+            usernameEdit.isFocusable = false;
+            usernameEdit.isFocusableInTouchMode = false;
+            usernameEdit.isEnabled = false;
+            passwordEdit.isFocusable = false;
+            passwordEdit.isFocusableInTouchMode = false;
+            passwordEdit.isEnabled = false;
+
             call = gesaHu.boardNames(username, passwordMd5)
             call?.enqueue(this)
         }
@@ -217,6 +226,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             Auth.CredentialsApi.save(client, credential).setResultCallback {
                 if (it.isSuccess) {
                     // Credentials were saved
+                    finishActivity()
                 } else {
                     if (it.hasResolution()) {
                         // Try to resolve the save request. This will prompt the user if
@@ -225,18 +235,17 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                             it.startResolutionForResult(this, SignInRequestCodes.save);
                         } catch (e: IntentSender.SendIntentException) {
                         }
+                    } else {
+                        finishActivity()
                     }
                 }
             }
+        } else {
+            finishActivity()
         }
+    }
 
-        usernameEdit.isFocusable = false;
-        usernameEdit.isFocusableInTouchMode = false;
-        usernameEdit.isEnabled = false;
-        passwordEdit.isFocusable = false;
-        passwordEdit.isFocusableInTouchMode = false;
-        passwordEdit.isEnabled = false;
-
+    private fun finishActivity() {
         SubstitutesSyncService.setIsSyncEnabled(account!!, true)
         BoardsSyncService.setIsSyncEnabled(account!!, true)
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
@@ -260,5 +269,11 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         this.call = null;
         snackbar.show();
         autoLockSignInSuccessful = false;
+        usernameEdit.isFocusable = true;
+        usernameEdit.isFocusableInTouchMode = true;
+        usernameEdit.isEnabled = true;
+        passwordEdit.isFocusable = true;
+        passwordEdit.isFocusableInTouchMode = true;
+        passwordEdit.isEnabled = true;
     }
 }

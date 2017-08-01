@@ -1,18 +1,15 @@
 package rhedox.gesahuvertretungsplan.mvp
 
 import rhedox.gesahuvertretungsplan.model.database.Lesson
+import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 
 
 /**
  * Created by robin on 18.01.2017.
  */
 interface LessonsContract {
-    interface State {
-        val boardId: Long;
-    }
-
     interface Presenter {
-        fun saveState(): State
+        fun saveState(): LessonsState
         fun attachView(view: View)
         fun detachView()
         fun destroy()

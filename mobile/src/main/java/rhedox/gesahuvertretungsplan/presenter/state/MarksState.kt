@@ -13,7 +13,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 02.01.2017.
  */
-data class MarksState(override val boardId: Long) : MarksContract.State, Parcelable {
+data class MarksState(val boardId: Long): Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(boardId)
     }

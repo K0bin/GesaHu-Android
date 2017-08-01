@@ -216,6 +216,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
             R.id.about -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.about);
             R.id.settings -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.settings);
             R.id.substitutes -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.substitutes);
+            R.id.supervisions -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.supervisions);
             else -> presenter.onNavigationDrawerItemClicked(drawerSelected!!)
         }
     }
@@ -317,6 +318,17 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToSubstitutes(date: LocalDate?) {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = SubstitutesFragment.newInstance(date)
+        fragment.useSlideAnimation = true
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.fragment_container, fragment, currentFragmentTag)
+                .commit()
+        this.currentFragment = fragment;
+    }
+
+    override fun navigateToSupervisions(date: LocalDate?) {
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
+        val fragment = SupervisionsFragment.newInstance(date)
         fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)

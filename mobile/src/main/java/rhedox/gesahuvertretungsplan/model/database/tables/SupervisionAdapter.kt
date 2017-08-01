@@ -24,7 +24,7 @@ object SupervisionAdapter {
     }
 
     fun fromCursor(cursor: Cursor): Supervision? {
-        if(cursor.columnCount < 10 || cursor.isClosed || cursor.count == 0)
+        if(cursor.columnCount < 7 || cursor.isClosed || cursor.count == 0)
             return null;
 
         val id = cursor.getLong(cursor.getColumnIndex(SupervisionsContract.Table.columnId))

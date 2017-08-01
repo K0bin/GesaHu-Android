@@ -69,7 +69,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        val state: LessonsContract.State;
+        val state: LessonsState;
         if (savedInstanceState != null) {
             state = savedInstanceState.getParcelable<LessonsState>(stateBundleName)
         } else {

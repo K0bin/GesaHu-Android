@@ -3,17 +3,17 @@ package rhedox.gesahuvertretungsplan.mvp
 import android.os.Parcelable
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.model.Supervision
+import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 
 /**
  * Created by robin on 20.10.2016.
  */
-interface SubstitutesContract {
+interface SupervisionsContract {
     interface Presenter {
         fun onDatePickerIconClicked();
         fun onDatePicked(date: LocalDate)
         fun onActivePageChanged(position: Int)
-        fun onFabClicked()
         fun onPageAttached(position: Int)
         fun onShareButtonClicked()
         fun onListItemClicked(listEntry: Int)
@@ -22,22 +22,20 @@ interface SubstitutesContract {
         fun attachView(view: View)
         fun detachView()
         fun destroy()
-        fun saveState(): SubstitutesState
+        fun saveState(): SupervisionsState
     }
 
     interface View {
-        fun showList(position: Int, list: List<Substitute>)
+        fun showList(position: Int, list: List<Supervision>)
         fun showDatePicker(defaultDate: LocalDate)
         var currentTab: Int
-        var isFabVisible: Boolean
         var isAppBarExpanded: Boolean
         var tabTitles: Array<String>
         var isRefreshing: Boolean
         var isSwipeRefreshEnabled: Boolean
         var isCabVisible: Boolean
         fun setSelected(position: Int, listPosition: Int?)
-        fun showDialog(text: String)
-        fun openSubstitutesForDate(date: LocalDate)
+        fun openSupervisionsForDay(date: LocalDate)
         fun share(text: String)
     }
 }

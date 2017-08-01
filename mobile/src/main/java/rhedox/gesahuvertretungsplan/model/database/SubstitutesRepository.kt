@@ -21,10 +21,8 @@ import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
+import rhedox.gesahuvertretungsplan.model.Supervision
+import rhedox.gesahuvertretungsplan.model.database.tables.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
@@ -44,18 +42,22 @@ class SubstitutesRepository(context: Context) {
     private val futures = mutableMapOf<Int, Future<Unit>>();
 
     var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null
+    var supervisisonsCallback: ((date: LocalDate, substitutes: List<Supervision>) -> Unit)? = null
     var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null
 
     init {
         observer = Observer {
-            if(it.pathSegments.size > 1 && (it.pathSegments[1] == SubstitutesContract.datePath || it.pathSegments[1] == AnnouncementsContract.datePath)) {
+            if(it.pathSegments.size > 1 && (it.pathSegments[1] == SubstitutesContract.datePath || it.pathSegments[1] == AnnouncementsContract.datePath || it.pathSegments[1] == SupervisionsContract.datePath)) {
                 if(it.pathSegments[0] == SubstitutesContract.path)
                     loadSubstitutesForDay(localDateFromUnix(it.lastPathSegment.toInt()));
                 else if(it.pathSegments[0]== AnnouncementsContract.path)
                     loadAnnouncementForDay(localDateFromUnix(it.lastPathSegment.toInt()));
+                else if(it.pathSegments[0]== SupervisionsContract.path)
+                    loadSupervisionsForDay(localDateFromUnix(it.lastPathSegment.toInt()));
             }
         }
         context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
+        context.contentResolver.registerContentObserver(SupervisionsContract.dateUri, true, observer);
         context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
     }
 
@@ -89,6 +91,17 @@ class SubstitutesRepository(context: Context) {
             return@load announcement
         }, {
             announcementCallback?.invoke(date, it)
+        })
+    }
+
+    fun loadSupervisionsForDay(date: LocalDate) {
+        load({
+            val cursor = contentResolver.query(SupervisionsContract.uriWithDate(date), SupervisionsContract.Table.columns.toTypedArray(), null, null, "${SupervisionsContract.Table.columnIsRelevant} DESC, ${SupervisionsContract.Table.columnTime} ASC")
+            val list = SupervisionAdapter.listFromCursor(cursor)
+            cursor.close()
+            return@load list
+        }, {
+            supervisisonsCallback?.invoke(date, it)
         })
     }
 
@@ -169,6 +182,5 @@ class SubstitutesRepository(context: Context) {
             cursor.close()
             return substitutes;
         }
-
     }
 }

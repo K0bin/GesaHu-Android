@@ -61,7 +61,7 @@ class MarksFragment : Fragment(), MarksContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        val state: MarksContract.State;
+        val state: MarksState;
         if (savedInstanceState != null) {
             state = savedInstanceState.getParcelable<MarksState>(stateBundleName)
         } else {

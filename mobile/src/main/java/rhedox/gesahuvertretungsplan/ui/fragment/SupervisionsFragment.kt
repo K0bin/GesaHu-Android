@@ -1,51 +1,39 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.content.DialogInterface
 import android.graphics.Point
-import android.graphics.PointF
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.*
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.android.KodeinSupportFragment
 import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.bind
-import com.github.salomonbrys.kodein.provider
-import com.github.salomonbrys.kodein.singleton
 import com.google.firebase.perf.metrics.AddTrace
-import org.jetbrains.anko.share
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.share
 import org.jetbrains.anko.windowManager
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
+import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
+import rhedox.gesahuvertretungsplan.presenter.SupervisionsPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import rhedox.gesahuvertretungsplan.ui.activity.NavigationActivity
-import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesPagerAdapter
+import rhedox.gesahuvertretungsplan.ui.adapter.SupervisionsPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 24.01.2017.
  */
-class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
-    private lateinit var presenter: SubstitutesContract.Presenter;
-    private var pagerAdapter: SubstitutesPagerAdapter? = null
+class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
+    private lateinit var presenter: SupervisionsContract.Presenter;
+    private var pagerAdapter: SupervisionsPagerAdapter? = null
         private set;
-
-    private val fabPosition = PointF()
-    private val fabSize = Point()
-    private var fabElevation = 0f
 
     private object State {
         const val presenterState = "presenterState"
@@ -55,8 +43,8 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     }
     companion object {
         @JvmStatic
-        fun newInstance(date: LocalDate? = null): SubstitutesFragment {
-            val fragment = SubstitutesFragment();
+        fun newInstance(date: LocalDate? = null): SupervisionsFragment {
+            val fragment = SupervisionsFragment();
             val arguments = Bundle()
             if (date != null) {
                 arguments.putInt(Argument.date, date.unixTimeStamp)
@@ -66,7 +54,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         }
     }
 
-    override fun showList(position: Int, list: List<Substitute>) {
+    override fun showList(position: Int, list: List<Supervision>) {
         val adapter = pagerAdapter?.getAdapter(position)
         adapter?.list = list
     }
@@ -79,21 +67,6 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
         picker.show(fragmentManager, "Datepicker")
     }
-
-    private var isFabMeasured = false;
-    override var isFabVisible: Boolean = false
-        get() = field
-        set(value) {
-            if (isFabMeasured) {
-                fab.isEnabled = value
-                if (value) {
-                    fab.show()
-                } else {
-                    fab.hide()
-                }
-            }
-            field = value
-        }
 
     override var currentTab: Int
         get() = viewPager?.currentItem ?: -1
@@ -143,15 +116,15 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             swipeRefreshLayout?.isEnabled = value
         }
 
-    @AddTrace(name = "SubFragCreate", enabled = true)
+    @AddTrace(name = "SupvFragCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
         setHasOptionsMenu(true)
 
-        val state: SubstitutesState;
+        val state: SupervisionsState;
         if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<SubstitutesState>(State.presenterState)
+            state = savedInstanceState.getParcelable<SupervisionsState>(State.presenterState)
         } else {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
             val date: LocalDate?;
@@ -160,12 +133,12 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             } else {
                 date = null
             }
-            state = SubstitutesState(date)
+            state = SupervisionsState(date)
         }
-        presenter = SubstitutesPresenter(appKodein(), state)
+        presenter = SupervisionsPresenter(appKodein(), state)
     }
 
-    @AddTrace(name = "SubFragCreateView", enabled = true)
+    @AddTrace(name = "SupvFragCreateView", enabled = true)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_substitutes, container, false)
     }
@@ -173,14 +146,13 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        pagerAdapter = SubstitutesPagerAdapter(presenter)
+        pagerAdapter = SupervisionsPagerAdapter(presenter)
         if(savedInstanceState != null) {
             pagerAdapter?.restoreState(savedInstanceState)
         }
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
-        isFabVisible = false
         isCabVisible = false
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -199,13 +171,9 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
         setupCab()
 
-        fab.setOnClickListener {
-            presenter.onFabClicked()
-        }
-
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
-        drawerActivity?.supportActionBar?.title = getString(R.string.activity_substitutes)
+        drawerActivity?.supportActionBar?.title = getString(R.string.activity_supervisions)
         if (!(drawerActivity?.isPermanentDrawer ?: true)) {
             drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -218,41 +186,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             tabLayout.tabMode = TabLayout.MODE_FIXED
         }
 
-
-        fab.post {
-            if (fab == null) {
-                return@post
-            }
-            fabSize.x = fab.width
-            fabSize.y = fab.height
-
-            val window = IntArray(2)
-            fab.getLocationInWindow(window)
-
-            fabPosition.x = window[0].toFloat()
-            fabPosition.y = window[1] - (24f * context.displayMetrics.density)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                fabElevation = fab.elevation
-            }
-            isFabMeasured = true
-            //Execute current fab state
-            isFabVisible = isFabVisible
-        }
-
         presenter.attachView(this)
-    }
-
-    override fun onDismiss(dialog: DialogInterface?) {
-        if (isFabVisible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onShow(dialog: DialogInterface?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab.visibility = View.INVISIBLE
-        }
     }
 
     fun setupCab() {
@@ -302,21 +236,8 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         adapter?.setSelected(listPosition ?: -1)
     }
 
-    override fun showDialog(text: String) {
-        val announcementFragment = AnnouncementFragment.newInstance("")
-        announcementFragment.showListener = this
-        announcementFragment.dismissListener = this
-        announcementFragment.fabPosition.x = fabPosition.x
-        announcementFragment.fabPosition.y = fabPosition.y
-        announcementFragment.fabSize.x = fabSize.x.toFloat()
-        announcementFragment.fabSize.y = fabSize.y.toFloat()
-        announcementFragment.fabElevation = fabElevation
-        announcementFragment.text = text;
-        announcementFragment.show(fragmentManager, AnnouncementFragment.tag)
-    }
-
-    override fun openSubstitutesForDate(date: LocalDate) {
-        (activity as? NavigationActivity)?.navigateToSubstitutes(date)
+    override fun openSupervisionsForDay(date: LocalDate) {
+        (activity as? NavigationActivity)?.navigateToSupervisions(date)
     }
 
     override fun share(text: String) {
