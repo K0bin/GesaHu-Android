@@ -1,13 +1,6 @@
 package rhedox.gesahuvertretungsplan.model
 
-import android.content.Context
 import android.support.annotation.IntDef
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver
-import rhedox.gesahuvertretungsplan.util.Html
-import java.lang.reflect.Type
 
 /**
  * Created by robin on 01.10.2016.
