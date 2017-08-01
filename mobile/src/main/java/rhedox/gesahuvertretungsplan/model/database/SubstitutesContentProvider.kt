@@ -9,6 +9,7 @@ import android.net.Uri
 import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesWidgetProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
 import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
+import rhedox.gesahuvertretungsplan.model.database.tables.SupervisionsContract
 
 /**
  * Created by robin on 19.10.2016.
@@ -26,6 +27,9 @@ class SubstitutesContentProvider : ContentProvider() {
         private const val announcements = 2;
         private const val announcementsById = 15;
         private const val announcementsByDate = 25;
+        private const val supervisions = 3;
+        private const val supervisionsByDate = 16;
+        private const val supervisionsById = 26;
 
         init {
             uriMatcher.addURI(authority, SubstitutesContract.path, substitutes)
@@ -34,6 +38,9 @@ class SubstitutesContentProvider : ContentProvider() {
             uriMatcher.addURI(authority, AnnouncementsContract.path, announcements)
             uriMatcher.addURI(authority, "${AnnouncementsContract.path}/${AnnouncementsContract.datePath}/#", announcementsByDate)
             uriMatcher.addURI(authority, "${AnnouncementsContract.path}/#", announcementsById)
+            uriMatcher.addURI(authority, SupervisionsContract.path, supervisions)
+            uriMatcher.addURI(authority, "${SupervisionsContract.path}/${SupervisionsContract.datePath}/#", supervisionsByDate)
+            uriMatcher.addURI(authority, "${SupervisionsContract.path}/#", supervisionsById)
         }
     }
 
@@ -61,6 +68,16 @@ class SubstitutesContentProvider : ContentProvider() {
             announcementsById -> {
                 queryBuilder.tables = AnnouncementsContract.Table.name;
                 queryBuilder.appendWhere("${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'")
+            }
+
+            supervisions -> queryBuilder.tables = SupervisionsContract.Table.name;
+            supervisionsByDate -> {
+                queryBuilder.tables = SupervisionsContract.Table.name;
+                queryBuilder.appendWhere("${SupervisionsContract.Table.columnDate} = '${uri.lastPathSegment}'")
+            }
+            supervisionsById -> {
+                queryBuilder.tables = SupervisionsContract.Table.name;
+                queryBuilder.appendWhere("${SupervisionsContract.Table.columnId} = '${uri.lastPathSegment}'")
             }
 
             else -> throw IllegalArgumentException("Unknown URI: $uri");
@@ -92,6 +109,9 @@ class SubstitutesContentProvider : ContentProvider() {
             announcements -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, selection ?: "", null)
             announcementsByDate -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
             announcementsById -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
+            supervisions -> rowsDeleted = db.delete(SupervisionsContract.Table.name, selection ?: "1", null)
+            supervisionsByDate -> rowsDeleted = db.delete(SupervisionsContract.Table.name, "${SupervisionsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            supervisionsById -> rowsDeleted = db.delete(SupervisionsContract.Table.name, "${SupervisionsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
 
@@ -122,6 +142,12 @@ class SubstitutesContentProvider : ContentProvider() {
                 val seconds = values?.getAsInteger(AnnouncementsContract.Table.columnDate) ?: 0
                 insertUri = AnnouncementsContract.uriWithId(id)
                 dateUri = AnnouncementsContract.uriWithSeconds(seconds);
+            }
+            supervisions -> {
+                val id = db.insert(SupervisionsContract.Table.name, null, values);
+                val seconds = values?.getAsInteger(SupervisionsContract.Table.columnDate) ?: 0
+                insertUri = SupervisionsContract.uriWithId(id)
+                dateUri = SupervisionsContract.uriWithSeconds(seconds);
             }
 
             else -> {
@@ -179,6 +205,22 @@ class SubstitutesContentProvider : ContentProvider() {
                     }
                     changed++;
                 }
+            supervisions -> {
+                for(value in values) {
+                    val id = db.insert(SupervisionsContract.Table.name, null, value);
+
+                    //Notify Content Resolver
+                    val insertUri = Uri.parse("content://$authority/${SupervisionsContract.path}/" + id.toString());
+                    context.contentResolver.notifyChange(insertUri, null, false);
+
+                    val seconds = value.getAsInteger(SupervisionsContract.Table.columnDate) ?: 0
+                    val dateUri = SupervisionsContract.uriWithSeconds(seconds)
+                    if(!dateUris.contains(dateUri)) {
+                        dateUris.add(dateUri);
+                    }
+                    changed++;
+                }
+            }
 
             else -> {
                 throw IllegalArgumentException("Unknown URI: $uri");
@@ -204,6 +246,10 @@ class SubstitutesContentProvider : ContentProvider() {
                 }
             } else if(uriType == announcements || uriType == announcementsByDate || uriType == announcementsById) {
                 if (!AnnouncementsContract.Table.columns.containsAll(requestedColumns)) {
+                    throw IllegalArgumentException("Unknown columns in projection");
+                }
+            } else if(uriType == supervisions || uriType == supervisionsByDate || uriType == supervisionsById) {
+                if (!SupervisionsContract.Table.columns.containsAll(requestedColumns)) {
                     throw IllegalArgumentException("Unknown columns in projection");
                 }
             }

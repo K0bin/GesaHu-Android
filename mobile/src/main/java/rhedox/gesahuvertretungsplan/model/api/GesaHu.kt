@@ -33,6 +33,7 @@ class GesaHu(context: Context) {
 
         val gson = GsonBuilder()
                 .registerTypeAdapter(SubstituteDeserializer(context))
+                .registerTypeAdapter(SupervisionDeserializer(context))
                 .registerTypeAdapter(TestDeserializer(context))
                 .registerTypeAdapter(ExamDeserializer(context))
                 .registerTypeAdapter(DateTime::class.java, DateTimeDeserializer())
