@@ -16,7 +16,9 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.GoogleApiClient
 import kotlinx.android.synthetic.main.activity_auth.*
 import org.jetbrains.anko.accountManager
@@ -52,6 +54,14 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
     private lateinit var snackbar: Snackbar;
     private lateinit var client: GoogleApiClient
+
+    private var autoLockSignInSuccessful = false;
+
+    object SignInRequestCodes {
+        const val save = 1;
+        const val read = 2;
+        const val hint = 3;
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +117,28 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             if (it.status.isSuccess) {
                 passwordEdit.setText(it.credential.password)
                 usernameEdit.setText(it.credential.id)
+                autoLockSignInSuccessful = true;
+                login()
+            } else {
+                if (it.status.statusCode == CommonStatusCodes.RESOLUTION_REQUIRED && it.status.hasResolution()) {
+                    try {
+                        it.status.startResolutionForResult(this, SignInRequestCodes.read);
+                    } catch (e: IntentSender.SendIntentException ) {}
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        data ?: return;
+
+        if (requestCode == SignInRequestCodes.read) {
+            if (resultCode == RESULT_OK) {
+                val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY);
+                passwordEdit.setText(credential.password)
+                usernameEdit.setText(credential.id)
+                autoLockSignInSuccessful = true;
                 login()
             }
         }
@@ -181,16 +213,19 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 .setPassword(passwordEdit.text.toString())
                 .build()
 
-        Auth.CredentialsApi.save(client, credential).setResultCallback {
-            if (it.isSuccess) {
-                // Credentials were saved
-            } else {
-                if (it.hasResolution()) {
-                    // Try to resolve the save request. This will prompt the user if
-                    // the credential is new.
-                    try {
-                        it.startResolutionForResult(this, 1);
-                    } catch (e: IntentSender.SendIntentException ) {}
+        if (!autoLockSignInSuccessful) {
+            Auth.CredentialsApi.save(client, credential).setResultCallback {
+                if (it.isSuccess) {
+                    // Credentials were saved
+                } else {
+                    if (it.hasResolution()) {
+                        // Try to resolve the save request. This will prompt the user if
+                        // the credential is new.
+                        try {
+                            it.startResolutionForResult(this, SignInRequestCodes.save);
+                        } catch (e: IntentSender.SendIntentException) {
+                        }
+                    }
                 }
             }
         }
@@ -224,5 +259,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     override fun onFailure(call: Call<List<BoardName>>?, t: Throwable?) {
         this.call = null;
         snackbar.show();
+        autoLockSignInSuccessful = false;
     }
 }
