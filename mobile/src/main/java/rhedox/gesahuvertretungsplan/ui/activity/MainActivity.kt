@@ -268,9 +268,11 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         set(value) {
             field = value
 
+            val imageView = navigationView.getHeaderView(0).findViewById<CircleImageView>(R.id.avatarView);
             if(field != null) {
-                val imageView = navigationView.getHeaderView(0).findViewById<CircleImageView>(R.id.avatarView);
                 imageView.setImageBitmap(avatar)
+            } else {
+                imageView.setImageResource(R.drawable.ic_person)
             }
         }
 

@@ -17,20 +17,21 @@ import java.io.File
 @Open
 class AvatarLoader(context: Context) {
     private val context = context.applicationContext;
-    var callback: ((bitmap: Bitmap) -> Unit)? = null
+    var callback: ((bitmap: Bitmap?) -> Unit)? = null
 
     fun loadAvatar() {
         doAsync {
             val file = context.getFileStreamPath(BoardsContract.avatarFileName)
             if (file == null || !file.exists()) {
+                uiThread {
+                    callback?.invoke(null)
+                }
             } else {
                 val stream = file.inputStream();
                 val bitmap = BitmapFactory.decodeStream(stream)
                 stream.close()
-                if (bitmap != null) {
-                    uiThread {
-                        callback?.invoke(bitmap)
-                    }
+                uiThread {
+                    callback?.invoke(bitmap)
                 }
             }
         }

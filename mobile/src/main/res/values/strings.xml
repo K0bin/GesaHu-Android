@@ -109,6 +109,7 @@
     <string name="retry">Erneut versuchen</string>
     <string name="no_announcements">Keine Ankündigungen</string>
     <string name="no_substitutes">Keine Vertretungsstunden</string>
+    <string name="no_supervisions">Keine Aufsichtsvertretungen</string>
     <string name="no_substitutes_hint">Alles nach Plan</string>
 
     <string name="no_lessons">Keine Stunden</string>

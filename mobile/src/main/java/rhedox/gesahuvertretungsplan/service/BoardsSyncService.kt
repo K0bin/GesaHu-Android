@@ -146,6 +146,7 @@ class BoardsSyncService : Service() {
                 fos.write(bytes)
                 fos.close()
 
+                avatarResponse?.close()
                 return true;
             }
             avatarResponse?.close()

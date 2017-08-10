@@ -79,10 +79,10 @@ class AboutContainerFragment : AnimationFragment() {
                 .withListener(object: LibsConfiguration.LibsListener {
                     override fun onExtraClicked(v: View?, specialButton: Libs.SpecialButton?): Boolean {
                         if (specialButton == Libs.SpecialButton.SPECIAL1) {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://gesahui.de")))
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://gesahui.de")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                             return true
                         } else if (specialButton == Libs.SpecialButton.SPECIAL3) {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/K0bin/GesaHu-Android/wiki/Privacy-policy")))
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/K0bin/GesaHu-Android/wiki/Privacy-policy")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                             return true
                         }
                         return false

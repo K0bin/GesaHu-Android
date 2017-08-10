@@ -46,7 +46,7 @@ class SupervisionsAdapter(private val presenter: SupervisionsContract.Presenter,
         typedArray.recycle()
 
         config = ErrorView.Config.create()
-                .title(context.getString(R.string.no_substitutes))
+                .title(context.getString(R.string.no_supervisions))
                 .titleColor(errorTitleColor)
                 .image(R.drawable.no_substitutes)
                 .subtitle(context.getString(R.string.no_substitutes_hint))
