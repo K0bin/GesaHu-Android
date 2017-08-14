@@ -7,6 +7,13 @@
             android:icon="@drawable/ic_substitutes"
             android:checked="true"
             android:title="@string/drawer_substitutes" />
+
+        <item
+            android:id="@+id/supervisions"
+            android:icon="@drawable/ic_supervision"
+            android:checked="true"
+            android:title="@string/drawer_supervisions" />
+
         <item
             android:id="@+id/settings"
             android:icon="@drawable/ic_settings"

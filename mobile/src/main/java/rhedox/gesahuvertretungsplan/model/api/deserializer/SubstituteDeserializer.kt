@@ -19,8 +19,14 @@ class SubstituteDeserializer(context: Context) : JsonDeserializer<Substitute> {
         val jsonObject = json.asJsonObject;
 
         val subjectAbbr = Html.decode(jsonObject.get("Fach").asString.trim());
-        val subject = resolver.resolveSubject(subjectAbbr);
-        val _class = Html.decode(jsonObject.get("Klasse").asString.trim())
+        var subject = resolver.resolveSubject(subjectAbbr);
+        if (subject == "---") {
+            subject = "";
+        }
+        var _class = Html.decode(jsonObject.get("Klasse").asString.trim())
+        if (_class == "---") {
+            _class = "";
+        }
         val teacherAbbr = Html.decode(jsonObject.get("Lehrer").asString.trim());
         val teacher = resolver.resolveTeacher(teacherAbbr);
         val substituteAbbr = Html.decode(jsonObject.get("Vertretungslehrer").asString.trim());

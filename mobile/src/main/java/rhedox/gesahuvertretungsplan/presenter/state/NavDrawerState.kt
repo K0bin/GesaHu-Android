@@ -13,7 +13,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 02.01.2017.
  */
-data class NavDrawerState(override val selectedDrawerId: Int? = null) : NavDrawerContract.State, Parcelable {
+data class NavDrawerState(val selectedDrawerId: Int? = null): Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(selectedDrawerId ?: -1)
     }

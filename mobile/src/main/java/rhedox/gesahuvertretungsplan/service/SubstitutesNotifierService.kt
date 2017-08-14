@@ -34,188 +34,26 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
         const val substitutesChannel = "substitutes"
     }
 
-    private var color: Int = 0;
-    private var lesson: Int = -1;
-
-    private var date: LocalDate? = null;
-    private var intent: Intent? = null;
-
-    private lateinit var repository: SubstitutesRepository;
-
-    private lateinit var formatter: SubstituteFormatter;
+    private lateinit var notifier: SubstitutesNotifier;
+    private var lastIntent: Intent? = null
 
     override fun onCreate() {
         super.onCreate()
 
-        //Color is used for the notifications
-        color = ContextCompat.getColor(applicationContext, R.color.colorDefaultAccent)
-        repository = SubstitutesRepository(this)
-        repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
-
-        formatter = SubstituteFormatter(this)
+        notifier = SubstitutesNotifier(applicationContext)
     }
 
     override fun onHandleIntent(intent: Intent) {
-        lesson = intent.getIntExtra(extraLesson, -1)
-
-        if (lesson != -1 && (DateTime.now().dayOfWeek == DateTimeConstants.SATURDAY || DateTime.now().dayOfWeek == DateTimeConstants.SUNDAY)) {
-            if (lesson == 1)
-                lesson = -1
-            else
-                return
-        }
-        date = SchoolWeek.nextFromNow()
-        repository.loadSubstitutesForDay(date!!)
-        this.intent = intent
-    }
-
-    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
-        val notificationManagerCompat = NotificationManagerCompat.from(applicationContext)
-        val notificationManager = applicationContext.notificationManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (notificationManager.getNotificationChannel(substitutesChannel) == null) {
-                val channel = NotificationChannel(substitutesChannel, applicationContext.getString(R.string.notification_channel_substitutes), NotificationManager.IMPORTANCE_DEFAULT)
-                channel.description = applicationContext.getString(R.string.notification_channel_substitutes_description)
-                notificationManager.createNotificationChannel(channel)
-            }
-        }
-
-        notificationManagerCompat.cancelAll()
-
-        //Store titles for summary notification
-        val titles = mutableListOf<String>()
-
-        for (i in substitutes.indices) {
-            if ((lesson == -1 || lesson == substitutes[i].lessonBegin) && substitutes[i].isRelevant) {
-
-                //Text to display
-                val notificationText = formatter.makeNotificationText(substitutes[i])
-                val title = formatter.makeSubstituteKindText(substitutes[i].kind)
-                val body = String.format(applicationContext.getString(R.string.notification_summary), title, substitutes[i].lessonText)
-                titles.add(body)
-
-                val builder = NotificationCompat.Builder(applicationContext)
-                //Open app on click on notification
-                val launchIntent = Intent(applicationContext, MainActivity::class.java)
-                launchIntent.putExtra(MainActivity.Extra.date, date.unixTimeStamp)
-                val launchPending = PendingIntent.getActivity(applicationContext, requestCodeBase + titles.size, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                builder.setContentIntent(launchPending)
-
-                //Expanded style
-                val bigTextStyle = NotificationCompat.BigTextStyle()
-                bigTextStyle.bigText(notificationText)
-                bigTextStyle.setBigContentTitle(title)
-                bigTextStyle.setSummaryText(body)
-                builder.setStyle(bigTextStyle)
-
-                //Normal notification
-                builder.setSmallIcon(R.drawable.ic_notification)
-                builder.setContentTitle(title)
-                builder.setContentText(body)
-                builder.setContentInfo(substitutes[i].lessonText)
-                builder.setGroup(groupKey)
-                builder.setChannelId(substitutesChannel)
-
-                //Only relevant for JELLY_BEAN and higher
-                val pending = SubstituteShareUtils.makePendingShareIntent(applicationContext, LocalDate.now(), substitutes[i])
-                val action = NotificationCompat.Action(R.drawable.ic_share, applicationContext.getString(R.string.share), pending)
-                builder.addAction(action)
-
-                //Only relevant for LOLLIPOP and higher
-                builder.setCategory(NotificationCompat.CATEGORY_EVENT)
-                builder.priority = NotificationCompat.PRIORITY_DEFAULT
-                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                builder.color = color
-
-                notificationManagerCompat.notify(i, builder.build())
-            }
-        }
-
-        //Notification group summary
-        val summary = makeSummaryNotification(lesson, date, titles)
-        if (summary != null)
-            notificationManagerCompat.notify(titles.size + 13, summary)
-
-        //TeslaUnread
-        try {
-            val cv = ContentValues()
-
-            cv.put("tag", "rhedox.gesahuvertretungsplan/rhedox.gesahuvertretungsplan.ui.activity.MainActivity")
-
-            cv.put("count", substitutes.countRelevant())
-
-            applicationContext.contentResolver.insert(Uri.parse("content://com.teslacoilsw.notifier/unread_count"), cv)
-
-        } catch (ex: IllegalArgumentException) { /* TeslaUnread is not installed. */ }
-
-        if(intent != null)
-            WakefulBroadcastReceiver.completeWakefulIntent(intent)
+        lastIntent = intent;
+        val lesson = intent.getIntExtra(extraLesson, -1)
+        notifier.load(lesson)
+        WakefulBroadcastReceiver.completeWakefulIntent(lastIntent)
+        lastIntent = null;
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        repository.destroy()
-        if(intent != null)
-            WakefulBroadcastReceiver.completeWakefulIntent(intent)
-    }
-
-    private fun makeSummaryNotification(lesson: Int, date: LocalDate?, notificationLines: List<String>): Notification? {
-
-        if (notificationLines.size <= 1)
-            return null
-
-        //This summary notification, denoted by setGroupSummary(true), is the only notification that appears on Marshmallow and lower devices and should (you guessed it) summarize all of the individual notifications.
-        val builder = NotificationCompat.Builder(applicationContext)
-
-        //Open app on click on notification
-        val launchIntent = Intent(applicationContext, MainActivity::class.java)
-        if (date != null) {
-            launchIntent.putExtra(MainActivity.Extra.date, date.unixTimeStamp)
-        }
-        val launchPending = PendingIntent.getActivity(applicationContext, requestCodeBase + notificationLines.size + 13, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(launchPending)
-
-        //Normal notification
-        builder.setContentText(String.format("%s %s", Integer.toString(notificationLines.size), applicationContext.getString(R.string.lessons)))
-        builder.setSmallIcon(R.drawable.ic_notification)
-        val title: String
-        val summary: String
-        if (lesson == -1) {
-            builder.setContentInfo("1-10")
-            title = applicationContext.getString(R.string.notification_summary_day)
-            summary = applicationContext.getString(R.string.notification_summary_day_hint)
-        } else {
-            builder.setContentInfo(Integer.toString(lesson))
-            title = applicationContext.getString(R.string.notification_summary_lesson)
-            summary = applicationContext.getString(R.string.notification_summary_lesson_hint)
-        }
-        builder.setContentTitle(title)
-
-        //Inbox style expanded notification
-        val inboxStyle = NotificationCompat.InboxStyle()
-        for (i in 0..Math.min(5, notificationLines.size) - 1)
-            inboxStyle.addLine(notificationLines[i])
-
-        if (notificationLines.size > 5)
-            inboxStyle.setSummaryText(String.format(applicationContext.getString(R.string.inbox_style), Integer.toString(notificationLines.size - 5)))
-        else
-            inboxStyle.setSummaryText(summary)
-
-        inboxStyle.setBigContentTitle(title)
-        builder.setStyle(inboxStyle)
-
-
-        //Only relevant for LOLLIPOP and higher
-        builder.setCategory(NotificationCompat.CATEGORY_EVENT)
-        builder.priority = NotificationCompat.PRIORITY_DEFAULT
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        builder.color = color
-
-        //N + Wear summary
-        builder.setGroupSummary(true)
-        builder.setGroup(groupKey)
-
-        return builder.build()
+        if(lastIntent != null)
+            WakefulBroadcastReceiver.completeWakefulIntent(lastIntent)
     }
 }

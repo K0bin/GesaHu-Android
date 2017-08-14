@@ -73,7 +73,7 @@
                 android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an."/>
         </service>
 
-        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver"/>
+        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiverLegacy"/>
         <receiver android:name=".broadcastReceiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -99,6 +99,11 @@
             android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
         <service android:name=".service.SubstitutesNotifierService">
+        </service>
+        <service
+            android:name=".service.SubstitutesNotifierJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+
         </service>
 
         <provider

@@ -7,6 +7,7 @@
     <string name="title_activity_settings">Einstellungen</string>
 
     <string name="activity_substitutes">Vertretungsstunden</string>
+    <string name="activity_supervisions">Aufsicht</string>
     <string name="activity_board">Board</string>
 
     <string name="provider_substitutes">Vertretungsstunden</string>
@@ -23,10 +24,12 @@
 
     <string name="notification_channel_substitutes">Vertretungsstunden</string>
     <string name="notification_channel_substitutes_description">GesaHu benachrichtigt dich auf diesem Kanal über anstehende relevante Vertretungsstunden.</string>
+    <string name="notification_channel_other">Andere</string>
 
     <string name="drawer_open">Menü anzeigen</string>
     <string name="drawer_close">Menü verstecken</string>
     <string name="drawer_substitutes">Vertretungsplan</string>
+    <string name="drawer_supervisions">Aufsicht</string>
     <string name="drawer_boards">Boards</string>
 
     <string name="login_account_exists">Es ist bereits ein GesaHu Account eingerichtet.</string>
@@ -82,6 +85,8 @@
     <string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
     <string name="share_regular" formatted="false">%s %s %s findet statt.</string>
 
+    <string name="share_supervision" formatted="false">Es gibt eine %s Aufsichtsvertretung: Im Zeitraum %s wird %s ersetzt durch %s. Ort: %s</string>
+
     <string name="main_cab_title">Teile eine Stunde!</string>
     <string name="failed">Da hat etwas nicht funktioniert!</string>
     <string name="today">heute</string>
@@ -104,6 +109,7 @@
     <string name="retry">Erneut versuchen</string>
     <string name="no_announcements">Keine Ankündigungen</string>
     <string name="no_substitutes">Keine Vertretungsstunden</string>
+    <string name="no_supervisions">Keine Aufsichtsvertretungen</string>
     <string name="no_substitutes_hint">Alles nach Plan</string>
 
     <string name="no_lessons">Keine Stunden</string>

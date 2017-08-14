@@ -1,13 +1,6 @@
 package rhedox.gesahuvertretungsplan.model
 
-import android.content.Context
 import android.support.annotation.IntDef
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver
-import rhedox.gesahuvertretungsplan.util.Html
-import java.lang.reflect.Type
 
 /**
  * Created by robin on 01.10.2016.
@@ -27,7 +20,7 @@ data class Substitute(val lessonBegin: Int,
 
     val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString();
 
-    val title: String = course + " " + subject;
+    val title: String;
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(KindValues.substitute, KindValues.dropped, KindValues.roomChange, KindValues.test, KindValues.regular, flag = false)
@@ -54,6 +47,13 @@ data class Substitute(val lessonBegin: Int,
             kind = KindValues.regular
         else
             kind = KindValues.substitute
+
+        var titleStr = course
+        if (course.isNotBlank() && subject.isNotBlank()) {
+            titleStr += course;
+        }
+        titleStr += subject;
+        title = titleStr;
     }
 
     override fun compareTo(other: Substitute): Int {
@@ -61,8 +61,12 @@ data class Substitute(val lessonBegin: Int,
             if (!other.isRelevant)
                 return -1
             else {
-                if (lessonBegin - other.lessonBegin == 0) {
-                    return duration - other.duration;
+                if (lessonBegin == other.lessonBegin) {
+                    if (duration == other.duration) {
+                        return if (course == other.course) subject.compareTo(other.subject) else course.compareTo(other.course);
+                    } else {
+                        return duration - other.duration;
+                    }
                 }
 
                 return lessonBegin - other.lessonBegin;
@@ -71,8 +75,12 @@ data class Substitute(val lessonBegin: Int,
             if (other.isRelevant)
                 return 1
             else {
-                if (lessonBegin - other.lessonBegin == 0) {
-                    return duration - other.duration;
+                if (lessonBegin == other.lessonBegin) {
+                    if (duration == other.duration) {
+                        return if (course == other.course) subject.compareTo(other.subject) else course.compareTo(other.course);
+                    } else {
+                        return duration - other.duration;
+                    }
                 }
 
                 return lessonBegin - other.lessonBegin

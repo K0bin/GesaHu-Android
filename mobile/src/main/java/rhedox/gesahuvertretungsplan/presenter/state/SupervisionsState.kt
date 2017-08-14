@@ -11,7 +11,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 02.01.2017.
  */
-data class SubstitutesState(val date: LocalDate?, val selected: Int? = null) : Parcelable {
+data class SupervisionsState(val date: LocalDate?, val selected: Int? = null) : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(date?.unixTimeStamp ?: 0)
         parcel.writeInt(selected?.toInt() ?: -1)

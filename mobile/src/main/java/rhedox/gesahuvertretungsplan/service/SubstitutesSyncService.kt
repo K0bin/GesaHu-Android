@@ -18,10 +18,7 @@ import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.AnnouncementsContract
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstituteAdapter
-import rhedox.gesahuvertretungsplan.model.database.tables.SubstitutesContract
+import rhedox.gesahuvertretungsplan.model.database.tables.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.io.IOException
@@ -117,6 +114,7 @@ class SubstitutesSyncService : Service() {
 
             provider.delete(SubstitutesContract.uri, "date < ${oldest.unixTimeStamp}", null);
             provider.delete(AnnouncementsContract.uri, "date < ${oldest.unixTimeStamp}", null);
+            provider.delete(SupervisionsContract.uri, "date < ${oldest.unixTimeStamp}", null);
         }
 
         fun loadSubstitutesForDay(provider: ContentProviderClient, account: Account, date: LocalDate): Boolean {
@@ -139,6 +137,7 @@ class SubstitutesSyncService : Service() {
 
                 provider.delete(SubstitutesContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
                 provider.delete(AnnouncementsContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
+                provider.delete(SupervisionsContract.uri, "date = ${substitutesList.date.unixTimeStamp}", null);
 
                 val substituteInserts = mutableListOf<ContentValues>()
                 for (substitute in substitutesList.substitutes) {
@@ -148,9 +147,16 @@ class SubstitutesSyncService : Service() {
                     Log.d("SubstitutesSync", "Inserted an announcement.")
                     provider.insert(AnnouncementsContract.uri, AnnouncementAdapter.toContentValues(substitutesList.announcement, substitutesList.date));
                 }
+                val supervisionInserts = mutableListOf<ContentValues>()
+                for (supervision in substitutesList.supervisions) {
+                    supervisionInserts.add(SupervisionAdapter.toContentValues(supervision, substitutesList.date))
+                }
 
-                val count = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())
-                Log.d("SubstitutesSync", "Inserted $count substitutes.")
+                val substituteCount = provider.bulkInsert(SubstitutesContract.uri, substituteInserts.toTypedArray())
+                Log.d("SubstitutesSync", "Inserted $substituteCount substitutes.")
+
+                val supervisionCount = provider.bulkInsert(SupervisionsContract.uri, supervisionInserts.toTypedArray())
+                Log.d("SubstitutesSync", "Inserted $supervisionCount supervisions.")
                 return true;
             } else if (response != null && response.code() == 403) {
                 BoardsSyncService.setIsSyncEnabled(account, false)

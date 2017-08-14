@@ -30,11 +30,11 @@ public class BootReceiver extends BroadcastReceiver {
             if(!"NONE".equals(mode)) {
                 @SubstitutesAlarmReceiver.NotificationFrequency long notificationFrequency;
                 if("per_lesson".equals(mode))
-                    notificationFrequency = SubstitutesAlarmReceiver.PER_LESSON;
+                    notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;
                 else if("both".equals(mode))
-                    notificationFrequency = SubstitutesAlarmReceiver.BOTH;
+                    notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.both;
                 else
-                    notificationFrequency = SubstitutesAlarmReceiver.DAILY;
+                    notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.daily;
 
                 SubstitutesAlarmReceiver.create(context, time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
             }

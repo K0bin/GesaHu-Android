@@ -11,4 +11,5 @@ interface NavigationActivity {
     fun navigateToIntro()
     fun navigateToBoard(boardId: Long)
     fun navigateToSubstitutes(date: LocalDate?)
+    fun navigateToSupervisions(date: LocalDate?)
 }

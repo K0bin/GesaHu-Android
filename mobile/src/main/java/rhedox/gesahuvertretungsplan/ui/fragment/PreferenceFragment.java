@@ -12,7 +12,6 @@ import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.ListPreferenceDialogFragmentCompat;
 import android.support.v7.preference.Preference;
-import android.view.View;
 
 import com.squareup.leakcanary.RefWatcher;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
@@ -22,8 +21,8 @@ import org.joda.time.LocalTime;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiverLegacy;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
-import rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity;
 import rhedox.gesahuvertretungsplan.broadcastReceiver.BootReceiver;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 
@@ -70,12 +69,12 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
             @SubstitutesAlarmReceiver.NotificationFrequency long notificationFrequency;
             if("per_lesson".equals(mode)) {
                 SubstitutesAlarmReceiver.cancelDaily(getContext());
-	            notificationFrequency = SubstitutesAlarmReceiver.PER_LESSON;
+	            notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;
             } else if("both".equals(mode))
-                notificationFrequency = SubstitutesAlarmReceiver.BOTH;
+                notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.both;
             else {
                 SubstitutesAlarmReceiver.cancelLesson(getContext());
-	            notificationFrequency = SubstitutesAlarmReceiver.DAILY;
+	            notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.daily;
             }
 
             SubstitutesAlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);

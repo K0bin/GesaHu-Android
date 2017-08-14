@@ -14,7 +14,7 @@ import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 /**
  * Created by robin on 18.01.2017.
  */
-class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsContract.Presenter {
+class LessonsPresenter(kodein: Kodein, state: LessonsState): LessonsContract.Presenter {
     private var view: LessonsContract.View? = null
     private val repository: BoardsRepository = kodein.instance();
     private val boardId = state.boardId;
@@ -64,7 +64,7 @@ class LessonsPresenter(kodein: Kodein, state: LessonsContract.State): LessonsCon
         repository.destroy()
     }
 
-    override fun saveState(): LessonsContract.State {
+    override fun saveState(): LessonsState {
         return LessonsState(boardId)
     }
 

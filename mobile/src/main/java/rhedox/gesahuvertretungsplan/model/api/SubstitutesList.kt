@@ -7,13 +7,14 @@ import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.Supervision
 import java.lang.reflect.Type
 
 /**
  * Created by robin on 01.10.2016.
  */
 
-data class SubstitutesList(@SerializedName("Hinweise") val announcement: String, @SerializedName("Stunden") val substitutes: List<Substitute>, @SerializedName("Datum") val date: LocalDate) {
+data class SubstitutesList(@SerializedName("Hinweise") val announcement: String, @SerializedName("Stunden") val substitutes: List<Substitute>, @SerializedName("Datum") val date: LocalDate, @SerializedName("Aufsichten") val supervisions: List<Supervision>) {
     val hasSubstitutes: Boolean
         @JvmName("hasSubstitutes")
         get() = substitutes.isNotEmpty();
@@ -21,4 +22,8 @@ data class SubstitutesList(@SerializedName("Hinweise") val announcement: String,
     val hasAnnouncement: Boolean
         @JvmName("hasAnnouncement")
         get() = announcement.isNullOrBlank() && announcement.trim() != "keine";
+
+    val hasSupervisions: Boolean
+        @JvmName("hasSupervisions")
+        get() = supervisions.isNotEmpty()
 }

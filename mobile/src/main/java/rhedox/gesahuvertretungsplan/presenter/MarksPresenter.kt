@@ -13,7 +13,7 @@ import rhedox.gesahuvertretungsplan.presenter.state.MarksState
 /**
  * Created by robin on 18.01.2017.
  */
-class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.Presenter {
+class MarksPresenter(kodein: Kodein, state: MarksState): MarksContract.Presenter {
     private var view: MarksContract.View? = null
     private val repository: BoardsRepository = kodein.instance();
     private val boardId = state.boardId;
@@ -57,7 +57,7 @@ class MarksPresenter(kodein: Kodein, state: MarksContract.State): MarksContract.
         repository.destroy()
     }
 
-    override fun saveState(): MarksContract.State {
+    override fun saveState(): MarksState {
         return MarksState(boardId)
     }
 }

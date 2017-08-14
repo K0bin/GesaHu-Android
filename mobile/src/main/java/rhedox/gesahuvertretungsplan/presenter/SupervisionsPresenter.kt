@@ -2,39 +2,30 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.app.Activity
 import android.content.ContentResolver
-import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import com.github.salomonbrys.kodein.*
-import org.jetbrains.anko.support.v4.act
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
+import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
-import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.util.*
 
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : SubstitutesContract.Presenter {
+class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : SupervisionsContract.Presenter {
     private val date: LocalDate;
-    private var view: SubstitutesContract.View? = null
-    private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
-    private var announcements = arrayOf("","","","","")
+    private var view: SupervisionsContract.View? = null
+    private var supervisions = kotlin.arrayOfNulls<List<Supervision>>(5)
     /**
      * The selected substitute (of the current page); null for none
      */
@@ -61,17 +52,15 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     init {
         val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
-        Log.d("SubstitutesPresenter", "Date: $_date")
+        Log.d("SupervisionsPresenter", "Date: $_date")
 
         currentPage = Math.max(0, Math.min(_date.dayOfWeek - DateTimeConstants.MONDAY, 4))
         this.date = getFirstDayOfWeek(_date)
 
-        repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
-        repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
+        repository.supervisisonsCallback = { date: LocalDate, list: List<Supervision> -> onSupervisionsLoaded(date, list) }
 
         for(i in 0..4) {
-            repository.loadSubstitutesForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
-            repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+            repository.loadSupervisionsForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
         }
 
         syncObserver.callback = {
@@ -85,13 +74,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         selected = state?.selected
     }
 
-    override fun attachView(view: SubstitutesContract.View) {
-        Log.d("SubstitutesPresenter", "attachView")
+    override fun attachView(view: SupervisionsContract.View) {
+        Log.d("SupervisionsPresenter", "attachView")
 
         this.view = view
 
         view.currentTab = currentPage
-        view.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
         view.isCabVisible = selected != null
         if(selected != null)
             view.isAppBarExpanded = true
@@ -105,12 +93,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         )
         view.isSwipeRefreshEnabled = account != null;
 
-        Log.d("SubstitutesPresenter", "viewattached selected $selected")
+        Log.d("SupervisionsPresenter", "viewattached selected $selected")
     }
 
     override fun detachView() {
         this.view = null;
-        Log.d("SubstitutesPresenter", "view detached")
+        Log.d("SupervisionsPresenter", "view detached")
     }
 
     override fun destroy() {
@@ -118,31 +106,16 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         syncObserver.destroy()
     }
 
-    fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
-        Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
+    fun onSupervisionsLoaded(date:LocalDate, supervisions: List<Supervision>) {
+        Log.d("SubstitutePresenter", "SupervisionContract loaded: $date, ${supervisions.size} items")
         if(date.dayOfWeekIndex > 4) {
             return;
         }
 
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
-            this.substitutes[position] = substitutes
-            view?.showList(position, substitutes)
-        }
-
-        if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
-    }
-
-    fun onAnnouncementLoaded(date:LocalDate, text: String) {
-        if(date.dayOfWeekIndex > 4) {
-            return;
-        }
-
-        if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
-            val position = date.dayOfWeekIndex
-            announcements[position] = text
-            view?.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
+            this.supervisions[position] = supervisions
+            view?.showList(position, supervisions)
         }
 
         if(account != null)
@@ -161,19 +134,16 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     override fun onDatePicked(date: LocalDate) {
         if (date.weekOfWeekyear != this.date.weekOfWeekyear) {
             //Launch a new activity with that week
-            view?.openSubstitutesForDate(date)
+            view?.openSupervisionsForDay(date)
         } else {
             //Same week => just switch to day-tab
             val dayIndex = Math.max(0, Math.min(date.dayOfWeekIndex, 5))
             view?.currentTab = dayIndex
         }
     }
-    override fun onFabClicked() {
-        view?.showDialog(announcements[currentPage])
-    }
 
     override fun onListItemClicked(listEntry: Int) {
-        if (currentPage < 0 || listEntry < 0 || listEntry >= substitutes[currentPage]?.size ?: 0) {
+        if (currentPage < 0 || listEntry < 0 || listEntry >= supervisions[currentPage]?.size ?: 0) {
             return;
         }
 
@@ -183,8 +153,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
             view!!.isCabVisible = selected != null
             if(selected != null)
                 view!!.isAppBarExpanded = true;
-
-            view!!.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
         }
     }
 
@@ -198,7 +166,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     }
 
     override fun onActivePageChanged(position: Int) {
-        Log.d("SubstitutesPresenter", "onActivePageChanged position: $position, selected: $selected, currentPage: $currentPage")
+        Log.d("SupervisionsPresenter", "onActivePageChanged position: $position, selected: $selected, currentPage: $currentPage")
 
         val previousPosition = currentPage
         currentPage = position
@@ -211,16 +179,15 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
                 view!!.setSelected(previousPosition, null)
             }
             view!!.setSelected(position, selected)
-            view!!.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
         }
     }
 
     override fun onPageAttached(position: Int) {
-        Log.d("SubstitutesPresenter", "onPageAttached position: $position, selected: $selected, currentPage: $currentPage")
+        Log.d("SupervisionsPresenter", "onPageAttached position: $position, selected: $selected, currentPage: $currentPage")
 
         if(view != null) {
-            if (substitutes[position] != null)
-                view!!.showList(position, substitutes[position]!!)
+            if (supervisions[position] != null)
+                view!!.showList(position, supervisions[position]!!)
 
             if (position == currentPage)
                 view!!.setSelected(position, selected)
@@ -231,20 +198,19 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         view!!.setSelected(currentPage, null)
         selected = null;
         view!!.isCabVisible = false
-        view!!.isFabVisible = announcements[currentPage].isNotBlank()
     }
 
     override fun onShareButtonClicked() {
         val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
-        val substitutesOfDay = substitutes[currentPage]
+        val substitutesOfDay = supervisions[currentPage]
 
         if(substitutesOfDay != null && selected != null) {
-            val substitute = substitutesOfDay[selected!!]
-            view?.share(formatter.makeShareText(currentDate, substitute))
+            val supervision = substitutesOfDay[selected!!]
+            view?.share(formatter.makeShareText(currentDate, supervision))
         }
     }
 
-    override fun saveState(): SubstitutesState {
-        return SubstitutesState(date, selected)
+    override fun saveState(): SupervisionsState {
+        return SupervisionsState(date, selected)
     }
 }
