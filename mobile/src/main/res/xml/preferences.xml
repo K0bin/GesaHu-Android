@@ -1,25 +1,5 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <android.support.v7.preference.PreferenceCategory
-        android:title="Schülerinformationen">
-        <android.support.v7.preference.ListPreference
-            android:key="pref_year"
-            android:title="Jahrgangsstufe"
-            android:dialogTitle="Wähle deine Jahrgangsstufe"
-            android:summary="Deine Jahrgangsstufe"
-            android:entries="@array/years_array"
-            android:entryValues="@array/years_array_values"
-            android:defaultValue="5" />
-        <android.support.v7.preference.ListPreference
-            android:key="pref_class"
-            android:title="Klasse"
-            android:dialogTitle="Wähle deine Klasse"
-            android:summary="Deine Klasse"
-            android:entries="@array/classes_array"
-            android:entryValues="@array/classes_array_values"
-            android:defaultValue="a" />
-    </android.support.v7.preference.PreferenceCategory>
-
-    <android.support.v7.preference.PreferenceCategory
         android:title="Benachrichtigungen">
         <android.support.v7.preference.ListPreference
             android:key="pref_notification_mode"

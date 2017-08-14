@@ -33,8 +33,6 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
     private static final String DIALOG_FRAGMENT_TAG =
             "android.support.v7.preference.PreferenceFragment.DIALOG";
 
-    public static final String PREF_YEAR ="pref_year";
-    public static final String PREF_CLASS ="pref_class";
     public static final String PREF_DARK_TYPE ="pref_dark_type";
     public static final String PREF_WIDGET_DARK ="pref_widget_dark";
     public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_long";
