@@ -230,7 +230,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             fab.getLocationInWindow(window)
 
             fabPosition.x = window[0].toFloat()
-            fabPosition.y = window[1] - (24f * context.displayMetrics.density)
+            fabPosition.y = fab.top.toFloat()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 fabElevation = fab.elevation
