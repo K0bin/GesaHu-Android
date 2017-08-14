@@ -66,7 +66,7 @@ public class SubstituteFormatter {
             }
         }
 
-        return String.format(context.getString(R.string.share_supervision), dateText, supervision.getTime(), supervision.getTeacher(), supervision.getSubstitute(), supervision.getLocation());
+        return String.format(TextUtils.isEmpty(supervision.getLocation()) ? context.getString(R.string.share_supervision) : context.getString(R.string.share_supervision_location), dateText, supervision.getTime(), supervision.getTeacher(), supervision.getSubstitute(), supervision.getLocation());
     }
 
     public String makeShareText(@Nullable LocalDate date, @NonNull Substitute substitute) {

@@ -85,7 +85,8 @@
     <string name="share_test" formatted="false">Wir schreiben %s %s. %s in Raum %s.</string>
     <string name="share_regular" formatted="false">%s %s %s findet statt.</string>
 
-    <string name="share_supervision" formatted="false">Es gibt eine %s Aufsichtsvertretung: Im Zeitraum %s wird %s ersetzt durch %s. Ort: %s</string>
+    <string name="share_supervision" formatted="false">Es gibt eine %s Aufsichtsvertretung: Im Zeitraum %s wird %s ersetzt durch %s.</string>
+    <string name="share_supervision_location" formatted="false">Es gibt eine %s Aufsichtsvertretung: Im Zeitraum %s wird %s ersetzt durch %s. Ort: %s</string>
 
     <string name="main_cab_title">Teile eine Stunde!</string>
     <string name="failed">Da hat etwas nicht funktioniert!</string>
