@@ -42,7 +42,7 @@
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
-        android:layout_weight="0.5"
+        android:layout_weight="0.35"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="Lindenberg xxxxxxxxx Lawl"
@@ -56,7 +56,7 @@
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
-        android:layout_weight="0.5"
+        android:layout_weight="0.45"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="Körschner"
@@ -85,7 +85,7 @@
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0.65"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="8dp"

@@ -22,10 +22,7 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.accountManager
-import org.jetbrains.anko.clearTask
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.newTask
+import org.jetbrains.anko.*
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Board
@@ -123,7 +120,11 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         headerUsername = navigationView.getHeaderView(0).findViewById<TextView>(R.id.headerUsername)
         navigationView.setNavigationItemSelectedListener {
             drawerSelected = it.itemId
-            drawer?.closeDrawer(GravityCompat.START)
+            if (drawer != null) {
+                drawer?.closeDrawer(GravityCompat.START)
+            } else {
+                onDrawerItemSelected(drawerSelected!!)
+            }
             true
         }
 
@@ -148,10 +149,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
-        if (isChangingConfigurations) {
-            //supportFragmentManager.beginTransaction().detach(currentFragment).commit();
-        }
         super.onSaveInstanceState(outState)
         outState.putParcelable(state, presenter.saveState() as NavDrawerState)
     }
@@ -270,8 +267,11 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
             val imageView = navigationView.getHeaderView(0).findViewById<CircleImageView>(R.id.avatarView);
             if(field != null) {
+                imageView.setPadding(0, 0, 0, 0)
                 imageView.setImageBitmap(avatar)
             } else {
+                val padding = (displayMetrics.density * 4).toInt()
+                imageView.setPadding(padding, padding, padding, padding)
                 imageView.setImageResource(R.drawable.ic_person)
             }
         }
@@ -320,7 +320,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToSubstitutes(date: LocalDate?) {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = SubstitutesFragment.newInstance(date)
-        fragment.useSlideAnimation = true
+        fragment.useSlideAnimation = date == null
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
@@ -331,7 +331,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun navigateToSupervisions(date: LocalDate?) {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = SupervisionsFragment.newInstance(date)
-        fragment.useSlideAnimation = true
+        fragment.useSlideAnimation = date == null
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)

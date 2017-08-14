@@ -50,7 +50,7 @@ data class Substitute(val lessonBegin: Int,
 
         var titleStr = course
         if (course.isNotBlank() && subject.isNotBlank()) {
-            titleStr += course;
+            titleStr += " ";
         }
         titleStr += subject;
         title = titleStr;
