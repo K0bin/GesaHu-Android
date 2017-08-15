@@ -245,7 +245,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
     override fun onDismiss(dialog: DialogInterface?) {
         if (isFabVisible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab.visibility = View.VISIBLE
+            fab?.visibility = View.VISIBLE
         }
     }
 
