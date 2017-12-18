@@ -71,7 +71,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
 
         val state: LessonsState;
         if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<LessonsState>(stateBundleName)
+            state = savedInstanceState.getParcelable(stateBundleName)
         } else {
             val id = arguments?.getLong(Extra.boardId, -1) ?: -1
             state = LessonsState(id)
@@ -88,16 +88,16 @@ class LessonsFragment : Fragment(), LessonsContract.View {
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(layoutManagerBundleName))
         }
         recycler.layoutManager = layoutManager
-        recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recycler.addItemDecoration(DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL))
 
         val size = Point()
-        context.windowManager.defaultDisplay.getSize(size)
-        val isTablet = size.x >= (680 / context.displayMetrics.density);
+        context!!.windowManager.defaultDisplay?.getSize(size)
+        val isTablet = size.x >= (680 / context!!.displayMetrics.density );
 
-        adapter = LessonsAdapter(context, isTablet);
+        adapter = LessonsAdapter(context!!, isTablet);
         recycler.adapter = adapter;
 
-        val cardHeight = context.resources.getDimension(R.dimen.topCardHeight);
+        val cardHeight = context!!.resources.getDimension(R.dimen.topCardHeight);
         recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

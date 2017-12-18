@@ -104,12 +104,12 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         return inflater.inflate(R.layout.fragment_board, container, false);
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("Board", "ViewCreated")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
-            val elevation = context.displayMetrics.density * 4f;
+            val elevation = context!!.displayMetrics.density * 4f;
             elevationAnimator = ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
         } else {
             elevationAnimator = null;
@@ -140,8 +140,8 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
 
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
-        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
-            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+        if (drawerActivity?.isPermanentDrawer == false) {
+            drawerActivity.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             drawerActivity.syncDrawer()
         }

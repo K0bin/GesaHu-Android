@@ -27,8 +27,8 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
     private val room = view.findViewById<TextView>(R.id.room)
     private val hint = view.findViewById<TextView>(R.id.hint)
 
-    private var circleRelevantBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
-    private var circleBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
+    private var circleRelevantBackground: Drawable? = ContextCompat.getDrawable(view.context, R.drawable.circle)
+    private var circleBackground: Drawable? = ContextCompat.getDrawable(view.context, R.drawable.circle)
     @ColorInt private val selectedColor: Int = ContextCompat.getColor(view.context, R.color.selected)
 
     private val backgroundAnimator: ObjectAnimator;
@@ -45,10 +45,14 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
 
         view.isClickable = true
 
-        circleBackground = DrawableCompat.wrap(circleBackground)
-        DrawableCompat.setTint(circleBackground, circleColor)
-        circleRelevantBackground = DrawableCompat.wrap(circleRelevantBackground)
-        DrawableCompat.setTint(circleRelevantBackground, circleColorRelevant)
+        if (circleBackground != null) {
+            circleBackground = DrawableCompat.wrap(circleBackground!!)
+            DrawableCompat.setTint(circleBackground!!, circleColor)
+        }
+        if (circleRelevantBackground != null) {
+            circleRelevantBackground = DrawableCompat.wrap(circleRelevantBackground!!)
+            DrawableCompat.setTint(circleRelevantBackground!!, circleColorRelevant)
+        }
 
         view.setOnClickListener {
             presenter.onListItemClicked(this.adapterPosition)

@@ -14,7 +14,6 @@ import tr.xip.errorview.ErrorView
  */
 class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Lesson>(hasEmptyView = true, hasTopHeader = !isTablet) {
     var lessonsMissed = 0
-        get() = field
         set(value) {
             if (field != value) {
                 field = value
@@ -27,7 +26,6 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
             }
         }
     var lessonsMissedWithSickNote = 0
-        get() = field
         set(value) {
             if (field != value) {
                 field = value
@@ -40,7 +38,6 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
             }
         }
     var lessonsTotal = 0
-        get() = field
         set(value) {
             if (field != value) {
                 field = value
@@ -77,11 +74,11 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
             return LessonsCardViewHolder(view)
         }
 
-        if(viewType == ListAdapter.ItemTypeValues.view) {
+        return if(viewType == ListAdapter.ItemTypeValues.view) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.view_lesson, parent, false)
-            return LessonViewHolder(view)
+            LessonViewHolder(view)
         } else {
-            return ErrorViewHolder(ErrorView(parent.context))
+            ErrorViewHolder(ErrorView(parent.context))
         }
     }
 

@@ -143,7 +143,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         return inflater.inflate(R.layout.fragment_substitutes, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         pagerAdapter = SupervisionsPagerAdapter(presenter)
@@ -174,15 +174,15 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.activity_supervisions)
-        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
-            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+        if (drawerActivity?.isPermanentDrawer == false) {
+            drawerActivity.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             drawerActivity.syncDrawer()
         }
 
         val size = Point();
-        context.windowManager.defaultDisplay.getSize(size)
-        if (size.x / context.displayMetrics.density >= 1024) {
+        context!!.windowManager.defaultDisplay.getSize(size)
+        if (size.x / context!!.displayMetrics.density >= 1024) {
             tabLayout.tabMode = TabLayout.MODE_FIXED
         }
 
@@ -241,6 +241,6 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
     }
 
     override fun share(text: String) {
-        activity.share(text, "")
+        activity?.share(text, "")
     }
 }

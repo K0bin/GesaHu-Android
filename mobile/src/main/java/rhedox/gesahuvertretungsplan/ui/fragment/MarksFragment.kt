@@ -83,13 +83,13 @@ class MarksFragment : Fragment(), MarksContract.View {
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         val size = Point()
-        context.windowManager.defaultDisplay.getSize(size)
-        val isTablet = size.x >= (680 / context.displayMetrics.density);
+        context!!.windowManager.defaultDisplay.getSize(size)
+        val isTablet = size.x >= (680 / context!!.displayMetrics.density);
 
-        adapter = MarksAdapter(context, isTablet);
+        adapter = MarksAdapter(context!!, isTablet);
         recycler.adapter = adapter;
 
-        val cardHeight = context.resources.getDimension(R.dimen.topCardHeight);
+        val cardHeight = context!!.resources.getDimension(R.dimen.topCardHeight);
         recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

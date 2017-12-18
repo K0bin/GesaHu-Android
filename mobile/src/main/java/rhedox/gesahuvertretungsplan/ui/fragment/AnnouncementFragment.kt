@@ -75,15 +75,15 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val a = context?.theme?.obtainStyledAttributes(TypedValue().data, intArrayOf(R.attr.colorAccent, R.attr.cardBackgroundColor, R.attr.textPrimary))
-        accentColor = a?.getColor(0, 0) ?: 0
-        cardColor = a?.getColor(1, 0) ?: 0
-        textColor = a?.getColor(2, 0) ?: 0
-        a?.recycle()
+        val a = context!!.theme.obtainStyledAttributes(TypedValue().data, intArrayOf(R.attr.colorAccent, R.attr.cardBackgroundColor, R.attr.textPrimary))
+        accentColor = a.getColor(0, 0) ?: 0
+        cardColor = a.getColor(1, 0) ?: 0
+        textColor = a.getColor(2, 0) ?: 0
+        a.recycle()
 
-        dialogElevation = context?.resources?.getDimension(R.dimen.dialogElevation) ?: 0f
-        longDuration = context?.resources?.getInteger(android.R.integer.config_longAnimTime)?.toLong() ?: 0L
-        shortDuration = context?.resources?.getInteger(android.R.integer.config_shortAnimTime)?.toLong() ?: 0L
+        dialogElevation = context!!.resources.getDimension(R.dimen.dialogElevation)
+        longDuration = context!!.resources.getInteger(android.R.integer.config_longAnimTime).toLong()
+        shortDuration = context!!.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         toDismiss = savedInstanceState?.getBoolean(stateDismiss, false) ?: false
     }

@@ -25,14 +25,14 @@ class PreferenceContainerFragment : AnimationFragment() {
         return inflater.inflate(R.layout.fragment_preference_container, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.action_settings)
-        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
-            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+        if (drawerActivity?.isPermanentDrawer == false) {
+            drawerActivity.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             drawerActivity.syncDrawer()
         }

@@ -29,8 +29,8 @@ class SupervisionViewHolder(private val view: View, private val presenter: Super
     private val teacher = view.findViewById<TextView>(R.id.teacher)
     private val location = view.findViewById<TextView>(R.id.location)
 
-    private var circleRelevantBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
-    private var circleBackground: Drawable = ContextCompat.getDrawable(view.context, R.drawable.circle)
+    private var circleRelevantBackground: Drawable? = ContextCompat.getDrawable(view.context, R.drawable.circle)
+    private var circleBackground: Drawable? = ContextCompat.getDrawable(view.context, R.drawable.circle)
     @ColorInt private val selectedColor: Int = ContextCompat.getColor(view.context, R.color.selected)
 
     private val backgroundAnimator: ObjectAnimator;
@@ -47,10 +47,14 @@ class SupervisionViewHolder(private val view: View, private val presenter: Super
 
         view.isClickable = true
 
-        circleBackground = DrawableCompat.wrap(circleBackground)
-        DrawableCompat.setTint(circleBackground, circleColor)
-        circleRelevantBackground = DrawableCompat.wrap(circleRelevantBackground)
-        DrawableCompat.setTint(circleRelevantBackground, circleColorRelevant)
+        if (circleBackground != null) {
+            circleBackground = DrawableCompat.wrap(circleBackground!!)
+            DrawableCompat.setTint(circleBackground!!, circleColor)
+        }
+        if (circleRelevantBackground != null) {
+            circleRelevantBackground = DrawableCompat.wrap(circleRelevantBackground!!)
+            DrawableCompat.setTint(circleRelevantBackground!!, circleColorRelevant)
+        }
 
         view.setOnClickListener {
             presenter.onListItemClicked(this.adapterPosition)

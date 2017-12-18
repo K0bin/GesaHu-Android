@@ -25,8 +25,8 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (savedInstanceState != null && savedInstanceState.containsKey(keyDate))
             date = DateTime(savedInstanceState.getLong(keyDate)).toLocalDate()
-        else if (arguments != null && arguments.containsKey(argumentDate))
-            date = DateTime(arguments.getLong(argumentDate)).toLocalDate()
+        else if (arguments != null && arguments!!.containsKey(argumentDate))
+            date = DateTime(arguments!!.getLong(argumentDate)).toLocalDate()
         else
             date = LocalDate.now()
 

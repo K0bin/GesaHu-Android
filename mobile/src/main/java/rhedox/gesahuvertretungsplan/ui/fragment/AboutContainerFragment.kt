@@ -34,18 +34,18 @@ class AboutContainerFragment : AnimationFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_about_container, container, false)
-        childFragmentManager.beginTransaction().replace(R.id.about_fragment_container, createFragment(context.applicationContext), fragmentTag).commit()
+        childFragmentManager.beginTransaction().replace(R.id.about_fragment_container, createFragment(context!!.applicationContext), fragmentTag).commit()
         return view;
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.action_about)
-        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
-            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+        if (drawerActivity?.isPermanentDrawer == false) {
+            drawerActivity.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             drawerActivity.syncDrawer()
         }
