@@ -1,35 +1,31 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.Manifest
 import android.accounts.Account
 import android.app.Service
 import android.content.*
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.CalendarContract
 import android.support.annotation.ColorInt
+import android.support.annotation.RequiresPermission
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.firebase.crash.FirebaseCrash
 import org.jetbrains.anko.accountManager
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
-import org.joda.time.LocalTime
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.Event
-import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Exam
+import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 import java.io.IOException
 import java.net.SocketTimeoutException
-import java.util.*
 
 /**
  * Created by robin on 27.12.2016.
@@ -267,6 +263,8 @@ class CalendarSyncService : Service() {
             return calendarUri.lastPathSegment.toLong();
         }
 
+        @Suppress("ReplaceArrayOfWithLiteral")
+        @RequiresPermission(allOf = arrayOf(android.Manifest.permission.WRITE_CALENDAR))
         private fun insert(event: Event, calendarId: Long) {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, event.begin.millis)
@@ -294,6 +292,8 @@ class CalendarSyncService : Service() {
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
 
+        @Suppress("ReplaceArrayOfWithLiteral")
+        @RequiresPermission(allOf = arrayOf(android.Manifest.permission.WRITE_CALENDAR))
         private fun insert(test: Test, calendarId: Long) {
             val values = ContentValues()
             if (test.lessonStart != null && test.duration != null) {
@@ -312,6 +312,8 @@ class CalendarSyncService : Service() {
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
 
+        @Suppress("ReplaceArrayOfWithLiteral")
+        @RequiresPermission(allOf = arrayOf(android.Manifest.permission.WRITE_CALENDAR))
         private fun insert(exam: Exam, calendarId: Long) {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, exam.date.toDateTime(exam.time).millis)

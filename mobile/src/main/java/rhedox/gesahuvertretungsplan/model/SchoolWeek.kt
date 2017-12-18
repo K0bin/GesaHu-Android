@@ -55,11 +55,23 @@ object SchoolWeek {
 
     @JvmStatic
     fun lessonStart(lessonIndex: Int): LocalTime {
-        return LocalTime(startHours[lessonIndex - 1], startMinutes[lessonIndex - 1])
+        var lesson = lessonIndex
+        if (lesson > startHours.size) {
+            if (lesson % 11 == 0) lesson /= 11; //teacher accidentally hit the key twice (55 for 5th period)
+            else if (lesson % 10 == 0) lesson /= 10; //dunno, why not?
+            else return LocalTime(lesson, 0) //teacher might've thought it's an hour
+        }
+        return LocalTime(startHours[lesson - 1], startMinutes[lesson - 1])
     }
     @JvmStatic
     fun lessonEnd(lessonIndex: Int): LocalTime {
-        return LocalTime(endHours[lessonIndex - 1], endMinutes[lessonIndex - 1])
+        var lesson = lessonIndex
+        if (lesson > startHours.size) {
+            if (lesson % 11 == 0) lesson /= 11; //teacher accidentally hit the key twice (55 for 5th period)
+            else if (lesson % 10 == 0) lesson /= 10; //dunno, why not?
+            else return LocalTime(lesson, 0) //teacher might've thought it's an hour
+        }
+        return LocalTime(endHours[lesson - 1], endMinutes[lesson - 1])
     }
 }
 

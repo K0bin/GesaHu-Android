@@ -57,7 +57,7 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
         container.removeView(recyclerView);
     }
 
-    override fun isViewFromObject(view: View?, page: Any?): Boolean {
+    override fun isViewFromObject(view: View, page: Any): Boolean {
         return view == page;
     }
 
