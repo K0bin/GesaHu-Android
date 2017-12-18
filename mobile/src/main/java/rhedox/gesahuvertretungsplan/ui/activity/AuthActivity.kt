@@ -149,7 +149,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     override fun onConnectionSuspended(cause: Int) {
     }
 
-    fun login() {
+    private fun login() {
         var areFieldsEmpty = false
         if (passwordEdit.text?.toString().isNullOrBlank()) {
             passwordLayout.error = getString(R.string.login_password_empty)
@@ -210,7 +210,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
     }
 
-    fun finishLogin() {
+    private fun finishLogin() {
         if(account == null) {
             account = Account(username, GesaHuAccountService.GesaHuAuthenticator.accountType);
             accountManager.addAccountExplicitly(account, passwordMd5, Bundle());
