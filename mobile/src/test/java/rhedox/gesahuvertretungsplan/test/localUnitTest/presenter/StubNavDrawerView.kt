@@ -9,6 +9,7 @@ import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
  * Created by robin on 26.01.2017.
  */
 class StubNavDrawerView: NavDrawerContract.View {
+
     var boards: List<Board> = listOf()
     var currentView: Int = ViewValues.substitutes;
 
@@ -19,6 +20,7 @@ class StubNavDrawerView: NavDrawerContract.View {
         const val intro = 3;
         const val board = 4;
         const val auth = 5;
+        const val supervisions = 6;
     }
 
     override fun showBoards(boards: List<Board>) { this.boards = boards }
@@ -28,6 +30,7 @@ class StubNavDrawerView: NavDrawerContract.View {
     override fun navigateToAuth() { currentView = ViewValues.auth }
     override fun navigateToSubstitutes(date: LocalDate?) { currentView = ViewValues.substitutes}
     override fun navigateToBoard(boardId: Long) { currentView = ViewValues.board }
+    override fun navigateToSupervisions(date: LocalDate?) { currentView = ViewValues.supervisions }
 
     override var userName: String = ""
     override var currentDrawerId: Int = -1

@@ -342,7 +342,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     class Listener: DrawerLayout.SimpleDrawerListener() {
         var callback: ((drawer: NavigationView) -> Unit)? = null
 
-        override fun onDrawerClosed(drawerView: View?) {
+        override fun onDrawerClosed(drawerView: View) {
             super.onDrawerClosed(drawerView)
             callback?.invoke(drawerView as NavigationView)
         }

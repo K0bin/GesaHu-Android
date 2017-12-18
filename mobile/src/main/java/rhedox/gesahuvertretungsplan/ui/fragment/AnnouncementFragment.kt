@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.animation.*
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Dialog
 import android.content.DialogInterface
@@ -10,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v7.widget.CardView
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
@@ -68,18 +71,19 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
     var toDismiss = false
 
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val a = context.theme.obtainStyledAttributes(TypedValue().data, intArrayOf(R.attr.colorAccent, R.attr.cardBackgroundColor, R.attr.textPrimary))
-        accentColor = a.getColor(0, 0)
-        cardColor = a.getColor(1, 0)
-        textColor = a.getColor(2, 0)
-        a.recycle()
+        val a = context?.theme?.obtainStyledAttributes(TypedValue().data, intArrayOf(R.attr.colorAccent, R.attr.cardBackgroundColor, R.attr.textPrimary))
+        accentColor = a?.getColor(0, 0) ?: 0
+        cardColor = a?.getColor(1, 0) ?: 0
+        textColor = a?.getColor(2, 0) ?: 0
+        a?.recycle()
 
-        dialogElevation = context.resources.getDimension(R.dimen.dialogElevation)
-        longDuration = context.resources.getInteger(android.R.integer.config_longAnimTime).toLong()
-        shortDuration = context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+        dialogElevation = context?.resources?.getDimension(R.dimen.dialogElevation) ?: 0f
+        longDuration = context?.resources?.getInteger(android.R.integer.config_longAnimTime)?.toLong() ?: 0L
+        shortDuration = context?.resources?.getInteger(android.R.integer.config_shortAnimTime)?.toLong() ?: 0L
 
         toDismiss = savedInstanceState?.getBoolean(stateDismiss, false) ?: false
     }
@@ -118,6 +122,8 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
         fabCenter.x = fabPosition.x + fabSize.x / 2
         fabCenter.y = fabPosition.y + fabSize.y / 2
+
+        Log.d("FabAnimation", "fabCenter: $fabCenter")
     }
 
     override fun onShow(dialog: DialogInterface) {
@@ -178,15 +184,16 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         animation.interpolator = FastOutSlowInInterpolator()
         animation.duration = longDuration
 
-        val colorFade = ObjectAnimator.ofObject(view, "cardBackgroundColor", ArgbEvaluator(),  if (isVisible) accentColor else cardColor,  if (isVisible) cardColor else accentColor)
+        val colorFade = ObjectAnimator.ofObject(view as CardView, "cardBackgroundColor", ArgbEvaluator(),  if (isVisible) accentColor else cardColor,  if (isVisible) cardColor else accentColor)
         colorFade.interpolator = FastOutSlowInInterpolator()
         colorFade.duration = longDuration
 
+        Log.d("FabAnimation", "ArcTarget (hide): {x: ${fabCenter.x - dialogSize!!.x * (revealPositionFraction - 0.5f)} y: ${fabCenter.y - dialogSize!!.y * (revealPositionFraction - 0.5f)}}")
         val dialogArcAnimator = ArcAnimator.createArcAnimator(view, if (isVisible) dialogCenter!!.x else fabCenter.x - dialogSize!!.x * (revealPositionFraction - 0.5f), if (isVisible) dialogCenter!!.y else fabCenter.y - dialogSize!!.y * (revealPositionFraction - 0.5f), 90f, Side.LEFT)
         dialogArcAnimator.setInterpolator(FastOutSlowInInterpolator())
         dialogArcAnimator.duration = longDuration
 
-        val elevationAnimator = ObjectAnimator.ofObject(view, "cardElevation", FloatEvaluator(), if (isVisible) fabElevation else dialogElevation, if (isVisible) dialogElevation else fabElevation)
+        val elevationAnimator = ObjectAnimator.ofObject(view as CardView, "cardElevation", FloatEvaluator(), if (isVisible) fabElevation else dialogElevation, if (isVisible) dialogElevation else fabElevation)
         elevationAnimator.interpolator = FastOutSlowInInterpolator()
         elevationAnimator.duration = longDuration
 

@@ -7,4 +7,8 @@
     android:elevation="4dp"
     android:id="@+id/recycler"
     android:paddingBottom="@dimen/listMargin"
-    android:clipToPadding="false"/>
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    app:layoutManager="LinearLayoutManager"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:listitem="@layout/view_lesson"/>

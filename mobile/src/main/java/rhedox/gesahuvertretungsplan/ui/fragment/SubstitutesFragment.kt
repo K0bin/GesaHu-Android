@@ -170,7 +170,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         return inflater.inflate(R.layout.fragment_substitutes, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         pagerAdapter = SubstitutesPagerAdapter(presenter)
@@ -206,15 +206,15 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         val drawerActivity = activity as? DrawerActivity
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.activity_substitutes)
-        if (!(drawerActivity?.isPermanentDrawer ?: true)) {
+        if (drawerActivity?.isPermanentDrawer == false) {
             drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             drawerActivity.syncDrawer()
         }
 
         val size = Point();
-        context.windowManager.defaultDisplay.getSize(size)
-        if (size.x / context.displayMetrics.density >= 1024) {
+        context!!.windowManager.defaultDisplay.getSize(size)
+        if (size.x / context!!.displayMetrics.density >= 1024) {
             tabLayout.tabMode = TabLayout.MODE_FIXED
         }
 
@@ -226,11 +226,13 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             fabSize.x = fab.width
             fabSize.y = fab.height
 
-            val window = IntArray(2)
+            /*val window = IntArray(2)
             fab.getLocationInWindow(window)
-
             fabPosition.x = window[0].toFloat()
-            fabPosition.y = window[1] - (24f * context.displayMetrics.density)
+            fabPosition.y = window[1] - (24f * context.displayMetrics.density)*/
+
+            fabPosition.x = fab.left.toFloat()
+            fabPosition.y = fab.top.toFloat()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 fabElevation = fab.elevation
@@ -320,6 +322,6 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     }
 
     override fun share(text: String) {
-        activity.share(text, "")
+        activity?.share(text, "")
     }
 }
