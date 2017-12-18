@@ -93,18 +93,6 @@ dependencies {
     compile('com.mikepenz:aboutlibraries:5.+@aar') {
         transitive = true
     }
-    //debugCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'
-    //compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
-
-    //compile 'com.pushtorefresh.storio:content-resolver:1.12.1'
-    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    /*testCompile 'org.robolectric:robolectric:3.+'
-        //testCompile 'org.mockito:mockito-core:2.+'
-        testCompile 'org.powermock:powermock-api-mockito:1.+'
-        testCompile "org.powermock:powermock-classloading-xstream:1.+"
-        testCompile 'org.powermock:powermock-module-junit4-rule-agent:+'
-        testCompile 'org.powermock:powermock-module-junit4-rule:+'
-        testCompile 'org.powermock:powermock-module-junit4:+'*/
     compile 'com.android.support:support-compat:27.0.+'
     compile 'com.android.support:support-core-utils:27.0.+'
     compile 'com.android.support:support-core-ui:27.0.+'
@@ -152,7 +140,7 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:+'
     releaseCompile 'net.danlew:android.joda:2.+'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:+'
-
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 repositories {
     mavenCentral()

@@ -18,21 +18,30 @@ class SubstituteDeserializer(context: Context) : JsonDeserializer<Substitute> {
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Substitute {
         val jsonObject = json.asJsonObject;
 
-        val subjectAbbr = Html.decode(jsonObject.get("Fach").asString.trim());
-        var subject = resolver.resolveSubject(subjectAbbr);
-        if (subject == "---") {
-            subject = "";
+        var subjectAbbr = Html.decode(jsonObject.get("Fach").asString.trim());
+        if (subjectAbbr == "---") {
+            subjectAbbr = "";
         }
+        val subject = resolver.resolveSubject(subjectAbbr);
         var _class = Html.decode(jsonObject.get("Klasse").asString.trim())
         if (_class == "---") {
             _class = "";
         }
-        val teacherAbbr = Html.decode(jsonObject.get("Lehrer").asString.trim());
+        var teacherAbbr = Html.decode(jsonObject.get("Lehrer").asString.trim());
+        if (teacherAbbr == "---") {
+            teacherAbbr = "";
+        }
         val teacher = resolver.resolveTeacher(teacherAbbr);
-        val substituteAbbr = Html.decode(jsonObject.get("Vertretungslehrer").asString.trim());
+        var substituteAbbr = Html.decode(jsonObject.get("Vertretungslehrer").asString.trim());
+        if (substituteAbbr == "---") {
+            substituteAbbr = "";
+        }
         val substitute = resolver.resolveTeacher(substituteAbbr);
         val hint = Html.decode(jsonObject.get("Hinweis").asString.trim());
-        val room = Html.decode(jsonObject.get("Raum").asString.trim());
+        var room = Html.decode(jsonObject.get("Raum").asString.trim());
+        if (room == "---") {
+            room = "";
+        }
         val isRelevant = jsonObject.get("relevant").asString.toLowerCase() == "true";
 
         //Bindestrich workaround
