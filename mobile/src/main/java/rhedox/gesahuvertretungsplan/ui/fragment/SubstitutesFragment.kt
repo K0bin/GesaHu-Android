@@ -72,17 +72,18 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     }
 
     override fun showDatePicker(defaultDate: LocalDate) {
-        val picker = DatePickerFragment.newInstance(defaultDate);
-        picker.callback = {
-            presenter.onDatePicked(it)
-        }
+        if (isResumed) {
+            val picker = DatePickerFragment.newInstance(defaultDate);
+            picker.callback = {
+                presenter.onDatePicked(it)
+            }
 
-        picker.show(fragmentManager, "Datepicker")
+            picker.show(fragmentManager, "Datepicker")
+        }
     }
 
     private var isFabMeasured = false;
     override var isFabVisible: Boolean = false
-        get() = field
         set(value) {
             if (isFabMeasured) {
                 fab.isEnabled = value
