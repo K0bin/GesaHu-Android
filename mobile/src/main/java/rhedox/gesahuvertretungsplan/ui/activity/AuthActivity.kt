@@ -99,7 +99,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         passwordEdit.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {
                 login();
-                true
+                return@setOnEditorActionListener true
             }
             false
         }

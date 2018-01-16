@@ -112,7 +112,7 @@ class MarksFragment : Fragment(), MarksContract.View {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelable(stateBundleName, presenter.saveState() as MarksState)
+        outState.putParcelable(stateBundleName, presenter.saveState())
         outState.putParcelable(layoutManagerBundleName, layoutManager.onSaveInstanceState())
     }
 

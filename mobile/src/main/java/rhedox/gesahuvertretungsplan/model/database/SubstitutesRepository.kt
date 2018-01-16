@@ -66,7 +66,7 @@ class SubstitutesRepository(context: Context) {
         announcementCallback = null;
         context.contentResolver.unregisterContentObserver(observer)
 
-        for ((key, value) in futures) {
+        for ((_, value) in futures) {
             value.cancel(true)
         }
         futures.clear()

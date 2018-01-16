@@ -9,7 +9,6 @@ import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.WakefulBroadcastReceiver
 import org.jetbrains.anko.notificationManager
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
@@ -42,13 +41,14 @@ class SubstitutesNotifier(private val context: Context) {
     private val formatter: SubstituteFormatter = SubstituteFormatter(context);
 
     fun load(lesson: Int? = null) {
-        var _lesson = lesson
-        if (lesson != -1 && lesson != -1 && (DateTime.now().dayOfWeek == DateTimeConstants.SATURDAY || DateTime.now().dayOfWeek == DateTimeConstants.SUNDAY)) {
+        var _lesson = lesson ?: -1
+        if (lesson != -1 && (DateTime.now().dayOfWeek == DateTimeConstants.SATURDAY || DateTime.now().dayOfWeek == DateTimeConstants.SUNDAY)) {
             if (lesson == 1)
                 _lesson = -1
             else
                 return
         }
+        this.lesson = _lesson;
         val date: LocalDate = SchoolWeek.nextFromNow()
         val substitutes = SubstitutesRepository.loadSubstitutesForDaySync(context, date, true)
         onSubstitutesLoaded(date, substitutes)

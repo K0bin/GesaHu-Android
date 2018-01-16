@@ -50,7 +50,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     private val formatter: SubstituteFormatter = kodeIn.instance()
 
     private val accountManager: AccountManager = kodeIn.instance()
-    private val account: Account? = null
+    private var account: Account? = null
         get() {
             if (field == null) {
                 field = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)?.firstOrNull()

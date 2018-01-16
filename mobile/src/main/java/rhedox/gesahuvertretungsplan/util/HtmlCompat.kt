@@ -8,6 +8,7 @@ import android.text.Spanned
  * Created by robin on 07.10.2016.
  */
 
+@Suppress("DEPRECATION")
 class Html {
     companion object {
         fun fromHtml(text: String): Spanned {

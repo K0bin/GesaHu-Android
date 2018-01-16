@@ -150,7 +150,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(state, presenter.saveState() as NavDrawerState)
+        outState.putParcelable(state, presenter.saveState())
     }
 
     override fun onStart() {
@@ -203,7 +203,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
             window.statusBarColor = 0
 
             if (drawer == null) {
-                rootLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                rootLayout?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
             }
         }
     }
@@ -245,8 +245,8 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
 
     override fun onBackPressed() {
-        if (drawer?.isDrawerOpen(GravityCompat.START) ?: false)
-            drawer.closeDrawer(GravityCompat.START)
+        if (drawer?.isDrawerOpen(GravityCompat.START) == true)
+            drawer!!.closeDrawer(GravityCompat.START)
         else
             super.onBackPressed()
     }

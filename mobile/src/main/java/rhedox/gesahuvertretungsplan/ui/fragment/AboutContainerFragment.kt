@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.preference.PreferenceManager
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +18,7 @@ import com.mikepenz.aboutlibraries.entity.Library
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import kotlinx.android.synthetic.main.fragment_preference_container.toolbar;
+import rhedox.gesahuvertretungsplan.util.Html
 
 /**
  * Created by robin on 07.02.2017.
@@ -56,6 +57,7 @@ class AboutContainerFragment : AnimationFragment() {
         (activity as? DrawerActivity)?.setSupportActionBar(null)
     }
 
+    @Suppress("DEPRECATION")
     private fun createFragment(context: Context): Fragment {
         val isDarkThemeEnabled = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)

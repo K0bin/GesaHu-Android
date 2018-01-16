@@ -208,7 +208,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         drawerActivity?.setSupportActionBar(toolbar)
         drawerActivity?.supportActionBar?.title = getString(R.string.activity_substitutes)
         if (drawerActivity?.isPermanentDrawer == false) {
-            drawerActivity?.supportActionBar!!.setHomeButtonEnabled(true)
+            drawerActivity.supportActionBar!!.setHomeButtonEnabled(true)
             drawerActivity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             drawerActivity.syncDrawer()
         }
@@ -262,7 +262,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         cab.inflateMenu(R.menu.menu_cab_main)
         cab.setOnMenuItemClickListener {
             if(id == R.id.action_share) {
-                true
+                return@setOnMenuItemClickListener true
             }
             presenter.onShareButtonClicked()
             false

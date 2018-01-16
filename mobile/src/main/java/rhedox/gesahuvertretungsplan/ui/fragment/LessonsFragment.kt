@@ -120,7 +120,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelable(stateBundleName, presenter.saveState() as LessonsState)
+        outState.putParcelable(stateBundleName, presenter.saveState())
         outState.putParcelable(layoutManagerBundleName, layoutManager.onSaveInstanceState())
     }
 

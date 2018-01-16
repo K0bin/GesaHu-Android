@@ -23,7 +23,7 @@ class DispatchInsetLinearLayout @JvmOverloads constructor(context: Context, attr
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ViewCompat.setOnApplyWindowInsetsListener(this,
-                    { v, insets ->
+                    { _, insets ->
                         forEachChild {
                             ViewCompat.dispatchApplyWindowInsets(it, insets)
                         }

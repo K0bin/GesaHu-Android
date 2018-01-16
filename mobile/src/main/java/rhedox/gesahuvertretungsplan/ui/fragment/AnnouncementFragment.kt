@@ -76,9 +76,9 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         super.onCreate(savedInstanceState)
 
         val a = context!!.theme.obtainStyledAttributes(TypedValue().data, intArrayOf(R.attr.colorAccent, R.attr.cardBackgroundColor, R.attr.textPrimary))
-        accentColor = a.getColor(0, 0) ?: 0
-        cardColor = a.getColor(1, 0) ?: 0
-        textColor = a.getColor(2, 0) ?: 0
+        accentColor = a.getColor(0, 0)
+        cardColor = a.getColor(1, 0)
+        textColor = a.getColor(2, 0)
         a.recycle()
 
         dialogElevation = context!!.resources.getDimension(R.dimen.dialogElevation)

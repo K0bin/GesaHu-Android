@@ -193,7 +193,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         cab.inflateMenu(R.menu.menu_cab_main)
         cab.setOnMenuItemClickListener {
             if(id == R.id.action_share) {
-                true
+                return@setOnMenuItemClickListener true
             }
             presenter.onShareButtonClicked()
             false

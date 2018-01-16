@@ -49,7 +49,7 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == ItemTypeValues.view) {
-            (holder as ModelViewHolder<T>).bind(list[if (!hasTopHeader) position else position - 1])
+            (holder as? ModelViewHolder<T>)?.bind(list[if (!hasTopHeader) position else position - 1])
         } else if (getItemViewType(position) == ItemTypeValues.topHeader) {
             bindTopHeader(holder, 0)
         } else if (getItemViewType(position) == ItemTypeValues.emptyView) {

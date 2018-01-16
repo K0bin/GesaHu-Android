@@ -8,6 +8,7 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 /**
  * Created by robin on 30.10.2016.
  */
+@Suppress("unused")
 object MarksContract {
     const val path = "marks"
 

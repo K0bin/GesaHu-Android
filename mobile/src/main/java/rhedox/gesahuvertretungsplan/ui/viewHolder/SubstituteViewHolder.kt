@@ -59,6 +59,7 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
         }
     }
 
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun bind(substitute: Substitute) {
         lesson.text = substitute.lessonText
         subject.text = substitute.title

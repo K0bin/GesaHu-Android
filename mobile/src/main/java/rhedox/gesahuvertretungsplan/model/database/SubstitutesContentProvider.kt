@@ -101,17 +101,16 @@ class SubstitutesContentProvider : ContentProvider() {
         val uriType = uriMatcher.match(uri);
         val db = database.writableDatabase;
 
-        var rowsDeleted = 0;
-        when (uriType) {
-            substitutes -> rowsDeleted = db.delete(SubstitutesContract.Table.name, selection ?: "1", null)
-            substitutesByDate -> rowsDeleted = db.delete(SubstitutesContract.Table.name, "${SubstitutesContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            substitutesById -> rowsDeleted = db.delete(SubstitutesContract.Table.name, "${SubstitutesContract.Table.columnId} = '${uri.lastPathSegment}'", null)
-            announcements -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, selection ?: "", null)
-            announcementsByDate -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            announcementsById -> rowsDeleted = db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
-            supervisions -> rowsDeleted = db.delete(SupervisionsContract.Table.name, selection ?: "1", null)
-            supervisionsByDate -> rowsDeleted = db.delete(SupervisionsContract.Table.name, "${SupervisionsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
-            supervisionsById -> rowsDeleted = db.delete(SupervisionsContract.Table.name, "${SupervisionsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
+        var rowsDeleted = when (uriType) {
+            substitutes -> db.delete(SubstitutesContract.Table.name, selection ?: "1", null)
+            substitutesByDate -> db.delete(SubstitutesContract.Table.name, "${SubstitutesContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            substitutesById -> db.delete(SubstitutesContract.Table.name, "${SubstitutesContract.Table.columnId} = '${uri.lastPathSegment}'", null)
+            announcements -> db.delete(AnnouncementsContract.Table.name, selection ?: "", null)
+            announcementsByDate -> db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            announcementsById -> db.delete(AnnouncementsContract.Table.name, "${AnnouncementsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
+            supervisions -> db.delete(SupervisionsContract.Table.name, selection ?: "1", null)
+            supervisionsByDate -> db.delete(SupervisionsContract.Table.name, "${SupervisionsContract.Table.columnDate} = '${uri.lastPathSegment}' and ${selection ?: ""}", null)
+            supervisionsById -> db.delete(SupervisionsContract.Table.name, "${SupervisionsContract.Table.columnId} = '${uri.lastPathSegment}'", null)
             else -> throw IllegalArgumentException("Unknown URI: $uri");
         }
 

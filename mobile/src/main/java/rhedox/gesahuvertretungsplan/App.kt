@@ -60,7 +60,7 @@ class App : Application(), KodeinAware {
 
         //Disable Firebase crash reporting
         if (BuildConfig.DEBUG) {
-            Thread.setDefaultUncaughtExceptionHandler { paramThread, paramThrowable ->
+            Thread.setDefaultUncaughtExceptionHandler { _, paramThrowable ->
                 Log.wtf("Alert", paramThrowable.message, paramThrowable)
                 System.exit(2) //Prevents the service/app from freezing
             }

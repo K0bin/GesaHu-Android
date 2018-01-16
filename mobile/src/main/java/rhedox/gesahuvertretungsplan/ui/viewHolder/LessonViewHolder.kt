@@ -27,6 +27,7 @@ class LessonViewHolder(view: View) : ModelViewHolder<Lesson>(view) {
 
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun bind(lesson: Lesson) {
         date.text = lesson.date.toString(formatter)
         topic.text = lesson.topic

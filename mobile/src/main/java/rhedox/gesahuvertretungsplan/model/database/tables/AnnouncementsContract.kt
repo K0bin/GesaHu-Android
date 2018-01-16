@@ -9,6 +9,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 19.10.2016.
  */
+@Suppress("unused")
 object AnnouncementsContract {
     const val datePath = "date"
     const val path = "announcements"

@@ -26,6 +26,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 26.10.2016.
  */
+@Suppress("DEPRECATION")
 class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
         const val extraLesson = "lesson";

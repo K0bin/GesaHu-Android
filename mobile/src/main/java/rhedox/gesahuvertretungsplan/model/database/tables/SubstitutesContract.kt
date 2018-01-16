@@ -9,6 +9,7 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 19.10.2016.
  */
+@Suppress("unused")
 object SubstitutesContract {
 
     const val datePath = "date"
@@ -65,6 +66,7 @@ object SubstitutesContract {
         db.execSQL(sql);
     }
 
+    @Suppress("DEPRECATION")
     @JvmStatic
     fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if(newVersion >= 3 && oldVersion < 3) {

@@ -61,6 +61,7 @@ class SupervisionViewHolder(private val view: View, private val presenter: Super
         }
     }
 
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun bind(supervision: Supervision) {
         time.text = supervision.time
         teacher.text = supervision.teacher
