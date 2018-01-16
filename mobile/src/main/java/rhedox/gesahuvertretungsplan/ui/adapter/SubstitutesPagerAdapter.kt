@@ -22,6 +22,8 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
 
     private val layoutManagerStates = arrayOfNulls<Parcelable>(5)
 
+    private val pool = RecyclerView.RecycledViewPool()
+
     object State {
         const val layoutManagerStates = "layoutManagerStates"
         const val state = "pagerState"
@@ -43,6 +45,7 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
         recyclerView.layoutManager = layoutManager
         val adapter = SubstitutesAdapter(presenter, container.context)
         recyclerView.adapter = adapter;
+        recyclerView.recycledViewPool = pool;
 
         container.addView(recyclerView, 0);
         adapters[position] = adapter;
