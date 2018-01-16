@@ -4,14 +4,13 @@ import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 
 /**
  * Created by Robin on 18.09.2015.
  * Workaround/ fix for SwipeRefreshLayout
  */
 public class SwipeRefreshLayoutFix extends SwipeRefreshLayout {
-	private boolean isGuestureEnabled = false;
+	private boolean isGestureEnabled = false;
 
     public SwipeRefreshLayoutFix(Context context) {
         super(context);
@@ -21,11 +20,11 @@ public class SwipeRefreshLayoutFix extends SwipeRefreshLayout {
         super(context, attrs);
     }
 
-	public void setIsGuestureEnabled(boolean isEnabled) {
-		isGuestureEnabled = isEnabled;
+	public void setIsGestureEnabled(boolean isEnabled) {
+		isGestureEnabled = isEnabled;
 	}
-	public boolean getIsGuestureEnabled() {
-		return isGuestureEnabled;
+	public boolean getIsGestureEnabled() {
+		return isGestureEnabled;
 	}
 
 	@Override
@@ -36,7 +35,7 @@ public class SwipeRefreshLayoutFix extends SwipeRefreshLayout {
 			case MotionEvent.ACTION_POINTER_UP:
 				return false;
 			default:
-				return isGuestureEnabled && super.onInterceptTouchEvent(ev);
+				return isGestureEnabled && super.onInterceptTouchEvent(ev);
 		}
 	}
 }
