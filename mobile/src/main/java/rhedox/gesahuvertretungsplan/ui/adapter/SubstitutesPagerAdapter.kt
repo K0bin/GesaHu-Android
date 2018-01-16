@@ -18,6 +18,7 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
 
     var tabTitles: Array<String> = arrayOf("","","","","")
 
+    private val recyclerViews = arrayOfNulls<RecyclerView>(5)
     private val adapters = arrayOfNulls<SubstitutesAdapter>(5)
 
     private val layoutManagerStates = arrayOfNulls<Parcelable>(5)
@@ -37,20 +38,28 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val inflater = LayoutInflater.from(container.context)
-        val recyclerView = inflater.inflate(R.layout.fragment_main, container, false) as RecyclerView;
-        val layoutManager = LinearLayoutManager(container.context, LinearLayoutManager.VERTICAL, false)
-        if(layoutManagerStates[position] != null)
-            layoutManager.onRestoreInstanceState(layoutManagerStates[position])
-        recyclerView.layoutManager = layoutManager
-        val adapter = SubstitutesAdapter(presenter, container.context)
-        recyclerView.adapter = adapter;
-        recyclerView.recycledViewPool = pool;
+        if (recyclerViews[position] == null) {
+            val inflater = LayoutInflater.from(container.context)
+            val recyclerView = inflater.inflate(R.layout.fragment_main, container, false) as RecyclerView;
+            val layoutManager = LinearLayoutManager(container.context, LinearLayoutManager.VERTICAL, false)
+            if (layoutManagerStates[position] != null) layoutManager.onRestoreInstanceState(layoutManagerStates[position])
+            layoutManager.recycleChildrenOnDetach = true
+            recyclerView.layoutManager = layoutManager
+            val adapter = SubstitutesAdapter(presenter, container.context)
+            recyclerView.adapter = adapter;
+            recyclerView.recycledViewPool = pool;
+            recyclerView.setHasFixedSize(true)
 
-        container.addView(recyclerView, 0);
-        adapters[position] = adapter;
-        presenter.onPageAttached(position)
-        return recyclerView
+            container.addView(recyclerView);
+            adapters[position] = adapter;
+            recyclerViews[position] = recyclerView
+            presenter.onPageAttached(position)
+            return recyclerView
+        } else {
+            val recyclerView = recyclerViews[position]!!
+            container.addView(recyclerView);
+            return recyclerView
+        }
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, page: Any) {
