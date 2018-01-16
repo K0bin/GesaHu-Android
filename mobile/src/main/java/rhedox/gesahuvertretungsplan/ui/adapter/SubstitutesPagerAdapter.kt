@@ -19,7 +19,6 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
     var tabTitles: Array<String> = arrayOf("","","","","")
 
     private val recyclerViews = arrayOfNulls<RecyclerView>(5)
-    private val adapters = arrayOfNulls<SubstitutesAdapter>(5)
 
     private val layoutManagerStates = arrayOfNulls<Parcelable>(5)
 
@@ -51,7 +50,6 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
             recyclerView.setHasFixedSize(true)
 
             container.addView(recyclerView);
-            adapters[position] = adapter;
             recyclerViews[position] = recyclerView
             presenter.onPageAttached(position)
             return recyclerView
@@ -82,7 +80,7 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
     }
 
     fun getAdapter(position: Int): SubstitutesAdapter? {
-        return adapters[position]
+        return recyclerViews[position]?.adapter as? SubstitutesAdapter
     }
 
     fun save(bundle: Bundle) {
