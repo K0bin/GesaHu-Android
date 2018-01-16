@@ -205,10 +205,14 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         } else {
             usernameLayout.error = getString(R.string.login_403);
             usernameLayout.isErrorEnabled = true;
-            usernameEdit.isEnabled = false;
+            usernameLayout.isFocusable = true;
+            usernameLayout.isFocusableInTouchMode = true;
+            usernameLayout.isEnabled = true;
             passwordLayout.error = getString(R.string.login_403);
             passwordLayout.isErrorEnabled = true;
-            passwordEdit.isEnabled = false;
+            passwordEdit.isFocusable = true;
+            passwordEdit.isFocusableInTouchMode = true;
+            passwordEdit.isEnabled = true;
         }
     }
 
