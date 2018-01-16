@@ -237,7 +237,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (toggle?.onOptionsItemSelected(item) ?: false) {
+        if (toggle?.onOptionsItemSelected(item) == true) {
             return true
         }
         return super.onOptionsItemSelected(item)

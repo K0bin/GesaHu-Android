@@ -190,7 +190,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
         viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
-                swipeRefreshLayout.isGuestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
+                swipeRefreshLayout.isGestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
@@ -226,11 +226,6 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             }
             fabSize.x = fab.width
             fabSize.y = fab.height
-
-            /*val window = IntArray(2)
-            fab.getLocationInWindow(window)
-            fabPosition.x = window[0].toFloat()
-            fabPosition.y = window[1] - (24f * context.displayMetrics.density)*/
 
             fabPosition.x = fab.left.toFloat()
             fabPosition.y = fab.top.toFloat()

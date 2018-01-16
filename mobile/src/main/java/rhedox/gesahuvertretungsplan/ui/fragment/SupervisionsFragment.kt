@@ -111,7 +111,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         }
 
     override var isSwipeRefreshEnabled: Boolean
-        get() = swipeRefreshLayout?.isEnabled ?: false
+        get() = swipeRefreshLayout?.isEnabled == true
         set(value) {
             swipeRefreshLayout?.isEnabled = value
         }
@@ -161,7 +161,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
 
         viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
-                swipeRefreshLayout.isGuestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
+                swipeRefreshLayout.isGestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
