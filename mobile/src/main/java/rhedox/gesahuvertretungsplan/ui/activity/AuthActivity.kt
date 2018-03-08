@@ -9,17 +9,24 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.net.toUri
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
+import com.google.android.gms.auth.api.credentials.Credentials
+import com.google.android.gms.auth.api.credentials.CredentialsClient
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.android.synthetic.main.activity_auth.*
 import org.jetbrains.anko.accountManager
 import retrofit2.Call
@@ -37,7 +44,7 @@ import rhedox.gesahuvertretungsplan.util.Md5Util
 /**
  * Created by robin on 31.10.2016.
  */
-class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<BoardName>>, GoogleApiClient.ConnectionCallbacks {
+class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<BoardName>> {
     companion object {
         const val stateAccount = "account";
         const val argIsNewAccount ="isNewAccount"
@@ -53,7 +60,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var call: Call<List<BoardName>>? = null;
 
     private lateinit var snackbar: Snackbar;
-    private lateinit var client: GoogleApiClient
+    private lateinit var client: CredentialsClient
 
     private var autoLockSignInSuccessful = false;
 
@@ -68,12 +75,26 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         setContentView(R.layout.activity_auth)
 
-        client = GoogleApiClient.Builder(this)
-                        .addApi(Auth.CREDENTIALS_API)
-                        .enableAutoManage(this, {})
-                        .build()
+        client = Credentials.getClient(this)
+        var request = CredentialRequest.Builder()
+                .setPasswordLoginSupported(true)
+                .build()
 
-        client.registerConnectionCallbacks(this)
+        client.request(request).addOnCompleteListener {
+            if (it.isSuccessful) {
+                usernameEdit.setText(it.result.credential.id)
+                passwordEdit.setText(it.result.credential.password)
+                autoLockSignInSuccessful = true;
+                login()
+                return@addOnCompleteListener
+            }
+            val exception = it.exception
+            if (exception is ResolvableApiException) {
+                try {
+                    exception.startResolutionForResult(this, SignInRequestCodes.read);
+                } catch (e: IntentSender.SendIntentException ) {}
+            }
+        }
 
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = Color.parseColor("#ffe0e0e0");
@@ -108,27 +129,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         snackbar = Snackbar.make(usernameLayout, getString(R.string.login_required), Snackbar.LENGTH_SHORT)
     }
 
-    override fun onConnected(connectionHint: Bundle?) {
-        val request = CredentialRequest.Builder()
-                .setPasswordLoginSupported(true)
-                .build()
-
-        Auth.CredentialsApi.request(client, request).setResultCallback {
-            if (it.status.isSuccess) {
-                passwordEdit.setText(it.credential.password)
-                usernameEdit.setText(it.credential.id)
-                autoLockSignInSuccessful = true;
-                login()
-            } else {
-                if (it.status.statusCode == CommonStatusCodes.RESOLUTION_REQUIRED && it.status.hasResolution()) {
-                    try {
-                        it.status.startResolutionForResult(this, SignInRequestCodes.read);
-                    } catch (e: IntentSender.SendIntentException ) {}
-                }
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         data ?: return;
@@ -144,9 +144,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         } else if (requestCode == SignInRequestCodes.save) {
             finishActivity()
         }
-    }
-
-    override fun onConnectionSuspended(cause: Int) {
     }
 
     private fun login() {
@@ -224,22 +221,25 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             accountManager.setPassword(account, passwordMd5);
         }
 
-        val credential = com.google.android.gms.auth.api.credentials.Credential.Builder(username)
+        val credential = Credential.Builder(username)
                 .setPassword(passwordEdit.text.toString())
+                .setProfilePictureUri(BoardsSyncService.getPhotoUrl(username).toUri())
                 .build()
 
         if (!autoLockSignInSuccessful) {
-            Auth.CredentialsApi.save(client, credential).setResultCallback {
-                if (it.isSuccess) {
+            client.save(credential).addOnCompleteListener {
+                if (it.isSuccessful) {
                     // Credentials were saved
                     finishActivity()
                 } else {
-                    if (it.hasResolution()) {
+                    val exception = it.exception
+                    if (exception is ResolvableApiException) {
                         // Try to resolve the save request. This will prompt the user if
                         // the credential is new.
                         try {
-                            it.startResolutionForResult(this, SignInRequestCodes.save);
+                            exception.startResolutionForResult(this, SignInRequestCodes.save);
                         } catch (e: IntentSender.SendIntentException) {
+                            finishActivity()
                         }
                     } else {
                         finishActivity()

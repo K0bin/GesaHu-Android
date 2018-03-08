@@ -11,7 +11,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.RequiresPermission
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.google.firebase.crash.FirebaseCrash
+import com.crashlytics.android.Crashlytics
 import org.jetbrains.anko.accountManager
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
@@ -107,7 +107,7 @@ class CalendarSyncService : Service() {
                 testResponse = testCall.execute()
             } catch (e: Exception) {
                 if (e !is IOException && !BuildConfig.DEBUG) {
-                    FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                 } else {
                     Log.e("CalendarSync", e.message)
                 }
@@ -139,7 +139,7 @@ class CalendarSyncService : Service() {
                 eventResponse = eventCall.execute()
             } catch (e: Exception) {
                 if (e !is IOException && !BuildConfig.DEBUG) {
-                    FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                 } else {
                     Log.e("CalendarSync", e.message)
                 }
@@ -171,7 +171,7 @@ class CalendarSyncService : Service() {
                 examResponse = examCall.execute()
             } catch (e: Exception) {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
-                    FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                 } else {
                     Log.e("CalendarSync", e.message)
                 }

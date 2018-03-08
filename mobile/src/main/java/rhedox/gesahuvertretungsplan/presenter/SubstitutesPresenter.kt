@@ -2,29 +2,21 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.app.Activity
 import android.content.ContentResolver
-import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import com.github.salomonbrys.kodein.*
-import org.jetbrains.anko.support.v4.act
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
-import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import java.util.*
 
 /**
@@ -154,8 +146,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     }
 
     private fun getFirstDayOfWeek(date: LocalDate): LocalDate {
-        val monday = date.minusDays(date.dayOfWeekIndex)
-        return monday
+        return date.minusDays(date.dayOfWeekIndex)
     }
 
     override fun onDatePicked(date: LocalDate) {

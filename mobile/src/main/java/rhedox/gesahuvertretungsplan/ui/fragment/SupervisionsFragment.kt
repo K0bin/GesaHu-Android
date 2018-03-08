@@ -36,7 +36,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         private set;
 
     private object State {
-        const val presenterState = "presenterState"
+        const val presenterState = "supervisionsPresenterState"
     }
     private object Argument {
         const val date = "date"
@@ -124,14 +124,14 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
 
         val state: SupervisionsState;
         if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<SupervisionsState>(State.presenterState)
+            state = savedInstanceState.getParcelable(State.presenterState)
         } else {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
             val date: LocalDate?;
-            if(seconds != 0) {
-                date = localDateFromUnix(seconds)
+            date = if(seconds != 0) {
+                localDateFromUnix(seconds)
             } else {
-                date = null
+                null
             }
             state = SupervisionsState(date)
         }
@@ -189,7 +189,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         presenter.attachView(this)
     }
 
-    fun setupCab() {
+    private fun setupCab() {
         cab.inflateMenu(R.menu.menu_cab_main)
         cab.setOnMenuItemClickListener {
             if(id == R.id.action_share) {

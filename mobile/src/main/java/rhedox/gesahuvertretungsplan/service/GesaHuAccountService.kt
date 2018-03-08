@@ -21,18 +21,12 @@ import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
 
 
 class GesaHuAccountService : Service() {
-    companion object {
-        private var authenticator: GesaHuAuthenticator? = null;
-    }
+    private lateinit var authenticator: GesaHuAuthenticator
 
     override fun onCreate() {
         super.onCreate()
 
-        synchronized(Companion) {
-            if (authenticator == null) {
-                authenticator = GesaHuAuthenticator(this)
-            }
-        }
+        authenticator = GesaHuAuthenticator(this)
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -43,8 +37,7 @@ class GesaHuAccountService : Service() {
     class GesaHuAuthenticator(private val context: Context) : AbstractAccountAuthenticator(context) {
 
         companion object {
-            @JvmField
-            val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
+            const val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
 
             const val notificationChannel = "otherChannel";
             const val requestCode = 10;

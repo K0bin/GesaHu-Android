@@ -31,14 +31,20 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
         val begin: Int?;
         val duration: Int?;
 
-        val lessonParts = lessons.replace(".", "").replace(" ", "").replace(',', '-').replace('/', '-').replace('&', '-').split('-')
+        val lessonParts = lessons.replace(".", "")
+                .replace(":", "")
+                .replace(" ", "")
+                .replace(',', '-')
+                .replace('/', '-')
+                .replace('&', '-')
+                .split('-')
         if(lessonParts.isNotEmpty() && lessonParts[0].isNotBlank()) {
             begin = lessonParts[0].toInt()
-            if (lessonParts.size > 1 && lessonParts[1].isNotBlank()) {
+            duration = if (lessonParts.size > 1 && lessonParts[1].isNotBlank()) {
                 val end = lessonParts[1].toInt()
-                duration = (end - begin) + 1
+                (end - begin) + 1
             } else {
-                duration = 1;
+                1
             }
         } else {
             begin = null;

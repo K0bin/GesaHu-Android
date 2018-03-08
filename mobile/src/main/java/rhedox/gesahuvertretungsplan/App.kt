@@ -29,6 +29,10 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 import android.util.Log
 import com.google.firebase.FirebaseApp
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
+
+
 
 /**
  * Created by Robin on 29.06.2015.

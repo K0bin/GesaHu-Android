@@ -40,12 +40,10 @@ import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
  */
 class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
     private var toggle: ActionBarDrawerToggle? = null
-        private set
     private lateinit var listener: Listener;
     private var drawerSelected: Int? = null;
     private lateinit var analytics: FirebaseAnalytics;
     private var isAmoledBlackEnabled = false
-            private set;
 
     private lateinit var presenter: NavDrawerContract.Presenter;
 
@@ -63,12 +61,11 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         get() = field
         set(value) {
             field = value
-            val menuItem: MenuItem?
-            when (value) {
-                NavDrawerContract.DrawerIds.settings -> menuItem = navigationView.menu.findItem(R.id.settings);
-                NavDrawerContract.DrawerIds.about -> menuItem = navigationView.menu.findItem(R.id.about);
-                NavDrawerContract.DrawerIds.substitutes -> menuItem = navigationView.menu.findItem(R.id.substitutes);
-                else -> menuItem = navigationView.menu.findItem(value);
+            val menuItem: MenuItem? = when (value) {
+                NavDrawerContract.DrawerIds.settings -> navigationView.menu.findItem(R.id.settings);
+                NavDrawerContract.DrawerIds.about -> navigationView.menu.findItem(R.id.about);
+                NavDrawerContract.DrawerIds.substitutes -> navigationView.menu.findItem(R.id.substitutes);
+                else -> navigationView.menu.findItem(value);
             }
             if(menuItem != null) {
                 menuItem.isChecked = true;
@@ -81,7 +78,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
     companion object {
         const val currentFragmentTag = "pageFragment"
-        const val state = "presenter"
+        const val state = "navPresenterState"
     }
 
     object Extra {
@@ -101,7 +98,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         }
 
         //Restore presenter
-        val state = savedInstanceState?.getParcelable<NavDrawerState>(MainActivity.state) ?: NavDrawerState()
+        val state = savedInstanceState?.getParcelable(MainActivity.state) ?: NavDrawerState()
         if (lastCustomNonConfigurationInstance != null) {
             presenter = lastCustomNonConfigurationInstance as NavDrawerPresenter
         } else {

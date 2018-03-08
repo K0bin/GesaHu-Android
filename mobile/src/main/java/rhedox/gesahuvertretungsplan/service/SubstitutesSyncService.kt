@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import com.google.firebase.crash.FirebaseCrash
+import com.crashlytics.android.Crashlytics
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
@@ -109,7 +109,7 @@ class SubstitutesSyncService : Service() {
             }
         }
 
-        fun clearOldSubstitutes(provider: ContentProviderClient) {
+        private fun clearOldSubstitutes(provider: ContentProviderClient) {
             val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -6);
 
             provider.delete(SubstitutesContract.uri, "date < ${oldest.unixTimeStamp}", null);
@@ -117,7 +117,7 @@ class SubstitutesSyncService : Service() {
             provider.delete(SupervisionsContract.uri, "date < ${oldest.unixTimeStamp}", null);
         }
 
-        fun loadSubstitutesForDay(provider: ContentProviderClient, account: Account, date: LocalDate): Boolean {
+        private fun loadSubstitutesForDay(provider: ContentProviderClient, account: Account, date: LocalDate): Boolean {
             val call = gesaHu.substitutes(account.name ?: "", date)
 
             var response: Response<SubstitutesList>? = null
@@ -125,7 +125,7 @@ class SubstitutesSyncService : Service() {
                 response = call.execute()
             } catch (e: Exception) {
                 if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
-                    FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                 } else {
                     if (e.message != null) {
                         Log.e("SubstitutesSync", e.message)

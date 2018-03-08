@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.util.Log.d
-import com.google.firebase.crash.FirebaseCrash
+import com.crashlytics.android.Crashlytics
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jetbrains.anko.accountManager
@@ -41,6 +41,8 @@ class BoardsSyncService : Service() {
                 ContentResolver.removePeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY)
             }
         }
+
+        fun getPhotoUrl(username: String): String = "https://www.gesahui.de/home/schoolboard/userbilder/${username.toUpperCase()}.jpg"
     }
 
     override fun onCreate() {
@@ -74,7 +76,7 @@ class BoardsSyncService : Service() {
                 response = call.execute()
             } catch (e: Exception) {
                 if (e !is IOException && !BuildConfig.DEBUG) {
-                    FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                 } else {
                     if (e.message != null) {
                         Log.e("BoardsSync", e.message)
@@ -115,7 +117,7 @@ class BoardsSyncService : Service() {
                 return;
             }
             val okHttp = OkHttpClient();
-            val wasAvatarSuccessful = loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder/${account.name.toUpperCase()}.jpg")
+            val wasAvatarSuccessful = loadImage(okHttp, BoardsSyncService.getPhotoUrl(account.name))
             if (!wasAvatarSuccessful && !Thread.interrupted()) {
                 val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpicture), null, null);
                 while (!future.isDone) {

@@ -35,7 +35,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         const val boardId = "boardId"
     }
     private object State {
-        const val presenterState = "presenterState"
+        const val presenterState = "boardPresenterState"
     }
     companion object {
         @JvmStatic

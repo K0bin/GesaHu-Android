@@ -48,7 +48,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     private var fabElevation = 0f
 
     private object State {
-        const val presenterState = "presenterState"
+        const val presenterState = "substitutesPresenterState"
     }
     private object Argument {
         const val date = "date"
@@ -152,14 +152,14 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
         val state: SubstitutesState;
         if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<SubstitutesState>(State.presenterState)
+            state = savedInstanceState.getParcelable(State.presenterState)
         } else {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
             val date: LocalDate?;
-            if(seconds != 0) {
-                date = localDateFromUnix(seconds)
+            date = if(seconds != 0) {
+                localDateFromUnix(seconds)
             } else {
-                date = null
+                null
             }
             state = SubstitutesState(date)
         }
@@ -190,7 +190,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
         viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
-                swipeRefreshLayout.isGestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
+                swipeRefreshLayout?.isGestureEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
@@ -253,7 +253,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         }
     }
 
-    fun setupCab() {
+    private fun setupCab() {
         cab.inflateMenu(R.menu.menu_cab_main)
         cab.setOnMenuItemClickListener {
             if(id == R.id.action_share) {
