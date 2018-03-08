@@ -1,25 +1,41 @@
 package rhedox.gesahuvertretungsplan.model
 
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.IntDef
+import android.support.annotation.LongDef
+import org.joda.time.LocalDate
 
 /**
  * Created by robin on 01.10.2016.
  */
-data class Substitute(val lessonBegin: Int,
-                      val duration: Int,
-                      val subject: String,
-                      val course: String,
-                      val teacher: String,
-                      val substitute: String,
-                      val room: String,
-                      val hint: String,
-                      val isRelevant: Boolean,
-                      val id: Long? = null) : Comparable<Substitute> {
+@Entity(tableName = Substitute.tableName)
+data class Substitute(@ColumnInfo(name = "date") val date: LocalDate,
+                      @ColumnInfo(name = "lessonBegin") val lessonBegin: Int,
+                      @ColumnInfo(name = "duration") val duration: Int,
+                      @ColumnInfo(name = "subject") val subject: String,
+                      @ColumnInfo(name = "course") val course: String,
+                      @ColumnInfo(name = "teacher") val teacher: String,
+                      @ColumnInfo(name = "substitute") val substitute: String,
+                      @ColumnInfo(name = "room") val room: String,
+                      @ColumnInfo(name = "hint") val hint: String,
+                      @ColumnInfo(name = "isRelevant") val isRelevant: Boolean,
+                      @ColumnInfo(name = "rowid") @PrimaryKey(autoGenerate = true) val id: Long? = null) : Comparable<Substitute> {
 
-    @Kind val kind: Long;
+    companion object {
+        const val tableName = "substitutes"
+    }
 
+    @Ignore
+    @Kind
+    val kind: Int;
+
+    @Ignore
     val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString();
 
+    @Ignore
     val title: String;
 
     @Retention(AnnotationRetention.SOURCE)
@@ -27,26 +43,26 @@ data class Substitute(val lessonBegin: Int,
     annotation class Kind
 
     object KindValues {
-        const val substitute = 0L;
-        const val dropped = 1L;
-        const val roomChange = 2L;
-        const val test = 3L;
-        const val regular = 4L;
+        const val substitute = 0;
+        const val dropped = 1;
+        const val roomChange = 2;
+        const val test = 3;
+        const val regular = 4;
     }
 
     init {
         val lowerSubstitute = substitute.toLowerCase()
         val lowerHint = hint.toLowerCase()
-        if (lowerSubstitute == "eigv. lernen" || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt"))
-            kind = KindValues.dropped
+        kind = if (lowerSubstitute == "eigv. lernen" || lowerHint.contains("eigenverantwortliches arbeiten") || lowerHint.contains("entfällt"))
+            KindValues.dropped
         else if ((substitute.isBlank() || substitute == teacher) && lowerHint == "raumänderung")
-            kind = KindValues.roomChange
+            KindValues.roomChange
         else if (lowerHint.contains("klausur"))
-            kind = KindValues.test
+            KindValues.test
         else if (lowerHint.contains("findet statt"))
-            kind = KindValues.regular
+            KindValues.regular
         else
-            kind = KindValues.substitute
+            KindValues.substitute
 
         var titleStr = course
         if (course.isNotBlank() && subject.isNotBlank()) {

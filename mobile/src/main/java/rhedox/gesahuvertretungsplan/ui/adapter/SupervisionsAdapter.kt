@@ -78,13 +78,13 @@ class SupervisionsAdapter(private val presenter: SupervisionsContract.Presenter,
         }
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         this.recyclerView = recyclerView
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
 
         this.recyclerView = null

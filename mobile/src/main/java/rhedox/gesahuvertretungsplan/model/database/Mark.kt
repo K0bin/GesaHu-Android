@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.model.database
 
 import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.support.annotation.StringDef
 import org.joda.time.LocalDate
 
@@ -12,7 +13,7 @@ data class Mark(val date: LocalDate,
                 val mark: String?,
                 @Kind val kind: String,
                 val average: Float?,
-                @MarkKind val markKind: Long,
+                @MarkKind val markKind: Int,
                 val logo: String,
                 val weighting: Float?,
                 val id: Long? = null,
@@ -33,8 +34,8 @@ data class Mark(val date: LocalDate,
     @IntDef(MarkKindValues.unknown, MarkKindValues.groupMark, MarkKindValues.mark)
     annotation class MarkKind
     object MarkKindValues {
-        const val unknown = 0L;
-        const val mark = 1L;
-        const val groupMark = 2L;
+        const val unknown = 0;
+        const val mark = 1;
+        const val groupMark = 2;
     }
 }

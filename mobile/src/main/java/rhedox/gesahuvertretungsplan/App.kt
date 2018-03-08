@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan
 
 import android.accounts.AccountManager
 import android.app.Application
+import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -29,9 +30,8 @@ import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 import android.util.Log
 import com.google.firebase.FirebaseApp
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
-
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDao
 
 
 /**
@@ -46,6 +46,7 @@ class App : Application(), KodeinAware {
         bind<PermissionManager>() with instance(PermissionManager(applicationContext))
         bind<ConnectivityManager>() with instance(applicationContext.connectivityManager)
         bind<AccountManager>() with instance(applicationContext.accountManager)
+        bind<SubstitutesDao>() with instance(db.substitutes)
 
         //Substitute
         bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
@@ -53,6 +54,7 @@ class App : Application(), KodeinAware {
     }
 
     private var refWatcher: RefWatcher? = null
+    private lateinit var db: SubstitutesDatabase;
 
     override fun onCreate() {
         super.onCreate()
@@ -106,6 +108,10 @@ class App : Application(), KodeinAware {
                     .build()
             StrictMode.setThreadPolicy(threadPolicy)
         }
+
+        db = Room.databaseBuilder(this, SubstitutesDatabase::class.java, SubstitutesDatabase.name)
+                .addMigrations(SubstitutesDatabase.migration7_8)
+                .build()
 
         val pref: SharedPreferences = kodein.instance()
         PreferenceFragment.applyDarkTheme(pref)

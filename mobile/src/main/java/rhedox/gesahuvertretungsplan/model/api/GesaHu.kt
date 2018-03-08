@@ -13,9 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.deserializer.*
-import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
 import rhedox.gesahuvertretungsplan.util.registerTypeAdapter
 
 /**
@@ -32,8 +30,7 @@ class GesaHu(context: Context) {
             builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
 
         val gson = GsonBuilder()
-                .registerTypeAdapter(SubstituteDeserializer(context))
-                .registerTypeAdapter(SupervisionDeserializer(context))
+                .registerTypeAdapter(SubstitutesListDeserializer(context))
                 .registerTypeAdapter(TestDeserializer(context))
                 .registerTypeAdapter(ExamDeserializer(context))
                 .registerTypeAdapter(DateTime::class.java, DateTimeDeserializer())

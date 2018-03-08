@@ -14,6 +14,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.support.annotation.RequiresPermission
 import org.jetbrains.anko.alarmManager
 import org.joda.time.DateTime
@@ -26,7 +27,7 @@ import rhedox.gesahuvertretungsplan.service.SubstitutesNotifierJobService
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class SubstitutesAlarmReceiver: BroadcastReceiver() {
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(NotificationFrequencyValues.daily, NotificationFrequencyValues.perLesson, NotificationFrequencyValues.both, NotificationFrequencyValues.none, flag = true)
+    @LongDef(NotificationFrequencyValues.daily, NotificationFrequencyValues.perLesson, NotificationFrequencyValues.both, NotificationFrequencyValues.none, flag = true)
     annotation class NotificationFrequency
 
     object NotificationFrequencyValues {

@@ -42,7 +42,7 @@ object SubstituteAdapter {
         val hint = cursor.getString(cursor.getColumnIndex(SubstitutesContract.Table.columnHint))
         val isRelevant = cursor.getInt(cursor.getColumnIndex(SubstitutesContract.Table.columnIsRelevant)) == 1
 
-        return Substitute(lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant, id = id);
+        return Substitute(LocalDate(), lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant, id = id);
     }
 
     fun listFromCursor(cursor: Cursor): List<Substitute> {

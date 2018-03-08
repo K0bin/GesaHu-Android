@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-allopen"
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
@@ -17,6 +18,13 @@ android {
         multiDexEnabled false
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -81,6 +89,8 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        androidTest.assets.srcDirs +=
+                files("$projectDir/schemas".toString())
     }
     lintOptions {
         checkReleaseBuilds false
@@ -109,6 +119,8 @@ dependencies {
     implementation "com.android.support:preference-v14:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta5'
     implementation 'androidx.core:core-ktx:0.2'
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
     implementation "com.google.android.gms:play-services-auth:$play_version"
     implementation 'com.takisoft.fix:preference-v7:27.1.0.0'
     implementation 'com.google.android.apps.dashclock:dashclock-api:2.0.0'
