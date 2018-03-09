@@ -12,17 +12,17 @@ import org.joda.time.LocalDate
  * Created by robin on 01.10.2016.
  */
 @Entity(tableName = Substitute.tableName)
-data class Substitute(@ColumnInfo(name = "date") val date: LocalDate,
-                      @ColumnInfo(name = "lessonBegin") val lessonBegin: Int,
-                      @ColumnInfo(name = "duration") val duration: Int,
-                      @ColumnInfo(name = "subject") val subject: String,
-                      @ColumnInfo(name = "course") val course: String,
-                      @ColumnInfo(name = "teacher") val teacher: String,
-                      @ColumnInfo(name = "substitute") val substitute: String,
-                      @ColumnInfo(name = "room") val room: String,
-                      @ColumnInfo(name = "hint") val hint: String,
-                      @ColumnInfo(name = "isRelevant") val isRelevant: Boolean,
-                      @ColumnInfo(name = "rowid") @PrimaryKey(autoGenerate = true) val id: Long? = null) : Comparable<Substitute> {
+data class Substitute(val date: LocalDate,
+                      val lessonBegin: Int,
+                      val duration: Int,
+                      val subject: String,
+                      val course: String,
+                      val teacher: String,
+                      val substitute: String,
+                      val room: String,
+                      val hint: String,
+                      val isRelevant: Boolean,
+                      @PrimaryKey(autoGenerate = true) val id: Long? = null) : Comparable<Substitute> {
 
     companion object {
         const val tableName = "substitutes"

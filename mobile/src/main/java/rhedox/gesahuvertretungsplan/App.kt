@@ -24,14 +24,11 @@ import net.danlew.android.joda.JodaTimeAndroid
 import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.connectivityManager
 import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 import android.util.Log
 import com.google.firebase.FirebaseApp
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesDao
+import rhedox.gesahuvertretungsplan.model.database.*
 
 
 /**
@@ -46,7 +43,9 @@ class App : Application(), KodeinAware {
         bind<PermissionManager>() with instance(PermissionManager(applicationContext))
         bind<ConnectivityManager>() with instance(applicationContext.connectivityManager)
         bind<AccountManager>() with instance(applicationContext.accountManager)
-        bind<SubstitutesDao>() with instance(db.substitutes)
+        bind<SubstitutesDao>() with instance(substitutesDB.substitutes)
+        bind<AnnouncementsDao>() with instance(substitutesDB.announcements)
+        bind<SupervisionsDao>() with instance(substitutesDB.supervisions)
 
         //Substitute
         bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
@@ -54,7 +53,7 @@ class App : Application(), KodeinAware {
     }
 
     private var refWatcher: RefWatcher? = null
-    private lateinit var db: SubstitutesDatabase;
+    private lateinit var substitutesDB: SubstitutesDatabase;
 
     override fun onCreate() {
         super.onCreate()
@@ -109,7 +108,8 @@ class App : Application(), KodeinAware {
             StrictMode.setThreadPolicy(threadPolicy)
         }
 
-        db = Room.databaseBuilder(this, SubstitutesDatabase::class.java, SubstitutesDatabase.name)
+        substitutesDB = Room.databaseBuilder(this, SubstitutesDatabase::class.java, SubstitutesDatabase.name)
+                .fallbackToDestructiveMigration()
                 .addMigrations(SubstitutesDatabase.migration7_8)
                 .build()
 

@@ -34,7 +34,7 @@ object SupervisionAdapter {
         val location = cursor.getString(cursor.getColumnIndex(SupervisionsContract.Table.columnLocation))
         val isRelevant = cursor.getInt(cursor.getColumnIndex(SupervisionsContract.Table.columnIsRelevant)) == 1
 
-        return Supervision(time, teacher, supervision, location, isRelevant, id = id);
+        return Supervision(LocalDate(), time, teacher, supervision, location, isRelevant, id = id);
     }
 
     fun listFromCursor(cursor: Cursor): List<Supervision> {

@@ -14,6 +14,8 @@ import android.os.Handler
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.util.Log
+import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.uiThread
@@ -36,7 +38,10 @@ import java.util.concurrent.Future
 @Open
 class SubstitutesRepository(context: Context) {
     private val context: Context = context.applicationContext
-    private val observer: Observer;
+
+    private val substitutesDao = context.appKodein().instance<SubstitutesDao>()
+
+    //private val observer: Observer;
     private val contentResolver = context.contentResolver
 
     private val futures = mutableMapOf<Int, Future<Unit>>();
@@ -46,7 +51,7 @@ class SubstitutesRepository(context: Context) {
     var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null
 
     init {
-        observer = Observer {
+        /*observer = Observer {
             if(it.pathSegments.size > 1 && (it.pathSegments[1] == SubstitutesContract.datePath || it.pathSegments[1] == AnnouncementsContract.datePath || it.pathSegments[1] == SupervisionsContract.datePath)) {
                 if(it.pathSegments[0] == SubstitutesContract.path)
                     loadSubstitutesForDay(localDateFromUnix(it.lastPathSegment.toInt()));
@@ -58,13 +63,13 @@ class SubstitutesRepository(context: Context) {
         }
         context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
         context.contentResolver.registerContentObserver(SupervisionsContract.dateUri, true, observer);
-        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);
+        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);*/
     }
 
     fun destroy() {
         substitutesCallback = null;
         announcementCallback = null;
-        context.contentResolver.unregisterContentObserver(observer)
+        //context.contentResolver.unregisterContentObserver(observer)
 
         for ((_, value) in futures) {
             value.cancel(true)
@@ -73,14 +78,12 @@ class SubstitutesRepository(context: Context) {
     }
 
     fun loadSubstitutesForDay(date: LocalDate) {
-        load({
-            val cursor = contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), null, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}")
-            val list = SubstituteAdapter.listFromCursor(cursor)
-            cursor.close()
-            return@load list
-        }, {
-            substitutesCallback?.invoke(date, it)
-        })
+        doAsync {
+            val substitutes = substitutesDao.get(date)
+            uiThread {
+                substitutesCallback?.invoke(date, substitutes)
+            }
+        }
     }
 
     fun loadAnnouncementForDay(date: LocalDate) {
@@ -126,7 +129,7 @@ class SubstitutesRepository(context: Context) {
     }
 
     fun requestUpdate(account: Account, date: LocalDate, singleDay: Boolean) {
-        if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+        /*if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
             val extras = Bundle()
             extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.unixTimeStamp)
             extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, singleDay)
@@ -156,7 +159,7 @@ class SubstitutesRepository(context: Context) {
 
                 ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)
             }
-        }
+        }*/
     }
 
     class Observer(private val callback: (uri: Uri) -> Unit): ContentObserver(Handler()) {

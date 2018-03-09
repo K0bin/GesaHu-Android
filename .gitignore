@@ -52,6 +52,8 @@ sync.ffs_lock
 
 mobile/google-services.json
 
+mobile/schemas/
+
 *.log
 
 appintro/

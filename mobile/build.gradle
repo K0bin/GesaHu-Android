@@ -51,8 +51,8 @@ android {
                     'proguard/proguard-arcanimator.pro'
         }
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg',
                     'proguard/proguard-androidannotations.pro',
                     'proguard/proguard-anko.pro',
