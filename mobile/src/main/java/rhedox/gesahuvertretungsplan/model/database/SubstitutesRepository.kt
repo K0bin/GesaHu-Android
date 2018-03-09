@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.SyncRequest
 import android.os.Build
 import android.os.Bundle
+import androidx.os.bundleOf
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import org.joda.time.LocalDate
@@ -39,10 +40,10 @@ class SubstitutesRepository(context: Context) {
 
     fun requestUpdate(account: Account, date: LocalDate, singleDay: Boolean) {
         if(!ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, StubSubstitutesContentProvider.authority)) {
-            val extras = Bundle()
-            extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.unixTimeStamp)
-            extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, singleDay)
-            extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraIgnorePast, true)
+            val extras = bundleOf(
+                    SubstitutesSyncService.SyncAdapter.extraDate to date.unixTimeStamp,
+                    SubstitutesSyncService.SyncAdapter.extraSingleDay to singleDay
+            )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 val syncRequest = SyncRequest.Builder()

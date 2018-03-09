@@ -19,7 +19,7 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
  * Created by robin on 08.03.2018.
  */
 @Database(entities = [(Substitute::class), (Supervision::class), (Announcement::class)], version = SubstitutesDatabase.version)
-@TypeConverters(rhedox.gesahuvertretungsplan.model.database.TypeConverters::class)
+@TypeConverters(LocalDateConverter::class)
 abstract class SubstitutesDatabase: RoomDatabase() {
     public abstract val substitutes: SubstitutesDao
     public abstract val supervisions: SupervisionsDao
@@ -36,7 +36,6 @@ abstract class SubstitutesDatabase: RoomDatabase() {
 
         private val migration7_8 = object: Migration(7, 8) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.beginTransaction()
                 //Migrate Substitutes to Room
                 db.execSQL("ALTER TABLE ${Substitute.tableName} RENAME TO ${Substitute.tableName}_old;")
                 db.execSQL("CREATE TABLE ${Substitute.tableName} " +
@@ -84,7 +83,6 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                         "SELECT rowid, date, time, teacher, substitute, location, isRelevant " +
                         "FROM ${Supervision.tableName}_old;")
                 db.execSQL("DROP TABLE ${Supervision.tableName}_old;")
-                db.endTransaction()
             }
         }
     }

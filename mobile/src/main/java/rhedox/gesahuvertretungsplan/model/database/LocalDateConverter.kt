@@ -8,12 +8,12 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 /**
  * Created by robin on 08.03.2018.
  */
-object TypeConverters {
+object LocalDateConverter {
     @JvmStatic
     @TypeConverter
-    fun toDate(value: Int): LocalDate = localDateFromUnix(value)
+    fun toDate(value: Int): LocalDate? = if (value == 0) null else localDateFromUnix(value)
 
     @JvmStatic
     @TypeConverter
-    fun toInt(date: LocalDate): Int = date.unixTimeStamp
+    fun dateToInt(date: LocalDate?): Int = date.unixTimeStamp
 }

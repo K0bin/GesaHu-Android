@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.support.v7.util.DiffUtil
+import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.RecyclerView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -15,9 +16,34 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
     set(value) {
         doAsync {
             isDiffing = true;
-            val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value, hasEmptyView, hasTopHeader), false)
+            //val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value, hasEmptyView, hadTopHeader, hasTopHeader), false)
+            val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value), false)
             uiThread {
-                diffResult.dispatchUpdatesTo(this@ListAdapter)
+                //diffResult.dispatchUpdatesTo(this@ListAdapter)
+                diffResult.dispatchUpdatesTo(object: ListUpdateCallback {
+                    override fun onChanged(position: Int, count: Int, payload: Any?) {
+                        notifyItemRangeChanged(position + if (hasTopHeader) 1 else 0, count, payload)
+                    }
+
+                    override fun onMoved(fromPosition: Int, toPosition: Int) {
+                        notifyItemMoved(fromPosition, toPosition + if (hasTopHeader) 1 else 0)
+                    }
+
+                    override fun onInserted(position: Int, count: Int) {
+                        if (hasEmptyView && field.isEmpty()) {
+                            notifyItemRemoved(if (hasTopHeader) 1 else 0)
+                        }
+                        notifyItemRangeInserted(position + if (hasTopHeader) 1 else 0, count)
+                    }
+
+                    override fun onRemoved(position: Int, count: Int) {
+                        notifyItemRangeRemoved(position + if (hasTopHeader) 1 else 0, count)
+                        if (hasEmptyView && value.isEmpty()) {
+                            notifyItemInserted(if (hasTopHeader) 1 else 0)
+                        }
+                    }
+
+                })
                 field = value
                 isDiffing = false;
             }

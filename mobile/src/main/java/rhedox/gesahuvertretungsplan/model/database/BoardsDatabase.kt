@@ -18,7 +18,7 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Mark
  * Created by robin on 08.03.2018.
  */
 @Database(entities = [(Lesson::class), (Mark::class), (Board::class)], version = BoardsDatabase.version)
-@TypeConverters(rhedox.gesahuvertretungsplan.model.database.TypeConverters::class)
+@TypeConverters(LocalDateConverter::class)
 abstract class BoardsDatabase: RoomDatabase() {
     public abstract val boards: BoardsDao
     public abstract val lessons: LessonsDao
@@ -26,7 +26,7 @@ abstract class BoardsDatabase: RoomDatabase() {
 
     companion object {
         const val name = "gesahui_boards.db"
-        const val version = 8
+        const val version = 7
 
         fun build(context: Context): BoardsDatabase = Room.databaseBuilder(context, BoardsDatabase::class.java, BoardsDatabase.name)
                 /*.fallbackToDestructiveMigration()*/
@@ -35,7 +35,6 @@ abstract class BoardsDatabase: RoomDatabase() {
 
         private val migration6_7 = object: Migration(6, 7) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.beginTransaction()
                 //Migrate Boards to Room
                 db.execSQL("CREATE TABLE ${Board.tableName}_new " +
                         "(name TEXT NOT NULL PRIMARY KEY," +
@@ -91,7 +90,6 @@ abstract class BoardsDatabase: RoomDatabase() {
                 //Finalize boards migration
                 db.execSQL("DROP TABLE ${Board.tableName};")
                 db.execSQL("ALTER TABLE ${Board.tableName}_new RENAME TO ${Board.tableName};")
-                db.endTransaction()
             }
         }
     }

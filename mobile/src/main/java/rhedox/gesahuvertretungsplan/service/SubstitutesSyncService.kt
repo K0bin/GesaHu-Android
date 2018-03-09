@@ -73,7 +73,6 @@ class SubstitutesSyncService : Service() {
         companion object {
             const val extraSingleDay = "day";
             const val extraDate = "date";
-            const val extraIgnorePast = "extraIgnorePast";
         }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {

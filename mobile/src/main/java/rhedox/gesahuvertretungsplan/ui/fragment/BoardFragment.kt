@@ -95,24 +95,24 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         super.onViewCreated(view, savedInstanceState)
         Log.d("Board", "ViewCreated")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
+        elevationAnimator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
             val elevation = context!!.displayMetrics.density * 4f;
-            elevationAnimator = ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
+            ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
         } else {
-            elevationAnimator = null;
+            null;
         }
 
         val _lessonsFragment = childFragmentManager.findFragmentByTag("lessons");
-        if (_lessonsFragment != null) {
-            lessonsFragment = _lessonsFragment as LessonsFragment
+        lessonsFragment = if (_lessonsFragment != null) {
+            _lessonsFragment as LessonsFragment
         } else {
-            lessonsFragment = LessonsFragment.newInstance(boardName)
+            LessonsFragment.newInstance(boardName)
         }
         val _marksFragment = childFragmentManager.findFragmentByTag("marks");
-        if (_marksFragment != null) {
-            marksFragment = _marksFragment as MarksFragment
+        marksFragment = if (_marksFragment != null) {
+            _marksFragment as MarksFragment
         } else {
-            marksFragment = MarksFragment.newInstance(boardName)
+            MarksFragment.newInstance(boardName)
         }
 
         if (viewPager != null) {
@@ -152,7 +152,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
 
     override fun onSaveInstanceState(outState: Bundle) {
         //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
-        if (activity?.isChangingConfigurations ?: false) {
+        if (activity?.isChangingConfigurations == true) {
             childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commit();
         }
 
