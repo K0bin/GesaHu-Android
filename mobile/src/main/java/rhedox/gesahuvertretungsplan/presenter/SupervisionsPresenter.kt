@@ -14,9 +14,13 @@ import com.github.salomonbrys.kodein.instance
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.*
+import rhedox.gesahuvertretungsplan.model.SchoolWeek
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
+import rhedox.gesahuvertretungsplan.model.dayOfWeekIndex
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -110,7 +114,6 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
     }
 
     override fun destroy() {
-        repository.destroy()
         syncObserver.destroy()
         supervisions.forEach {
             it?.removeObserver(supervisionsObserver)

@@ -11,16 +11,12 @@ import com.nhaarman.mockito_kotlin.mock
 import org.joda.time.LocalDate
 import org.junit.Test
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
-import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 
@@ -63,8 +59,8 @@ class MarksPresenterTest {
         var view = StubMarksView()
         presenter.attachView(view)
         presenter.onMarksLoaded(listOf(
-                Mark(LocalDate(),"mark1", "12", Mark.KindValues.test, null, Mark.MarkKindValues.groupMark, "", 0.1f),
-                Mark(LocalDate(),"mark2", "13", Mark.KindValues.testOrComplexTask, null, Mark.MarkKindValues.mark, "", 0.9f)
+                Mark(LocalDate(), "mark1", "12", Mark.KindValues.test, null, Mark.MarkKindValues.groupMark, "", 0.1f),
+                Mark(LocalDate(), "mark2", "13", Mark.KindValues.testOrComplexTask, null, Mark.MarkKindValues.mark, "", 0.9f)
         ))
         assert(view.list[0].mark == "12")
         assert(view.list[0].description == "mark1")

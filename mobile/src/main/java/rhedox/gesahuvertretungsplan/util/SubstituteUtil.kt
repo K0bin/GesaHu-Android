@@ -2,7 +2,7 @@
 
 package rhedox.gesahuvertretungsplan.util
 
-import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 
 /**
  * Created by robin on 19.01.2017.

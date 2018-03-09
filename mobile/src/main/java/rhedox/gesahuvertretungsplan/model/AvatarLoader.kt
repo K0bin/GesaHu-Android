@@ -3,13 +3,10 @@ package rhedox.gesahuvertretungsplan.model
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.AsyncTask
-import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import rhedox.gesahuvertretungsplan.model.database.tables.BoardsContract
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.util.Open
-import java.io.File
 
 /**
  * Created by robin on 07.11.2016.
@@ -21,7 +18,7 @@ class AvatarLoader(context: Context) {
 
     fun loadAvatar() {
         doAsync {
-            val file = context.getFileStreamPath(BoardsContract.avatarFileName)
+            val file = context.getFileStreamPath(Board.avatarFileName)
             if (file == null || !file.exists()) {
                 uiThread {
                     callback?.invoke(null)

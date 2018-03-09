@@ -15,11 +15,15 @@ import org.joda.time.LocalDate
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.*
+import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.model.database.dao.AnnouncementsDao
+import rhedox.gesahuvertretungsplan.model.database.dao.SubstitutesDao
+import rhedox.gesahuvertretungsplan.model.database.dao.SupervisionsDao
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -96,11 +100,6 @@ class SubstitutesSyncService : Service() {
                 }
             } else {
                 Log.d("SubstitutesSync", "Sync triggered for week starting with $date")
-                val ignorePast = (extras?.getBoolean(extraIgnorePast, false) ?: false) && date > LocalDate.now();
-
-                if (!hasDate) {
-                    clearOldSubstitutes();
-                }
 
                 val days = if (hasDate) 7 else 14;
                 for (i in 0 until days) {
@@ -109,10 +108,9 @@ class SubstitutesSyncService : Service() {
                     }
 
                     val day = date.withFieldAdded(DurationFieldType.days(), i)
-                    if (ignorePast && day < LocalDate.now() || day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
+                    if (day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
                         continue
                     }
-                    Log.d("SubstitutesSync", "Synced $day")
 
                     val result = loadSubstitutesForDay(account, day)
                     if (result != null) {
@@ -127,21 +125,10 @@ class SubstitutesSyncService : Service() {
             if(Thread.interrupted()) {
                 return;
             }
-            val datesArray =  dates.toTypedArray()
-            substitutesDao.delete(*datesArray)
-            substitutesDao.insert(*substitutes.toTypedArray())
-            supervisionsDao.delete(*datesArray)
-            supervisionsDao.insert(*supervisions.toTypedArray())
-            announcementsDao.delete(*datesArray)
-            announcementsDao.insert(*announcements.toTypedArray())
-        }
-
-        private fun clearOldSubstitutes() {
             val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -6);
-
-            substitutesDao.clear(oldest)
-            announcementsDao.clear(oldest)
-            supervisionsDao.clear(oldest)
+            substitutesDao.insertAndClear(substitutes, oldest, dates)
+            supervisionsDao.insertAndClear(supervisions, oldest, dates)
+            announcementsDao.insertAndClear(announcements, oldest, dates)
         }
 
         private fun loadSubstitutesForDay(account: Account, date: LocalDate): SubstitutesList? {

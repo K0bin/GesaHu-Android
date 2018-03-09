@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan
 
 import android.accounts.AccountManager
 import android.app.Application
-import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -24,7 +23,11 @@ import net.danlew.android.joda.JodaTimeAndroid
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.*
+import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
+import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.dao.*
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
 import rhedox.gesahuvertretungsplan.util.accountManager
@@ -46,6 +49,9 @@ class App : Application(), KodeinAware {
         bind<SubstitutesDao>() with instance(substitutesDB.substitutes)
         bind<AnnouncementsDao>() with instance(substitutesDB.announcements)
         bind<SupervisionsDao>() with instance(substitutesDB.supervisions)
+        bind<BoardsDao>() with instance(boardsDB.boards)
+        bind<LessonsDao>() with instance(boardsDB.lessons)
+        bind<MarksDao>() with instance(boardsDB.marks)
 
         //Substitute
         bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
@@ -54,6 +60,7 @@ class App : Application(), KodeinAware {
 
     private var refWatcher: RefWatcher? = null
     private lateinit var substitutesDB: SubstitutesDatabase;
+    private lateinit var boardsDB: BoardsDatabase;
 
     override fun onCreate() {
         super.onCreate()
@@ -108,10 +115,8 @@ class App : Application(), KodeinAware {
             StrictMode.setThreadPolicy(threadPolicy)
         }
 
-        substitutesDB = Room.databaseBuilder(this, SubstitutesDatabase::class.java, SubstitutesDatabase.name)
-                .fallbackToDestructiveMigration()
-                .addMigrations(SubstitutesDatabase.migration7_8)
-                .build()
+        substitutesDB = SubstitutesDatabase.build(this)
+        boardsDB = BoardsDatabase.build(this)
 
         val pref: SharedPreferences = kodein.instance()
         PreferenceFragment.applyDarkTheme(pref)

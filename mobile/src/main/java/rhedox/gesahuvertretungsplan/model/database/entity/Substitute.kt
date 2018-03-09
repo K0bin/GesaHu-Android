@@ -1,11 +1,9 @@
-package rhedox.gesahuvertretungsplan.model
+package rhedox.gesahuvertretungsplan.model.database.entity
 
-import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.IntDef
-import android.support.annotation.LongDef
 import org.joda.time.LocalDate
 
 /**

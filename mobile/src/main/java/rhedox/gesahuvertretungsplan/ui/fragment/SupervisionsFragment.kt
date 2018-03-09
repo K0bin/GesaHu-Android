@@ -13,7 +13,7 @@ import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.share
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Supervision
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 import rhedox.gesahuvertretungsplan.presenter.SupervisionsPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState

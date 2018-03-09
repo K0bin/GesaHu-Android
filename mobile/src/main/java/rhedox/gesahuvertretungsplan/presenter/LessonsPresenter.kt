@@ -1,14 +1,12 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.arch.lifecycle.Observer
 import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.KodeinInjected
-import com.github.salomonbrys.kodein.KodeinInjector
 import com.github.salomonbrys.kodein.instance
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.Lesson
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
-import rhedox.gesahuvertretungsplan.mvp.MarksContract
 import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 
 /**
@@ -17,30 +15,29 @@ import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 class LessonsPresenter(kodein: Kodein, state: LessonsState): LessonsContract.Presenter {
     private var view: LessonsContract.View? = null
     private val repository: BoardsRepository = kodein.instance();
-    private val boardId = state.boardId;
-    private var board: Board? = null
-    private var lessons: List<Lesson> = listOf()
+    private val boardName = state.boardName;
+    private val board = repository.loadBoard(boardName)
+    private var lessons = repository.loadLessons(boardName)
+
+    private val boardObserver = Observer<Board?> {
+        it ?: return@Observer
+        onBoardLoaded(it)
+    }
+    private val lessonsObserver = Observer<List<Lesson>?> {
+        if (it?.isNotEmpty() != true) return@Observer
+        onLessonsLoaded(it)
+    }
 
     init {
-        repository.lessonsCallback = { boardId, lessons -> if (boardId == this.boardId) onLessonsLoaded(lessons) }
-        repository.boardsCallback = { boards ->
-            val board = boards.find { it.id == boardId }
-            if (board != null) {
-                onBoardLoaded(board)
-            }
-        }
-        repository.loadLessons(boardId)
-        repository.loadBoards()
+        board.observeForever(boardObserver)
+        lessons.observeForever(lessonsObserver)
     }
 
     fun onLessonsLoaded(lessons: List<Lesson>) {
         view?.showList(lessons)
-        this.lessons = lessons;
     }
 
     fun onBoardLoaded(board: Board) {
-        this.board = board;
-
         view?.lessonsMissed = board.missedLessons
         view?.lessonsMissedWithSickNote = board.missedLessonsWithSickNotes
         view?.lessonsTotal = board.lessonsTotal
@@ -49,11 +46,11 @@ class LessonsPresenter(kodein: Kodein, state: LessonsState): LessonsContract.Pre
     override fun attachView(view: LessonsContract.View) {
         this.view = view;
 
-        view.lessonsMissed = board?.missedLessons ?: 0
-        view.lessonsMissedWithSickNote = board?.missedLessonsWithSickNotes ?: 0
-        view.lessonsTotal = board?.lessonsTotal ?: 0
+        view.lessonsMissed = board.value?.missedLessons ?: 0
+        view.lessonsMissedWithSickNote = board.value?.missedLessonsWithSickNotes ?: 0
+        view.lessonsTotal = board.value?.lessonsTotal ?: 0
 
-        view.showList(lessons)
+        view.showList(lessons.value ?: listOf())
     }
 
     override fun detachView() {
@@ -61,11 +58,12 @@ class LessonsPresenter(kodein: Kodein, state: LessonsState): LessonsContract.Pre
     }
 
     override fun destroy() {
-        repository.destroy()
+        board.removeObserver(boardObserver)
+        lessons.removeObserver(lessonsObserver)
     }
 
     override fun saveState(): LessonsState {
-        return LessonsState(boardId)
+        return LessonsState(boardName)
     }
 
 }

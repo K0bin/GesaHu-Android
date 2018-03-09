@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 
 /**

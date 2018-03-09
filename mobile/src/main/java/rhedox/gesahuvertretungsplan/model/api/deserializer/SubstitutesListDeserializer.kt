@@ -7,10 +7,10 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type
 

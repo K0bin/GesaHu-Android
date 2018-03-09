@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.mvp
 
-import rhedox.gesahuvertretungsplan.model.database.Lesson
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 
 

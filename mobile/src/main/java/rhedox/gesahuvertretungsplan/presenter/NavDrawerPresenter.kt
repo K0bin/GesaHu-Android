@@ -2,16 +2,18 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.arch.lifecycle.Observer
 import android.content.ContentResolver
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.provider.CalendarContract
+import androidx.content.edit
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
@@ -25,7 +27,6 @@ import rhedox.gesahuvertretungsplan.util.PermissionManager
 class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
     private var account: Account? = null
-        private set
     private var avatar: Bitmap? = null;
 
     private val accountManager: AccountManager = kodeIn.instance()
@@ -35,12 +36,17 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
 
     private val prefs: SharedPreferences = kodeIn.instance()
 
-    private var boards: List<Board> = listOf();
-
     private var drawerId: Int? = null;
 
+    private var boards = boardsRepository.loadBoards()
+
+    private val observer = Observer<List<Board>?> {
+        if (it?.isNotEmpty() != true) return@Observer
+        onBoardsLoaded(it)
+    }
+
+
     init {
-        boardsRepository.boardsCallback = { onBoardsLoaded(it) }
         boardsRepository.loadBoards()
 
         drawerId = state.selectedDrawerId
@@ -49,9 +55,11 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
     }
 
     override fun attachView(view: NavDrawerContract.View) {
+        boards.observeForever(observer)
+
         this.view = view;
         view.userName = account?.name ?: ""
-        view.showBoards(this.boards)
+        view.showBoards(this.boards.value ?: listOf())
         view.avatar = this.avatar
 
         if (drawerId != null) {
@@ -81,10 +89,9 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
     private fun updateApp() {
         val version = prefs.getInt(PreferenceFragment.PREF_VERSION, 0)
         if (version < BuildConfig.VERSION_CODE) {
-            val editor = prefs.edit() ?: return
-
-            editor.putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
-            editor.apply()
+            prefs.edit {
+                putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
+            }
         }
 
         if (version < 4012) {
@@ -98,12 +105,11 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
     }
 
     override fun destroy() {
-        boardsRepository.destroy()
+        boards.removeObserver(observer)
     }
 
     fun onBoardsLoaded(boards: List<Board>) {
         view?.showBoards(boards)
-        this.boards = boards;
     }
 
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
@@ -115,9 +121,11 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
             NavDrawerContract.DrawerIds.settings -> view?.navigateToSettings()
             NavDrawerContract.DrawerIds.supervisions -> view?.navigateToSupervisions()
             else -> {
-                for (board in boards) {
-                    if (board.id == drawerId - 13L) {
-                        view?.navigateToBoard(board.id)
+                if (boards.value != null) {
+                    for (board in boards.value!!) {
+                        if (board.name.hashCode() == drawerId - NavDrawerContract.DrawerIds.board) {
+                            view?.navigateToBoard(board.name)
+                        }
                     }
                 }
             }

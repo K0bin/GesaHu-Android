@@ -1,14 +1,14 @@
 package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
-import rhedox.gesahuvertretungsplan.ui.viewHolder.*
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
+import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.MarkViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.MarksCardViewHolder
 import tr.xip.errorview.ErrorView
 
 /**

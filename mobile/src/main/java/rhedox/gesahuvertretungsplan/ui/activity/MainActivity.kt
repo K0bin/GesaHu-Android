@@ -28,16 +28,14 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
 import rhedox.gesahuvertretungsplan.util.accountManager
-import rhedox.gesahuvertretungsplan.util.fixInputMethod
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
 /**
  * Created by robin on 20.10.2016.
@@ -62,7 +60,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         }
 
     override var currentDrawerId: Int = -1
-        get() = field
         set(value) {
             field = value
             val menuItem: MenuItem? = when (value) {
@@ -103,10 +100,10 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
         //Restore presenter
         val state = savedInstanceState?.getParcelable(MainActivity.state) ?: NavDrawerState()
-        if (lastCustomNonConfigurationInstance != null) {
-            presenter = lastCustomNonConfigurationInstance as NavDrawerPresenter
+        presenter = if (lastCustomNonConfigurationInstance != null) {
+            lastCustomNonConfigurationInstance as NavDrawerPresenter
         } else {
-            presenter = NavDrawerPresenter(appKodein(), state)
+            NavDrawerPresenter(appKodein(), state)
         }
 
         //Setup view
@@ -139,14 +136,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
             currentFragment = SubstitutesFragment.newInstance(date)
             supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment, currentFragmentTag).commit()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        //Fix Android memory leaks
-        fixInputMethod()
-        removeActivityFromTransitionManager()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -256,9 +245,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         val menu = navigationView.menu
         menu.removeGroup(R.id.boardsSubheader)
         for (board in boards) {
-            val item = menu.add(R.id.boardsSubheader, (board.id ?: 0).toInt() + NavDrawerContract.DrawerIds.board, Menu.NONE, board.name)
+            val item = menu.add(R.id.boardsSubheader, board.name.hashCode() + NavDrawerContract.DrawerIds.board, Menu.NONE, board.name)
             item.isCheckable = true
-            item.isChecked = currentDrawerId == (board.id ?: 0).toInt() + NavDrawerContract.DrawerIds.board
+            item.isChecked = currentDrawerId == board.name.hashCode() + NavDrawerContract.DrawerIds.board
         }
     }
 
@@ -303,9 +292,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         startActivity(intentFor<WelcomeActivity>().newTask().clearTask())
     }
 
-    override fun navigateToBoard(boardId: Long) {
+    override fun navigateToBoard(boardName: String) {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
-        val fragment = BoardFragment.newInstance(boardId)
+        val fragment = BoardFragment.newInstance(boardName)
         fragment.useSlideAnimation = true;
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)

@@ -2,19 +2,13 @@ package rhedox.gesahuvertretungsplan.presenter.state
 
 import android.os.Parcel
 import android.os.Parcelable
-import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.mvp.BoardContract
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 02.01.2017.
  */
-data class BoardState(val boardId: Long): Parcelable {
+data class BoardState(val boardName: String): Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(boardId)
+        parcel.writeString(boardName)
     }
 
     override fun describeContents(): Int {
@@ -25,9 +19,9 @@ data class BoardState(val boardId: Long): Parcelable {
         @JvmField
         val CREATOR: Parcelable.Creator<BoardState> = object : Parcelable.Creator<BoardState> {
             override fun createFromParcel(parcel: Parcel): BoardState {
-                val id = parcel.readLong()
+                val name = parcel.readString()
 
-                return BoardState(id)
+                return BoardState(name)
             }
 
             override fun newArray(size: Int): Array<BoardState?> {

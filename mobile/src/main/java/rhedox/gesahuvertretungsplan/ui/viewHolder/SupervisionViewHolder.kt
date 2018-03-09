@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolder
 
-import android.animation.*
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -8,15 +9,11 @@ import android.support.annotation.ColorInt
 import android.support.annotation.Dimension
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 
 /**

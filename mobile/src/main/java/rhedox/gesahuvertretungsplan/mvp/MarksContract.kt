@@ -1,7 +1,6 @@
 package rhedox.gesahuvertretungsplan.mvp
 
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
 
 

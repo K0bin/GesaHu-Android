@@ -1,11 +1,11 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.arch.lifecycle.Observer
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState
 
 /**
@@ -13,26 +13,26 @@ import rhedox.gesahuvertretungsplan.presenter.state.BoardState
  */
 class BoardPresenter(kodein: Kodein, state: BoardState) : BoardContract.Presenter {
     private var view: BoardContract.View? = null
-    val boardId = state.boardId;
+    val boardName = state.boardName;
     private val repository: BoardsRepository = kodein.instance()
-    private var board: Board? = null
+    private val board = repository.loadBoard(boardName)
 
-    init {
-        repository.boardsCallback = { onBoardsLoaded(it) }
-        repository.loadBoards()
+    private val observer = Observer<Board?> {
+        it ?: return@Observer
+        onBoardLoaded(it)
     }
 
-    fun onBoardsLoaded(boards: List<Board>) {
-        val board = boards.find({ it.id == boardId })
-        if (board != null) {
-            this.board = board;
-            view?.title = board.name;
-        }
+    init {
+        board.observeForever(observer)
+    }
+
+    private fun onBoardLoaded(board: Board) {
+        view?.title = board.name;
     }
 
     override fun attachView(view: BoardContract.View) {
         this.view = view;
-        this.view?.title = this.board?.name ?: "";
+        this.view?.title = this.board.value?.name ?: "";
     }
 
     override fun detachView() {
@@ -40,10 +40,10 @@ class BoardPresenter(kodein: Kodein, state: BoardState) : BoardContract.Presente
     }
 
     override fun destroy() {
-        repository.destroy()
+        board.removeObserver(observer)
     }
 
     override fun saveState(): BoardState {
-        return BoardState(boardId)
+        return BoardState(boardName)
     }
 }

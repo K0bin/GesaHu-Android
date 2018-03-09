@@ -1,9 +1,9 @@
 package rhedox.gesahuvertretungsplan.model.api
 
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
-import rhedox.gesahuvertretungsplan.model.database.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 
 /**
  * Created by robin on 01.10.2016.

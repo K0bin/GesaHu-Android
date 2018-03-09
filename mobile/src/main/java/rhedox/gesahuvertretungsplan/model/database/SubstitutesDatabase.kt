@@ -2,11 +2,17 @@ package rhedox.gesahuvertretungsplan.model.database
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
+import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
+import android.content.Context
+import rhedox.gesahuvertretungsplan.model.database.dao.AnnouncementsDao
+import rhedox.gesahuvertretungsplan.model.database.dao.SubstitutesDao
+import rhedox.gesahuvertretungsplan.model.database.dao.SupervisionsDao
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 
 
 /**
@@ -23,13 +29,19 @@ abstract class SubstitutesDatabase: RoomDatabase() {
         const val name = "gesahui_substitutes.db"
         const val version = 8
 
-        val migration7_8 = object: Migration(7, 8) {
+        fun build(context: Context): SubstitutesDatabase = Room.databaseBuilder(context, SubstitutesDatabase::class.java, SubstitutesDatabase.name)
+                    /*.fallbackToDestructiveMigration()*/
+                    .addMigrations(SubstitutesDatabase.migration7_8)
+                    .build()
+
+        private val migration7_8 = object: Migration(7, 8) {
             override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
                 //Migrate Substitutes to Room
                 db.execSQL("ALTER TABLE ${Substitute.tableName} RENAME TO ${Substitute.tableName}_old;")
                 db.execSQL("CREATE TABLE ${Substitute.tableName} " +
-                        "(id INTEGER PRIMARY KEY," +
-                        "date INTEGER NOT NULL, " +
+                        "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "date INTEGER NOT NULL," +
                         "lessonBegin INTEGER NOT NULL," +
                         "duration INTEGER NOT NULL," +
                         "subject TEXT NOT NULL," +
@@ -48,8 +60,8 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                 //Migrate Announcements to Room
                 db.execSQL("ALTER TABLE ${Announcement.tableName} RENAME TO ${Announcement.tableName}_old;")
                 db.execSQL("CREATE TABLE ${Announcement.tableName} " +
-                        "(id INTEGER PRIMARY KEY," +
-                        "date INTEGER NOT NULL, " +
+                        "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "date INTEGER NOT NULL," +
                         "text Text NOT NULL);");
 
                 db.execSQL("INSERT INTO ${Announcement.tableName} (id, date, text) " +
@@ -60,8 +72,8 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                 //Migrate Supervisions to Room
                 db.execSQL("ALTER TABLE ${Supervision.tableName} RENAME TO ${Supervision.tableName}_old;")
                 db.execSQL("CREATE TABLE ${Supervision.tableName} " +
-                        "(id INTEGER PRIMARY KEY," +
-                        "date INTEGER NOT NULL, " +
+                        "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "date INTEGER NOT NULL," +
                         "time TEXT NOT NULL," +
                         "teacher TEXT NOT NULL," +
                         "substitute TEXT NOT NULL," +
@@ -72,6 +84,7 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                         "SELECT rowid, date, time, teacher, substitute, location, isRelevant " +
                         "FROM ${Supervision.tableName}_old;")
                 db.execSQL("DROP TABLE ${Supervision.tableName}_old;")
+                db.endTransaction()
             }
         }
     }

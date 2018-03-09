@@ -1,29 +1,21 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
 import android.accounts.AccountManager
-import android.content.ContentResolver
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
-import android.os.Bundle
-import android.preference.PreferenceManager
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.provider
 import com.nhaarman.mockito_kotlin.mock
-import net.danlew.android.joda.JodaTimeAndroid
-import org.jetbrains.anko.accountManager
 import org.joda.time.LocalDate
 import org.junit.Test
-import org.junit.runner.RunWith
-import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.util.PermissionManager
@@ -46,7 +38,7 @@ class SubstitutesPresenterTest {
     }
 
     val date: LocalDate = LocalDate(2016,5,12)
-    val list = listOf(Substitute(0,0, "", "", "", "", "", "", false), Substitute(0,0, "", "", "", "", "", "", false), Substitute(0,0, "", "", "", "", "", "", false))
+    val list = listOf(Substitute(0, 0, "", "", "", "", "", "", false), Substitute(0, 0, "", "", "", "", "", "", false), Substitute(0, 0, "", "", "", "", "", "", false))
     val announcement = "hi"
 
     private fun simulateOrientationChange(presenter: SubstitutesPresenter): StubSubstitutesView {

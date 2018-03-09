@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
-import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type

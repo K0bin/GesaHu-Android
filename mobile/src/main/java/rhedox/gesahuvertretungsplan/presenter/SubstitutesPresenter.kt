@@ -14,10 +14,14 @@ import com.github.salomonbrys.kodein.instance
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.database.Announcement
+import rhedox.gesahuvertretungsplan.model.SchoolWeek
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
+import rhedox.gesahuvertretungsplan.model.dayOfWeekIndex
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -120,7 +124,6 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     }
 
     override fun destroy() {
-        repository.destroy()
         syncObserver.destroy()
         substitutes.forEach { it?.removeObserver(substitutesObserver) }
         announcements.forEach { it?.removeObserver(announcementObserver) }

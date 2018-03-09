@@ -11,7 +11,11 @@ import android.os.Bundle
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.database.dao.AnnouncementsDao
+import rhedox.gesahuvertretungsplan.model.database.dao.SubstitutesDao
+import rhedox.gesahuvertretungsplan.model.database.dao.SupervisionsDao
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.util.Open
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
@@ -24,9 +28,6 @@ class SubstitutesRepository(context: Context) {
     private val substitutesDao = context.appKodein().instance<SubstitutesDao>()
     private val supervisionsDao = context.appKodein().instance<SupervisionsDao>()
     private val announcementsDao = context.appKodein().instance<AnnouncementsDao>()
-
-    fun destroy() {
-    }
 
     fun loadSubstitutesForDay(date: LocalDate): LiveData<List<Substitute>> = substitutesDao.get(date);
 

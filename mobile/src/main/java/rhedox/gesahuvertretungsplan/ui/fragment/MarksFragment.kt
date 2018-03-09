@@ -9,11 +9,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.os.bundleOf
 import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Mark
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
@@ -29,8 +30,8 @@ class MarksFragment : Fragment(), MarksContract.View {
     private lateinit var layoutManager: LinearLayoutManager;
     private lateinit var adapter: MarksAdapter;
 
-    object Extra {
-        const val boardId = "boardId"
+    object Arguments {
+        const val boardName = "boardName"
     }
 
     companion object {
@@ -38,12 +39,8 @@ class MarksFragment : Fragment(), MarksContract.View {
         const val layoutManagerBundleName = "layoutManager"
 
         @JvmStatic
-        fun newInstance(boardId: Long): MarksFragment {
-            val args = Bundle()
-            args.putLong(Extra.boardId, boardId)
-            val fragment = MarksFragment()
-            fragment.arguments = args
-            return fragment;
+        fun newInstance(boardName: String): MarksFragment = MarksFragment().apply {
+            arguments = bundleOf(Arguments.boardName to boardName)
         }
     }
 
@@ -56,12 +53,11 @@ class MarksFragment : Fragment(), MarksContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        val state: MarksState;
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<MarksState>(stateBundleName)
+        val state = if (savedInstanceState != null) {
+            savedInstanceState.getParcelable(stateBundleName)
         } else {
-            val id = arguments?.getLong(Extra.boardId, -1) ?: -1
-            state = MarksState(id)
+            val name = arguments?.getString(Arguments.boardName) ?: ""
+            MarksState(name)
         }
         presenter = MarksPresenter(appKodein(), state)
     }

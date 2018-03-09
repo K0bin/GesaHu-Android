@@ -1,8 +1,6 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
-import rhedox.gesahuvertretungsplan.mvp.LessonsContract
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
 
 /**

@@ -1,10 +1,7 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import android.graphics.Bitmap
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.api.BoardName
-import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 
 /**

@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.mvp
 
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 
 /**
@@ -33,7 +33,7 @@ interface NavDrawerContract {
         fun navigateToAuth()
         fun navigateToSubstitutes(date: LocalDate? = null)
         fun navigateToSupervisions(date: LocalDate? = null)
-        fun navigateToBoard(boardId: Long)
+        fun navigateToBoard(boardName: String)
         var userName: String;
         var currentDrawerId: Int;
         var avatar: Bitmap?

@@ -9,11 +9,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.os.bundleOf
 import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Lesson
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
 import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
@@ -29,8 +30,8 @@ class LessonsFragment : Fragment(), LessonsContract.View {
     private lateinit var layoutManager: LinearLayoutManager;
     private lateinit var adapter: LessonsAdapter;
 
-    object Extra {
-        const val boardId = "boardId"
+    object Arguments {
+        const val boardName = "boardName"
     }
 
     companion object {
@@ -38,12 +39,8 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         const val layoutManagerBundleName = "layoutManager"
 
         @JvmStatic
-        fun newInstance(boardId: Long): LessonsFragment {
-            val args = Bundle()
-            args.putLong(Extra.boardId, boardId)
-            val fragment = LessonsFragment()
-            fragment.arguments = args
-            return fragment;
+        fun newInstance(boardName: String): LessonsFragment = LessonsFragment().apply {
+            arguments = bundleOf(Arguments.boardName to boardName)
         }
     }
 
@@ -62,12 +59,11 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        val state: LessonsState;
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable(stateBundleName)
+        val state = if (savedInstanceState != null) {
+            savedInstanceState.getParcelable(stateBundleName)
         } else {
-            val id = arguments?.getLong(Extra.boardId, -1) ?: -1
-            state = LessonsState(id)
+            val name = arguments?.getString(Arguments.boardName) ?: ""
+            LessonsState(name)
         }
         presenter = LessonsPresenter(appKodein(), state)
     }

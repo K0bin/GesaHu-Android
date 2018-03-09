@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.ui.viewHolder.*
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
+import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.LessonViewHolder
+import rhedox.gesahuvertretungsplan.ui.viewHolder.LessonsCardViewHolder
 import tr.xip.errorview.ErrorView
 
 /**
