@@ -12,7 +12,7 @@ data class Mark(val date: LocalDate,
                 val mark: String?,
                 @Kind val kind: String,
                 val average: Float?,
-                @MarkKind val markKind: Long,
+                @MarkKind val markKind: Int,
                 val logo: String,
                 val weighting: Float?,
                 val id: Long? = null,
@@ -33,8 +33,8 @@ data class Mark(val date: LocalDate,
     @IntDef(MarkKindValues.unknown, MarkKindValues.groupMark, MarkKindValues.mark)
     annotation class MarkKind
     object MarkKindValues {
-        const val unknown = 0L;
-        const val mark = 1L;
-        const val groupMark = 2L;
+        const val unknown = 0;
+        const val mark = 1;
+        const val groupMark = 2;
     }
 }

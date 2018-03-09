@@ -51,7 +51,7 @@ object MarksAdapter {
         val mark = cursor.getString(cursor.getColumnIndex(MarksContract.Table.columnMark))
         val kind = cursor.getString(cursor.getColumnIndex(MarksContract.Table.columnKind))
         val average = cursor.getFloat(cursor.getColumnIndex(MarksContract.Table.columnAverage))
-        val markKind = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnMarkKind))
+        val markKind = cursor.getInt(cursor.getColumnIndex(MarksContract.Table.columnMarkKind))
         val logo = cursor.getString(cursor.getColumnIndex(MarksContract.Table.columnLogo))
         val weighting = cursor.getFloat(cursor.getColumnIndex(MarksContract.Table.columnWeighting))
         val id = cursor.getLong(cursor.getColumnIndex(MarksContract.Table.columnBoardId))

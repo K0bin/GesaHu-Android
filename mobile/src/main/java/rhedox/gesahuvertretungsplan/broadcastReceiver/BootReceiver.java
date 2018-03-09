@@ -28,7 +28,7 @@ public class BootReceiver extends BroadcastReceiver {
             LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
 
             if(!"NONE".equals(mode)) {
-                @SubstitutesAlarmReceiver.NotificationFrequency long notificationFrequency;
+                @SubstitutesAlarmReceiver.NotificationFrequency int notificationFrequency;
                 if("per_lesson".equals(mode))
                     notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;
                 else if("both".equals(mode))

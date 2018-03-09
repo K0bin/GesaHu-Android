@@ -16,7 +16,7 @@ data class Substitute(val lessonBegin: Int,
                       val isRelevant: Boolean,
                       val id: Long? = null) : Comparable<Substitute> {
 
-    @Kind val kind: Long;
+    @Kind val kind: Int;
 
     val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString();
 
@@ -27,11 +27,11 @@ data class Substitute(val lessonBegin: Int,
     annotation class Kind
 
     object KindValues {
-        const val substitute = 0L;
-        const val dropped = 1L;
-        const val roomChange = 2L;
-        const val test = 3L;
-        const val regular = 4L;
+        const val substitute = 0;
+        const val dropped = 1;
+        const val roomChange = 2;
+        const val test = 3;
+        const val regular = 4;
     }
 
     init {

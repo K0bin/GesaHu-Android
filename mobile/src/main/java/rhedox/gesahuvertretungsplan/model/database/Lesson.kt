@@ -10,7 +10,7 @@ import org.joda.time.LocalDate
 data class Lesson(val date: LocalDate,
                   val topic: String,
                   val duration: Int,
-                  @Status val status: Long,
+                  @Status val status: Int,
                   @SerializedName("HA_Inhalt") val homeWork: String?,
                   @SerializedName("HA_Datum") val homeWorkDue: LocalDate?,
                   val id: Long? = null,
@@ -20,8 +20,8 @@ data class Lesson(val date: LocalDate,
     @IntDef(StatusValues.present, StatusValues.absent, StatusValues.absentWithSickNote)
     annotation class Status
     object StatusValues {
-        const val present = 0L //"anwesend";
-        const val absent = 1L //"abwesend";
-        const val absentWithSickNote = 2L //"abwesend und entschuldigt"
+        const val present = 0 //"anwesend";
+        const val absent = 1 //"abwesend";
+        const val absentWithSickNote = 2 //"abwesend und entschuldigt"
     }
 }

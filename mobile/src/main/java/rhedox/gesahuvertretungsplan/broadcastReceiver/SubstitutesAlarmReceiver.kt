@@ -30,9 +30,9 @@ class SubstitutesAlarmReceiver: BroadcastReceiver() {
     annotation class NotificationFrequency
 
     object NotificationFrequencyValues {
-        const val none = 0L
-        const val daily = 1L
-        const val perLesson = 2L
+        const val none = 0
+        const val daily = 1
+        const val perLesson = 2
         const val both = daily or perLesson
 
     }
@@ -50,7 +50,7 @@ class SubstitutesAlarmReceiver: BroadcastReceiver() {
 
         @JvmStatic
         @RequiresPermission(value = Manifest.permission.SET_ALARM)
-        fun create(context: Context, firstHour: Int, firstMinute: Int, @NotificationFrequency frequency: Long) {
+        fun create(context: Context, firstHour: Int, firstMinute: Int, @NotificationFrequency frequency: Int) {
             if (frequency == NotificationFrequencyValues.none)
                 return
 

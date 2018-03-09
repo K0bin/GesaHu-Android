@@ -64,7 +64,7 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
         String mode = prefs.getString(PREF_NOTIFICATION_MODE, null);
 
         if(!"NONE".equals(mode)) {
-            @SubstitutesAlarmReceiver.NotificationFrequency long notificationFrequency;
+            @SubstitutesAlarmReceiver.NotificationFrequency int notificationFrequency;
             if("per_lesson".equals(mode)) {
                 SubstitutesAlarmReceiver.cancelDaily(getContext());
 	            notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;

@@ -47,7 +47,7 @@ object LessonsAdapter {
         val date = localDateFromUnix(cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnDate)))
         val topic = cursor.getString(cursor.getColumnIndex(LessonsContract.Table.columnTopic))
         val duration = cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnDuration))
-        val status = cursor.getLong(cursor.getColumnIndex(LessonsContract.Table.columnStatus))
+        val status = cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnStatus))
         val homework = cursor.getString(cursor.getColumnIndex(LessonsContract.Table.columnHomework))
         val homeworkDueInt = cursor.getInt(cursor.getColumnIndex(LessonsContract.Table.columnHomeworkDue))
         val homeworkDue = if (homeworkDueInt != 0) localDateFromUnix(homeworkDueInt) else null
