@@ -11,21 +11,18 @@ import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.share
-import org.jetbrains.anko.windowManager
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.Supervision
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
-import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.SupervisionsPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
 import rhedox.gesahuvertretungsplan.ui.activity.NavigationActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.SupervisionsPagerAdapter
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
+import rhedox.gesahuvertretungsplan.util.windowManager
 
 /**
  * Created by robin on 24.01.2017.

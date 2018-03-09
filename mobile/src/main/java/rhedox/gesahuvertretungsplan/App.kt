@@ -10,25 +10,25 @@ import android.net.ConnectivityManager
 import android.os.StrictMode
 import android.preference.PreferenceManager
 import android.provider.CalendarContract
+import android.util.Log
 import com.facebook.stetho.InspectorModulesProvider
-
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.inspector.database.ContentProviderDatabaseDriver
 import com.facebook.stetho.inspector.database.ContentProviderSchema
 import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain
 import com.github.salomonbrys.kodein.*
+import com.google.firebase.FirebaseApp
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-
 import net.danlew.android.joda.JodaTimeAndroid
-import org.jetbrains.anko.accountManager
-import org.jetbrains.anko.connectivityManager
-import rhedox.gesahuvertretungsplan.model.*
+import rhedox.gesahuvertretungsplan.model.AvatarLoader
+import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.SyncObserver
+import rhedox.gesahuvertretungsplan.model.database.*
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
-import android.util.Log
-import com.google.firebase.FirebaseApp
-import rhedox.gesahuvertretungsplan.model.database.*
+import rhedox.gesahuvertretungsplan.util.accountManager
+import rhedox.gesahuvertretungsplan.util.connectivityManager
 
 
 /**

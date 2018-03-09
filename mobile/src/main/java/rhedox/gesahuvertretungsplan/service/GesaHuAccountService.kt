@@ -1,19 +1,24 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.accounts.*
-import android.app.*
+import android.accounts.AbstractAccountAuthenticator
+import android.accounts.Account
+import android.accounts.AccountAuthenticatorResponse
+import android.accounts.AccountManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
-import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.notificationManager
-import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
+import rhedox.gesahuvertretungsplan.util.accountManager
+import rhedox.gesahuvertretungsplan.util.notificationManager
 
 /**
  * Created by robin on 11.10.2016.

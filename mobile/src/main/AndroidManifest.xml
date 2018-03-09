@@ -107,16 +107,15 @@
         </service>
 
         <provider
-            android:authorities="rhedox.gesahuvertretungsplan.stub"
-            android:name="rhedox.gesahuvertretungsplan.model.database.StubContentProvider"
+            android:authorities="rhedox.gesahuvertretungsplan.substitutes.stub"
+            android:name="rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider"
             android:exported="false"
             android:syncable="true" />
         <provider
-            android:name=".model.database.SubstitutesContentProvider"
-            android:authorities="rhedox.gesahuvertretungsplan.substitutes"
-            android:label="@string/provider_substitutes"
-            android:syncable="true"
-            android:exported="true" />
+            android:authorities="rhedox.gesahuvertretungsplan.boards.stub"
+            android:name="rhedox.gesahuvertretungsplan.model.database.StubBoardsContentProvider"
+            android:exported="false"
+            android:syncable="true" />
         <provider
             android:name=".model.database.BoardsContentProvider"
             android:authorities="rhedox.gesahuvertretungsplan.boards"

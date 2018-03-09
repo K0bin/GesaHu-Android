@@ -10,6 +10,7 @@ import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.Supervision
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
+import rhedox.gesahuvertretungsplan.model.database.Announcement
 import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type
 
@@ -37,7 +38,7 @@ class SubstitutesListDeserializer(context: Context) : JsonDeserializer<Substitut
             supervisions.add(deserializeSupervision(date, jsonSupervision.asJsonObject))
         }
 
-        return SubstitutesList(announcement, substitutes, date, supervisions)
+        return SubstitutesList(Announcement(date, announcement), substitutes, date, supervisions)
     }
 
     private fun deserializeSubstitute(date: LocalDate, jsonObject: JsonObject): Substitute {

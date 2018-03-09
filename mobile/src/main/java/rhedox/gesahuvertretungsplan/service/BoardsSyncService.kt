@@ -3,24 +3,21 @@ package rhedox.gesahuvertretungsplan.service
 import android.accounts.Account
 import android.app.Service
 import android.content.*
-import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.util.Log.d
 import com.crashlytics.android.Crashlytics
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.jetbrains.anko.accountManager
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.BoardInfo
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.tables.*
+import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
-import java.net.SocketTimeoutException
 
 /**
  * Created by robin on 30.10.2016.

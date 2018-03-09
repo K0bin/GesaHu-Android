@@ -8,7 +8,11 @@ import android.net.Uri
 /**
  * Created by robin on 08.03.2018.
  */
-class StubContentProvider: ContentProvider() {
+class StubSubstitutesContentProvider: ContentProvider() {
+    companion object {
+        const val authority = "rhedox.gesahuvertretungsplan.substitutes.stub"
+    }
+
     override fun insert(uri: Uri?, values: ContentValues?): Uri? = null
     override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? = null
     override fun onCreate(): Boolean = true

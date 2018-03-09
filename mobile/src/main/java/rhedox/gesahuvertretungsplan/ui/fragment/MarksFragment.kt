@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,17 +12,13 @@ import android.view.ViewGroup
 import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.windowManager
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Lesson
 import rhedox.gesahuvertretungsplan.model.database.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
-import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
-import rhedox.gesahuvertretungsplan.ui.adapter.LessonsAdapter
 import rhedox.gesahuvertretungsplan.ui.adapter.MarksAdapter
+import rhedox.gesahuvertretungsplan.util.windowManager
 
 /**
  * Created by robin on 19.01.2017.

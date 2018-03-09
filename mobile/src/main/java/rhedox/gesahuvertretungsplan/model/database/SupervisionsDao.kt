@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.model.database
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
@@ -14,9 +15,15 @@ interface SupervisionsDao {
     @Insert
     fun insert(vararg supervisions: Supervision)
 
-    @Query("DELETE FROM ${Supervision.tableName} WHERE 1")
+    @Query("DELETE FROM ${Supervision.tableName} WHERE date = :date;")
+    fun delete(date: LocalDate)
+
+    @Query("DELETE FROM ${Supervision.tableName} WHERE date < :olderThan;")
+    fun clear(olderThan: LocalDate)
+
+    @Query("DELETE FROM ${Supervision.tableName} WHERE 1;")
     fun clear()
 
-    @Query("SELECT * FROM ${Supervision.tableName} WHERE date = :date")
-    fun get(date: LocalDate): List<Supervision>
+    @Query("SELECT * FROM ${Supervision.tableName} WHERE date = :date;")
+    fun get(date: LocalDate): LiveData<List<Supervision>>
 }

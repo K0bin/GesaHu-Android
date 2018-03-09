@@ -3,7 +3,6 @@ package rhedox.gesahuvertretungsplan.model.database.tables
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
 
 /**
  * Created by robin on 30.10.2016.

@@ -1,6 +1,9 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -9,7 +12,6 @@ import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
-import org.jetbrains.anko.notificationManager
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
@@ -21,6 +23,7 @@ import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 import rhedox.gesahuvertretungsplan.util.countRelevant
+import rhedox.gesahuvertretungsplan.util.notificationManager
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**

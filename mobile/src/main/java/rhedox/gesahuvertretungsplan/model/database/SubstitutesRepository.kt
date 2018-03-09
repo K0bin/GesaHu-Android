@@ -1,135 +1,43 @@
 package rhedox.gesahuvertretungsplan.model.database
 
 import android.accounts.Account
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Transformations
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Loader
 import android.content.SyncRequest
-import android.database.ContentObserver
-import android.database.Cursor
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.CursorLoader
-import android.util.Log
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.doAsyncResult
-import org.jetbrains.anko.uiThread
-import org.joda.time.DateTime
 import org.joda.time.LocalDate
-import org.joda.time.LocalTime
 import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
-import rhedox.gesahuvertretungsplan.model.database.tables.*
-import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
-import rhedox.gesahuvertretungsplan.ui.adapter.SubstitutesAdapter
 import rhedox.gesahuvertretungsplan.util.Open
-import java.util.concurrent.Future
+import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 29.10.2016.
  */
 @Open
 class SubstitutesRepository(context: Context) {
-    private val context: Context = context.applicationContext
-
     private val substitutesDao = context.appKodein().instance<SubstitutesDao>()
-
-    //private val observer: Observer;
-    private val contentResolver = context.contentResolver
-
-    private val futures = mutableMapOf<Int, Future<Unit>>();
-
-    var substitutesCallback: ((date: LocalDate, substitutes: List<Substitute>) -> Unit)? = null
-    var supervisisonsCallback: ((date: LocalDate, substitutes: List<Supervision>) -> Unit)? = null
-    var announcementCallback: ((date: LocalDate, text: String) -> Unit)? = null
-
-    init {
-        /*observer = Observer {
-            if(it.pathSegments.size > 1 && (it.pathSegments[1] == SubstitutesContract.datePath || it.pathSegments[1] == AnnouncementsContract.datePath || it.pathSegments[1] == SupervisionsContract.datePath)) {
-                if(it.pathSegments[0] == SubstitutesContract.path)
-                    loadSubstitutesForDay(localDateFromUnix(it.lastPathSegment.toInt()));
-                else if(it.pathSegments[0]== AnnouncementsContract.path)
-                    loadAnnouncementForDay(localDateFromUnix(it.lastPathSegment.toInt()));
-                else if(it.pathSegments[0]== SupervisionsContract.path)
-                    loadSupervisionsForDay(localDateFromUnix(it.lastPathSegment.toInt()));
-            }
-        }
-        context.contentResolver.registerContentObserver(SubstitutesContract.dateUri, true, observer);
-        context.contentResolver.registerContentObserver(SupervisionsContract.dateUri, true, observer);
-        context.contentResolver.registerContentObserver(AnnouncementsContract.dateUri, true, observer);*/
-    }
+    private val supervisionsDao = context.appKodein().instance<SupervisionsDao>()
+    private val announcementsDao = context.appKodein().instance<AnnouncementsDao>()
 
     fun destroy() {
-        substitutesCallback = null;
-        announcementCallback = null;
-        //context.contentResolver.unregisterContentObserver(observer)
-
-        for ((_, value) in futures) {
-            value.cancel(true)
-        }
-        futures.clear()
     }
 
-    fun loadSubstitutesForDay(date: LocalDate) {
-        doAsync {
-            val substitutes = substitutesDao.get(date)
-            uiThread {
-                substitutesCallback?.invoke(date, substitutes)
-            }
-        }
-    }
+    fun loadSubstitutesForDay(date: LocalDate): LiveData<List<Substitute>> = substitutesDao.get(date);
 
-    fun loadAnnouncementForDay(date: LocalDate) {
-        load({
-            val cursor = contentResolver.query(AnnouncementsContract.uriWithDate(date), AnnouncementsContract.Table.columns.toTypedArray(), null, null, null)
-            val announcement = AnnouncementAdapter.fromCursor(cursor)
-            cursor.close()
-            return@load announcement
-        }, {
-            announcementCallback?.invoke(date, it)
-        })
-    }
+    fun loadAnnouncementForDay(date: LocalDate): LiveData<Announcement> = Transformations.map(announcementsDao.get(date),
+            { it.firstOrNull() }
+    )
 
-    fun loadSupervisionsForDay(date: LocalDate) {
-        load({
-            val cursor = contentResolver.query(SupervisionsContract.uriWithDate(date), SupervisionsContract.Table.columns.toTypedArray(), null, null, "${SupervisionsContract.Table.columnIsRelevant} DESC, ${SupervisionsContract.Table.columnTime} ASC")
-            val list = SupervisionAdapter.listFromCursor(cursor)
-            cursor.close()
-            return@load list
-        }, {
-            supervisisonsCallback?.invoke(date, it)
-        })
-    }
-
-    private fun <T>load(async: () -> T, done: (data: T) -> Unit) {
-        var addedToList = false
-        var key = 0
-        while (futures[key] != null) {
-            key++;
-        }
-
-        val future = doAsync {
-            val data = async();
-            uiThread {
-                done(data)
-                if(addedToList) {
-                    futures.remove(key)
-                }
-            }
-        }
-        futures.put(key, future)
-        addedToList = true;
-    }
+    fun loadSupervisionsForDay(date: LocalDate) = supervisionsDao.get(date)
 
     fun requestUpdate(account: Account, date: LocalDate, singleDay: Boolean) {
-        /*if(!ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, SubstitutesContentProvider.authority)) {
+        if(!ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority) && !ContentResolver.isSyncPending(account, StubSubstitutesContentProvider.authority)) {
             val extras = Bundle()
             extras.putInt(SubstitutesSyncService.SyncAdapter.extraDate, date.unixTimeStamp)
             extras.putBoolean(SubstitutesSyncService.SyncAdapter.extraSingleDay, singleDay)
@@ -137,7 +45,7 @@ class SubstitutesRepository(context: Context) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 val syncRequest = SyncRequest.Builder()
-                        .setSyncAdapter(account, SubstitutesContentProvider.authority)
+                        .setSyncAdapter(account, StubSubstitutesContentProvider.authority)
                         .setExpedited(true)
                         .setManual(true)
                         .setDisallowMetered(false)
@@ -157,33 +65,20 @@ class SubstitutesRepository(context: Context) {
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_IGNORE_SETTINGS, true)
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true)
 
-                ContentResolver.requestSync(account, SubstitutesContentProvider.authority, bundle)
+                ContentResolver.requestSync(account, StubSubstitutesContentProvider.authority, bundle)
             }
-        }*/
-    }
-
-    class Observer(private val callback: (uri: Uri) -> Unit): ContentObserver(Handler()) {
-
-        override fun onChange(selfChange: Boolean) {
-            onChange(selfChange, null);
-        }
-
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            Log.i("SubstitutesObserver", "onChange: $uri");
-
-            if(uri != null)
-                callback(uri)
         }
     }
 
     companion object {
         @JvmStatic
         fun loadSubstitutesForDaySync(context: Context, date: LocalDate, onlyRelevant: Boolean = false): List<Substitute> {
-            val filter = if(onlyRelevant) "${SubstitutesContract.Table.columnIsRelevant} = '1'" else null;
+            /*val filter = if(onlyRelevant) "${SubstitutesContract.Table.columnIsRelevant} = '1'" else null;
             val cursor = context.contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), filter, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}");
             val substitutes = SubstituteAdapter.listFromCursor(cursor)
             cursor.close()
-            return substitutes;
+            return substitutes;*/
+            TODO()
         }
     }
 }

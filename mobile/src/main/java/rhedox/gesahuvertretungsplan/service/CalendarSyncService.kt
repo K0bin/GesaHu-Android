@@ -12,7 +12,6 @@ import android.support.annotation.RequiresPermission
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import org.jetbrains.anko.accountManager
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import retrofit2.Response
@@ -24,6 +23,7 @@ import rhedox.gesahuvertretungsplan.model.api.Exam
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.PermissionManager
+import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
 import java.net.SocketTimeoutException
 
