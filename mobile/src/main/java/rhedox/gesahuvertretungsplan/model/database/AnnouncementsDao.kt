@@ -14,8 +14,8 @@ interface AnnouncementsDao {
     @Insert
     fun insert(vararg announcements: Announcement)
 
-    @Query("DELETE FROM ${Announcement.tableName} WHERE date = :date;")
-    fun delete(date: LocalDate)
+    @Query("DELETE FROM ${Announcement.tableName} WHERE date IN (:date);")
+    fun delete(vararg date: LocalDate)
 
     @Query("DELETE FROM ${Announcement.tableName} WHERE date < :olderThan;")
     fun clear(olderThan: LocalDate)

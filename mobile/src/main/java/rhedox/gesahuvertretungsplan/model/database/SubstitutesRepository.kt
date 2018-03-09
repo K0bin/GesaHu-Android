@@ -72,13 +72,6 @@ class SubstitutesRepository(context: Context) {
 
     companion object {
         @JvmStatic
-        fun loadSubstitutesForDaySync(context: Context, date: LocalDate, onlyRelevant: Boolean = false): List<Substitute> {
-            /*val filter = if(onlyRelevant) "${SubstitutesContract.Table.columnIsRelevant} = '1'" else null;
-            val cursor = context.contentResolver.query(SubstitutesContract.uriWithDate(date), SubstitutesContract.Table.columns.toTypedArray(), filter, null, "${SubstitutesContract.Table.columnIsRelevant} DESC, ${SubstitutesContract.Table.columnLessonBegin} ASC, ${SubstitutesContract.Table.columnDuration} ASC, ${SubstitutesContract.Table.columnCourse}");
-            val substitutes = SubstituteAdapter.listFromCursor(cursor)
-            cursor.close()
-            return substitutes;*/
-            TODO()
-        }
+        fun loadSubstitutesForDaySync(context: Context, date: LocalDate, onlyRelevant: Boolean = false): List<Substitute> = context.appKodein().instance<SubstitutesDao>().getSync(date, onlyRelevant)
     }
 }

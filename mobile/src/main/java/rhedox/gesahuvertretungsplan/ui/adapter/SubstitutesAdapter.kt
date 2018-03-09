@@ -3,7 +3,6 @@ package rhedox.gesahuvertretungsplan.ui.adapter
 import android.content.Context
 import android.support.annotation.ColorInt
 import android.support.annotation.Dimension
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -53,13 +52,13 @@ class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, c
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+        return when (viewType) {
             ItemTypeValues.view -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.view_substitute, parent, false)
-                return SubstituteViewHolder(view, presenter, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation)
+                SubstituteViewHolder(view, presenter, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation)
             }
 
-            else -> return ErrorViewHolder(ErrorView(parent.context));
+            else -> ErrorViewHolder(ErrorView(parent.context));
         }
     }
 

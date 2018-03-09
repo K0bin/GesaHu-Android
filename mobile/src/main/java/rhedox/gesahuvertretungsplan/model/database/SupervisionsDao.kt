@@ -15,8 +15,8 @@ interface SupervisionsDao {
     @Insert
     fun insert(vararg supervisions: Supervision)
 
-    @Query("DELETE FROM ${Supervision.tableName} WHERE date = :date;")
-    fun delete(date: LocalDate)
+    @Query("DELETE FROM ${Supervision.tableName} WHERE date IN (:date);")
+    fun delete(vararg date: LocalDate)
 
     @Query("DELETE FROM ${Supervision.tableName} WHERE date < :olderThan;")
     fun clear(olderThan: LocalDate)

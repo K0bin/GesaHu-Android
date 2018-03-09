@@ -55,7 +55,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     private val substitutes = arrayOfNulls<LiveData<List<Substitute>>>(5)
     private val announcements = arrayOfNulls<LiveData<Announcement>>(5)
     private val substitutesObserver = Observer<List<Substitute>> { it ->
-        if (it?.isEmpty() != false) return@Observer
+        if (it?.isNotEmpty() != true) return@Observer
 
         onSubstitutesLoaded(it.first().date, it)
     }
@@ -195,7 +195,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
 
     override fun onRefresh() {
         if (account != null) {
-            val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
+            val singleDay = Build.VERSION.SDK_INT < Build.VERSION_CODES.N || connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
             repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else

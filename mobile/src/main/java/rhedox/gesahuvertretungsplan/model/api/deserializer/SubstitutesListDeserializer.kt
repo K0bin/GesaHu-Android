@@ -33,7 +33,7 @@ class SubstitutesListDeserializer(context: Context) : JsonDeserializer<Substitut
         }
 
         val supervisions = mutableListOf<Supervision>()
-        val jsonSupervisions = jsonObject.getAsJsonArray("Stunden")
+        val jsonSupervisions = jsonObject.getAsJsonArray("Aufsichten")
         for (jsonSupervision in jsonSupervisions) {
             supervisions.add(deserializeSupervision(date, jsonSupervision.asJsonObject))
         }

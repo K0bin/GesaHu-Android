@@ -15,12 +15,11 @@ import org.joda.time.LocalDate
 import retrofit2.Response
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
+import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.Supervision
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.SubstitutesList
-import rhedox.gesahuvertretungsplan.model.database.AnnouncementsDao
-import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesDao
-import rhedox.gesahuvertretungsplan.model.database.SupervisionsDao
+import rhedox.gesahuvertretungsplan.model.database.*
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -74,8 +73,6 @@ class SubstitutesSyncService : Service() {
         }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
-            //android.os.Debug.waitForDebugger();
-
             if(Thread.interrupted()) {
                 return;
             }
@@ -83,14 +80,27 @@ class SubstitutesSyncService : Service() {
             val singleDay = extras?.getBoolean(extraSingleDay, false) ?: false
             val date = if(hasDate) localDateFromUnix(extras!!.getInt(extraDate)) else SchoolWeek.nextFromNow()
 
+            val dates = mutableListOf<LocalDate>()
+            val substitutes = mutableListOf<Substitute>()
+            val supervisions = mutableListOf<Supervision>()
+            val announcements = mutableListOf<Announcement>()
+
             if(hasDate && singleDay) {
                 Log.d("SubstitutesSync", "Sync triggered for $date")
-                loadSubstitutesForDay(account, date)
+                val result = loadSubstitutesForDay(account, date)
+                if (result != null) {
+                    dates.add(result.date)
+                    substitutes.addAll(result.substitutes)
+                    supervisions.addAll(result.supervisions)
+                    announcements.add(result.announcement)
+                }
             } else {
                 Log.d("SubstitutesSync", "Sync triggered for week starting with $date")
                 val ignorePast = (extras?.getBoolean(extraIgnorePast, false) ?: false) && date > LocalDate.now();
 
-                clearOldSubstitutes();
+                if (!hasDate) {
+                    clearOldSubstitutes();
+                }
 
                 val days = if (hasDate) 7 else 14;
                 for (i in 0 until days) {
@@ -98,20 +108,32 @@ class SubstitutesSyncService : Service() {
                         return;
                     }
 
-                    var day = date.withFieldAdded(DurationFieldType.days(), i)
-                    if (day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
-                        //Saturday => Monday & Sunday => Tuesday
-                        day = date.withFieldAdded(DurationFieldType.days(), 2);
-                    }
-                    if(ignorePast && day < LocalDate.now())
+                    val day = date.withFieldAdded(DurationFieldType.days(), i)
+                    if (ignorePast && day < LocalDate.now() || day.dayOfWeek == DateTimeConstants.SATURDAY || date.dayOfWeek == DateTimeConstants.SUNDAY) {
                         continue
+                    }
                     Log.d("SubstitutesSync", "Synced $day")
-                    val isSuccessful = loadSubstitutesForDay(account, day)
-                    if (!isSuccessful) {
-                        return;
+
+                    val result = loadSubstitutesForDay(account, day)
+                    if (result != null) {
+                        dates.add(result.date)
+                        substitutes.addAll(result.substitutes)
+                        supervisions.addAll(result.supervisions)
+                        announcements.add(result.announcement)
                     }
                 }
             }
+
+            if(Thread.interrupted()) {
+                return;
+            }
+            val datesArray =  dates.toTypedArray()
+            substitutesDao.delete(*datesArray)
+            substitutesDao.insert(*substitutes.toTypedArray())
+            supervisionsDao.delete(*datesArray)
+            supervisionsDao.insert(*supervisions.toTypedArray())
+            announcementsDao.delete(*datesArray)
+            announcementsDao.insert(*announcements.toTypedArray())
         }
 
         private fun clearOldSubstitutes() {
@@ -122,7 +144,7 @@ class SubstitutesSyncService : Service() {
             supervisionsDao.clear(oldest)
         }
 
-        private fun loadSubstitutesForDay(account: Account, date: LocalDate): Boolean {
+        private fun loadSubstitutesForDay(account: Account, date: LocalDate): SubstitutesList? {
             val call = gesaHu.substitutes(account.name ?: "", date)
 
             var response: Response<SubstitutesList>? = null
@@ -137,31 +159,15 @@ class SubstitutesSyncService : Service() {
                     }
                 }
             }
-            if (response != null && response.isSuccessful) {
-                val substitutesList = response.body() ?: return false;
-
-                substitutesDao.delete(substitutesList.date)
-                announcementsDao.delete(substitutesList.date)
-                supervisionsDao.delete(substitutesList.date)
-
-                if(substitutesList.hasAnnouncement) {
-                    Log.d("SubstitutesSync", "Inserted an announcement.")
-                    announcementsDao.insert(substitutesList.announcement)
-                }
-
-                substitutesDao.insert(*substitutesList.substitutes.toTypedArray())
-                supervisionsDao.insert(*substitutesList.supervisions.toTypedArray())
-
-                return true;
-            } else if (response != null && response.code() == 403) {
+            if (response != null && response.code() == 403) {
                 BoardsSyncService.setIsSyncEnabled(account, false)
                 CalendarSyncService.setIsSyncEnabled(account, false)
                 SubstitutesSyncService.setIsSyncEnabled(account, false)
 
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
-                return false;
+                return null;
             }
-            return false;
+            return response?.body();
         }
     }
 }

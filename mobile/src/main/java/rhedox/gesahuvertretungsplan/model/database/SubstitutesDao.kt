@@ -15,8 +15,8 @@ interface SubstitutesDao {
     @Insert
     fun insert(vararg substitutes: Substitute)
 
-    @Query("DELETE FROM ${Substitute.tableName} WHERE date = :date;")
-    fun delete(date: LocalDate)
+    @Query("DELETE FROM ${Substitute.tableName} WHERE date IN (:date);")
+    fun delete(vararg date: LocalDate)
 
     @Query("DELETE FROM ${Substitute.tableName} WHERE date < :olderThan;")
     fun clear(olderThan: LocalDate)
@@ -24,6 +24,9 @@ interface SubstitutesDao {
     @Query("DELETE FROM ${Substitute.tableName} WHERE 1;")
     fun clear()
 
-    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date;")
-    fun get(date: LocalDate): LiveData<List<Substitute>>
+    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date AND isRelevant = :isRelevant ORDER BY lessonBegin ASC, duration ASC, course ASC, subject ASC;")
+    fun get(date: LocalDate, isRelevant: Boolean = false): LiveData<List<Substitute>>
+
+    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date AND isRelevant = :isRelevant ORDER BY lessonBegin ASC, duration ASC, course ASC, subject ASC;")
+    fun getSync(date: LocalDate, isRelevant: Boolean = false): List<Substitute>
 }

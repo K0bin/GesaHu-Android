@@ -8,36 +8,36 @@ import android.support.v7.util.DiffUtil
 class ListDiffCallback<T>(private val oldList: List<T>, private val newList: List<T>, private val hasEmptyView: Boolean = false, private val hasTopHeader: Boolean = false) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        if (oldList.isEmpty() || newList.isEmpty() && (oldItemPosition == 0 || newItemPosition == 0)) {
+        if ((oldList.isEmpty() || newList.isEmpty()) && (oldItemPosition == 0 || newItemPosition == 0)) {
             return oldList.isEmpty() && newList.isEmpty() && oldItemPosition == 0 && newItemPosition == 0 && hasEmptyView
         }
-        if (newItemPosition == 0 || oldItemPosition == 0 && hasTopHeader) {
+        if ((newItemPosition == 0 || oldItemPosition == 0) && hasTopHeader) {
             return newItemPosition == 0 && oldItemPosition == 0 && hasTopHeader
         }
 
-        return oldList[oldItemPosition] === newList[newItemPosition]
+        return true
     }
 
     override fun getOldListSize(): Int {
-        if (oldList.isNotEmpty()) {
-            return if (!hasTopHeader) oldList.size else oldList.size + 1
+        return if (oldList.isNotEmpty()) {
+            if (!hasTopHeader) oldList.size else oldList.size + 1
         } else {
             if (hasEmptyView) {
-                return if (hasTopHeader) 2 else 1;
+                if (hasTopHeader) 2 else 1;
             } else {
-                return 0;
+                0;
             }
         }
     }
 
     override fun getNewListSize(): Int {
-        if (newList.isNotEmpty()) {
-            return if (!hasTopHeader) newList.size else newList.size + 1
+        return if (newList.isNotEmpty()) {
+            if (!hasTopHeader) newList.size else newList.size + 1
         } else {
             if (hasEmptyView) {
-                return if (hasTopHeader) 2 else 1;
+                if (hasTopHeader) 2 else 1;
             } else {
-                return 0;
+                0;
             }
         }
     }

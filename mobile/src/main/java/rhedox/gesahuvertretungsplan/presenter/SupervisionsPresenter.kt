@@ -53,7 +53,7 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
 
     private val supervisions = arrayOfNulls<LiveData<List<Supervision>>>(5)
     private val supervisionsObserver = Observer<List<Supervision>> {
-        if (it?.isEmpty() != false) return@Observer
+        if (it?.isNotEmpty() != true) return@Observer
 
         onSupervisionsLoaded(it.first().date, it)
     }
