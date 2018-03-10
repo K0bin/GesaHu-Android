@@ -11,9 +11,6 @@ import android.support.v4.content.WakefulBroadcastReceiver
 class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
         const val extraLesson = "lesson";
-        const val requestCodeBase = 64
-        const val groupKey = "gesahuvpsubstitutes"
-        const val substitutesChannel = "substitutes"
     }
 
     private lateinit var notifier: SubstitutesNotifier;

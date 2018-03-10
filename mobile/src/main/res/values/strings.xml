@@ -150,9 +150,9 @@
 
     <string name="special1">GesaHu Webseite</string>
 
-    <string name="special2">Erwähnungen</string>
+    <!--<string name="special2">Credits</string>-->
     <!-- <string name="special2_description">Danke an Kenneth Wolfram für die Idee zu den Benachrichtigungen&lt;br>Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>-->
-    <string name="special2_description">Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>
+    <!--<string name="special2_description">Wollen unbedingt erwähnt werden: Heidi Meyer, Robin Möbus, Jonas Dietz</string>-->
 
     <string name="special3">Datenschutz</string>
 

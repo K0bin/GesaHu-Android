@@ -117,6 +117,9 @@ public class SubstituteFormatter {
     public String makeNotificationText(Substitute substitute) {
         String text = substitute.getSubject();
 
+        if (!TextUtils.isEmpty(substitute.getCourse()))
+            text += " " + substitute.getCourse();
+
         if(!TextUtils.isEmpty(substitute.getRoom()))
             text += "; " + context.getString(R.string.room) + ": " + substitute.getRoom();
 

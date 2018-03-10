@@ -70,7 +70,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         setContentView(R.layout.activity_auth)
 
         client = Credentials.getClient(this)
-        var request = CredentialRequest.Builder()
+        val request = CredentialRequest.Builder()
                 .setPasswordLoginSupported(true)
                 .build()
 

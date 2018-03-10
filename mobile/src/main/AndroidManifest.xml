@@ -74,6 +74,7 @@
         </service>
 
         <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiverLegacy"/>
+        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver"/>
         <receiver android:name=".broadcastReceiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

@@ -282,7 +282,6 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val fragment = PreferenceContainerFragment.newInstance()
         fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         currentFragment = fragment
@@ -319,22 +318,20 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
-        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = currentFragment !is SubstitutesFragment
         val fragment = SubstitutesFragment.newInstance(date)
-        fragment.useSlideAnimation = date == null
+        fragment.useSlideAnimation = currentFragment !is SubstitutesFragment
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
     }
 
     override fun navigateToSupervisions(date: LocalDate?) {
-        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = currentFragment !is SupervisionsFragment
         val fragment = SupervisionsFragment.newInstance(date)
-        fragment.useSlideAnimation = date == null
+        fragment.useSlideAnimation = currentFragment !is SupervisionsFragment
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;

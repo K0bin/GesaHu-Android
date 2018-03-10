@@ -44,15 +44,15 @@ class GesaHuAccountService : Service() {
         companion object {
             const val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
 
-            const val notificationChannel = "otherChannel";
-            const val requestCode = 10;
+            private const val notificationChannel = "otherChannel";
+            private const val requestCode = 10;
 
             fun askForLogin(context: Context) {
                 val intent = context.intentFor<AuthActivity>(AuthActivity.argIsNewAccount to false)
                 val notificationManager = context.notificationManager
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (notificationManager.getNotificationChannel(SubstitutesNotifierService.substitutesChannel) == null) {
+                    if (notificationManager.getNotificationChannel(notificationChannel) == null) {
                         val channel = NotificationChannel(notificationChannel, context.getString(R.string.notification_channel_other), NotificationManager.IMPORTANCE_DEFAULT)
                         notificationManager.createNotificationChannel(channel)
                     }

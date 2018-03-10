@@ -13,6 +13,7 @@ import android.content.Intent
 import android.os.Build
 import android.support.annotation.LongDef
 import android.support.annotation.RequiresPermission
+import android.util.Log
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import rhedox.gesahuvertretungsplan.service.SubstitutesNotifierJobService
@@ -86,7 +87,7 @@ class SubstitutesAlarmReceiver: BroadcastReceiver() {
                 Intent(context, SubstitutesAlarmReceiverLegacy::class.java)
             };
             intent.putExtra(extraLesson, lesson)
-            val pending = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pending = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
             context.alarmManager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending)
         }
@@ -109,6 +110,7 @@ class SubstitutesAlarmReceiver: BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("AlarmReceiver", "ReceivedAlarm")
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val jobInfo = JobInfo.Builder(jobId, ComponentName(context, SubstitutesNotifierJobService::class.java))
                 .setOverrideDeadline(1000 * 60 * 5)

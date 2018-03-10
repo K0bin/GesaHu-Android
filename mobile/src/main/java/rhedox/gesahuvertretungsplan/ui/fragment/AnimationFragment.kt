@@ -11,12 +11,13 @@ import rhedox.gesahuvertretungsplan.R
 abstract class AnimationFragment: Fragment() {
     var useSlideAnimation = false
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation {
-        if (useSlideAnimation) {
-            useSlideAnimation = false;
-            return if (enter) AnimationUtils.loadAnimation(context, R.anim.slide_in_from_right) else AnimationUtils.loadAnimation(context, R.anim.slide_out_to_left)
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        val animation = if (useSlideAnimation) {
+            if (enter) AnimationUtils.loadAnimation(context, R.anim.slide_in_from_right) else AnimationUtils.loadAnimation(context, R.anim.slide_out_to_left)
         } else {
-            return if (enter) AnimationUtils.loadAnimation(context, R.anim.fade_in) else AnimationUtils.loadAnimation(context, R.anim.fade_out)
+            if (enter) AnimationUtils.loadAnimation(context, R.anim.fade_in) else AnimationUtils.loadAnimation(context, R.anim.fade_out)
         }
+        useSlideAnimation = false;
+        return animation
     }
 }
