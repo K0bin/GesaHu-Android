@@ -1,23 +1,24 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
+import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
+import javax.inject.Inject
 
 /**
  * Created by robin on 18.01.2017.
  */
-class MarksPresenter(kodein: Kodein, state: MarksState): MarksContract.Presenter {
+class MarksPresenter(component: BoardsComponent, state: MarksState): MarksContract.Presenter {
     private var view: MarksContract.View? = null
-    private val repository: BoardsRepository = kodein.instance();
+    @Inject internal lateinit var repository: BoardsRepository
     private val boardName = state.boardName;
-    private val board = repository.loadBoard(boardName)
-    private var marks = repository.loadMarks(boardName)
+    private val board: LiveData<Board>
+    private var marks: LiveData<List<Mark>>
 
     private val boardObserver = Observer<Board?> {
         it ?: return@Observer
@@ -29,6 +30,10 @@ class MarksPresenter(kodein: Kodein, state: MarksState): MarksContract.Presenter
     }
 
     init {
+        component.inject(this)
+
+        board = repository.loadBoard(boardName)
+        marks = repository.loadMarks(boardName)
         board.observeForever(boardObserver)
         marks.observeForever(marksObserver)
     }

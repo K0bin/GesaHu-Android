@@ -116,12 +116,6 @@
             android:name="rhedox.gesahuvertretungsplan.model.database.StubBoardsContentProvider"
             android:exported="false"
             android:syncable="true" />
-        <provider
-            android:name=".model.database.BoardsContentProvider"
-            android:authorities="rhedox.gesahuvertretungsplan.boards"
-            android:label="@string/provider_boards"
-            android:syncable="true"
-            android:exported="true" />
 
         <service android:name=".service.GesaHuAccountService">
             <intent-filter>

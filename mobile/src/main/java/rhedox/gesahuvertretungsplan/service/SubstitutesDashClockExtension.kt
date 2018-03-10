@@ -30,7 +30,7 @@ class SubstitutesDashClockExtension : DashClockExtension() {
     override fun onCreate() {
         super.onCreate()
 
-        repo = SubstitutesRepository(applicationContext)
+        //repo = SubstitutesRepository(applicationContext)
     }
 
     override fun onDestroy() {

@@ -2,15 +2,15 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.content.ContentResolver
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.provider.CalendarContract
 import androidx.content.edit
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import rhedox.gesahuvertretungsplan.BuildConfig
+import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
@@ -20,25 +20,25 @@ import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
+import javax.inject.Inject
 
 /**
  * Created by robin on 20.10.2016.
  */
-class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : NavDrawerContract.Presenter {
+class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
     private var account: Account? = null
     private var avatar: Bitmap? = null;
 
-    private val accountManager: AccountManager = kodeIn.instance()
-    private val permissionManager: PermissionManager = kodeIn.instance()
-
-    private val boardsRepository: BoardsRepository = kodeIn.instance()
-
-    private val prefs: SharedPreferences = kodeIn.instance()
-
     private var drawerId: Int? = null;
 
-    private var boards = boardsRepository.loadBoards()
+    @Inject internal lateinit var accountManager: AccountManager
+    @Inject internal lateinit var permissionManager: PermissionManager
+    @Inject internal lateinit var prefs: SharedPreferences
+    @Inject internal lateinit var boardsRepository: BoardsRepository
+    @Inject internal lateinit var avatarLoader: AvatarLoader
+
+    private var boards: LiveData<List<Board>>
 
     private val observer = Observer<List<Board>?> {
         if (it?.isNotEmpty() != true) return@Observer
@@ -47,10 +47,15 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
 
 
     init {
-        boardsRepository.loadBoards()
+        component.inject(this)
+        boards = boardsRepository.loadBoards()
 
-        drawerId = state.selectedDrawerId
+        avatarLoader.callback = {
+            this.avatar = it
+            view?.avatar = it
+        }
 
+        this.drawerId = state.selectedDrawerId
         checkFirstStart()
     }
 
@@ -148,11 +153,6 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
 
         if(account != null) {
             //load avatar
-            val avatarLoader: AvatarLoader = kodeIn.instance();
-            avatarLoader.callback = {
-                this.avatar = it
-                view?.avatar = it
-            }
             avatarLoader.loadAvatar();
 
             if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && permissionManager.isCalendarWritingPermissionGranted) {

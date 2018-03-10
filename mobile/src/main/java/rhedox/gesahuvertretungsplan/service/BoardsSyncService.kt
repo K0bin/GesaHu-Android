@@ -8,11 +8,10 @@ import android.os.IBinder
 import android.util.Log
 import android.util.Log.d
 import com.crashlytics.android.Crashlytics
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.api.BoardInfo
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
@@ -25,6 +24,7 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * Created by robin on 30.10.2016.
@@ -66,9 +66,16 @@ class BoardsSyncService : Service() {
 
         private val gesahu = GesaHu(context);
 
-        private val boardsDao = context.appKodein().instance<BoardsDao>()
-        private val lessonsDao = context.appKodein().instance<LessonsDao>()
-        private val marksDao = context.appKodein().instance<MarksDao>()
+        @Inject internal lateinit var boardsDao: BoardsDao
+        @Inject internal lateinit var lessonsDao: LessonsDao
+        @Inject internal lateinit var marksDao: MarksDao
+
+        init {
+            (context.applicationContext as App)
+                    .appComponent
+                    .plusBoards()
+                    .inject(this)
+        }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             if(Thread.interrupted()) {

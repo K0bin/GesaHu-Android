@@ -9,11 +9,10 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.util.Log
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.dependencyInjection.SubstitutesComponent
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.SyncObserver
@@ -26,28 +25,30 @@ import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : SubstitutesContract.Presenter {
+class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesState?) : SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
     /**
      * The selected substitute (of the current page); null for none
      */
     private var selected: Int? = null
-    private val syncObserver: SyncObserver = kodeIn.instance()
+    @Inject internal lateinit var syncObserver: SyncObserver
     /**
      * The page (day of week) which is currently visible to the user
      */
     private var currentPage: Int;
-    private val repository: SubstitutesRepository = kodeIn.instance()
+    @Inject internal lateinit var repository: SubstitutesRepository
 
-    private val connectivityManager: ConnectivityManager = kodeIn.instance()
-    private val formatter: SubstituteFormatter = kodeIn.instance()
+    @Inject internal lateinit var connectivityManager: ConnectivityManager
+    @Inject internal lateinit var formatter: SubstituteFormatter
 
-    private val accountManager: AccountManager = kodeIn.instance()
+    @Inject internal lateinit var accountManager: AccountManager
+
     private var account: Account? = null
         get() {
             if (field == null) {
@@ -70,6 +71,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     }
 
     init {
+        component.inject(this)
+
         val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
         Log.d("SubstitutesPresenter", "Date: $_date")

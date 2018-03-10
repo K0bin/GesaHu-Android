@@ -13,12 +13,11 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
-import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,6 +26,7 @@ import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
@@ -40,18 +40,18 @@ import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 /**
  * Created by robin on 20.10.2016.
  */
-class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
+class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
     private var toggle: ActionBarDrawerToggle? = null
     private lateinit var listener: Listener;
     private var drawerSelected: Int? = null;
     private lateinit var analytics: FirebaseAnalytics;
     private var isAmoledBlackEnabled = false
 
-    private lateinit var presenter: NavDrawerContract.Presenter;
-
     private lateinit var headerUsername: TextView;
 
     private lateinit var currentFragment: Fragment;
+
+    private lateinit var presenter: NavDrawerContract.Presenter
 
     override var userName: String
         get() = headerUsername.text.toString();
@@ -89,6 +89,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val appComponent = (application as App).appComponent
+        appComponent.inject(this)
+
         val prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this)
         isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false)
 
@@ -103,7 +106,7 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         presenter = if (lastCustomNonConfigurationInstance != null) {
             lastCustomNonConfigurationInstance as NavDrawerPresenter
         } else {
-            NavDrawerPresenter(appKodein(), state)
+            NavDrawerPresenter(appComponent.plusBoards(), state)
         }
 
         //Setup view
@@ -215,6 +218,14 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         toggle?.syncState()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (!isChangingConfigurations) {
+            presenter.destroy()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

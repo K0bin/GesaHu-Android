@@ -10,9 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.os.bundleOf
-import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
@@ -59,13 +59,15 @@ class LessonsFragment : Fragment(), LessonsContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
+        val appComponent = (context?.applicationContext as App).appComponent
+
         val state = if (savedInstanceState != null) {
             savedInstanceState.getParcelable(stateBundleName)
         } else {
             val name = arguments?.getString(Arguments.boardName) ?: ""
             LessonsState(name)
         }
-        presenter = LessonsPresenter(appKodein(), state)
+        presenter = LessonsPresenter(appComponent.plusBoards(), state)
     }
 
     @AddTrace(name = "LessonsFragCreateView", enabled = true)

@@ -9,10 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.os.bundleOf
-import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
@@ -66,7 +66,8 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        Log.d("Board", "Create")
+
+        val appComponent = (context?.applicationContext as App).appComponent
 
         val state: BoardState;
         if (savedInstanceState != null) {
@@ -77,7 +78,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
             state = BoardState(boardName)
         }
 
-        presenter = BoardPresenter(appKodein(), state)
+        presenter = BoardPresenter(appComponent.plusBoards(), state)
     }
 
     override fun onDestroy() {

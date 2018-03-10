@@ -7,12 +7,11 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import com.github.salomonbrys.kodein.android.appKodein
-import com.github.salomonbrys.kodein.instance
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
@@ -27,6 +26,7 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import java.io.IOException
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 
 /**
  * Created by robin on 18.10.2016.
@@ -66,13 +66,17 @@ class SubstitutesSyncService : Service() {
 
         private val gesaHu = GesaHu(context);
 
-        private val substitutesDao = context.appKodein().instance<SubstitutesDao>()
-        private val supervisionsDao = context.appKodein().instance<SupervisionsDao>()
-        private val announcementsDao = context.appKodein().instance<AnnouncementsDao>()
+        @Inject internal lateinit var substitutesDao: SubstitutesDao
+        @Inject internal lateinit var supervisionsDao: SupervisionsDao
+        @Inject internal lateinit var announcementsDao: AnnouncementsDao
 
         companion object {
             const val extraSingleDay = "day";
             const val extraDate = "date";
+        }
+
+        init {
+            (context.applicationContext as App).appComponent.plusSubstitutes().inject(this)
         }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {

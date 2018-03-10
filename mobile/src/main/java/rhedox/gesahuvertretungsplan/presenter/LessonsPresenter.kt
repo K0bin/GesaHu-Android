@@ -1,23 +1,24 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
+import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
 import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
+import javax.inject.Inject
 
 /**
  * Created by robin on 18.01.2017.
  */
-class LessonsPresenter(kodein: Kodein, state: LessonsState): LessonsContract.Presenter {
+class LessonsPresenter(component: BoardsComponent, state: LessonsState): LessonsContract.Presenter {
     private var view: LessonsContract.View? = null
-    private val repository: BoardsRepository = kodein.instance();
+    @Inject internal lateinit var repository: BoardsRepository
     private val boardName = state.boardName;
-    private val board = repository.loadBoard(boardName)
-    private var lessons = repository.loadLessons(boardName)
+    private val board: LiveData<Board>
+    private var lessons: LiveData<List<Lesson>>
 
     private val boardObserver = Observer<Board?> {
         it ?: return@Observer
@@ -29,6 +30,10 @@ class LessonsPresenter(kodein: Kodein, state: LessonsState): LessonsContract.Pre
     }
 
     init {
+        component.inject(this)
+
+        board = repository.loadBoard(boardName)
+        lessons = repository.loadLessons(boardName)
         board.observeForever(boardObserver)
         lessons.observeForever(lessonsObserver)
     }

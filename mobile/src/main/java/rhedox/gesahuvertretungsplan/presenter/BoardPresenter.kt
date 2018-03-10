@@ -1,21 +1,22 @@
 package rhedox.gesahuvertretungsplan.presenter
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
+import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState
+import javax.inject.Inject
 
 /**
  * Created by robin on 18.01.2017.
  */
-class BoardPresenter(kodein: Kodein, state: BoardState) : BoardContract.Presenter {
+class BoardPresenter(component: BoardsComponent, state: BoardState) : BoardContract.Presenter {
     private var view: BoardContract.View? = null
     val boardName = state.boardName;
-    private val repository: BoardsRepository = kodein.instance()
-    private val board = repository.loadBoard(boardName)
+    @Inject internal lateinit var repository: BoardsRepository
+    private val board: LiveData<Board>
 
     private val observer = Observer<Board?> {
         it ?: return@Observer
@@ -23,6 +24,9 @@ class BoardPresenter(kodein: Kodein, state: BoardState) : BoardContract.Presente
     }
 
     init {
+        component.inject(this)
+
+        board = repository.loadBoard(boardName);
         board.observeForever(observer)
     }
 

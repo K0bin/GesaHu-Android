@@ -1,13 +1,10 @@
 package rhedox.gesahuvertretungsplan
 
-import android.accounts.AccountManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.net.ConnectivityManager
 import android.os.StrictMode
-import android.preference.PreferenceManager
 import android.provider.CalendarContract
 import android.util.Log
 import com.facebook.stetho.InspectorModulesProvider
@@ -15,55 +12,37 @@ import com.facebook.stetho.Stetho
 import com.facebook.stetho.inspector.database.ContentProviderDatabaseDriver
 import com.facebook.stetho.inspector.database.ContentProviderSchema
 import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain
-import com.github.salomonbrys.kodein.*
 import com.google.firebase.FirebaseApp
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import net.danlew.android.joda.JodaTimeAndroid
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.model.database.dao.*
+import rhedox.gesahuvertretungsplan.dependencyInjection.AppComponent
+import rhedox.gesahuvertretungsplan.dependencyInjection.DaggerAppComponent
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
-import rhedox.gesahuvertretungsplan.util.PermissionManager
-import rhedox.gesahuvertretungsplan.util.accountManager
-import rhedox.gesahuvertretungsplan.util.connectivityManager
+import javax.inject.Inject
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 /**
  * Created by Robin on 29.06.2015.
  */
-class App : Application(), KodeinAware {
-    override val kodein by Kodein.lazy {
-        bind<SharedPreferences>() with instance(PreferenceManager.getDefaultSharedPreferences(applicationContext))
-        bind<BoardsRepository>() with provider { BoardsRepository(applicationContext) }
-        bind<SyncObserver>() with provider { SyncObserver() }
-        bind<AvatarLoader>() with provider { AvatarLoader(applicationContext) }
-        bind<PermissionManager>() with instance(PermissionManager(applicationContext))
-        bind<ConnectivityManager>() with instance(applicationContext.connectivityManager)
-        bind<AccountManager>() with instance(applicationContext.accountManager)
-        bind<SubstitutesDao>() with instance(substitutesDB.substitutes)
-        bind<AnnouncementsDao>() with instance(substitutesDB.announcements)
-        bind<SupervisionsDao>() with instance(substitutesDB.supervisions)
-        bind<BoardsDao>() with instance(boardsDB.boards)
-        bind<LessonsDao>() with instance(boardsDB.lessons)
-        bind<MarksDao>() with instance(boardsDB.marks)
+class App : Application() {
 
-        //Substitute
-        bind<SubstitutesRepository>() with provider { SubstitutesRepository(applicationContext) }
-        bind<SubstituteFormatter>() with singleton { SubstituteFormatter(applicationContext) }
-    }
+    public var refWatcher: RefWatcher? = null
+        private set;
 
-    private var refWatcher: RefWatcher? = null
-    private lateinit var substitutesDB: SubstitutesDatabase;
-    private lateinit var boardsDB: BoardsDatabase;
+    public lateinit var appComponent: AppComponent
+        private set;
+
+    @Inject lateinit var prefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
+
+        appComponent = DaggerAppComponent.builder()
+                .application(this)
+                .build()
+        appComponent.inject(this)
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
@@ -115,20 +94,20 @@ class App : Application(), KodeinAware {
             StrictMode.setThreadPolicy(threadPolicy)
         }
 
-        substitutesDB = SubstitutesDatabase.build(this)
-        boardsDB = BoardsDatabase.build(this)
+        initWithDependencies();
+    }
 
-        val pref: SharedPreferences = kodein.instance()
-        PreferenceFragment.applyDarkTheme(pref)
+    private fun initWithDependencies() {
+        PreferenceFragment.applyDarkTheme(prefs)
     }
 
     companion object {
         @JvmStatic
         fun getRefWatcher(context: Context): RefWatcher? {
-            if (BuildConfig.DEBUG)
-                return (context.applicationContext as App).refWatcher
+            return if (BuildConfig.DEBUG)
+                (context.applicationContext as App).refWatcher
             else
-                return null
+                null
         }
 
         fun checkNightMode(context: Context): Boolean {

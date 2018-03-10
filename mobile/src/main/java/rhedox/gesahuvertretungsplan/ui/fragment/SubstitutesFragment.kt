@@ -9,12 +9,12 @@ import android.os.Parcelable
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.view.*
-import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.share
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
@@ -33,11 +33,13 @@ import rhedox.gesahuvertretungsplan.util.windowManager
 class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
     private lateinit var presenter: SubstitutesContract.Presenter;
     private var pagerAdapter: SubstitutesPagerAdapter? = null
-        private set;
 
     private val fabPosition = PointF()
     private val fabSize = Point()
     private var fabElevation = 0f
+
+    internal var date = LocalDate.now()
+        private set;
 
     private object State {
         const val presenterState = "substitutesPresenterState"
@@ -95,14 +97,12 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         }
 
     override var isAppBarExpanded: Boolean = true
-        get() = field
         set(value) {
             appbarLayout.setExpanded(value)
             field = value
         }
 
     override var tabTitles: Array<String> = arrayOf("", "", "", "", "")
-        get() = field
         set(value) {
             field = value
             pagerAdapter?.tabTitles = value;
@@ -118,7 +118,6 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         }
 
     override var isCabVisible: Boolean = false
-        get() = field
         set(value) {
             if(field != value) {
                 if(value) {
@@ -139,12 +138,15 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     @AddTrace(name = "SubFragCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val appComponent = (context?.applicationContext as App).appComponent
+        //appComponent.inject(this)
+
         retainInstance = true
         setHasOptionsMenu(true)
 
-        val state: SubstitutesState;
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable(State.presenterState)
+        val state = if (savedInstanceState != null) {
+            savedInstanceState.getParcelable(State.presenterState)
         } else {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
             val date: LocalDate?;
@@ -153,9 +155,9 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             } else {
                 null
             }
-            state = SubstitutesState(date)
+            SubstitutesState(date)
         }
-        presenter = SubstitutesPresenter(appKodein(), state)
+        presenter = SubstitutesPresenter(appComponent.plusSubstitutes(), state)
     }
 
     @AddTrace(name = "SubFragCreateView", enabled = true)
