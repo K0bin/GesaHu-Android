@@ -64,8 +64,7 @@ class SubstitutesSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedSyncAdapter(context, autoInitialize, true) {
 
-        private val gesaHu = GesaHu(context);
-
+        @Inject internal lateinit var gesaHu: GesaHu
         @Inject internal lateinit var substitutesDao: SubstitutesDao
         @Inject internal lateinit var supervisionsDao: SupervisionsDao
         @Inject internal lateinit var announcementsDao: AnnouncementsDao

@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_auth.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.api.BoardName
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
@@ -34,6 +35,7 @@ import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.util.Md5Util
 import rhedox.gesahuvertretungsplan.util.accountManager
+import javax.inject.Inject
 
 /**
  * Created by robin on 31.10.2016.
@@ -50,7 +52,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var passwordMd5: String = "";
     private var password: String = "";
 
-    private lateinit var gesaHu: GesaHu;
+    @Inject internal lateinit var gesaHu: GesaHu;
     private var call: Call<List<BoardName>>? = null;
 
     private lateinit var snackbar: Snackbar;
@@ -66,6 +68,8 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        (application as App).appComponent.inject(this)
 
         setContentView(R.layout.activity_auth)
 
@@ -109,7 +113,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 usernameEdit.setText(username)
             }
         }
-        gesaHu = GesaHu(this);
 
         passwordEdit.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {

@@ -1,24 +1,8 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import android.accounts.AccountManager
-import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import com.nhaarman.mockito_kotlin.mock
-import org.joda.time.LocalDate
-import org.junit.Test
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
-import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
-import rhedox.gesahuvertretungsplan.util.PermissionManager
-
 /**
  * Created by robin on 22.12.2016.
- */
+ *
 class SubstitutesPresenterTest {
     val kodein = Kodein {
         bind<SharedPreferences>() with instance ( mock<SharedPreferences> {} )
@@ -162,4 +146,4 @@ class SubstitutesPresenterTest {
         assert(!view.isFabVisible)
         assert(view.isCabVisible)
     }
-}
+}*/

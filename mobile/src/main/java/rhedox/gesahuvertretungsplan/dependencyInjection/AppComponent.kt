@@ -3,6 +3,8 @@ package rhedox.gesahuvertretungsplan.dependencyInjection
 import dagger.BindsInstance
 import dagger.Component
 import rhedox.gesahuvertretungsplan.App
+import rhedox.gesahuvertretungsplan.service.CalendarSyncService
+import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import javax.inject.Singleton
 
@@ -21,6 +23,8 @@ public interface AppComponent {
 
     fun inject(application: App)
     fun inject(activity: MainActivity)
+    fun inject(activity: AuthActivity)
+    fun inject(calendarSyncAdapter: CalendarSyncService.SyncAdapter)
 
     fun plusSubstitutes(): SubstitutesComponent
     fun plusBoards(): BoardsComponent

@@ -3,8 +3,6 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 

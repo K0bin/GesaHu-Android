@@ -1,23 +1,8 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import android.accounts.AccountManager
-import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import org.junit.Test
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.model.database.entity.Board
-import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
-import rhedox.gesahuvertretungsplan.util.PermissionManager
-
 /**
  * Created by robin on 26.01.2017.
- */
+ *
 class NavDrawerPresenterTest {
     val kodein = Kodein {
         bind<SharedPreferences>() with instance ( mock<SharedPreferences> {} )
@@ -85,4 +70,4 @@ class NavDrawerPresenterTest {
         presenter.onNavigationDrawerItemClicked(14)
         assert(view.currentView == StubNavDrawerView.ViewValues.board)
     }
-}
+}*/

@@ -64,8 +64,7 @@ class BoardsSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
 
-        private val gesahu = GesaHu(context);
-
+        @Inject internal lateinit var gesahu: GesaHu
         @Inject internal lateinit var boardsDao: BoardsDao
         @Inject internal lateinit var lessonsDao: LessonsDao
         @Inject internal lateinit var marksDao: MarksDao
