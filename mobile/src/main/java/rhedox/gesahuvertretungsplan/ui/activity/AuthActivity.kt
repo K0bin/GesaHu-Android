@@ -27,6 +27,9 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.api.BoardName
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
+import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.addAccountSecurely
+import rhedox.gesahuvertretungsplan.security.setPasswordSecurely
 import rhedox.gesahuvertretungsplan.service.BoardsSyncService
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -51,8 +54,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var passwordMd5: String = "";
     private var password: String = "";
 
-    @Inject internal lateinit var prefs: SharedPreferences;
-    @Inject internal lateinit var gesaHu: GesaHu;
+    @Inject internal lateinit var prefs: SharedPreferences
+    @Inject internal lateinit var gesaHu: GesaHu
+    @Inject internal lateinit var encryptionHelper: EncryptionHelper
     private var call: Call<List<BoardName>>? = null;
 
     private lateinit var snackbar: Snackbar;
@@ -213,9 +217,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private fun finishLogin() {
         if(account == null) {
             account = Account(username, GesaHuAccountService.GesaHuAuthenticator.accountType);
-            accountManager.addAccountExplicitly(account, passwordMd5, Bundle());
+            accountManager.addAccountSecurely(account!!, passwordMd5, encryptionHelper);
         } else {
-            accountManager.setPassword(account, passwordMd5);
+            accountManager.setPasswordSecurely(account!!, passwordMd5, encryptionHelper);
         }
 
         notificationManager.cancel(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode())

@@ -12,8 +12,10 @@ import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
+import rhedox.gesahuvertretungsplan.mvp.MainContract
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.encryptExistingPassword
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
@@ -22,8 +24,8 @@ import javax.inject.Inject
 /**
  * Created by robin on 20.10.2016.
  */
-class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : NavDrawerContract.Presenter {
-    private var view: NavDrawerContract.View? = null;
+class MainPresenter(component: BoardsComponent, state: NavDrawerState) : MainContract.Presenter {
+    private var view: MainContract.View? = null;
     private var account: Account? = null
     private var avatar: Bitmap? = null;
 
@@ -33,6 +35,7 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
     @Inject internal lateinit var prefs: SharedPreferences
     @Inject internal lateinit var boardsRepository: BoardsRepository
     @Inject internal lateinit var avatarLoader: AvatarLoader
+    @Inject internal lateinit var encryptionHelper: EncryptionHelper
 
     private var boards: LiveData<List<Board>>
 
@@ -55,7 +58,7 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
         checkFirstStart()
     }
 
-    override fun attachView(view: NavDrawerContract.View) {
+    override fun attachView(view: MainContract.View) {
         boards.observeForever(observer)
 
         this.view = view;
@@ -99,6 +102,12 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
             //Show intro again due to major update & permissions
             view?.navigateToIntro()
         }
+        if (version < 4045) {
+            //Encrypt password
+            if (account != null) {
+                accountManager.encryptExistingPassword(account!!, encryptionHelper)
+            }
+        }
     }
 
     override fun detachView() {
@@ -117,14 +126,14 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
         when (drawerId) {
             this.drawerId -> return;
 
-            NavDrawerContract.DrawerIds.substitutes -> view?.navigateToSubstitutes(null)
-            NavDrawerContract.DrawerIds.about -> view?.navigateToAbout()
-            NavDrawerContract.DrawerIds.settings -> view?.navigateToSettings()
-            NavDrawerContract.DrawerIds.supervisions -> view?.navigateToSupervisions()
+            MainContract.DrawerIds.substitutes -> view?.navigateToSubstitutes(null)
+            MainContract.DrawerIds.about -> view?.navigateToAbout()
+            MainContract.DrawerIds.settings -> view?.navigateToSettings()
+            MainContract.DrawerIds.supervisions -> view?.navigateToSupervisions()
             else -> {
                 if (boards.value != null) {
                     for (board in boards.value!!) {
-                        if (board.name.hashCode() == drawerId - NavDrawerContract.DrawerIds.board) {
+                        if (board.name.hashCode() == drawerId - MainContract.DrawerIds.board) {
                             view?.navigateToBoard(board.name)
                         }
                     }

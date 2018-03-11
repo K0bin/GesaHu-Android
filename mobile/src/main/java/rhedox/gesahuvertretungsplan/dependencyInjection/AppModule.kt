@@ -4,6 +4,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.os.Build
 import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
@@ -11,6 +12,9 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
+import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.EncryptionHelperMarshmallow
+import rhedox.gesahuvertretungsplan.security.NoEncryptionHelper
 import rhedox.gesahuvertretungsplan.util.accountManager
 import rhedox.gesahuvertretungsplan.util.connectivityManager
 import javax.inject.Singleton
@@ -47,4 +51,8 @@ internal open class AppModule {
     @Provides
     @Singleton
     internal fun provideBoardsDatabase(context: Context): BoardsDatabase = BoardsDatabase.build(context)
+
+    @Provides
+    @Singleton
+    internal fun provideEncryption(): EncryptionHelper = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) EncryptionHelperMarshmallow() else NoEncryptionHelper()
 }

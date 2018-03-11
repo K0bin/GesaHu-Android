@@ -31,6 +31,8 @@ import rhedox.gesahuvertretungsplan.model.api.Event
 import rhedox.gesahuvertretungsplan.model.api.Exam
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Test
+import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.getPasswordSecurely
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.accountManager
 import rhedox.gesahuvertretungsplan.util.isCalendarReadingPermissionGranted
@@ -134,6 +136,7 @@ class CalendarSyncService : Service() {
         }
 
         @Inject internal lateinit var gesaHu: GesaHu
+        @Inject internal lateinit var encryptionHelper: EncryptionHelper
         private val address = context.getString(R.string.school_address)
 
         init {
@@ -168,7 +171,11 @@ class CalendarSyncService : Service() {
             val start = DateTime.now()
             val end = start.withFieldAdded(DurationFieldType.days(), 60).withTime(23,59,59,999)
 
-            val password = context.accountManager.getPassword(account) ?: "";
+            val password = context.accountManager.getPasswordSecurely(account, encryptionHelper)
+            if (password == null) {
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return
+            }
 
             val testCall = gesaHu.tests(account.name, start)
             var testResponse: Response<List<Test>>? = null

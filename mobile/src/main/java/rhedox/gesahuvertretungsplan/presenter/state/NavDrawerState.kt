@@ -2,13 +2,6 @@ package rhedox.gesahuvertretungsplan.presenter.state
 
 import android.os.Parcel
 import android.os.Parcelable
-import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.mvp.BoardContract
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 02.01.2017.

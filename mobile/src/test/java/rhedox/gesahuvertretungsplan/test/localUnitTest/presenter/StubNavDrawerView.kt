@@ -3,12 +3,12 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
+import rhedox.gesahuvertretungsplan.mvp.MainContract
 
 /**
  * Created by robin on 26.01.2017.
  */
-class StubNavDrawerView: NavDrawerContract.View {
+class StubNavDrawerView: MainContract.View {
 
     var boards: List<Board> = listOf()
     var currentView: Int = ViewValues.substitutes;

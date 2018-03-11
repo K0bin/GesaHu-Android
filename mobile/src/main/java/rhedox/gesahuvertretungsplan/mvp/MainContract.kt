@@ -9,7 +9,7 @@ import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 /**
  * Created by robin on 20.10.2016.
  */
-interface NavDrawerContract {
+interface MainContract {
     interface Presenter {
         fun onNavigationDrawerItemClicked(drawerId: Int)
         fun attachView(view: View)

@@ -71,7 +71,7 @@ class App : Application() {
                     //.detectAll()
                     .detectDiskWrites()
                     .detectCustomSlowCalls()
-                    .detectNetwork()
+                    //.detectNetwork()
                     .penaltyLog()
                     .build()
             StrictMode.setThreadPolicy(threadPolicy)

@@ -22,6 +22,8 @@ import rhedox.gesahuvertretungsplan.model.database.dao.MarksDao
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
+import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.getPasswordSecurely
 import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
 import javax.inject.Inject
@@ -69,6 +71,7 @@ class BoardsSyncService : Service() {
         @Inject internal lateinit var boardsDao: BoardsDao
         @Inject internal lateinit var lessonsDao: LessonsDao
         @Inject internal lateinit var marksDao: MarksDao
+        @Inject internal lateinit var encryptionHelper: EncryptionHelper
 
         init {
             (context.applicationContext as App)
@@ -84,7 +87,12 @@ class BoardsSyncService : Service() {
 
             CalendarSyncService.updateIsSyncable(account, context, prefs)
 
-            val password = context.accountManager.getPassword(account) ?: "";
+            val password = context.accountManager.getPasswordSecurely(account, encryptionHelper)
+            if (password == null) {
+                GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
+                return
+            }
+
             val call = gesahu.boards(account.name, password)
             var response: Response<List<BoardInfo>>? = null
             try {

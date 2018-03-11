@@ -13,7 +13,6 @@ import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
-import rhedox.gesahuvertretungsplan.util.PermissionManager
 import javax.inject.Singleton
 
 /**
@@ -36,10 +35,6 @@ internal open class TestAppModule {
     @Provides
     @Singleton
     internal fun provideAccountManager() = mock(AccountManager::class.java)
-
-    @Provides
-    @Singleton
-    internal fun providePermissionManager() = mock(PermissionManager::class.java)
 
     @Provides
     @Singleton

@@ -35,8 +35,8 @@ import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
-import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
-import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
+import rhedox.gesahuvertretungsplan.mvp.MainContract
+import rhedox.gesahuvertretungsplan.presenter.MainPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -49,7 +49,7 @@ import javax.inject.Inject
 /**
  * Created by robin on 20.10.2016.
  */
-class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
+class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, NavigationActivity {
     private var toggle: ActionBarDrawerToggle? = null
     private lateinit var listener: Listener;
     private var drawerSelected: Int? = null;
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
 
     private lateinit var currentFragment: Fragment;
 
-    private lateinit var presenter: NavDrawerContract.Presenter
+    private lateinit var presenter: MainContract.Presenter
 
     @Inject internal lateinit var prefs: SharedPreferences
 
@@ -74,9 +74,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         set(value) {
             field = value
             val menuItem: MenuItem? = when (value) {
-                NavDrawerContract.DrawerIds.settings -> navigationView.menu.findItem(R.id.settings);
-                NavDrawerContract.DrawerIds.about -> navigationView.menu.findItem(R.id.about);
-                NavDrawerContract.DrawerIds.substitutes -> navigationView.menu.findItem(R.id.substitutes);
+                MainContract.DrawerIds.settings -> navigationView.menu.findItem(R.id.settings);
+                MainContract.DrawerIds.about -> navigationView.menu.findItem(R.id.about);
+                MainContract.DrawerIds.substitutes -> navigationView.menu.findItem(R.id.substitutes);
                 else -> navigationView.menu.findItem(value);
             }
             if(menuItem != null) {
@@ -119,9 +119,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         //Restore presenter
         val state = savedInstanceState?.getParcelable(MainActivity.state) ?: NavDrawerState()
         presenter = if (lastCustomNonConfigurationInstance != null) {
-            lastCustomNonConfigurationInstance as NavDrawerPresenter
+            lastCustomNonConfigurationInstance as MainPresenter
         } else {
-            NavDrawerPresenter(appComponent.plusBoards(), state)
+            MainPresenter(appComponent.plusBoards(), state)
         }
 
         //Setup view
@@ -222,10 +222,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
 
     private fun onDrawerItemSelected(id: Int) {
         when (id) {
-            R.id.about -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.about);
-            R.id.settings -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.settings);
-            R.id.substitutes -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.substitutes);
-            R.id.supervisions -> presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.supervisions);
+            R.id.about -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.about);
+            R.id.settings -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.settings);
+            R.id.substitutes -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.substitutes);
+            R.id.supervisions -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.supervisions);
             else -> presenter.onNavigationDrawerItemClicked(drawerSelected!!)
         }
     }
@@ -275,9 +275,9 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val menu = navigationView.menu
         menu.removeGroup(R.id.boardsSubheader)
         for (board in boards) {
-            val item = menu.add(R.id.boardsSubheader, board.name.hashCode() + NavDrawerContract.DrawerIds.board, Menu.NONE, board.name)
+            val item = menu.add(R.id.boardsSubheader, board.name.hashCode() + MainContract.DrawerIds.board, Menu.NONE, board.name)
             item.isCheckable = true
-            item.isChecked = currentDrawerId == board.name.hashCode() + NavDrawerContract.DrawerIds.board
+            item.isChecked = currentDrawerId == board.name.hashCode() + MainContract.DrawerIds.board
         }
     }
 

@@ -4,8 +4,8 @@ import dagger.Subcomponent
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabaseRepository
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
+import rhedox.gesahuvertretungsplan.presenter.MainPresenter
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
-import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.service.BoardsSyncService
 
 /**
@@ -16,7 +16,7 @@ import rhedox.gesahuvertretungsplan.service.BoardsSyncService
 interface BoardsComponent {
     fun repository(): BoardsDatabaseRepository
 
-    fun inject(presenter: NavDrawerPresenter)
+    fun inject(presenter: MainPresenter)
     fun inject(presenter: BoardPresenter)
     fun inject(presenter: LessonsPresenter)
     fun inject(presenter: MarksPresenter)
