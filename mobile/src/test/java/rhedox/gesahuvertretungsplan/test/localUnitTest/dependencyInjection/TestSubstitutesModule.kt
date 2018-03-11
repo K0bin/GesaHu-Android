@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection
 
 import dagger.Module
 import dagger.Provides
-import io.mockk.mockk
+import org.mockito.Mockito.mock
 import rhedox.gesahuvertretungsplan.dependencyInjection.PresenterScope
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
 import rhedox.gesahuvertretungsplan.model.SubstitutesRepository
@@ -23,21 +23,21 @@ internal open class TestSubstitutesModule {
 
     @PresenterScope
     @Provides
-    internal fun provideSubstitutesDao(): SubstitutesDao = mockk(relaxed = true)
+    internal fun provideSubstitutesDao() = mock(SubstitutesDao::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideSupervisionsDao(): SupervisionsDao = mockk(relaxed = true)
+    internal fun provideSupervisionsDao() = mock(SupervisionsDao::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideAnnouncementsDao(): AnnouncementsDao = mockk(relaxed = true)
+    internal fun provideAnnouncementsDao() = mock(AnnouncementsDao::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideSyncObserver(): SyncObserver = mockk(relaxed = true)
+    internal fun provideSyncObserver() = mock(SyncObserver::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideFormatter(): SubstituteFormatter = mockk(relaxed = true)
+    internal fun provideFormatter() = mock(SubstituteFormatter::class.java)
 }

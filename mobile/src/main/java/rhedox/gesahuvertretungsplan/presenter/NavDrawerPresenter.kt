@@ -148,7 +148,7 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
         val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
         if (accounts.isNotEmpty()) {
             account = accounts[0]
-            view?.userName = account!!.name
+            view?.userName = account!!.name ?: ""
         }
 
         if(account != null) {

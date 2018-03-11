@@ -1,14 +1,18 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
+import android.accounts.Account
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import junit.framework.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection.TestAppComponent
 import rhedox.gesahuvertretungsplan.test.localUnitTest.repository.BoardsTestRepository
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
@@ -33,6 +37,11 @@ class NavDrawerPresenterTest {
         val appComponent = TestAppComponent.create()
         val presenter = NavDrawerPresenter(appComponent.boardComponent(), NavDrawerState(null))
         val repository = presenter.boardsRepository as BoardsTestRepository
+
+        val prefs = appComponent.prefs()
+        `when`(prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)).thenReturn(true)
+        `when`(prefs.getInt(PreferenceFragment.PREF_VERSION, 0)).thenReturn(BuildConfig.VERSION_CODE)
+
         var view = StubNavDrawerView()
         presenter.attachView(view)
         repository.loadBoards().value = listOf(Board("Englisch", "15", "irgendwas", 2, 2, 28))
@@ -62,9 +71,8 @@ class NavDrawerPresenterTest {
         val presenter = NavDrawerPresenter(appComponent.boardComponent(), NavDrawerState(null))
 
         val prefs = appComponent.prefs()
-        doReturn(true).`when`(prefs).getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)
-
-        assertTrue("Mocking didn't work.", prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false))
+        `when`(prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)).thenReturn(true)
+        `when`(prefs.getInt(PreferenceFragment.PREF_VERSION, 0)).thenReturn(BuildConfig.VERSION_CODE)
 
         var view = StubNavDrawerView()
         presenter.attachView(view)
@@ -81,11 +89,20 @@ class NavDrawerPresenterTest {
     fun testBoard() {
         val appComponent = TestAppComponent.create()
         val presenter = NavDrawerPresenter(appComponent.boardComponent(), NavDrawerState(null))
+
+        val prefs = appComponent.prefs()
+        `when`(prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)).thenReturn(true)
+        `when`(prefs.getInt(PreferenceFragment.PREF_VERSION, 0)).thenReturn(BuildConfig.VERSION_CODE)
+
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        `when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
+
         val repository = presenter.boardsRepository as BoardsTestRepository
         val view = StubNavDrawerView()
         repository.loadBoards().value = listOf(Board("Englisch", "15", "irgendwas", 2, 2, 28))
         presenter.attachView(view)
-        presenter.onNavigationDrawerItemClicked(13 + "English".hashCode())
+        presenter.onNavigationDrawerItemClicked(NavDrawerContract.DrawerIds.board + "Englisch".hashCode())
         assertEquals(StubNavDrawerView.ViewValues.board, view.currentView)
     }
 }

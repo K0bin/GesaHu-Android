@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection
 
 import dagger.Module
 import dagger.Provides
-import io.mockk.mockk
+import org.mockito.Mockito.mock
 import rhedox.gesahuvertretungsplan.dependencyInjection.PresenterScope
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
@@ -22,17 +22,17 @@ internal open class TestBoardModule {
 
     @PresenterScope
     @Provides
-    internal fun provideAvatarLoader(): AvatarLoader = mockk(relaxed = true)
+    internal fun provideAvatarLoader() = mock(AvatarLoader::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideBoardsDao(): BoardsDao = mockk(relaxed = true)
+    internal fun provideBoardsDao() = mock(BoardsDao::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideMarksDao(): MarksDao = mockk(relaxed = true)
+    internal fun provideMarksDao() = mock(MarksDao::class.java)
 
     @PresenterScope
     @Provides
-    internal fun provideLessonsDao(): LessonsDao = mockk(relaxed = true)
+    internal fun provideLessonsDao() = mock(LessonsDao::class.java)
 }
