@@ -3,7 +3,7 @@ package rhedox.gesahuvertretungsplan.presenter
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.mvp.LessonsContract
@@ -38,11 +38,11 @@ class LessonsPresenter(component: BoardsComponent, state: LessonsState): Lessons
         lessons.observeForever(lessonsObserver)
     }
 
-    fun onLessonsLoaded(lessons: List<Lesson>) {
+    private fun onLessonsLoaded(lessons: List<Lesson>) {
         view?.showList(lessons)
     }
 
-    fun onBoardLoaded(board: Board) {
+    private fun onBoardLoaded(board: Board) {
         view?.lessonsMissed = board.missedLessons
         view?.lessonsMissedWithSickNote = board.missedLessonsWithSickNotes
         view?.lessonsTotal = board.lessonsTotal

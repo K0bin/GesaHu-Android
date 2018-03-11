@@ -8,7 +8,7 @@ import com.google.android.apps.dashclock.api.ExtensionData
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabaseRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.filterRelevant
@@ -17,7 +17,7 @@ import rhedox.gesahuvertretungsplan.util.filterRelevant
  * Created by robin on 11.12.2016.
  */
 class SubstitutesDashClockExtension : DashClockExtension() {
-    lateinit var repo: SubstitutesRepository;
+    lateinit var repo: SubstitutesDatabaseRepository;
     var date = LocalDate()
     private var liveData: LiveData<List<Substitute>>? = null
 
@@ -30,7 +30,7 @@ class SubstitutesDashClockExtension : DashClockExtension() {
     override fun onCreate() {
         super.onCreate()
 
-        //repo = SubstitutesRepository(applicationContext)
+        //repo = SubstitutesDatabaseRepository(applicationContext)
     }
 
     override fun onDestroy() {

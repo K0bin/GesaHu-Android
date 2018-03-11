@@ -1,7 +1,7 @@
 package rhedox.gesahuvertretungsplan.dependencyInjection
 
 import dagger.Subcomponent
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.BoardsDatabaseRepository
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
@@ -14,7 +14,7 @@ import rhedox.gesahuvertretungsplan.service.BoardsSyncService
 @PresenterScope
 @Subcomponent(modules = [BoardsModule::class])
 interface BoardsComponent {
-    fun repository(): BoardsRepository
+    fun repository(): BoardsDatabaseRepository
 
     fun inject(presenter: NavDrawerPresenter)
     fun inject(presenter: BoardPresenter)

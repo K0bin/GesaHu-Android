@@ -3,7 +3,7 @@ package rhedox.gesahuvertretungsplan.presenter
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
@@ -38,11 +38,11 @@ class MarksPresenter(component: BoardsComponent, state: MarksState): MarksContra
         marks.observeForever(marksObserver)
     }
 
-    fun onBoardLoaded(board: Board) {
+    private fun onBoardLoaded(board: Board) {
         view?.mark = board.mark ?: ""
     }
 
-    fun onMarksLoaded(marks: List<Mark>) {
+    private fun onMarksLoaded(marks: List<Mark>) {
         view?.showList(marks)
     }
 

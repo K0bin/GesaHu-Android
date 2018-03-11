@@ -3,7 +3,7 @@ package rhedox.gesahuvertretungsplan.presenter
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState

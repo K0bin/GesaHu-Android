@@ -13,13 +13,9 @@ import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.dependencyInjection.SubstitutesComponent
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SyncObserver
+import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
-import rhedox.gesahuvertretungsplan.model.dayOfWeekIndex
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -122,7 +118,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
         }
     }
 
-    fun onSupervisionsLoaded(date:LocalDate, supervisions: List<Supervision>) {
+    private fun onSupervisionsLoaded(date:LocalDate, supervisions: List<Supervision>) {
         Log.d("SubstitutePresenter", "SupervisionContract loaded: $date, ${supervisions.size} items")
         if(date.dayOfWeekIndex > 4) {
             return;
@@ -175,7 +171,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
         if (account != null) {
             val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
-            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
+            StubSubstitutesContentProvider.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
     }

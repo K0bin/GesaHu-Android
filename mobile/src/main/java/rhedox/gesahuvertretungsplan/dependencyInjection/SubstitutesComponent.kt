@@ -1,7 +1,7 @@
 package rhedox.gesahuvertretungsplan.dependencyInjection
 
 import dagger.Subcomponent
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabaseRepository
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.SupervisionsPresenter
 import rhedox.gesahuvertretungsplan.service.SubstitutesNotifier
@@ -14,7 +14,7 @@ import rhedox.gesahuvertretungsplan.service.SubstitutesWidgetService
 @PresenterScope
 @Subcomponent(modules = [SubstitutesModule::class])
 interface SubstitutesComponent {
-    fun repository(): SubstitutesRepository
+    fun repository(): SubstitutesDatabaseRepository
 
     fun inject(presenter: SubstitutesPresenter)
     fun inject(presenter: SupervisionsPresenter)

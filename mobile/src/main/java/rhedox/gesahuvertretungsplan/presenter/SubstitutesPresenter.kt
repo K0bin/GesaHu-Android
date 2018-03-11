@@ -13,14 +13,10 @@ import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.dependencyInjection.SubstitutesComponent
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.SyncObserver
+import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
-import rhedox.gesahuvertretungsplan.model.dayOfWeekIndex
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
@@ -203,7 +199,7 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
         if (account != null) {
             val singleDay = Build.VERSION.SDK_INT < Build.VERSION_CODES.N || connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
-            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
+            StubSubstitutesContentProvider.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
     }
@@ -222,6 +218,7 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
                 view!!.setSelected(previousPosition, null)
             }
             view!!.setSelected(position, selected)
+            System.out.println("selected: $selected, currentPage: $currentPage, announcement: ${announcements[currentPage]?.value}")
             view!!.isFabVisible = selected == null && !announcements[currentPage]?.value?.text.isNullOrEmpty();
         }
     }

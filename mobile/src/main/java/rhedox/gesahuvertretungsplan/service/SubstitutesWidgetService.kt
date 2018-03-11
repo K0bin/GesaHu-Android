@@ -8,7 +8,7 @@ import android.widget.RemoteViewsService
 import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabaseRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class SubstitutesWidgetService : RemoteViewsService() {
     }
 
     class ViewsFactory(private val context: Context) : RemoteViewsFactory {
-        @Inject internal lateinit var repository: SubstitutesRepository
+        @Inject internal lateinit var repository: SubstitutesDatabaseRepository
         private var list: List<Substitute> = listOf()
         private var darkTheme = false
         private val date = SchoolWeek.nextFromNow()

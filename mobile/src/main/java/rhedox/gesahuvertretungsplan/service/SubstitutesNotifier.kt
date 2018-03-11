@@ -19,7 +19,7 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabaseRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
@@ -44,7 +44,7 @@ class SubstitutesNotifier(private val context: Context) {
     private var lesson: Int = -1;
 
     @Inject internal lateinit var formatter: SubstituteFormatter
-    @Inject internal lateinit var repository: SubstitutesRepository
+    @Inject internal lateinit var repository: SubstitutesDatabaseRepository
 
     init {
         (context.applicationContext as App)

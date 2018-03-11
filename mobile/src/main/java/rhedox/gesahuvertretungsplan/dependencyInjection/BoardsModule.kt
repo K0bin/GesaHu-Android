@@ -4,7 +4,9 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
+import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
+import rhedox.gesahuvertretungsplan.model.database.BoardsDatabaseRepository
 import rhedox.gesahuvertretungsplan.model.database.dao.BoardsDao
 import rhedox.gesahuvertretungsplan.model.database.dao.LessonsDao
 import rhedox.gesahuvertretungsplan.model.database.dao.MarksDao
@@ -29,4 +31,8 @@ public class BoardsModule {
     @Provides
     @PresenterScope
     internal fun provideAvatarLoader(context: Context): AvatarLoader = AvatarLoader(context)
+
+    @Provides
+    @PresenterScope
+    internal fun provideRepository(repository: BoardsDatabaseRepository): BoardsRepository = repository
 }

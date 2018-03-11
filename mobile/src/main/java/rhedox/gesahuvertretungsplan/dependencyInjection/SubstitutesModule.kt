@@ -4,8 +4,10 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
+import rhedox.gesahuvertretungsplan.model.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.model.SyncObserver
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabaseRepository
 import rhedox.gesahuvertretungsplan.model.database.dao.AnnouncementsDao
 import rhedox.gesahuvertretungsplan.model.database.dao.SubstitutesDao
 import rhedox.gesahuvertretungsplan.model.database.dao.SupervisionsDao
@@ -33,5 +35,9 @@ public class SubstitutesModule {
 
     @Provides
     @PresenterScope
-    internal fun provideSubstitutesFormatter(context: Context): SubstituteFormatter = SubstituteFormatter(context)
+    internal fun provideFormatter(context: Context): SubstituteFormatter = SubstituteFormatter(context)
+
+    @Provides
+    @PresenterScope
+    internal fun provideepository(repository: SubstitutesDatabaseRepository): SubstitutesRepository = repository
 }

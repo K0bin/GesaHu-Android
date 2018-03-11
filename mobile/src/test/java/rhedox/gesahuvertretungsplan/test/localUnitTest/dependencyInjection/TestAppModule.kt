@@ -20,33 +20,33 @@ import javax.inject.Singleton
 internal open class TestAppModule {
     @Provides
     @Singleton
-    internal fun provideContext() = mockk<Context>()
+    internal fun provideContext() = mockk<Context>(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun provideSharedPreferences(): SharedPreferences = mockk()
+    internal fun provideSharedPreferences(): SharedPreferences = mockk(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun provideAccountManager(): AccountManager = mockk()
+    internal fun provideAccountManager(): AccountManager = mockk(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun providePermissionManager(): PermissionManager = mockk()
+    internal fun providePermissionManager(): PermissionManager = mockk(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun provideConnectivityManager(): ConnectivityManager = mockk()
+    internal fun provideConnectivityManager(): ConnectivityManager = mockk(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun provideSubstituteDatabase() = mockk<SubstitutesDatabase>()
+    internal fun provideSubstituteDatabase() = mockk<SubstitutesDatabase>(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun provideBoardsDatabase() = mockk<BoardsDatabase>()
+    internal fun provideBoardsDatabase() = mockk<BoardsDatabase>(relaxed = true)
 
     @Provides
     @Singleton
-    internal fun provideApi() = mockk<GesaHu>()
+    internal fun provideApi() = mockk<GesaHu>(relaxed = true)
 }

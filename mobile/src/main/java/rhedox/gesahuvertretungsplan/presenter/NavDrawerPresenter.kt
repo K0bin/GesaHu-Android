@@ -12,7 +12,7 @@ import androidx.content.edit
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
@@ -113,7 +113,7 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
         boards.removeObserver(observer)
     }
 
-    fun onBoardsLoaded(boards: List<Board>) {
+    private fun onBoardsLoaded(boards: List<Board>) {
         view?.showBoards(boards)
     }
 

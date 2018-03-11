@@ -28,6 +28,8 @@ abstract class SubstitutesDao {
         insert(*substitutes.toTypedArray())
     }
 
-    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date AND isRelevant = :isRelevant ORDER BY lessonBegin ASC, duration ASC, course ASC, subject ASC;")
-    abstract fun getSync(date: LocalDate, isRelevant: Boolean = false): List<Substitute>
+    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date AND isRelevant = 1 ORDER BY lessonBegin ASC, duration ASC, course ASC, subject ASC;")
+    abstract fun getRelevantSync(date: LocalDate): List<Substitute>
+    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date ORDER BY lessonBegin ASC, duration ASC, course ASC, subject ASC;")
+    abstract fun getSync(date: LocalDate): List<Substitute>
 }
