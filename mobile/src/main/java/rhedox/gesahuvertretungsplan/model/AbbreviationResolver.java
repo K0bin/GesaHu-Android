@@ -30,7 +30,7 @@ public class AbbreviationResolver {
 
         int id = context.getResources().getIdentifier("subjects_" + stringsShortName, "string", packageName);
         if(id == 0)
-            return packageName;
+            return shortName;
         else
             return context.getString(id);
     }

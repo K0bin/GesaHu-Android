@@ -4,6 +4,7 @@ import android.accounts.AbstractAccountAuthenticator
 import android.accounts.Account
 import android.accounts.AccountAuthenticatorResponse
 import android.accounts.AccountManager
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -35,7 +36,7 @@ class GesaHuAccountService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return authenticator!!.iBinder;
+        return authenticator.iBinder;
     }
 
     //Authenticator
@@ -44,9 +45,10 @@ class GesaHuAccountService : Service() {
         companion object {
             const val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
 
-            private const val notificationChannel = "otherChannel";
+            internal const val notificationChannel = "otherChannel";
             private const val requestCode = 10;
 
+            @SuppressLint("NewApi")
             fun askForLogin(context: Context) {
                 val intent = context.intentFor<AuthActivity>(AuthActivity.argIsNewAccount to false)
                 val notificationManager = context.notificationManager

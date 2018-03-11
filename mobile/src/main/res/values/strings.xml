@@ -54,6 +54,12 @@
     <string name="notification_ask_for_login_title">Login fehlgeschlagen</string>
     <string name="notification_ask_for_login_body">Bitte aktualisiere dein Passwort</string>
 
+    <string name="notification_ask_for_calendar_title">Kalendersynchronisation fehlgeschlagen</string>
+    <string name="notification_ask_for_calendar_body">Bitte erlaube den Zugriff auf deinen Kalender.</string>
+    <string name="notification_ask_for_calendar_body_long">Bitte erlaube den Zugriff auf deinen Kalender. Es werden lediglich Klausuren und andere Schultermine hinzugefügt.</string>
+
+    <string name="calendar_rational">Der Zugriff auf deinen Kalender wird wirklich nur verwendet, um Klausuren und andere Schultermine einzutragen. Es wird nichts ausgelesen oder übertragen.</string>
+
     <string name="lessons_total">Stunden</string>
     <string name="lessons_missed">Verpasst</string>
     <string name="lessons_missed_with_sick_note">Entschuldigt</string>

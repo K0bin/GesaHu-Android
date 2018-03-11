@@ -143,7 +143,7 @@ dependencies {
     }
     implementation "com.google.firebase:firebase-perf:$play_version"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:0.10.4"
-    implementation 'com.github.paolorotolo:appintro:4.1.0'
+    implementation 'com.github.apl-devs:appintro:v4.2.3'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.facebook.stetho:stetho:1.5.0'

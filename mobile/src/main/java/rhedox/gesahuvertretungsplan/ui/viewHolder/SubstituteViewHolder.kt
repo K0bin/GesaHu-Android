@@ -36,10 +36,10 @@ class SubstituteViewHolder(private val view: View, private val presenter: Substi
     init {
         backgroundAnimator = ObjectAnimator.ofObject(view, "backgroundColor", ArgbEvaluator(), 0, selectedColor)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            elevationAnimator = ObjectAnimator.ofFloat(view, "elevation", 0f, selectedElevation)
+        elevationAnimator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ObjectAnimator.ofFloat(view, "elevation", 0f, selectedElevation)
         } else {
-            elevationAnimator = null;
+            null;
         }
 
         view.isClickable = true

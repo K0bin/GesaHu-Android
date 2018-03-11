@@ -32,15 +32,15 @@ import javax.inject.Inject
 class BoardsSyncService : Service() {
 
     companion object {
-        private var syncAdapter: SyncAdapter? = null;
+        private val syncPrimitive = object {
+            var syncAdapter: SyncAdapter? = null;
+        }
 
         fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setIsSyncable(account, StubBoardsContentProvider.authority, 1);
                 ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, true);
                 ContentResolver.addPeriodicSync(account, StubBoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
             } else {
-                ContentResolver.setIsSyncable(account, StubBoardsContentProvider.authority, 0);
                 ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, false);
                 ContentResolver.removePeriodicSync(account, StubBoardsContentProvider.authority, Bundle.EMPTY)
             }
@@ -52,14 +52,14 @@ class BoardsSyncService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        synchronized(Companion) {
-            if (syncAdapter == null)
-                syncAdapter = SyncAdapter(applicationContext, true)
+        synchronized(syncPrimitive) {
+            if (syncPrimitive.syncAdapter == null)
+                syncPrimitive.syncAdapter = SyncAdapter(applicationContext, true)
         }
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return syncAdapter!!.syncAdapterBinder;
+        return syncPrimitive.syncAdapter!!.syncAdapterBinder;
     }
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
@@ -80,6 +80,8 @@ class BoardsSyncService : Service() {
             if(Thread.interrupted()) {
                 return;
             }
+
+            CalendarSyncService.updateIsSyncable(account, context)
 
             val password = context.accountManager.getPassword(account) ?: "";
             val call = gesahu.boards(account.name, password)
@@ -116,10 +118,6 @@ class BoardsSyncService : Service() {
                 marksDao.insertAndClear(*marks.toTypedArray())
 
             } else if (response != null && response.code() == 403) {
-                BoardsSyncService.setIsSyncEnabled(account, false)
-                CalendarSyncService.setIsSyncEnabled(account, false)
-                SubstitutesSyncService.setIsSyncEnabled(account, false)
-
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
                 return;
             }

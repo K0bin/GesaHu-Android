@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.mvp
 
+import android.accounts.Account
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
@@ -14,6 +15,7 @@ interface NavDrawerContract {
         fun attachView(view: View)
         fun detachView()
         fun destroy()
+        fun onCalendarPermissionResult(isGranted: Boolean)
         fun saveState(): NavDrawerState
     }
 
@@ -34,6 +36,7 @@ interface NavDrawerContract {
         fun navigateToSubstitutes(date: LocalDate? = null)
         fun navigateToSupervisions(date: LocalDate? = null)
         fun navigateToBoard(boardName: String)
+        fun updateCalendarSync(account: Account)
         var userName: String;
         var currentDrawerId: Int;
         var avatar: Bitmap?

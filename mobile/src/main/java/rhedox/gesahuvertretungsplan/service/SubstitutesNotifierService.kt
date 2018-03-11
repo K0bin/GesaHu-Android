@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package rhedox.gesahuvertretungsplan.service
 
 import android.app.IntentService
@@ -7,7 +9,6 @@ import android.support.v4.content.WakefulBroadcastReceiver
 /**
  * Created by robin on 26.10.2016.
  */
-@Suppress("DEPRECATION")
 class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
         const val extraLesson = "lesson";

@@ -1,7 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
+import android.Manifest
+import android.accounts.Account
 import android.annotation.TargetApi
 import android.app.ActivityManager
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,6 +13,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -32,10 +37,13 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
 import rhedox.gesahuvertretungsplan.util.accountManager
+import rhedox.gesahuvertretungsplan.util.isCalendarWritingPermissionGranted
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
+import javax.inject.Inject
 
 /**
  * Created by robin on 20.10.2016.
@@ -52,6 +60,8 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     private lateinit var currentFragment: Fragment;
 
     private lateinit var presenter: NavDrawerContract.Presenter
+
+    @Inject internal lateinit var prefs: SharedPreferences
 
     override var userName: String
         get() = headerUsername.text.toString();
@@ -80,10 +90,15 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     companion object {
         const val currentFragmentTag = "pageFragment"
         const val state = "navPresenterState"
+        const val calendarPermissionRequestCode = 9
     }
 
     object Extra {
         const val date = "date"
+    }
+
+    object Action {
+        const val calendarPermission = "calendarPermission"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +107,6 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         val appComponent = (application as App).appComponent
         appComponent.inject(this)
 
-        val prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this)
         isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false)
 
         analytics = FirebaseAnalytics.getInstance(this)
@@ -138,6 +152,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
         } else {
             currentFragment = SubstitutesFragment.newInstance(date)
             supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment, currentFragmentTag).commit()
+        }
+
+        if (intent?.action == Action.calendarPermission) {
+            askForCalendarPermission()
         }
     }
 
@@ -335,6 +353,20 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
+    }
+
+    private fun askForCalendarPermission() {
+        if (isCalendarWritingPermissionGranted) return
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR), calendarPermissionRequestCode)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode != calendarPermissionRequestCode) return;
+        presenter.onCalendarPermissionResult(permissions.firstOrNull() == Manifest.permission.WRITE_CALENDAR && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
+    }
+
+    override fun updateCalendarSync(account: Account) {
+        CalendarSyncService.updateIsSyncable(account, applicationContext)
     }
 
     class Listener: DrawerLayout.SimpleDrawerListener() {

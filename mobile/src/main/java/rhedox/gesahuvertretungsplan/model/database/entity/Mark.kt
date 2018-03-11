@@ -2,6 +2,7 @@ package rhedox.gesahuvertretungsplan.model.database.entity
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.IntDef
 import android.support.annotation.StringDef
@@ -10,7 +11,9 @@ import org.joda.time.LocalDate
 /**
  * Created by robin on 19.01.2017.
  */
-@Entity(tableName = Mark.tableName, foreignKeys = [ForeignKey(entity = Board::class, parentColumns = ["name"], childColumns = ["boardName"], onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE, deferred = false)])
+@Entity(tableName = Mark.tableName,
+        foreignKeys = [ForeignKey(entity = Board::class, parentColumns = ["name"], childColumns = ["boardName"], onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE, deferred = false)],
+        indices = [(Index(name = "markBoardName", value = ["boardName"], unique = false))])
 data class Mark(val date: LocalDate,
                 val description: String,
                 val mark: String?,

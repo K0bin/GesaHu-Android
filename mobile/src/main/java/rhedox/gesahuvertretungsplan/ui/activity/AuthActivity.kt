@@ -1,18 +1,15 @@
 package rhedox.gesahuvertretungsplan.ui.activity
 
-import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.net.toUri
@@ -35,6 +32,7 @@ import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.util.Md5Util
 import rhedox.gesahuvertretungsplan.util.accountManager
+import rhedox.gesahuvertretungsplan.util.notificationManager
 import javax.inject.Inject
 
 /**
@@ -102,7 +100,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
 
         if(savedInstanceState != null) {
-            account = savedInstanceState.getParcelable<Account>(stateAccount);
+            account = savedInstanceState.getParcelable(stateAccount);
         }
 
         if(account == null && !intent.getBooleanExtra(argIsNewAccount, true)) {
@@ -218,6 +216,8 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             accountManager.setPassword(account, passwordMd5);
         }
 
+        notificationManager.cancel(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode())
+
         val credential = Credential.Builder(username)
                 .setPassword(passwordEdit.text.toString())
                 .setProfilePictureUri(BoardsSyncService.getPhotoUrl(username).toUri())
@@ -251,9 +251,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private fun finishActivity() {
         SubstitutesSyncService.setIsSyncEnabled(account!!, true)
         BoardsSyncService.setIsSyncEnabled(account!!, true)
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-            CalendarSyncService.setIsSyncEnabled(account!!, true)
-        }
+        CalendarSyncService.updateIsSyncable(account!!, applicationContext)
 
         val res = Intent()
         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username)

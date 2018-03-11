@@ -4,10 +4,8 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.content.ContentResolver
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.provider.CalendarContract
 import androidx.content.edit
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
@@ -19,7 +17,6 @@ import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
-import rhedox.gesahuvertretungsplan.util.PermissionManager
 import javax.inject.Inject
 
 /**
@@ -33,7 +30,6 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
     private var drawerId: Int? = null;
 
     @Inject internal lateinit var accountManager: AccountManager
-    @Inject internal lateinit var permissionManager: PermissionManager
     @Inject internal lateinit var prefs: SharedPreferences
     @Inject internal lateinit var boardsRepository: BoardsRepository
     @Inject internal lateinit var avatarLoader: AvatarLoader
@@ -138,6 +134,11 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
         this.drawerId = drawerId
     }
 
+    override fun onCalendarPermissionResult(isGranted: Boolean) {
+        account ?: return
+        view?.updateCalendarSync(account!!)
+    }
+
     /**
      * Tries to load the account and avatar. If that fails, it'll start the AuthActivity to add an Account
      */
@@ -155,9 +156,7 @@ class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : Na
             //load avatar
             avatarLoader.loadAvatar();
 
-            if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && permissionManager.isCalendarWritingPermissionGranted) {
-                CalendarSyncService.setIsSyncEnabled(account!!, true)
-            }
+            CalendarSyncService.setIsPeriodicSyncEnabled(account!!, true)
         } else if (view != null) {
             view!!.navigateToAuth()
         }

@@ -1,17 +1,25 @@
 package rhedox.gesahuvertretungsplan.service
 
+import android.Manifest
 import android.accounts.Account
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.*
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.CalendarContract
 import android.support.annotation.ColorInt
 import android.support.annotation.RequiresPermission
+import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.crashlytics.android.Crashlytics
+import org.jetbrains.anko.intentFor
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import retrofit2.Response
@@ -23,8 +31,11 @@ import rhedox.gesahuvertretungsplan.model.api.Event
 import rhedox.gesahuvertretungsplan.model.api.Exam
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Test
-import rhedox.gesahuvertretungsplan.util.PermissionManager
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.accountManager
+import rhedox.gesahuvertretungsplan.util.isCalendarReadingPermissionGranted
+import rhedox.gesahuvertretungsplan.util.isCalendarWritingPermissionGranted
+import rhedox.gesahuvertretungsplan.util.notificationManager
 import java.io.IOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
@@ -34,32 +45,81 @@ import javax.inject.Inject
  */
 class CalendarSyncService : Service() {
     companion object {
-        private var syncAdapter: SyncAdapter? = null;
+        private val syncPrimitive = object {
+            var syncAdapter: SyncAdapter? = null;
+        }
 
-        fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
+        fun updateIsSyncable(account: Account, context: Context) {
+            val wasSyncable = ContentResolver.getIsSyncable(account, CalendarContract.AUTHORITY) == 1
+            val isSyncable = context.isCalendarReadingPermissionGranted && context.isCalendarWritingPermissionGranted
+            if (isSyncable != wasSyncable) {
+                ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, if (isSyncable) 1 else 0)
+                if (isSyncable) {
+                    setIsPeriodicSyncEnabled(account, true)
+                }
+            } else {
+                if (!isSyncable) {
+                    askForPermission(context)
+                }
+            }
+        }
+
+        fun setIsPeriodicSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 1);
                 ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
                 ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, Bundle.EMPTY, 2 * 24 * 60 * 60)
             } else {
-                ContentResolver.setIsSyncable(account, CalendarContract.AUTHORITY, 0)
                 ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, false);
                 ContentResolver.removePeriodicSync(account,  CalendarContract.AUTHORITY, Bundle.EMPTY)
             }
+        }
+
+        private const val requestCode = 11
+        @SuppressLint("NewApi")
+        fun askForPermission(context: Context) {
+            val intent = context.intentFor<MainActivity>()
+            intent.action = MainActivity.Action.calendarPermission
+            val notificationManager = context.notificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (notificationManager.getNotificationChannel(GesaHuAccountService.GesaHuAuthenticator.notificationChannel) == null) {
+                    val channel = NotificationChannel(GesaHuAccountService.GesaHuAuthenticator.notificationChannel, context.getString(R.string.notification_channel_other), NotificationManager.IMPORTANCE_DEFAULT)
+                    notificationManager.createNotificationChannel(channel)
+                }
+            }
+
+            val body = context.getString(R.string.notification_ask_for_calendar_body)
+            val bodyLong = context.getString(R.string.notification_ask_for_calendar_body_long)
+            val title = context.getString(R.string.notification_ask_for_calendar_title)
+
+            val bigTextStyle = NotificationCompat.BigTextStyle()
+            bigTextStyle.bigText(bodyLong)
+            bigTextStyle.setBigContentTitle(title)
+
+            val notification = NotificationCompat.Builder(context, GesaHuAccountService.GesaHuAuthenticator.notificationChannel)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setContentIntent(PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                    .setStyle(bigTextStyle)
+                    .setAutoCancel(true)
+                    .build()
+
+            context.notificationManager.notify(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode() + 1, notification)
         }
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        synchronized(Companion) {
-            if (syncAdapter == null)
-                syncAdapter = SyncAdapter(applicationContext, true)
+        synchronized(syncPrimitive) {
+            if (syncPrimitive.syncAdapter == null)
+                syncPrimitive.syncAdapter = SyncAdapter(applicationContext, true)
         }
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return syncAdapter!!.syncAdapterBinder;
+        return syncPrimitive.syncAdapter!!.syncAdapterBinder;
     }
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
@@ -76,17 +136,14 @@ class CalendarSyncService : Service() {
             (context.applicationContext as App)
                     .appComponent
                     .inject(this)
+
+            Log.d("sync", "injected")
         }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
-            //android.os.Debug.waitForDebugger();
+            Log.d("sync", "performcalendarsync")
 
             if(Thread.interrupted()) {
-                return;
-            }
-            val permissionManager = PermissionManager(context)
-            if (!permissionManager.isCalendarReadingPermissionGranted || !permissionManager.isCalendarWritingPermissionGranted) {
-                setIsSyncEnabled(account, false)
                 return;
             }
 
@@ -95,13 +152,13 @@ class CalendarSyncService : Service() {
             calendars.putAll(existingCalendars)
 
             if(!calendars.containsKey(examCalendarName)) {
-                calendars.put(examCalendarName, createCalendar(examCalendarName, account))
+                calendars[examCalendarName] = createCalendar(examCalendarName, account)
             }
             if(!calendars.containsKey(testCalendarName)) {
-                calendars.put(testCalendarName, createCalendar(testCalendarName, account))
+                calendars[testCalendarName] = createCalendar(testCalendarName, account)
             }
             if(!calendars.containsKey(eventCalendarName)) {
-                calendars.put(eventCalendarName, createCalendar(eventCalendarName, account))
+                calendars[eventCalendarName] = createCalendar(eventCalendarName, account)
             }
 
             val start = DateTime.now()
@@ -133,10 +190,6 @@ class CalendarSyncService : Service() {
                     insert(it, calendars[testCalendarName]!!)
                 }
             } else if (testResponse != null && testResponse.code() == 403) {
-                BoardsSyncService.setIsSyncEnabled(account, false)
-                CalendarSyncService.setIsSyncEnabled(account, false)
-                SubstitutesSyncService.setIsSyncEnabled(account, false)
-
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
                 return;
             }
@@ -166,7 +219,7 @@ class CalendarSyncService : Service() {
                 }
             } else if (eventResponse != null && eventResponse.code() == 403) {
                 BoardsSyncService.setIsSyncEnabled(account, false)
-                CalendarSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsPeriodicSyncEnabled(account, false)
                 SubstitutesSyncService.setIsSyncEnabled(account, false)
 
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
@@ -198,7 +251,7 @@ class CalendarSyncService : Service() {
                 }
             } else if (examResponse != null && examResponse.code() == 403) {
                 BoardsSyncService.setIsSyncEnabled(account, false)
-                CalendarSyncService.setIsSyncEnabled(account, false)
+                CalendarSyncService.setIsPeriodicSyncEnabled(account, false)
                 SubstitutesSyncService.setIsSyncEnabled(account, false)
 
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
@@ -206,6 +259,8 @@ class CalendarSyncService : Service() {
             }
         }
 
+        @SuppressLint("MissingPermission")
+        @RequiresPermission(allOf = [Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR])
         private fun getCalendarIds(account: Account): Map<String, Long> {
             val cursor = context.contentResolver.query(CalendarContract.Calendars.CONTENT_URI,
                     arrayOf(CalendarContract.Calendars.NAME, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, CalendarContract.Calendars._ID),
@@ -227,6 +282,8 @@ class CalendarSyncService : Service() {
             return calendars;
         }
 
+        @SuppressLint("MissingPermission")
+        @RequiresPermission(allOf = [Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR])
         private fun clearExistingCalendars(calendarId: Long, start: DateTime) {
             val uri = CalendarContract.Events.CONTENT_URI
             context.contentResolver.delete(uri, "${CalendarContract.Events.CALENDAR_ID} = $calendarId AND (${CalendarContract.Events.DTSTART} >= ${start.millis} OR ${CalendarContract.Events.DTEND} >= ${start.millis})", null)
@@ -272,7 +329,8 @@ class CalendarSyncService : Service() {
         }
 
         @Suppress("ReplaceArrayOfWithLiteral")
-        @RequiresPermission(allOf = arrayOf(android.Manifest.permission.WRITE_CALENDAR))
+        @SuppressLint("MissingPermission")
+        @RequiresPermission(allOf = [Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR])
         private fun insert(event: Event, calendarId: Long) {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, event.begin.millis)
@@ -301,7 +359,8 @@ class CalendarSyncService : Service() {
         }
 
         @Suppress("ReplaceArrayOfWithLiteral")
-        @RequiresPermission(allOf = arrayOf(android.Manifest.permission.WRITE_CALENDAR))
+        @SuppressLint("MissingPermission")
+        @RequiresPermission(allOf = [Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR])
         private fun insert(test: Test, calendarId: Long) {
             val values = ContentValues()
             if (test.lessonStart != null && test.duration != null) {
@@ -321,7 +380,8 @@ class CalendarSyncService : Service() {
         }
 
         @Suppress("ReplaceArrayOfWithLiteral")
-        @RequiresPermission(allOf = arrayOf(android.Manifest.permission.WRITE_CALENDAR))
+        @SuppressLint("MissingPermission")
+        @RequiresPermission(allOf = [Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR])
         private fun insert(exam: Exam, calendarId: Long) {
             val values = ContentValues()
             values.put(CalendarContract.Events.DTSTART, exam.date.toDateTime(exam.time).millis)

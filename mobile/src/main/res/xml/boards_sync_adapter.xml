@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:contentAuthority="rhedox.gesahuvertretungsplan.boards.stub"
     android:accountType="rhedox.gesahuvertretungsplan.gesaHuAccount"
-    android:userVisible="true"
+    android:userVisible="false"
     android:supportsUploading="false"
     android:allowParallelSyncs="false"
     android:isAlwaysSyncable="true"/>

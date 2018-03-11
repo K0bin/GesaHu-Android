@@ -11,7 +11,6 @@ import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
-import rhedox.gesahuvertretungsplan.util.PermissionManager
 import rhedox.gesahuvertretungsplan.util.accountManager
 import rhedox.gesahuvertretungsplan.util.connectivityManager
 import javax.inject.Singleton
@@ -32,10 +31,6 @@ internal open class AppModule {
     @Provides
     @Singleton
     internal fun provideAccountManager(context: Context): AccountManager = context.accountManager
-
-    @Provides
-    @Singleton
-    internal fun providePermissionManager(context: Context): PermissionManager = PermissionManager(context)
 
     @Provides
     @Singleton

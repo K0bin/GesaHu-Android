@@ -128,8 +128,7 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
         announcements.forEach { it?.removeObserver(announcementObserver) }
     }
 
-    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
-        Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
+    private fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
         if(date.dayOfWeekIndex > 4) {
             return;
         }
@@ -143,14 +142,14 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
             view?.isRefreshing = ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority)
     }
 
-    fun onAnnouncementLoaded(date: LocalDate, text: String) {
+    private fun onAnnouncementLoaded(date: LocalDate, text: String) {
         if(date.dayOfWeekIndex > 4) {
             return;
         }
 
-        if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
-            val position = date.dayOfWeekIndex
-            view?.isFabVisible = selected == null && !announcements[currentPage]!!.value?.text.isNullOrEmpty()
+        val position = date.dayOfWeekIndex
+        if (date.weekOfWeekyear == this.date.weekOfWeekyear && position == currentPage) {
+            view?.isFabVisible = selected == null && !text.isEmpty()
         }
 
         if(account != null)

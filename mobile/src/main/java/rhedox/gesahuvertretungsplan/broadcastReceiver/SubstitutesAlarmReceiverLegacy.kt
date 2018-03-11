@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package rhedox.gesahuvertretungsplan.broadcastReceiver
 
 import android.content.Context

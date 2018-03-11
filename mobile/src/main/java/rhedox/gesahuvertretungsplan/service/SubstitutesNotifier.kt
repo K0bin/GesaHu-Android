@@ -67,7 +67,7 @@ class SubstitutesNotifier(private val context: Context) {
         onSubstitutesLoaded(date, substitutes)
     }
 
-    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
+    private fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
         val notificationManagerCompat = NotificationManagerCompat.from(context)
         val notificationManager = context.notificationManager
 
@@ -104,7 +104,7 @@ class SubstitutesNotifier(private val context: Context) {
                 val bigTextStyle = NotificationCompat.BigTextStyle()
                 bigTextStyle.bigText(notificationText)
                 bigTextStyle.setBigContentTitle(title)
-                bigTextStyle.setSummaryText(body)
+                bigTextStyle.setSummaryText(formatter.makeSubstituteKindText(substitutes[i].kind))
                 builder.setStyle(bigTextStyle)
 
                 //Normal notification

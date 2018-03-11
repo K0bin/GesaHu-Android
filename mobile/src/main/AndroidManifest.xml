@@ -110,11 +110,13 @@
         <provider
             android:authorities="rhedox.gesahuvertretungsplan.substitutes.stub"
             android:name="rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider"
+            android:label="@string/provider_substitutes"
             android:exported="false"
             android:syncable="true" />
         <provider
             android:authorities="rhedox.gesahuvertretungsplan.boards.stub"
             android:name="rhedox.gesahuvertretungsplan.model.database.StubBoardsContentProvider"
+            android:label="@string/provider_boards"
             android:exported="false"
             android:syncable="true" />
 
@@ -161,5 +163,4 @@
                 android:resource="@xml/calendar_sync_adapter"/>
         </service>
     </application>
-
 </manifest>

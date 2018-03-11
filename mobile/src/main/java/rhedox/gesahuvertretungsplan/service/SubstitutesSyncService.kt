@@ -34,15 +34,15 @@ import javax.inject.Inject
 class SubstitutesSyncService : Service() {
 
     companion object {
-        private var syncAdapter: SyncAdapter? = null;
+        private val syncPrimitive = object {
+            var syncAdapter: SyncAdapter? = null;
+        }
 
         fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setIsSyncable(account, StubSubstitutesContentProvider.authority, 1);
                 ContentResolver.setSyncAutomatically(account, StubSubstitutesContentProvider.authority, true);
                 ContentResolver.addPeriodicSync(account, StubSubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
             } else {
-                ContentResolver.setIsSyncable(account, StubSubstitutesContentProvider.authority, 0)
                 ContentResolver.setSyncAutomatically(account, StubSubstitutesContentProvider.authority, false);
                 ContentResolver.removePeriodicSync(account,  StubSubstitutesContentProvider.authority, Bundle.EMPTY)
             }
@@ -52,17 +52,17 @@ class SubstitutesSyncService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        synchronized(Companion) {
-            if (syncAdapter == null)
-                syncAdapter = SyncAdapter(applicationContext, true)
+        synchronized(syncPrimitive) {
+            if (syncPrimitive.syncAdapter == null)
+                syncPrimitive.syncAdapter = SyncAdapter(applicationContext, true)
         }
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return syncAdapter!!.syncAdapterBinder;
+        return syncPrimitive.syncAdapter!!.syncAdapterBinder;
     }
 
-    class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedSyncAdapter(context, autoInitialize, true) {
+    class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedSyncAdapter(context, autoInitialize, false) {
 
         @Inject internal lateinit var gesaHu: GesaHu
         @Inject internal lateinit var substitutesDao: SubstitutesDao
@@ -149,10 +149,6 @@ class SubstitutesSyncService : Service() {
                 }
             }
             if (response != null && response.code() == 403) {
-                BoardsSyncService.setIsSyncEnabled(account, false)
-                CalendarSyncService.setIsSyncEnabled(account, false)
-                SubstitutesSyncService.setIsSyncEnabled(account, false)
-
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
                 return null;
             }
