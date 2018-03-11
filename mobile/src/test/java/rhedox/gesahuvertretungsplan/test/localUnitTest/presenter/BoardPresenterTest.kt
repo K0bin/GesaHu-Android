@@ -1,37 +1,22 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import android.accounts.AccountManager
-import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.bind
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.provider
-import com.nhaarman.mockito_kotlin.mock
+import android.arch.core.executor.testing.InstantTaskExecutorRule
+import junit.framework.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState
-import rhedox.gesahuvertretungsplan.util.PermissionManager
+import rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection.TestAppComponent
+import rhedox.gesahuvertretungsplan.test.localUnitTest.repository.BoardsTestRepository
 
 /**
  * Created by robin on 01.02.2017.
  */
 class BoardPresenterTest {
-    val kodein = Kodein {
-        bind<SharedPreferences>() with instance(mock<SharedPreferences> {})
-        bind<BoardsRepository>() with provider { mock<BoardsRepository> {} }
-        bind<SubstitutesRepository>() with provider { mock<SubstitutesRepository> {} }
-        bind<SyncObserver>() with provider { mock<SyncObserver> {} }
-        bind<AccountManager>() with instance(mock<AccountManager> {})
-        bind<AvatarLoader>() with provider { mock<AvatarLoader> {} }
-        bind<PermissionManager>() with provider { mock<PermissionManager> {} }
-        bind<ConnectivityManager>() with provider { mock<ConnectivityManager> {} }
-    }
+    @Rule
+    @JvmField
+    val rule = InstantTaskExecutorRule()
 
     private fun simulateOrientationChange(presenter: BoardPresenter): StubBoardView {
         presenter.detachView()
@@ -42,15 +27,14 @@ class BoardPresenterTest {
 
     @Test
     fun testTitle() {
-        val presenter = BoardPresenter(kodein, BoardState(0L));
+        val appComponent = TestAppComponent.create()
+        val presenter = BoardPresenter(appComponent.boardComponent(), BoardState("BOARD"));
+        val repository = presenter.repository as BoardsTestRepository
         var view = StubBoardView()
         presenter.attachView(view)
-        presenter.onBoardsLoaded(listOf(
-                Board("Mathe LK", "15", "", 15, 2, 99, 0L),
-                Board("Deutsch LK", "13", "", 78, 55, 66, 1L)
-        ))
-        assert(view.title == "Mathe LK")
+        repository.loadBoard("BOARD").value = Board("Mathe LK", "15", "", 15, 2, 99)
+        assertEquals("Mathe LK", view.title)
         view = simulateOrientationChange(presenter)
-        assert(view.title == "Mathe LK")
+        assertEquals("Mathe LK", view.title)
     }
 }

@@ -9,6 +9,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import rhedox.gesahuvertretungsplan.R;
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute;
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision;
 import rhedox.gesahuvertretungsplan.util.TextUtils;
 
 /**
@@ -114,6 +116,9 @@ public class SubstituteFormatter {
 
     public String makeNotificationText(Substitute substitute) {
         String text = substitute.getSubject();
+
+        if (!TextUtils.isEmpty(substitute.getCourse()))
+            text += " " + substitute.getCourse();
 
         if(!TextUtils.isEmpty(substitute.getRoom()))
             text += "; " + context.getString(R.string.room) + ": " + substitute.getRoom();

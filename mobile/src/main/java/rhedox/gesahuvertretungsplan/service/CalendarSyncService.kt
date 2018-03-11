@@ -12,10 +12,10 @@ import android.support.annotation.RequiresPermission
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import org.jetbrains.anko.accountManager
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
@@ -24,8 +24,10 @@ import rhedox.gesahuvertretungsplan.model.api.Exam
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.PermissionManager
+import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 
 /**
  * Created by robin on 27.12.2016.
@@ -67,8 +69,14 @@ class CalendarSyncService : Service() {
             const val eventCalendarName = "gesaHuEvents";
         }
 
-        private val gesaHu = GesaHu(context)
+        @Inject internal lateinit var gesaHu: GesaHu
         private val address = context.getString(R.string.school_address)
+
+        init {
+            (context.applicationContext as App)
+                    .appComponent
+                    .inject(this)
+        }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             //android.os.Debug.waitForDebugger();

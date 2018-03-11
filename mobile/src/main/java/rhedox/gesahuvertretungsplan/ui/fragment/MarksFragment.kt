@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,20 +9,17 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.salomonbrys.kodein.android.appKodein
+import androidx.os.bundleOf
 import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.windowManager
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.mvp.MarksContract
-import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
-import rhedox.gesahuvertretungsplan.ui.adapter.LessonsAdapter
 import rhedox.gesahuvertretungsplan.ui.adapter.MarksAdapter
+import rhedox.gesahuvertretungsplan.util.windowManager
 
 /**
  * Created by robin on 19.01.2017.
@@ -34,8 +30,8 @@ class MarksFragment : Fragment(), MarksContract.View {
     private lateinit var layoutManager: LinearLayoutManager;
     private lateinit var adapter: MarksAdapter;
 
-    object Extra {
-        const val boardId = "boardId"
+    object Arguments {
+        const val boardName = "boardName"
     }
 
     companion object {
@@ -43,12 +39,8 @@ class MarksFragment : Fragment(), MarksContract.View {
         const val layoutManagerBundleName = "layoutManager"
 
         @JvmStatic
-        fun newInstance(boardId: Long): MarksFragment {
-            val args = Bundle()
-            args.putLong(Extra.boardId, boardId)
-            val fragment = MarksFragment()
-            fragment.arguments = args
-            return fragment;
+        fun newInstance(boardName: String): MarksFragment = MarksFragment().apply {
+            arguments = bundleOf(Arguments.boardName to boardName)
         }
     }
 
@@ -61,14 +53,15 @@ class MarksFragment : Fragment(), MarksContract.View {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        val state: MarksState;
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<MarksState>(stateBundleName)
+        val appComponent = (context?.applicationContext as App).appComponent
+
+        val state = if (savedInstanceState != null) {
+            savedInstanceState.getParcelable(stateBundleName)
         } else {
-            val id = arguments?.getLong(Extra.boardId, -1) ?: -1
-            state = MarksState(id)
+            val name = arguments?.getString(Arguments.boardName) ?: ""
+            MarksState(name)
         }
-        presenter = MarksPresenter(appKodein(), state)
+        presenter = MarksPresenter(appComponent.plusBoards(), state)
     }
 
     @AddTrace(name = "MarksFragCreateView", enabled = true)
@@ -94,7 +87,7 @@ class MarksFragment : Fragment(), MarksContract.View {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val totalScroll = recycler.computeVerticalScrollOffset();
-                (parentFragment as? AppBarFragment)?.hasAppBarElevation = totalScroll >= cardHeight
+                (parentFragment as? AppBarFragment)?.hasAppBarElevation = !adapter.hasTopHeader || totalScroll >= cardHeight
             }
         })
 

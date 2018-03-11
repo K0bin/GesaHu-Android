@@ -2,56 +2,69 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.ContentResolver
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.provider.CalendarContract
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
+import androidx.content.edit
 import rhedox.gesahuvertretungsplan.BuildConfig
+import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.BoardsRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import rhedox.gesahuvertretungsplan.util.PermissionManager
+import javax.inject.Inject
 
 /**
  * Created by robin on 20.10.2016.
  */
-class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : NavDrawerContract.Presenter {
+class NavDrawerPresenter(component: BoardsComponent, state: NavDrawerState) : NavDrawerContract.Presenter {
     private var view: NavDrawerContract.View? = null;
     private var account: Account? = null
-        private set
     private var avatar: Bitmap? = null;
-
-    private val accountManager: AccountManager = kodeIn.instance()
-    private val permissionManager: PermissionManager = kodeIn.instance()
-
-    private val boardsRepository: BoardsRepository = kodeIn.instance()
-
-    private val prefs: SharedPreferences = kodeIn.instance()
-
-    private var boards: List<Board> = listOf();
 
     private var drawerId: Int? = null;
 
+    @Inject internal lateinit var accountManager: AccountManager
+    @Inject internal lateinit var permissionManager: PermissionManager
+    @Inject internal lateinit var prefs: SharedPreferences
+    @Inject internal lateinit var boardsRepository: BoardsRepository
+    @Inject internal lateinit var avatarLoader: AvatarLoader
+
+    private var boards: LiveData<List<Board>>
+
+    private val observer = Observer<List<Board>?> {
+        if (it?.isNotEmpty() != true) return@Observer
+        onBoardsLoaded(it)
+    }
+
+
     init {
-        boardsRepository.boardsCallback = { onBoardsLoaded(it) }
-        boardsRepository.loadBoards()
+        component.inject(this)
+        boards = boardsRepository.loadBoards()
 
-        drawerId = state.selectedDrawerId
+        avatarLoader.callback = {
+            this.avatar = it
+            view?.avatar = it
+        }
 
+        this.drawerId = state.selectedDrawerId
         checkFirstStart()
     }
 
     override fun attachView(view: NavDrawerContract.View) {
+        boards.observeForever(observer)
+
         this.view = view;
         view.userName = account?.name ?: ""
-        view.showBoards(this.boards)
+        view.showBoards(this.boards.value ?: listOf())
         view.avatar = this.avatar
 
         if (drawerId != null) {
@@ -81,10 +94,9 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
     private fun updateApp() {
         val version = prefs.getInt(PreferenceFragment.PREF_VERSION, 0)
         if (version < BuildConfig.VERSION_CODE) {
-            val editor = prefs.edit() ?: return
-
-            editor.putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
-            editor.apply()
+            prefs.edit {
+                putInt(PreferenceFragment.PREF_VERSION, BuildConfig.VERSION_CODE)
+            }
         }
 
         if (version < 4012) {
@@ -98,12 +110,11 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
     }
 
     override fun destroy() {
-        boardsRepository.destroy()
+        boards.removeObserver(observer)
     }
 
-    fun onBoardsLoaded(boards: List<Board>) {
+    private fun onBoardsLoaded(boards: List<Board>) {
         view?.showBoards(boards)
-        this.boards = boards;
     }
 
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
@@ -115,9 +126,11 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
             NavDrawerContract.DrawerIds.settings -> view?.navigateToSettings()
             NavDrawerContract.DrawerIds.supervisions -> view?.navigateToSupervisions()
             else -> {
-                for (board in boards) {
-                    if (board.id == drawerId - 13L) {
-                        view?.navigateToBoard(board.id)
+                if (boards.value != null) {
+                    for (board in boards.value!!) {
+                        if (board.name.hashCode() == drawerId - NavDrawerContract.DrawerIds.board) {
+                            view?.navigateToBoard(board.name)
+                        }
                     }
                 }
             }
@@ -135,16 +148,11 @@ class NavDrawerPresenter(private val kodeIn: Kodein, state: NavDrawerState) : Na
         val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
         if (accounts.isNotEmpty()) {
             account = accounts[0]
-            view?.userName = account!!.name
+            view?.userName = account!!.name ?: ""
         }
 
         if(account != null) {
             //load avatar
-            val avatarLoader: AvatarLoader = kodeIn.instance();
-            avatarLoader.callback = {
-                this.avatar = it
-                view?.avatar = it
-            }
             avatarLoader.loadAvatar();
 
             if(ContentResolver.getIsSyncable(account!!, CalendarContract.AUTHORITY) == 0 && permissionManager.isCalendarWritingPermissionGranted) {

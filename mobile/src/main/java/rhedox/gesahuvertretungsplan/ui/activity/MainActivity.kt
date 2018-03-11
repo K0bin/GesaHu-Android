@@ -13,43 +13,45 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import com.github.salomonbrys.kodein.android.KodeinAppCompatActivity
-import com.github.salomonbrys.kodein.android.appKodein
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
-import rhedox.gesahuvertretungsplan.util.fixInputMethod
+import rhedox.gesahuvertretungsplan.util.accountManager
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import rhedox.gesahuvertretungsplan.util.removeActivityFromTransitionManager
 
 /**
  * Created by robin on 20.10.2016.
  */
-class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
+class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity, NavigationActivity {
     private var toggle: ActionBarDrawerToggle? = null
     private lateinit var listener: Listener;
     private var drawerSelected: Int? = null;
     private lateinit var analytics: FirebaseAnalytics;
     private var isAmoledBlackEnabled = false
 
-    private lateinit var presenter: NavDrawerContract.Presenter;
-
     private lateinit var headerUsername: TextView;
 
     private lateinit var currentFragment: Fragment;
+
+    private lateinit var presenter: NavDrawerContract.Presenter
 
     override var userName: String
         get() = headerUsername.text.toString();
@@ -58,7 +60,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         }
 
     override var currentDrawerId: Int = -1
-        get() = field
         set(value) {
             field = value
             val menuItem: MenuItem? = when (value) {
@@ -88,6 +89,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val appComponent = (application as App).appComponent
+        appComponent.inject(this)
+
         val prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this)
         isAmoledBlackEnabled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false)
 
@@ -99,10 +103,10 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
 
         //Restore presenter
         val state = savedInstanceState?.getParcelable(MainActivity.state) ?: NavDrawerState()
-        if (lastCustomNonConfigurationInstance != null) {
-            presenter = lastCustomNonConfigurationInstance as NavDrawerPresenter
+        presenter = if (lastCustomNonConfigurationInstance != null) {
+            lastCustomNonConfigurationInstance as NavDrawerPresenter
         } else {
-            presenter = NavDrawerPresenter(appKodein(), state)
+            NavDrawerPresenter(appComponent.plusBoards(), state)
         }
 
         //Setup view
@@ -135,14 +139,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
             currentFragment = SubstitutesFragment.newInstance(date)
             supportFragmentManager.beginTransaction().replace(R.id.fragment_container, currentFragment, currentFragmentTag).commit()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        //Fix Android memory leaks
-        fixInputMethod()
-        removeActivityFromTransitionManager()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -224,6 +220,14 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         toggle?.syncState()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (!isChangingConfigurations) {
+            presenter.destroy()
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         toggle?.onConfigurationChanged(newConfig)
@@ -252,9 +256,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         val menu = navigationView.menu
         menu.removeGroup(R.id.boardsSubheader)
         for (board in boards) {
-            val item = menu.add(R.id.boardsSubheader, (board.id ?: 0).toInt() + NavDrawerContract.DrawerIds.board, Menu.NONE, board.name)
+            val item = menu.add(R.id.boardsSubheader, board.name.hashCode() + NavDrawerContract.DrawerIds.board, Menu.NONE, board.name)
             item.isCheckable = true
-            item.isChecked = currentDrawerId == (board.id ?: 0).toInt() + NavDrawerContract.DrawerIds.board
+            item.isChecked = currentDrawerId == board.name.hashCode() + NavDrawerContract.DrawerIds.board
         }
     }
 
@@ -278,7 +282,6 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         val fragment = PreferenceContainerFragment.newInstance()
         fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         currentFragment = fragment
@@ -299,9 +302,9 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
         startActivity(intentFor<WelcomeActivity>().newTask().clearTask())
     }
 
-    override fun navigateToBoard(boardId: Long) {
+    override fun navigateToBoard(boardName: String) {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
-        val fragment = BoardFragment.newInstance(boardId)
+        val fragment = BoardFragment.newInstance(boardName)
         fragment.useSlideAnimation = true;
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
@@ -315,22 +318,20 @@ class MainActivity : KodeinAppCompatActivity(), NavDrawerContract.View, DrawerAc
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
-        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = currentFragment !is SubstitutesFragment
         val fragment = SubstitutesFragment.newInstance(date)
-        fragment.useSlideAnimation = date == null
+        fragment.useSlideAnimation = currentFragment !is SubstitutesFragment
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;
     }
 
     override fun navigateToSupervisions(date: LocalDate?) {
-        (currentFragment as? AnimationFragment)?.useSlideAnimation = true
+        (currentFragment as? AnimationFragment)?.useSlideAnimation = currentFragment !is SupervisionsFragment
         val fragment = SupervisionsFragment.newInstance(date)
-        fragment.useSlideAnimation = date == null
+        fragment.useSlideAnimation = currentFragment !is SupervisionsFragment
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(if (date == null) R.anim.slide_in_from_right else R.anim.fade_in, if (date == null) R.anim.slide_out_to_left else R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
         this.currentFragment = fragment;

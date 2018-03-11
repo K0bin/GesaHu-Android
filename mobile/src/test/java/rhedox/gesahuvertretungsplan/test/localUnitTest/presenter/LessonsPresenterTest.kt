@@ -1,40 +1,24 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import android.accounts.AccountManager
-import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.bind
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.provider
-import com.nhaarman.mockito_kotlin.mock
+import android.arch.core.executor.testing.InstantTaskExecutorRule
+import junit.framework.Assert.assertEquals
 import org.joda.time.LocalDate
+import org.junit.Rule
 import org.junit.Test
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
-import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
-import rhedox.gesahuvertretungsplan.util.PermissionManager
+import rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection.TestAppComponent
+import rhedox.gesahuvertretungsplan.test.localUnitTest.repository.BoardsTestRepository
 
 /**
  * Created by robin on 01.02.2017.
  */
 class LessonsPresenterTest {
-    val kodein = Kodein {
-        bind<SharedPreferences>() with instance(mock<SharedPreferences> {})
-        bind<BoardsRepository>() with provider { mock<BoardsRepository> {} }
-        bind<SubstitutesRepository>() with provider { mock<SubstitutesRepository> {} }
-        bind<SyncObserver>() with provider { mock<SyncObserver> {} }
-        bind<AccountManager>() with instance(mock<AccountManager> {})
-        bind<AvatarLoader>() with provider { mock<AvatarLoader> {} }
-        bind<PermissionManager>() with provider { mock<PermissionManager> {} }
-        bind<ConnectivityManager>() with provider { mock<ConnectivityManager> {} }
-    }
+    @Rule
+    @JvmField
+    val rule = InstantTaskExecutorRule()
 
     private fun simulateOrientationChange(presenter: LessonsPresenter): StubLessonsView {
         presenter.detachView()
@@ -45,37 +29,42 @@ class LessonsPresenterTest {
 
     @Test
     fun testLessons() {
-        val presenter = LessonsPresenter(kodein, LessonsState(0))
+        val appComponent = TestAppComponent.create()
+        val presenter = LessonsPresenter(appComponent.boardComponent(), LessonsState("BOARD"))
+        val repository = presenter.repository as BoardsTestRepository
         var view = StubLessonsView()
         presenter.attachView(view)
-        presenter.onBoardLoaded(Board("", null, "", 15, 2, 99))
-        assert(view.lessonsMissed == 15)
-        assert(view.lessonsMissedWithSickNote == 2)
-        assert(view.lessonsTotal == 99)
+        repository.loadBoard("BOARD").value = Board("BOARD2", null, "", 15, 2, 99)
+        assertEquals(15, view.lessonsMissed)
+        assertEquals(2, view.lessonsMissedWithSickNote)
+        assertEquals(99, view.lessonsTotal)
         view = simulateOrientationChange(presenter)
-        assert(view.lessonsMissed == 15)
-        assert(view.lessonsMissedWithSickNote == 2)
-        assert(view.lessonsTotal == 99)
+        assertEquals(15, view.lessonsMissed)
+        assertEquals(2, view.lessonsMissedWithSickNote)
+        assertEquals(99, view.lessonsTotal)
     }
 
     @Test
     fun testList() {
-        val presenter = LessonsPresenter(kodein, LessonsState(0))
+        val appComponent = TestAppComponent.create()
+        val presenter = LessonsPresenter(appComponent.boardComponent(), LessonsState("BOARD"))
+        val repository = presenter.repository as BoardsTestRepository
         var view = StubLessonsView()
         presenter.attachView(view)
-        presenter.onLessonsLoaded(listOf(
-                Lesson(LocalDate(), "Topic1", 2, Lesson.StatusValues.absent, null, null),
-                Lesson(LocalDate(), "Topic2", 4, Lesson.StatusValues.present, null, null),
-                Lesson(LocalDate(), "Topic3", 77, Lesson.StatusValues.absent, null, null)
-        ))
-        assert(view.list[0].topic == "Topic1")
-        assert(view.list[1].status == Lesson.StatusValues.present)
-        assert(view.list[2].status == Lesson.StatusValues.absent)
-        assert(view.list[2].duration == 77)
+        val date = LocalDate(2015, 1, 1)
+        repository.loadLessons("BOARD").value = listOf(
+                Lesson(date, "Topic1", 2, Lesson.StatusValues.absent, null, null, "BOARD"),
+                Lesson(date, "Topic2", 4, Lesson.StatusValues.present, null, null, "BOARD"),
+                Lesson(date, "Topic3", 77, Lesson.StatusValues.absent, null, null, "BOARD")
+        )
+        assertEquals("Topic1", view.list[0].topic )
+        assertEquals(Lesson.StatusValues.present, view.list[1].status)
+        assertEquals(Lesson.StatusValues.absent, view.list[2].status)
+        assertEquals(77, view.list[2].duration)
         view = simulateOrientationChange(presenter)
-        assert(view.list[0].topic == "Topic1")
-        assert(view.list[1].status == Lesson.StatusValues.present)
-        assert(view.list[2].status == Lesson.StatusValues.absent)
-        assert(view.list[2].duration == 77)
+        assertEquals("Topic1", view.list[0].topic )
+        assertEquals(Lesson.StatusValues.present, view.list[1].status)
+        assertEquals(Lesson.StatusValues.absent, view.list[2].status)
+        assertEquals(77, view.list[2].duration)
     }
 }

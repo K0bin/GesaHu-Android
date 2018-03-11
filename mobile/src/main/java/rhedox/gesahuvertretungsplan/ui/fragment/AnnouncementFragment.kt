@@ -1,6 +1,9 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.animation.*
+import android.animation.Animator
+import android.animation.ArgbEvaluator
+import android.animation.FloatEvaluator
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Dialog
@@ -14,11 +17,13 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.widget.CardView
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.KeyEvent
+import android.view.View
+import android.view.ViewAnimationUtils
+import android.view.Window
 import android.widget.TextView
 import io.codetail.animation.arcanimator.ArcAnimator
 import io.codetail.animation.arcanimator.Side
-
 import rhedox.gesahuvertretungsplan.R
 import java.lang.ref.WeakReference
 
@@ -193,7 +198,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         dialogArcAnimator.setInterpolator(FastOutSlowInInterpolator())
         dialogArcAnimator.duration = longDuration
 
-        val elevationAnimator = ObjectAnimator.ofObject(view as CardView, "cardElevation", FloatEvaluator(), if (isVisible) fabElevation else dialogElevation, if (isVisible) dialogElevation else fabElevation)
+        val elevationAnimator = ObjectAnimator.ofObject(view, "cardElevation", FloatEvaluator(), if (isVisible) fabElevation else dialogElevation, if (isVisible) dialogElevation else fabElevation)
         elevationAnimator.interpolator = FastOutSlowInInterpolator()
         elevationAnimator.duration = longDuration
 

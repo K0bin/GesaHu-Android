@@ -4,14 +4,12 @@ import android.content.Context
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormatterBuilder
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.api.Exam
-import rhedox.gesahuvertretungsplan.util.Html
 import java.lang.reflect.Type
 
 /**
@@ -48,12 +46,12 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
         val duration: Duration?
         if (timeParts.isNotEmpty() && timeParts[0].isNotBlank()) {
             begin = LocalTime.parse(timeParts[0].replace('.', ':'), formatter)
-            if (timeParts.size > 1 && timeParts[1].isNotBlank()) {
+            duration = if (timeParts.size > 1 && timeParts[1].isNotBlank()) {
                 val end = LocalTime.parse(timeParts[1].replace('.', ':'), formatter)
                 val durationMillis = end.millisOfDay - begin.millisOfDay;
-                duration = Duration(durationMillis.toLong())
+                Duration(durationMillis.toLong())
             } else {
-                duration = null
+                null
             }
         } else {
             begin = LocalTime()

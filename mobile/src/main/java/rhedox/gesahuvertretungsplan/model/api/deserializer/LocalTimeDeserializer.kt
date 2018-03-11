@@ -17,7 +17,6 @@ class LocalTimeDeserializer : JsonDeserializer<LocalTime> {
             .appendSecondOfMinute(2)
             .toParser()
 
-
     private val formatter = DateTimeFormatterBuilder()
             .appendHourOfDay(2)
             .appendLiteral(':')

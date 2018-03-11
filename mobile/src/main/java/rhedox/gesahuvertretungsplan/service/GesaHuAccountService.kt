@@ -1,19 +1,24 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.accounts.*
-import android.app.*
+import android.accounts.AbstractAccountAuthenticator
+import android.accounts.Account
+import android.accounts.AccountAuthenticatorResponse
+import android.accounts.AccountManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
-import org.jetbrains.anko.accountManager
 import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.notificationManager
-import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
+import rhedox.gesahuvertretungsplan.util.accountManager
+import rhedox.gesahuvertretungsplan.util.notificationManager
 
 /**
  * Created by robin on 11.10.2016.
@@ -39,15 +44,15 @@ class GesaHuAccountService : Service() {
         companion object {
             const val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
 
-            const val notificationChannel = "otherChannel";
-            const val requestCode = 10;
+            private const val notificationChannel = "otherChannel";
+            private const val requestCode = 10;
 
             fun askForLogin(context: Context) {
                 val intent = context.intentFor<AuthActivity>(AuthActivity.argIsNewAccount to false)
                 val notificationManager = context.notificationManager
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (notificationManager.getNotificationChannel(SubstitutesNotifierService.substitutesChannel) == null) {
+                    if (notificationManager.getNotificationChannel(notificationChannel) == null) {
                         val channel = NotificationChannel(notificationChannel, context.getString(R.string.notification_channel_other), NotificationManager.IMPORTANCE_DEFAULT)
                         notificationManager.createNotificationChannel(channel)
                     }

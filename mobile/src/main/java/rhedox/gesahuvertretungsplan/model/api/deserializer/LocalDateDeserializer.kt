@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeFormatterBuilder
 import java.lang.reflect.Type
 
 /**
@@ -12,10 +12,18 @@ import java.lang.reflect.Type
  */
 
 class LocalDateDeserializer : JsonDeserializer<LocalDate?> {
+    private val formatter = DateTimeFormatterBuilder()
+            .appendYear(4, 4)
+            .appendLiteral('-')
+            .appendMonthOfYear(2)
+            .appendLiteral('-')
+            .appendDayOfMonth(2)
+            .toFormatter()
+
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): LocalDate? {
         if(json == null || json.asString.isNullOrBlank())
             return null
 
-        return LocalDate.parse(json.asString);
+        return LocalDate.parse(json.asString, formatter);
     }
 }

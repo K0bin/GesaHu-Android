@@ -9,7 +9,6 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -17,29 +16,26 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.net.toUri
-import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.android.synthetic.main.activity_auth.*
-import org.jetbrains.anko.accountManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.api.BoardName
+import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.service.BoardsSyncService
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.util.Md5Util
+import rhedox.gesahuvertretungsplan.util.accountManager
+import javax.inject.Inject
 
 /**
  * Created by robin on 31.10.2016.
@@ -56,7 +52,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var passwordMd5: String = "";
     private var password: String = "";
 
-    private lateinit var gesaHu: GesaHu;
+    @Inject internal lateinit var gesaHu: GesaHu;
     private var call: Call<List<BoardName>>? = null;
 
     private lateinit var snackbar: Snackbar;
@@ -73,10 +69,12 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        (application as App).appComponent.inject(this)
+
         setContentView(R.layout.activity_auth)
 
         client = Credentials.getClient(this)
-        var request = CredentialRequest.Builder()
+        val request = CredentialRequest.Builder()
                 .setPasswordLoginSupported(true)
                 .build()
 
@@ -115,7 +113,6 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 usernameEdit.setText(username)
             }
         }
-        gesaHu = GesaHu(this);
 
         passwordEdit.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {

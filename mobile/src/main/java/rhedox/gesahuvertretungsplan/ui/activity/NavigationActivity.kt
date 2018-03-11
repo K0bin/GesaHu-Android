@@ -9,7 +9,7 @@ interface NavigationActivity {
     fun navigateToSettings()
     fun navigateToAbout()
     fun navigateToIntro()
-    fun navigateToBoard(boardId: Long)
+    fun navigateToBoard(boardName: String)
     fun navigateToSubstitutes(date: LocalDate?)
     fun navigateToSupervisions(date: LocalDate?)
 }

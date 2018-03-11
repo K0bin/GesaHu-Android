@@ -1,8 +1,7 @@
 package rhedox.gesahuvertretungsplan.mvp
 
-import android.os.Parcelable
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Substitute
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 
 /**

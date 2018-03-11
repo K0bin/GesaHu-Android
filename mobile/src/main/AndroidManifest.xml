@@ -74,6 +74,7 @@
         </service>
 
         <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiverLegacy"/>
+        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver"/>
         <receiver android:name=".broadcastReceiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -107,17 +108,15 @@
         </service>
 
         <provider
-            android:name=".model.database.SubstitutesContentProvider"
-            android:authorities="rhedox.gesahuvertretungsplan.substitutes"
-            android:label="@string/provider_substitutes"
-            android:syncable="true"
-            android:exported="true" />
+            android:authorities="rhedox.gesahuvertretungsplan.substitutes.stub"
+            android:name="rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider"
+            android:exported="false"
+            android:syncable="true" />
         <provider
-            android:name=".model.database.BoardsContentProvider"
-            android:authorities="rhedox.gesahuvertretungsplan.boards"
-            android:label="@string/provider_boards"
-            android:syncable="true"
-            android:exported="true" />
+            android:authorities="rhedox.gesahuvertretungsplan.boards.stub"
+            android:name="rhedox.gesahuvertretungsplan.model.database.StubBoardsContentProvider"
+            android:exported="false"
+            android:syncable="true" />
 
         <service android:name=".service.GesaHuAccountService">
             <intent-filter>

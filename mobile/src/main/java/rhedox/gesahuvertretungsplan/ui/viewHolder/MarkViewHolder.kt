@@ -6,7 +6,7 @@ import android.widget.TextView
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormatterBuilder
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.database.Mark
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 
 /**
  * Created by robin on 30.01.2017.

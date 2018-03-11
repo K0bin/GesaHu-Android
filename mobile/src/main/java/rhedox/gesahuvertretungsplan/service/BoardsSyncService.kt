@@ -3,24 +3,28 @@ package rhedox.gesahuvertretungsplan.service
 import android.accounts.Account
 import android.app.Service
 import android.content.*
-import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.util.Log.d
 import com.crashlytics.android.Crashlytics
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.jetbrains.anko.accountManager
 import retrofit2.Response
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.model.Board
 import rhedox.gesahuvertretungsplan.model.api.BoardInfo
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
-import rhedox.gesahuvertretungsplan.model.database.BoardsContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.tables.*
+import rhedox.gesahuvertretungsplan.model.database.StubBoardsContentProvider
+import rhedox.gesahuvertretungsplan.model.database.dao.BoardsDao
+import rhedox.gesahuvertretungsplan.model.database.dao.LessonsDao
+import rhedox.gesahuvertretungsplan.model.database.dao.MarksDao
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
+import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
-import java.net.SocketTimeoutException
+import javax.inject.Inject
 
 /**
  * Created by robin on 30.10.2016.
@@ -32,13 +36,13 @@ class BoardsSyncService : Service() {
 
         fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 1);
-                ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, true);
-                ContentResolver.addPeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
+                ContentResolver.setIsSyncable(account, StubBoardsContentProvider.authority, 1);
+                ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, true);
+                ContentResolver.addPeriodicSync(account, StubBoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
             } else {
-                ContentResolver.setIsSyncable(account, BoardsContentProvider.authority, 0);
-                ContentResolver.setSyncAutomatically(account, BoardsContentProvider.authority, false);
-                ContentResolver.removePeriodicSync(account, BoardsContentProvider.authority, Bundle.EMPTY)
+                ContentResolver.setIsSyncable(account, StubBoardsContentProvider.authority, 0);
+                ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, false);
+                ContentResolver.removePeriodicSync(account, StubBoardsContentProvider.authority, Bundle.EMPTY)
             }
         }
 
@@ -60,11 +64,19 @@ class BoardsSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
 
-        private val gesahu = GesaHu(context);
+        @Inject internal lateinit var gesahu: GesaHu
+        @Inject internal lateinit var boardsDao: BoardsDao
+        @Inject internal lateinit var lessonsDao: LessonsDao
+        @Inject internal lateinit var marksDao: MarksDao
+
+        init {
+            (context.applicationContext as App)
+                    .appComponent
+                    .plusBoards()
+                    .inject(this)
+        }
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
-            //android.os.Debug.waitForDebugger()
-
             if(Thread.interrupted()) {
                 return;
             }
@@ -87,23 +99,22 @@ class BoardsSyncService : Service() {
                 return;
             }
             if(response != null && response.isSuccessful) {
-                //Clear tables
-                provider.delete(BoardsContract.uri, null, null);
-                provider.delete(LessonsContract.uri, null, null);
-                provider.delete(MarksContract.uri, null, null);
+                val boards = mutableListOf<Board>()
+                val lessons = mutableListOf<Lesson>()
+                val marks = mutableListOf<Mark>()
 
                 //Insert new data
-                val boards = response.body() ?: return
-                for (board in boards) {
-                    val uri = provider.insert(BoardsContract.uri, BoardsAdapter.toContentValues(board.board))
-                    val id = uri.lastPathSegment.toLong()
-                    for (lesson in board.lessons) {
-                        provider.insert(LessonsContract.uri, LessonsAdapter.toContentValues(lesson, id))
-                    }
-                    for (mark in board.marks) {
-                        provider.insert(MarksContract.uri, MarksAdapter.toContentValues(mark, id))
-                    }
+                val boardsInfo = response.body() ?: return
+                for (board in boardsInfo) {
+                    boards.add(board.board)
+                    lessons.addAll(board.lessons)
+                    marks.addAll(board.marks)
                 }
+
+                boardsDao.insertAndClear(*boards.toTypedArray())
+                lessonsDao.insertAndClear(*lessons.toTypedArray())
+                marksDao.insertAndClear(*marks.toTypedArray())
+
             } else if (response != null && response.code() == 403) {
                 BoardsSyncService.setIsSyncEnabled(account, false)
                 CalendarSyncService.setIsSyncEnabled(account, false)
@@ -144,7 +155,7 @@ class BoardsSyncService : Service() {
                 bytes = avatarResponse.body()?.bytes();
             } catch (e: IOException) {}
             if(avatarResponse != null && avatarResponse.isSuccessful && bytes != null) {
-                val fos = context.openFileOutput(BoardsContract.avatarFileName, Context.MODE_PRIVATE)
+                val fos = context.openFileOutput(Board.avatarFileName, Context.MODE_PRIVATE)
                 fos.write(bytes)
                 fos.close()
 

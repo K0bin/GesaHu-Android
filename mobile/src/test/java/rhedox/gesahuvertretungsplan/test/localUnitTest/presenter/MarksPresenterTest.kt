@@ -1,43 +1,24 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
-import android.accounts.AccountManager
-import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.bind
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.provider
-import com.nhaarman.mockito_kotlin.mock
+import android.arch.core.executor.testing.InstantTaskExecutorRule
+import junit.framework.Assert.assertEquals
 import org.joda.time.LocalDate
+import org.junit.Rule
 import org.junit.Test
-import rhedox.gesahuvertretungsplan.model.AvatarLoader
-import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.SyncObserver
-import rhedox.gesahuvertretungsplan.model.database.BoardsRepository
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.presenter.LessonsPresenter
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 import rhedox.gesahuvertretungsplan.presenter.MarksPresenter
-import rhedox.gesahuvertretungsplan.presenter.NavDrawerPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.LessonsState
 import rhedox.gesahuvertretungsplan.presenter.state.MarksState
-import rhedox.gesahuvertretungsplan.util.PermissionManager
+import rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection.TestAppComponent
+import rhedox.gesahuvertretungsplan.test.localUnitTest.repository.BoardsTestRepository
 
 /**
  * Created by robin on 01.02.2017.
  */
 class MarksPresenterTest {
-    val kodein = Kodein {
-        bind<SharedPreferences>() with instance(mock<SharedPreferences> {})
-        bind<BoardsRepository>() with provider { mock<BoardsRepository> {} }
-        bind<SubstitutesRepository>() with provider { mock<SubstitutesRepository> {} }
-        bind<SyncObserver>() with provider { mock<SyncObserver> {} }
-        bind<AccountManager>() with instance(mock<AccountManager> {})
-        bind<AvatarLoader>() with provider { mock<AvatarLoader> {} }
-        bind<PermissionManager>() with provider { mock<PermissionManager> {} }
-        bind<ConnectivityManager>() with provider { mock<ConnectivityManager> {} }
-    }
+    @Rule
+    @JvmField
+    val rule = InstantTaskExecutorRule()
 
     private fun simulateOrientationChange(presenter: MarksPresenter): StubMarksView {
         presenter.detachView()
@@ -48,38 +29,43 @@ class MarksPresenterTest {
 
     @Test
     fun testMark() {
-        val presenter = MarksPresenter(kodein, MarksState(0))
+        val appComponent = TestAppComponent.create()
+        val presenter = MarksPresenter(appComponent.boardComponent(), MarksState("BOARD"))
+        val repository = presenter.repository as BoardsTestRepository
         var view = StubMarksView()
         presenter.attachView(view)
-        presenter.onBoardLoaded(Board("", "15", "", 15, 2, 99))
-        assert(view.mark == "15")
+        repository.loadBoard("BOARD").value = Board("Board2", "15", "", 15, 2, 99)
+        assertEquals("15", view.mark)
         view = simulateOrientationChange(presenter)
-        assert(view.mark == "15")
+        assertEquals("15", view.mark)
     }
 
     @Test
     fun testList() {
-        val presenter = MarksPresenter(kodein, MarksState(0))
+        val appComponent = TestAppComponent.create()
+        val presenter = MarksPresenter(appComponent.boardComponent(), MarksState("BOARD"))
+        val repository = presenter.repository as BoardsTestRepository
         var view = StubMarksView()
         presenter.attachView(view)
-        presenter.onMarksLoaded(listOf(
-                Mark(LocalDate(),"mark1", "12", Mark.KindValues.test, null, Mark.MarkKindValues.groupMark, "", 0.1f),
-                Mark(LocalDate(),"mark2", "13", Mark.KindValues.testOrComplexTask, null, Mark.MarkKindValues.mark, "", 0.9f)
-        ))
-        assert(view.list[0].mark == "12")
-        assert(view.list[0].description == "mark1")
-        assert(view.list[0].kind == Mark.KindValues.test)
-        assert(view.list[0].markKind == Mark.MarkKindValues.groupMark)
-        assert(view.list[1].mark == "13")
-        assert(view.list[1].description == "mark2")
-        assert(view.list[1].markKind == Mark.MarkKindValues.mark)
+        val date = LocalDate(2010, 10, 5)
+        repository.loadMarks("BOARD").value = listOf(
+                Mark(date, "mark1", "12", Mark.KindValues.test, null, Mark.MarkKindValues.groupMark, "", 0.1f, "BOARD"),
+                Mark(date, "mark2", "13", Mark.KindValues.testOrComplexTask, null, Mark.MarkKindValues.mark, "", 0.9f, "BOARD")
+        )
+        assertEquals("12", view.list[0].mark)
+        assertEquals("mark1", view.list[0].description)
+        assertEquals(Mark.KindValues.test, view.list[0].kind)
+        assertEquals(Mark.MarkKindValues.groupMark, view.list[0].markKind)
+        assertEquals("13", view.list[1].mark)
+        assertEquals("mark2", view.list[1].description)
+        assertEquals(Mark.MarkKindValues.mark, view.list[1].markKind)
         view = simulateOrientationChange(presenter)
-        assert(view.list[0].mark == "12")
-        assert(view.list[0].description == "mark1")
-        assert(view.list[0].kind == Mark.KindValues.test)
-        assert(view.list[0].markKind == Mark.MarkKindValues.groupMark)
-        assert(view.list[1].mark == "13")
-        assert(view.list[1].description == "mark2")
-        assert(view.list[1].markKind == Mark.MarkKindValues.mark)
+        assertEquals("12", view.list[0].mark)
+        assertEquals("mark1", view.list[0].description)
+        assertEquals(Mark.KindValues.test, view.list[0].kind)
+        assertEquals(Mark.MarkKindValues.groupMark, view.list[0].markKind)
+        assertEquals("13", view.list[1].mark)
+        assertEquals("mark2", view.list[1].description)
+        assertEquals(Mark.MarkKindValues.mark, view.list[1].markKind)
     }
 }

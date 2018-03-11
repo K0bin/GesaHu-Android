@@ -1,25 +1,56 @@
 package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.support.v7.util.DiffUtil
+import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import rhedox.gesahuvertretungsplan.ui.viewHolder.ModelViewHolder
 
 /**
  * Created by robin on 23.01.2017.
  */
 abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopHeader: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var isDiffing = false;
     open var list = listOf<T>()
-    get() = field
     set(value) {
-        val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value, hasEmptyView, hasTopHeader))
-        diffResult.dispatchUpdatesTo(this)
-        field = value
+        doAsync {
+            isDiffing = true;
+            //val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value, hasEmptyView, hadTopHeader, hasTopHeader), false)
+            val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value), false)
+            uiThread {
+                //diffResult.dispatchUpdatesTo(this@ListAdapter)
+                diffResult.dispatchUpdatesTo(object: ListUpdateCallback {
+                    override fun onChanged(position: Int, count: Int, payload: Any?) {
+                        notifyItemRangeChanged(position + if (hasTopHeader) 1 else 0, count, payload)
+                    }
+
+                    override fun onMoved(fromPosition: Int, toPosition: Int) {
+                        notifyItemMoved(fromPosition, toPosition + if (hasTopHeader) 1 else 0)
+                    }
+
+                    override fun onInserted(position: Int, count: Int) {
+                        if (hasEmptyView && field.isEmpty()) {
+                            notifyItemRemoved(if (hasTopHeader) 1 else 0)
+                        }
+                        notifyItemRangeInserted(position + if (hasTopHeader) 1 else 0, count)
+                    }
+
+                    override fun onRemoved(position: Int, count: Int) {
+                        notifyItemRangeRemoved(position + if (hasTopHeader) 1 else 0, count)
+                        if (hasEmptyView && value.isEmpty()) {
+                            notifyItemInserted(if (hasTopHeader) 1 else 0)
+                        }
+                    }
+
+                })
+                field = value
+                isDiffing = false;
+            }
+        }
     }
 
     var hasTopHeader = hasTopHeader
-    get() = field
     set(value) {
         if (field && !value) {
             notifyItemRemoved(0)
@@ -36,10 +67,10 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
     }
 
     override fun getItemCount(): Int {
-        if (list.isNotEmpty() || !hasEmptyView) {
-            return if (!hasTopHeader) list.size else list.size + 1
+        return if (list.isNotEmpty() || !hasEmptyView) {
+            if (!hasTopHeader) list.size else list.size + 1
         } else {
-            return if (!hasTopHeader) 1 else 2;
+            if (!hasTopHeader) 1 else 2;
         }
     }
 
@@ -48,12 +79,10 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == ItemTypeValues.view) {
-            (holder as? ModelViewHolder<T>)?.bind(list[if (!hasTopHeader) position else position - 1])
-        } else if (getItemViewType(position) == ItemTypeValues.topHeader) {
-            bindTopHeader(holder, 0)
-        } else if (getItemViewType(position) == ItemTypeValues.emptyView) {
-            bindEmptyView(holder, position)
+        when {
+            getItemViewType(position) == ItemTypeValues.view -> (holder as? ModelViewHolder<T>)?.bind(list[if (!hasTopHeader) position else position - 1])
+            getItemViewType(position) == ItemTypeValues.topHeader -> bindTopHeader(holder, 0)
+            getItemViewType(position) == ItemTypeValues.emptyView -> bindEmptyView(holder, position)
         }
     }
 

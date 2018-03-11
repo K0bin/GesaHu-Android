@@ -1,8 +1,8 @@
 package rhedox.gesahuvertretungsplan.model.api
 
-import rhedox.gesahuvertretungsplan.model.Board
-import rhedox.gesahuvertretungsplan.model.database.Lesson
-import rhedox.gesahuvertretungsplan.model.database.Mark
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
+import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 
 /**
  * Created by robin on 11.10.2016.

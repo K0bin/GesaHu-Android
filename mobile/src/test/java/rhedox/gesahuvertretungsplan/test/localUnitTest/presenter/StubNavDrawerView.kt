@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Board
+import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.NavDrawerContract
 
 /**
@@ -29,7 +29,7 @@ class StubNavDrawerView: NavDrawerContract.View {
     override fun navigateToIntro() { currentView = ViewValues.intro }
     override fun navigateToAuth() { currentView = ViewValues.auth }
     override fun navigateToSubstitutes(date: LocalDate?) { currentView = ViewValues.substitutes}
-    override fun navigateToBoard(boardId: Long) { currentView = ViewValues.board }
+    override fun navigateToBoard(boardName: String) { currentView = ViewValues.board }
     override fun navigateToSupervisions(date: LocalDate?) { currentView = ViewValues.supervisions }
 
     override var userName: String = ""

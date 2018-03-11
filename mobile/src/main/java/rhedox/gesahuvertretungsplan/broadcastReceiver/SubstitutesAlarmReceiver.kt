@@ -5,20 +5,19 @@ import android.annotation.TargetApi
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.job.JobInfo
-import android.app.job.JobParameters
 import android.app.job.JobScheduler
-import android.app.job.JobService
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.support.annotation.RequiresPermission
-import org.jetbrains.anko.alarmManager
+import android.util.Log
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import rhedox.gesahuvertretungsplan.service.SubstitutesNotifierJobService
+import rhedox.gesahuvertretungsplan.util.alarmManager
 
 /**
  * Created by robin on 01.08.17.
@@ -26,7 +25,7 @@ import rhedox.gesahuvertretungsplan.service.SubstitutesNotifierJobService
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class SubstitutesAlarmReceiver: BroadcastReceiver() {
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(NotificationFrequencyValues.daily, NotificationFrequencyValues.perLesson, NotificationFrequencyValues.both, NotificationFrequencyValues.none, flag = true)
+    @LongDef(NotificationFrequencyValues.daily, NotificationFrequencyValues.perLesson, NotificationFrequencyValues.both, NotificationFrequencyValues.none, flag = true)
     annotation class NotificationFrequency
 
     object NotificationFrequencyValues {
@@ -82,42 +81,36 @@ class SubstitutesAlarmReceiver: BroadcastReceiver() {
         private fun scheduleAlarm(context: Context, time: DateTime, requestCode: Int, lesson: Int) {
             val millis = time.millis
 
-            val manager = context.alarmManager
-
-            val intent: Intent;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                intent = Intent(context, SubstitutesAlarmReceiver::class.java)
+            val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Intent(context, SubstitutesAlarmReceiver::class.java)
             } else {
-                intent = Intent(context, SubstitutesAlarmReceiverLegacy::class.java)
-            }
+                Intent(context, SubstitutesAlarmReceiverLegacy::class.java)
+            };
             intent.putExtra(extraLesson, lesson)
-            val pending = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pending = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-            manager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending)
+            context.alarmManager.setInexactRepeating(AlarmManager.RTC, millis, AlarmManager.INTERVAL_DAY, pending)
         }
 
         @JvmStatic
         fun cancelDaily(context: Context) {
-            val manager = context.alarmManager
-
             val intent = PendingIntent.getBroadcast(context, requestCode, Intent(), PendingIntent.FLAG_NO_CREATE)
             if (intent != null)
-                manager.cancel(intent)
+                context.alarmManager.cancel(intent)
         }
 
         @JvmStatic
         fun cancelLesson(context: Context) {
-            val manager = context.alarmManager
-
             for (i in hours.indices) {
                 val intent = PendingIntent.getBroadcast(context, requestCodeBase + i, Intent(), PendingIntent.FLAG_NO_CREATE)
                 if (intent != null)
-                    manager.cancel(intent)
+                    context.alarmManager.cancel(intent)
             }
         }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("AlarmReceiver", "ReceivedAlarm")
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val jobInfo = JobInfo.Builder(jobId, ComponentName(context, SubstitutesNotifierJobService::class.java))
                 .setOverrideDeadline(1000 * 60 * 5)

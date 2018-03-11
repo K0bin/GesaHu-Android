@@ -3,17 +3,13 @@ package rhedox.gesahuvertretungsplan.ui.adapter
 import android.content.Context
 import android.support.annotation.ColorInt
 import android.support.annotation.Dimension
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.Supervision
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.SubstituteViewHolder
 import rhedox.gesahuvertretungsplan.ui.viewHolder.SupervisionViewHolder
 import tr.xip.errorview.ErrorView
 

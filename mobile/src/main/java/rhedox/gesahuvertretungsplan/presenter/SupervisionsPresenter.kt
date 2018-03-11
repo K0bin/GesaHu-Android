@@ -2,45 +2,47 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.ContentResolver
 import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.util.Log
-import com.github.salomonbrys.kodein.*
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.dependencyInjection.SubstitutesComponent
 import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
 import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by robin on 20.10.2016.
  */
-class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : SupervisionsContract.Presenter {
+class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: SupervisionsState?) : SupervisionsContract.Presenter {
     private val date: LocalDate;
     private var view: SupervisionsContract.View? = null
-    private var supervisions = kotlin.arrayOfNulls<List<Supervision>>(5)
     /**
      * The selected substitute (of the current page); null for none
      */
     private var selected: Int? = null
-    private val syncObserver: SyncObserver = kodeIn.instance()
+    @Inject internal lateinit var syncObserver: SyncObserver
     /**
      * The page (day of week) which is currently visible to the user
      */
     private var currentPage: Int;
-    private val repository: SubstitutesRepository = kodeIn.instance()
+    @Inject internal lateinit var repository: SubstitutesRepository
 
-    private val connectivityManager: ConnectivityManager = kodeIn.instance()
-    private val formatter: SubstituteFormatter = kodeIn.instance()
+    @Inject internal lateinit var connectivityManager: ConnectivityManager
+    @Inject internal lateinit var formatter: SubstituteFormatter
 
-    private val accountManager: AccountManager = kodeIn.instance()
+    @Inject internal lateinit var accountManager: AccountManager
     private var account: Account? = null
         get() {
             if (field == null) {
@@ -49,7 +51,16 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
             return field;
         }
 
+    private val supervisions = arrayOfNulls<LiveData<List<Supervision>>>(5)
+    private val supervisionsObserver = Observer<List<Supervision>> {
+        if (it?.isNotEmpty() != true) return@Observer
+
+        onSupervisionsLoaded(it.first().date, it)
+    }
+
     init {
+        substitutesComponent.inject(this)
+
         val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
         Log.d("SupervisionsPresenter", "Date: $_date")
@@ -57,16 +68,15 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
         currentPage = Math.max(0, Math.min(_date.dayOfWeek - DateTimeConstants.MONDAY, 4))
         this.date = getFirstDayOfWeek(_date)
 
-        repository.supervisisonsCallback = { date: LocalDate, list: List<Supervision> -> onSupervisionsLoaded(date, list) }
-
-        for(i in 0..4) {
-            repository.loadSupervisionsForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+        for(i in 0 until 5) {
+            supervisions[i] = repository.loadSupervisionsForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+            supervisions[i]!!.observeForever(supervisionsObserver)
         }
 
         syncObserver.callback = {
             if (account != null) {
                 (view as? Fragment)?.activity?.runOnUiThread {
-                    view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+                    view?.isRefreshing = ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority)
                 }
             }
         }
@@ -102,11 +112,13 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
     }
 
     override fun destroy() {
-        repository.destroy()
         syncObserver.destroy()
+        supervisions.forEach {
+            it?.removeObserver(supervisionsObserver)
+        }
     }
 
-    fun onSupervisionsLoaded(date:LocalDate, supervisions: List<Supervision>) {
+    private fun onSupervisionsLoaded(date:LocalDate, supervisions: List<Supervision>) {
         Log.d("SubstitutePresenter", "SupervisionContract loaded: $date, ${supervisions.size} items")
         if(date.dayOfWeekIndex > 4) {
             return;
@@ -114,12 +126,11 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
 
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
-            this.supervisions[position] = supervisions
             view?.showList(position, supervisions)
         }
 
         if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority)
     }
 
     override fun onDatePickerIconClicked() {
@@ -143,7 +154,7 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
     }
 
     override fun onListItemClicked(listEntry: Int) {
-        if (currentPage < 0 || listEntry < 0 || listEntry >= supervisions[currentPage]?.size ?: 0) {
+        if (currentPage < 0 || listEntry < 0 || listEntry >= supervisions[currentPage]?.value?.size ?: 0) {
             return;
         }
 
@@ -160,7 +171,7 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
         if (account != null) {
             val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
-            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
+            StubSubstitutesContentProvider.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
     }
@@ -187,7 +198,7 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
 
         if(view != null) {
             if (supervisions[position] != null)
-                view!!.showList(position, supervisions[position]!!)
+                view!!.showList(position, supervisions[position]?.value ?: listOf())
 
             if (position == currentPage)
                 view!!.setSelected(position, selected)
@@ -202,7 +213,7 @@ class SupervisionsPresenter(kodeIn: Kodein, state: SupervisionsState?) : Supervi
 
     override fun onShareButtonClicked() {
         val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
-        val substitutesOfDay = supervisions[currentPage]
+        val substitutesOfDay = supervisions[currentPage]?.value
 
         if(substitutesOfDay != null && selected != null) {
             val supervision = substitutesOfDay[selected!!]

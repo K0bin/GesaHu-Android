@@ -1,6 +1,9 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -9,19 +12,21 @@ import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
-import org.jetbrains.anko.notificationManager
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.Substitute
 import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabaseRepository
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
 import rhedox.gesahuvertretungsplan.util.countRelevant
+import rhedox.gesahuvertretungsplan.util.notificationManager
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
+import javax.inject.Inject
 
 /**
  * Created by robin on 26.10.2016.
@@ -38,7 +43,15 @@ class SubstitutesNotifier(private val context: Context) {
     private val color: Int = ContextCompat.getColor(context, R.color.colorDefaultAccent);
     private var lesson: Int = -1;
 
-    private val formatter: SubstituteFormatter = SubstituteFormatter(context);
+    @Inject internal lateinit var formatter: SubstituteFormatter
+    @Inject internal lateinit var repository: SubstitutesDatabaseRepository
+
+    init {
+        (context.applicationContext as App)
+                .appComponent
+                .plusSubstitutes()
+                .inject(this)
+    }
 
     fun load(lesson: Int? = null) {
         var _lesson = lesson ?: -1
@@ -50,7 +63,7 @@ class SubstitutesNotifier(private val context: Context) {
         }
         this.lesson = _lesson;
         val date: LocalDate = SchoolWeek.nextFromNow()
-        val substitutes = SubstitutesRepository.loadSubstitutesForDaySync(context, date, true)
+        val substitutes = repository.loadSubstitutesForDaySync(date, true)
         onSubstitutesLoaded(date, substitutes)
     }
 

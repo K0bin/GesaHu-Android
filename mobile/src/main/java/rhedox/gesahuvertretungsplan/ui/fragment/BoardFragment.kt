@@ -1,30 +1,23 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.animation.ObjectAnimator
-import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.salomonbrys.kodein.android.appKodein
+import androidx.os.bundleOf
 import com.google.firebase.perf.metrics.AddTrace
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_lessons.*
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
+import rhedox.gesahuvertretungsplan.App
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.mvp.BoardContract
 import rhedox.gesahuvertretungsplan.presenter.BoardPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
 import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
 
 /**
@@ -32,38 +25,32 @@ import rhedox.gesahuvertretungsplan.ui.adapter.BoardPagerAdapter
  */
 class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     private object Arguments {
-        const val boardId = "boardId"
+        const val boardName = "boardName"
     }
     private object State {
         const val presenterState = "boardPresenterState"
     }
     companion object {
         @JvmStatic
-        fun newInstance(boardId: Long): BoardFragment {
-            val fragment = BoardFragment()
-            val arguments = Bundle()
-            arguments.putLong(Arguments.boardId, boardId)
-            fragment.arguments = arguments
-            return fragment
+        fun newInstance(boardName: String): BoardFragment = BoardFragment().apply {
+            arguments = bundleOf(Arguments.boardName to boardName)
         }
     }
 
     private lateinit var presenter: BoardContract.Presenter;
-    private var boardId: Long = 0L;
+    private var boardName: String = "";
     private var elevationAnimator: ObjectAnimator? = null
 
     private lateinit var marksFragment: MarksFragment;
     private lateinit var lessonsFragment: LessonsFragment;
 
     override var title: String = ""
-        get() = field
         set(value) {
             field = value
             (activity as? DrawerActivity)?.supportActionBar?.title = value
         }
 
     override var hasAppBarElevation: Boolean = false
-        get() = field
         set(value) {
             if (value != field) {
                 if (value) {
@@ -79,18 +66,19 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        Log.d("Board", "Create")
+
+        val appComponent = (context?.applicationContext as App).appComponent
 
         val state: BoardState;
         if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable<BoardState>(State.presenterState)
-            boardId = state.boardId
+            state = savedInstanceState.getParcelable(State.presenterState)
+            boardName = state.boardName
         } else {
-            boardId = arguments?.getLong(Arguments.boardId, 0L) ?: 0L;
-            state = BoardState(boardId)
+            boardName = arguments?.getString(Arguments.boardName) ?: "";
+            state = BoardState(boardName)
         }
 
-        presenter = BoardPresenter(appKodein(), state)
+        presenter = BoardPresenter(appComponent.plusBoards(), state)
     }
 
     override fun onDestroy() {
@@ -108,24 +96,24 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         super.onViewCreated(view, savedInstanceState)
         Log.d("Board", "ViewCreated")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
+        elevationAnimator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
             val elevation = context!!.displayMetrics.density * 4f;
-            elevationAnimator = ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
+            ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
         } else {
-            elevationAnimator = null;
+            null;
         }
 
         val _lessonsFragment = childFragmentManager.findFragmentByTag("lessons");
-        if (_lessonsFragment != null) {
-            lessonsFragment = _lessonsFragment as LessonsFragment
+        lessonsFragment = if (_lessonsFragment != null) {
+            _lessonsFragment as LessonsFragment
         } else {
-            lessonsFragment = LessonsFragment.newInstance(boardId)
+            LessonsFragment.newInstance(boardName)
         }
         val _marksFragment = childFragmentManager.findFragmentByTag("marks");
-        if (_marksFragment != null) {
-            marksFragment = _marksFragment as MarksFragment
+        marksFragment = if (_marksFragment != null) {
+            _marksFragment as MarksFragment
         } else {
-            marksFragment = MarksFragment.newInstance(boardId)
+            MarksFragment.newInstance(boardName)
         }
 
         if (viewPager != null) {
@@ -165,7 +153,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
 
     override fun onSaveInstanceState(outState: Bundle) {
         //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
-        if (activity?.isChangingConfigurations ?: false) {
+        if (activity?.isChangingConfigurations == true) {
             childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commit();
         }
 

@@ -2,46 +2,49 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.ContentResolver
 import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.util.Log
-import com.github.salomonbrys.kodein.*
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
+import rhedox.gesahuvertretungsplan.dependencyInjection.SubstitutesComponent
 import rhedox.gesahuvertretungsplan.model.*
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesContentProvider
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
+import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
+import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
+import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : SubstitutesContract.Presenter {
+class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesState?) : SubstitutesContract.Presenter {
     private val date: LocalDate;
     private var view: SubstitutesContract.View? = null
-    private var substitutes = kotlin.arrayOfNulls<List<Substitute>>(5)
-    private var announcements = arrayOf("","","","","")
     /**
      * The selected substitute (of the current page); null for none
      */
     private var selected: Int? = null
-    private val syncObserver: SyncObserver = kodeIn.instance()
+    @Inject internal lateinit var syncObserver: SyncObserver
     /**
      * The page (day of week) which is currently visible to the user
      */
     private var currentPage: Int;
-    private val repository: SubstitutesRepository = kodeIn.instance()
+    @Inject internal lateinit var repository: SubstitutesRepository
 
-    private val connectivityManager: ConnectivityManager = kodeIn.instance()
-    private val formatter: SubstituteFormatter = kodeIn.instance()
+    @Inject internal lateinit var connectivityManager: ConnectivityManager
+    @Inject internal lateinit var formatter: SubstituteFormatter
 
-    private val accountManager: AccountManager = kodeIn.instance()
+    @Inject internal lateinit var accountManager: AccountManager
+
     private var account: Account? = null
         get() {
             if (field == null) {
@@ -50,7 +53,22 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
             return field;
         }
 
+    private val substitutes = arrayOfNulls<LiveData<List<Substitute>>>(5)
+    private val announcements = arrayOfNulls<LiveData<Announcement>>(5)
+    private val substitutesObserver = Observer<List<Substitute>> { it ->
+        if (it?.isNotEmpty() != true) return@Observer
+
+        onSubstitutesLoaded(it.first().date, it)
+    }
+    private val announcementObserver = Observer<Announcement> {
+        if (it?.text.isNullOrEmpty()) return@Observer
+
+        onAnnouncementLoaded(it!!.date, it.text)
+    }
+
     init {
+        component.inject(this)
+
         val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
         Log.d("SubstitutesPresenter", "Date: $_date")
@@ -58,18 +76,17 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         currentPage = Math.max(0, Math.min(_date.dayOfWeek - DateTimeConstants.MONDAY, 4))
         this.date = getFirstDayOfWeek(_date)
 
-        repository.substitutesCallback = { date: LocalDate, list: List<Substitute> -> onSubstitutesLoaded(date, list) }
-        repository.announcementCallback = { date: LocalDate, text: String -> onAnnouncementLoaded(date, text) }
-
-        for(i in 0..4) {
-            repository.loadSubstitutesForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
-            repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+        for(i in 0 until 5) {
+            substitutes[i] = repository.loadSubstitutesForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+            substitutes[i]!!.observeForever(substitutesObserver)
+            announcements[i] = repository.loadAnnouncementForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
+            announcements[i]!!.observeForever(announcementObserver)
         }
 
         syncObserver.callback = {
             if (account != null) {
                 (view as? Fragment)?.activity?.runOnUiThread {
-                    view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+                    view?.isRefreshing = ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority)
                 }
             }
         }
@@ -83,7 +100,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         this.view = view
 
         view.currentTab = currentPage
-        view.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
+        view.isFabVisible = selected == null && !announcements[currentPage]?.value?.text.isNullOrEmpty()
         view.isCabVisible = selected != null
         if(selected != null)
             view.isAppBarExpanded = true
@@ -106,11 +123,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
     }
 
     override fun destroy() {
-        repository.destroy()
         syncObserver.destroy()
+        substitutes.forEach { it?.removeObserver(substitutesObserver) }
+        announcements.forEach { it?.removeObserver(announcementObserver) }
     }
 
-    fun onSubstitutesLoaded(date:LocalDate, substitutes: List<Substitute>) {
+    fun onSubstitutesLoaded(date: LocalDate, substitutes: List<Substitute>) {
         Log.d("SubstitutePresenter", "SubstitutesContract loaded: $date, ${substitutes.size} items")
         if(date.dayOfWeekIndex > 4) {
             return;
@@ -118,27 +136,25 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
 
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
-            this.substitutes[position] = substitutes
             view?.showList(position, substitutes)
         }
 
         if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority)
     }
 
-    fun onAnnouncementLoaded(date:LocalDate, text: String) {
+    fun onAnnouncementLoaded(date: LocalDate, text: String) {
         if(date.dayOfWeekIndex > 4) {
             return;
         }
 
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
             val position = date.dayOfWeekIndex
-            announcements[position] = text
-            view?.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
+            view?.isFabVisible = selected == null && !announcements[currentPage]!!.value?.text.isNullOrEmpty()
         }
 
         if(account != null)
-            view?.isRefreshing = ContentResolver.isSyncActive(account, SubstitutesContentProvider.authority)
+            view?.isRefreshing = ContentResolver.isSyncActive(account, StubSubstitutesContentProvider.authority)
     }
 
     override fun onDatePickerIconClicked() {
@@ -160,11 +176,11 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         }
     }
     override fun onFabClicked() {
-        view?.showDialog(announcements[currentPage])
+        view?.showDialog(announcements[currentPage]?.value?.text ?: "")
     }
 
     override fun onListItemClicked(listEntry: Int) {
-        if (currentPage < 0 || listEntry < 0 || listEntry >= substitutes[currentPage]?.size ?: 0) {
+        if (currentPage < 0 || listEntry < 0 || listEntry >= substitutes[currentPage]?.value?.size ?: 0) {
             return;
         }
 
@@ -175,15 +191,15 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
             if(selected != null)
                 view!!.isAppBarExpanded = true;
 
-            view!!.isFabVisible = selected == null && announcements[currentPage].isNotBlank();
+            view!!.isFabVisible = selected == null && !announcements[currentPage]?.value?.text.isNullOrEmpty();
         }
     }
 
     override fun onRefresh() {
         if (account != null) {
-            val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
+            val singleDay = Build.VERSION.SDK_INT < Build.VERSION_CODES.N || connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
 
-            repository.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
+            StubSubstitutesContentProvider.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
             view?.isRefreshing = false
     }
@@ -202,7 +218,8 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
                 view!!.setSelected(previousPosition, null)
             }
             view!!.setSelected(position, selected)
-            view!!.isFabVisible = selected == null && announcements[currentPage].isNotBlank()
+            System.out.println("selected: $selected, currentPage: $currentPage, announcement: ${announcements[currentPage]?.value}")
+            view!!.isFabVisible = selected == null && !announcements[currentPage]?.value?.text.isNullOrEmpty();
         }
     }
 
@@ -211,7 +228,7 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
 
         if(view != null) {
             if (substitutes[position] != null)
-                view!!.showList(position, substitutes[position]!!)
+                view!!.showList(position, substitutes[position]?.value ?: listOf())
 
             if (position == currentPage)
                 view!!.setSelected(position, selected)
@@ -222,12 +239,12 @@ class SubstitutesPresenter(kodeIn: Kodein, state: SubstitutesState?) : Substitut
         view!!.setSelected(currentPage, null)
         selected = null;
         view!!.isCabVisible = false
-        view!!.isFabVisible = announcements[currentPage].isNotBlank()
+        view!!.isFabVisible = !announcements[currentPage]?.value?.text.isNullOrEmpty();
     }
 
     override fun onShareButtonClicked() {
         val currentDate = date.withFieldAdded(DurationFieldType.days(), currentPage)
-        val substitutesOfDay = substitutes[currentPage]
+        val substitutesOfDay = substitutes[currentPage]?.value
 
         if(substitutesOfDay != null && selected != null) {
             val substitute = substitutesOfDay[selected!!]

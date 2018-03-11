@@ -1,27 +1,8 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.app.*
-import android.content.ContentValues
+import android.app.IntentService
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.WakefulBroadcastReceiver
-import org.jetbrains.anko.notificationManager
-import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
-import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.R
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.SubstituteFormatter
-import rhedox.gesahuvertretungsplan.model.database.SubstitutesRepository
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity
-import rhedox.gesahuvertretungsplan.util.SubstituteShareUtils
-import rhedox.gesahuvertretungsplan.util.countRelevant
-import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
 /**
  * Created by robin on 26.10.2016.
@@ -30,9 +11,6 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
         const val extraLesson = "lesson";
-        const val requestCodeBase = 64
-        const val groupKey = "gesahuvpsubstitutes"
-        const val substitutesChannel = "substitutes"
     }
 
     private lateinit var notifier: SubstitutesNotifier;

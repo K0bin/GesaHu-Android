@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.DatePicker
@@ -18,10 +17,6 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
 
     var callback: ((date: LocalDate) -> Unit)? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (savedInstanceState != null && savedInstanceState.containsKey(keyDate))
             date = DateTime(savedInstanceState.getLong(keyDate)).toLocalDate()
@@ -32,14 +27,6 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
 
         isPickerDone = false
         return DatePickerDialog(activity, this, date.year, date.monthOfYear - 1, date.dayOfMonth)
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

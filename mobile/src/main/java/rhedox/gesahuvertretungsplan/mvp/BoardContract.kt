@@ -1,8 +1,5 @@
 package rhedox.gesahuvertretungsplan.mvp
 
-import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.Substitute
-import rhedox.gesahuvertretungsplan.model.database.Lesson
 import rhedox.gesahuvertretungsplan.presenter.state.BoardState
 
 /**

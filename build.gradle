@@ -2,11 +2,12 @@
 
 buildscript {
     ext.kotlin_version = '1.2.30'
-    ext.anko_version = '0.10.4'
     ext.support_version = '27.1.0'
     ext.play_version = '11.8.0'
+    ext.dagger_version = '2.11'
     repositories {
         jcenter()
+        google()
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {

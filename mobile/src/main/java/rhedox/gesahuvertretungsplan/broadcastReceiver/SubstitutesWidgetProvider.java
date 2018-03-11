@@ -43,34 +43,34 @@ public class SubstitutesWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 	    super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-        for (int i= 0; i < appWidgetIds.length; i++) {
-            Intent factoryServiceIntent = new Intent(context, SubstitutesWidgetService.class);
-            factoryServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
-            factoryServiceIntent.setData(Uri.parse(factoryServiceIntent.toUri(Intent.URI_INTENT_SCHEME)));
+		for (int appWidgetId : appWidgetIds) {
+			Intent factoryServiceIntent = new Intent(context, SubstitutesWidgetService.class);
+			factoryServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+			factoryServiceIntent.setData(Uri.parse(factoryServiceIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.appwidget_list);
+			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.appwidget_list);
 
-	        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-	        boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
-	        boolean amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
-            @ColorInt int color;
-            if(!darkTheme)
-                color = ContextCompat.getColor(context, R.color.widgetBackgroundLight);
-            else if(amoled)
-                color = 0xFF000000;
-            else
-                color = ContextCompat.getColor(context, R.color.widgetBackgroundDark);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			boolean darkTheme = prefs.getBoolean(PreferenceFragment.PREF_WIDGET_DARK, false);
+			boolean amoled = prefs.getBoolean(PreferenceFragment.PREF_AMOLED, false);
+			@ColorInt int color;
+			if (!darkTheme)
+				color = ContextCompat.getColor(context, R.color.widgetBackgroundLight);
+			else if (amoled)
+				color = 0xFF000000;
+			else
+				color = ContextCompat.getColor(context, R.color.widgetBackgroundDark);
 
-            remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
-            remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
+			remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
+			remoteViews.setRemoteAdapter(R.id.list, factoryServiceIntent);
 
-            Intent onClickIntent = new Intent(context, MainActivity.class);
-            onClickIntent.putExtra(MainActivity.Extra.date, JodaTimeUtils.getUnixTimeStamp(SchoolWeek.nextFromNow()));
-            PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
-            remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
+			Intent onClickIntent = new Intent(context, MainActivity.class);
+			onClickIntent.putExtra(MainActivity.Extra.date, JodaTimeUtils.getUnixTimeStamp(SchoolWeek.nextFromNow()));
+			PendingIntent onClickPending = PendingIntent.getActivity(context, REQUEST_CODE, onClickIntent, 0);
+			remoteViews.setOnClickPendingIntent(R.id.widget_toolbar_text, onClickPending);
 
-            appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);
-        }
+			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+		}
     }
 
 	public static Intent getRefreshBroadcastIntent(Context context) {
