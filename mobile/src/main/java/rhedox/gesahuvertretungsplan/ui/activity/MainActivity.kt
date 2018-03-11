@@ -23,6 +23,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.content.edit
 import com.google.firebase.analytics.FirebaseAnalytics
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -366,7 +367,10 @@ class MainActivity : AppCompatActivity(), NavDrawerContract.View, DrawerActivity
     }
 
     override fun updateCalendarSync(account: Account) {
-        CalendarSyncService.updateIsSyncable(account, applicationContext)
+        prefs.edit {
+            this.putBoolean(CalendarSyncService.alreadyAskedForCalendarPreference, true)
+        }
+        CalendarSyncService.updateIsSyncable(account, applicationContext, prefs)
     }
 
     class Listener: DrawerLayout.SimpleDrawerListener() {

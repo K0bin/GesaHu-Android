@@ -45,11 +45,13 @@ import javax.inject.Inject
  */
 class CalendarSyncService : Service() {
     companion object {
+        const val alreadyAskedForCalendarPreference = "alreadyAskedCalendar"
+
         private val syncPrimitive = object {
             var syncAdapter: SyncAdapter? = null;
         }
 
-        fun updateIsSyncable(account: Account, context: Context) {
+        fun updateIsSyncable(account: Account, context: Context, prefs: SharedPreferences) {
             val wasSyncable = ContentResolver.getIsSyncable(account, CalendarContract.AUTHORITY) == 1
             val isSyncable = context.isCalendarReadingPermissionGranted && context.isCalendarWritingPermissionGranted
             if (isSyncable != wasSyncable) {
@@ -59,7 +61,7 @@ class CalendarSyncService : Service() {
                 }
             } else {
                 if (!isSyncable) {
-                    askForPermission(context)
+                    askForPermission(context, prefs)
                 }
             }
         }
@@ -76,36 +78,38 @@ class CalendarSyncService : Service() {
 
         private const val requestCode = 11
         @SuppressLint("NewApi")
-        fun askForPermission(context: Context) {
-            val intent = context.intentFor<MainActivity>()
-            intent.action = MainActivity.Action.calendarPermission
-            val notificationManager = context.notificationManager
+        private fun askForPermission(context: Context, prefs: SharedPreferences) {
+            if (!prefs.getBoolean(alreadyAskedForCalendarPreference, false)) {
+                val intent = context.intentFor<MainActivity>()
+                intent.action = MainActivity.Action.calendarPermission
+                val notificationManager = context.notificationManager
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (notificationManager.getNotificationChannel(GesaHuAccountService.GesaHuAuthenticator.notificationChannel) == null) {
-                    val channel = NotificationChannel(GesaHuAccountService.GesaHuAuthenticator.notificationChannel, context.getString(R.string.notification_channel_other), NotificationManager.IMPORTANCE_DEFAULT)
-                    notificationManager.createNotificationChannel(channel)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (notificationManager.getNotificationChannel(GesaHuAccountService.GesaHuAuthenticator.notificationChannel) == null) {
+                        val channel = NotificationChannel(GesaHuAccountService.GesaHuAuthenticator.notificationChannel, context.getString(R.string.notification_channel_other), NotificationManager.IMPORTANCE_DEFAULT)
+                        notificationManager.createNotificationChannel(channel)
+                    }
                 }
+
+                val body = context.getString(R.string.notification_ask_for_calendar_body)
+                val bodyLong = context.getString(R.string.notification_ask_for_calendar_body_long)
+                val title = context.getString(R.string.notification_ask_for_calendar_title)
+
+                val bigTextStyle = NotificationCompat.BigTextStyle()
+                bigTextStyle.bigText(bodyLong)
+                bigTextStyle.setBigContentTitle(title)
+
+                val notification = NotificationCompat.Builder(context, GesaHuAccountService.GesaHuAuthenticator.notificationChannel)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setContentIntent(PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                        .setStyle(bigTextStyle)
+                        .setAutoCancel(true)
+                        .build()
+
+                context.notificationManager.notify(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode() + 1, notification)
             }
-
-            val body = context.getString(R.string.notification_ask_for_calendar_body)
-            val bodyLong = context.getString(R.string.notification_ask_for_calendar_body_long)
-            val title = context.getString(R.string.notification_ask_for_calendar_title)
-
-            val bigTextStyle = NotificationCompat.BigTextStyle()
-            bigTextStyle.bigText(bodyLong)
-            bigTextStyle.setBigContentTitle(title)
-
-            val notification = NotificationCompat.Builder(context, GesaHuAccountService.GesaHuAuthenticator.notificationChannel)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setContentIntent(PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setStyle(bigTextStyle)
-                    .setAutoCancel(true)
-                    .build()
-
-            context.notificationManager.notify(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode() + 1, notification)
         }
     }
 

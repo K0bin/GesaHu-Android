@@ -64,6 +64,7 @@ class BoardsSyncService : Service() {
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
 
+        @Inject internal lateinit var prefs: SharedPreferences
         @Inject internal lateinit var gesahu: GesaHu
         @Inject internal lateinit var boardsDao: BoardsDao
         @Inject internal lateinit var lessonsDao: LessonsDao
@@ -81,7 +82,7 @@ class BoardsSyncService : Service() {
                 return;
             }
 
-            CalendarSyncService.updateIsSyncable(account, context)
+            CalendarSyncService.updateIsSyncable(account, context, prefs)
 
             val password = context.accountManager.getPassword(account) ?: "";
             val call = gesahu.boards(account.name, password)

@@ -5,6 +5,7 @@ import android.accounts.AccountManager
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
@@ -50,6 +51,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private var passwordMd5: String = "";
     private var password: String = "";
 
+    @Inject internal lateinit var prefs: SharedPreferences;
     @Inject internal lateinit var gesaHu: GesaHu;
     private var call: Call<List<BoardName>>? = null;
 
@@ -251,7 +253,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private fun finishActivity() {
         SubstitutesSyncService.setIsSyncEnabled(account!!, true)
         BoardsSyncService.setIsSyncEnabled(account!!, true)
-        CalendarSyncService.updateIsSyncable(account!!, applicationContext)
+        CalendarSyncService.updateIsSyncable(account!!, applicationContext, prefs)
 
         val res = Intent()
         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username)
