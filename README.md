@@ -16,16 +16,16 @@ Zeigt Stunden und Noten eines Kursboards an.
 ## Code
 Die App ist überwiegend in Kotlin geschrieben und auf dem Model-View-Presenter Entwurfsmuster aufgebaut.
 Verwendete Libraries:
-* [OkHttp](http://square.github.io/okhttp/)
-* [Retrofit](http://square.github.io/retrofit/)
-* [ANKO](https://github.com/Kotlin/anko)
-* [Kodein](https://github.com/SalomonBrys/Kodein)
+* [Room](https://developer.android.com/topic/libraries/architecture/room.html) & [LiveData](https://developer.android.com/topic/libraries/architecture/livedata.html) für die Datenbank
+* [Dagger 2](https://google.github.io/dagger/) für Dependency Injection
+* [OkHttp](http://square.github.io/okhttp/) & [Retrofit](http://square.github.io/retrofit/) für die GET API
+* [Android KTX](https://github.com/android/android-ktx) & [Anko](https://github.com/Kotlin/anko) für nützliche Android Hilfsfunktionen in Kotlin
 * [Android Support Libraries](http://developer.android.com/tools/support-library/index.html)
-* [Joda-Time](http://www.joda.org/joda-time/)
-* [Jsoup](http://jsoup.org/)
-* [LeakCanary](https://github.com/square/leakcanary)
+* [Joda-Time](http://www.joda.org/joda-time/) für immutable Datums- und Zeitklassen in Java 7
+* [LeakCanary](https://github.com/square/leakcanary) um Memory Leaks zu erkennen
 * [ErrorView](https://github.com/xiprox/ErrorView)
 * [AboutLibraries](https://github.com/mikepenz/AboutLibraries)
+* [AppIntro](https://github.com/apl-devs/AppIntro) für die Einleitung beim ersten Start
 
 ## Playstore
 <a href="https://play.google.com/store/apps/details?id=rhedox.gesahuvertretungsplan"><img alt="Play Store badge" src="https://play.google.com/intl/en_us/badges/images/generic/de-play-badge.png" width="185"></img></a>
