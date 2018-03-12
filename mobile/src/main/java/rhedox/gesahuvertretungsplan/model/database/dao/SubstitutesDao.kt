@@ -19,8 +19,8 @@ abstract class SubstitutesDao {
     @Query("DELETE FROM ${Substitute.tableName} WHERE date < :olderThan OR date IN (:dates);")
     abstract fun clear(olderThan: LocalDate, vararg dates: LocalDate)
 
-    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date AND isRelevant = :isRelevant ORDER BY isRelevant DESC, lessonBegin ASC, duration ASC, course ASC, subject ASC;")
-    abstract fun get(date: LocalDate, isRelevant: Boolean = false): LiveData<List<Substitute>>
+    @Query("SELECT * FROM ${Substitute.tableName} WHERE date = :date ORDER BY isRelevant DESC, lessonBegin ASC, duration ASC, course ASC, subject ASC;")
+    abstract fun get(date: LocalDate): LiveData<List<Substitute>>
 
     @Transaction
     open fun insertAndClear(substitutes: Collection<Substitute>, olderThan: LocalDate, dates: Collection<LocalDate>) {
