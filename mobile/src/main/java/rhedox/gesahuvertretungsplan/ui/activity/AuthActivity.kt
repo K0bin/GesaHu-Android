@@ -62,7 +62,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     private lateinit var snackbar: Snackbar;
     private lateinit var client: CredentialsClient
 
-    private var autoLockSignInSuccessful = false;
+    private var autoSignInSuccessful = false;
 
     object SignInRequestCodes {
         const val save = 1;
@@ -87,8 +87,8 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 usernameEdit.setText(it.result.credential.id)
                 passwordEdit.setText(it.result.credential.password)
                 if (passwordEdit.text.isNotEmpty()) {
+                    autoSignInSuccessful = true;
                     login()
-                    autoLockSignInSuccessful = true;
                 }
                 return@addOnCompleteListener
             }
@@ -141,8 +141,10 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY);
                 passwordEdit.setText(credential.password)
                 usernameEdit.setText(credential.id)
-                autoLockSignInSuccessful = true;
-                login()
+                if (passwordEdit.text.isNotEmpty()) {
+                    autoSignInSuccessful = true;
+                    login()
+                }
             }
         } else if (requestCode == SignInRequestCodes.save) {
             finishActivity()
@@ -231,7 +233,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 .setProfilePictureUri(BoardsSyncService.getPhotoUrl(username).toUri())
                 .build()
 
-        if (!autoLockSignInSuccessful) {
+        if (!autoSignInSuccessful) {
             client.save(credential).addOnCompleteListener {
                 if (it.isSuccessful) {
                     // Credentials were saved
@@ -277,7 +279,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     override fun onFailure(call: Call<List<BoardName>>?, t: Throwable?) {
         this.call = null;
         snackbar.show();
-        autoLockSignInSuccessful = false;
+        autoSignInSuccessful = false;
         usernameEdit.isFocusable = true;
         usernameEdit.isFocusableInTouchMode = true;
         usernameEdit.isEnabled = true;
