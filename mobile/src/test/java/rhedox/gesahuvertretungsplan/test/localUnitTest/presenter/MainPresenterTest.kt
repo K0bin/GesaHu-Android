@@ -11,7 +11,7 @@ import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.MainContract
 import rhedox.gesahuvertretungsplan.presenter.MainPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.presenter.state.MainState
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.test.localUnitTest.dependencyInjection.TestAppComponent
 import rhedox.gesahuvertretungsplan.test.localUnitTest.repository.BoardsTestRepository
@@ -35,7 +35,7 @@ class MainPresenterTest {
     @Test
     fun testBoards() {
         val appComponent = TestAppComponent.create()
-        val presenter = MainPresenter(appComponent.boardComponent(), NavDrawerState(null))
+        val presenter = MainPresenter(appComponent.boardComponent(), MainState(null))
         val repository = presenter.boardsRepository as BoardsTestRepository
 
         val prefs = appComponent.prefs()
@@ -56,7 +56,7 @@ class MainPresenterTest {
     @Test
     fun testIntro() {
         val appComponent = TestAppComponent.create()
-        val presenter = MainPresenter(appComponent.boardComponent(), NavDrawerState(null))
+        val presenter = MainPresenter(appComponent.boardComponent(), MainState(null))
         var view = StubNavDrawerView()
         presenter.attachView(view)
         assertEquals(StubNavDrawerView.ViewValues.intro, view.currentView)
@@ -68,7 +68,7 @@ class MainPresenterTest {
     @Test
     fun testAuth() {
         val appComponent = TestAppComponent.create()
-        val presenter = MainPresenter(appComponent.boardComponent(), NavDrawerState(null))
+        val presenter = MainPresenter(appComponent.boardComponent(), MainState(null))
 
         val prefs = appComponent.prefs()
         `when`(prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)).thenReturn(true)
@@ -88,7 +88,7 @@ class MainPresenterTest {
     @Test
     fun testBoard() {
         val appComponent = TestAppComponent.create()
-        val presenter = MainPresenter(appComponent.boardComponent(), NavDrawerState(null))
+        val presenter = MainPresenter(appComponent.boardComponent(), MainState(null))
 
         val prefs = appComponent.prefs()
         `when`(prefs.getBoolean(PreferenceFragment.PREF_PREVIOUSLY_STARTED, false)).thenReturn(true)

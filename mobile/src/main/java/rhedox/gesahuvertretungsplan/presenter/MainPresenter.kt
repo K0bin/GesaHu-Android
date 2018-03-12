@@ -13,7 +13,7 @@ import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.MainContract
-import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.presenter.state.MainState
 import rhedox.gesahuvertretungsplan.security.EncryptionHelper
 import rhedox.gesahuvertretungsplan.security.encryptExistingPassword
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
@@ -24,7 +24,7 @@ import javax.inject.Inject
 /**
  * Created by robin on 20.10.2016.
  */
-class MainPresenter(component: BoardsComponent, state: NavDrawerState) : MainContract.Presenter {
+class MainPresenter(component: BoardsComponent, state: MainState) : MainContract.Presenter {
     private var view: MainContract.View? = null;
     private var account: Account? = null
     private var avatar: Bitmap? = null;
@@ -77,8 +77,8 @@ class MainPresenter(component: BoardsComponent, state: NavDrawerState) : MainCon
         updateApp()
     }
 
-    override fun saveState(): NavDrawerState {
-        return NavDrawerState(drawerId)
+    override fun saveState(): MainState {
+        return MainState(drawerId)
     }
 
     private fun checkFirstStart() {

@@ -37,7 +37,7 @@ import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.mvp.MainContract
 import rhedox.gesahuvertretungsplan.presenter.MainPresenter
-import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.presenter.state.MainState
 import rhedox.gesahuvertretungsplan.service.CalendarSyncService
 import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.ui.fragment.*
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         }
 
         //Restore presenter
-        val state = savedInstanceState?.getParcelable(MainActivity.state) ?: NavDrawerState()
+        val state = savedInstanceState?.getParcelable(MainActivity.state) ?: MainState()
         presenter = if (lastCustomNonConfigurationInstance != null) {
             lastCustomNonConfigurationInstance as MainPresenter
         } else {

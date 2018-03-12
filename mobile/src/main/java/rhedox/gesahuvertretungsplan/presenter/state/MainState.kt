@@ -6,7 +6,7 @@ import android.os.Parcelable
 /**
  * Created by robin on 02.01.2017.
  */
-data class NavDrawerState(val selectedDrawerId: Int? = null): Parcelable {
+data class MainState(val selectedDrawerId: Int? = null): Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(selectedDrawerId ?: -1)
     }
@@ -17,15 +17,15 @@ data class NavDrawerState(val selectedDrawerId: Int? = null): Parcelable {
 
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<NavDrawerState> = object : Parcelable.Creator<NavDrawerState> {
-            override fun createFromParcel(parcel: Parcel): NavDrawerState {
+        val CREATOR: Parcelable.Creator<MainState> = object : Parcelable.Creator<MainState> {
+            override fun createFromParcel(parcel: Parcel): MainState {
                 val id = parcel.readInt()
 
-                return NavDrawerState(if (id == -1) null else id)
+                return MainState(if (id == -1) null else id)
             }
 
-            override fun newArray(size: Int): Array<NavDrawerState?> {
-                return arrayOfNulls<NavDrawerState?>(size)
+            override fun newArray(size: Int): Array<MainState?> {
+                return arrayOfNulls<MainState?>(size)
             }
         }
     }

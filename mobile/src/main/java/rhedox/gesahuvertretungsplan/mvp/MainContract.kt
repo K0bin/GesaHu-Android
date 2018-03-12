@@ -4,7 +4,7 @@ import android.accounts.Account
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
-import rhedox.gesahuvertretungsplan.presenter.state.NavDrawerState
+import rhedox.gesahuvertretungsplan.presenter.state.MainState
 
 /**
  * Created by robin on 20.10.2016.
@@ -16,7 +16,7 @@ interface MainContract {
         fun detachView()
         fun destroy()
         fun onCalendarPermissionResult(isGranted: Boolean)
-        fun saveState(): NavDrawerState
+        fun saveState(): MainState
     }
 
     object DrawerIds {
