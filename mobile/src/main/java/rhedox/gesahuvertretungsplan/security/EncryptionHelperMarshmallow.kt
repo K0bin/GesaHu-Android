@@ -20,7 +20,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
     companion object {
         private const val keyAlias = "key"
         private const val androidKeyStore = "AndroidKeyStore"
-        private const val aesMode = "AES/CBC/PKCS7Padding"
+        private const val transformationAlgorithm = "AES/CBC/PKCS7Padding"
     }
 
     private val key = retrieveKey()
@@ -44,7 +44,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
     }
 
     override fun encrypt(text: String): String {
-        val cipher = Cipher.getInstance(aesMode)
+        val cipher = Cipher.getInstance(transformationAlgorithm)
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val encryptedBytes = cipher.doFinal(text.toByteArray(StandardCharsets.UTF_8))
         val ivString = Base64.encodeToString(cipher.iv, Base64.DEFAULT)
@@ -58,7 +58,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         val iv = Base64.decode(textParts[0], Base64.DEFAULT)
         val passwordBytes = Base64.decode(textParts[1], Base64.DEFAULT)
 
-        val cipher =  Cipher.getInstance(aesMode)
+        val cipher =  Cipher.getInstance(transformationAlgorithm)
         cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
         val decodedBytes = cipher.doFinal(passwordBytes)
         return String(decodedBytes, charset = StandardCharsets.UTF_8)

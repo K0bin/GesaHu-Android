@@ -1,5 +1,6 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.presenter
 
+import android.accounts.Account
 import android.graphics.Bitmap
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
@@ -9,7 +10,6 @@ import rhedox.gesahuvertretungsplan.mvp.MainContract
  * Created by robin on 26.01.2017.
  */
 class StubNavDrawerView: MainContract.View {
-
     var boards: List<Board> = listOf()
     var currentView: Int = ViewValues.substitutes;
 
@@ -31,6 +31,7 @@ class StubNavDrawerView: MainContract.View {
     override fun navigateToSubstitutes(date: LocalDate?) { currentView = ViewValues.substitutes}
     override fun navigateToBoard(boardName: String) { currentView = ViewValues.board }
     override fun navigateToSupervisions(date: LocalDate?) { currentView = ViewValues.supervisions }
+    override fun updateCalendarSync(account: Account) {}
 
     override var userName: String = ""
     override var currentDrawerId: Int = -1

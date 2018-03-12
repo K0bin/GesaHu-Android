@@ -86,8 +86,10 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             if (it.isSuccessful) {
                 usernameEdit.setText(it.result.credential.id)
                 passwordEdit.setText(it.result.credential.password)
-                autoLockSignInSuccessful = true;
-                login()
+                if (passwordEdit.text.isNotEmpty()) {
+                    login()
+                    autoLockSignInSuccessful = true;
+                }
                 return@addOnCompleteListener
             }
             val exception = it.exception

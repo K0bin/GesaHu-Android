@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.security
 /**
  * People who still run Android 4.1 or 4.2 have bigger security problems than their
  * GesaHu password not being encrypted
+ *
  * Created by robin on 11.03.2018.
  */
 

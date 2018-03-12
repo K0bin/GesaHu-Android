@@ -13,6 +13,7 @@ import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
 import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.EncryptionHelperJellyBean
 import rhedox.gesahuvertretungsplan.security.EncryptionHelperMarshmallow
 import rhedox.gesahuvertretungsplan.security.NoEncryptionHelper
 import rhedox.gesahuvertretungsplan.util.accountManager
@@ -54,5 +55,9 @@ internal open class AppModule {
 
     @Provides
     @Singleton
-    internal fun provideEncryption(): EncryptionHelper = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) EncryptionHelperMarshmallow() else NoEncryptionHelper()
+    internal fun provideEncryption(context: Context): EncryptionHelper = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> EncryptionHelperMarshmallow()
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> EncryptionHelperJellyBean(context)
+        else -> NoEncryptionHelper()
+    }
 }

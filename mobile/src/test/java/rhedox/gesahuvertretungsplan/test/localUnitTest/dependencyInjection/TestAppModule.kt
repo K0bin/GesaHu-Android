@@ -12,6 +12,8 @@ import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.model.api.GesaHu
 import rhedox.gesahuvertretungsplan.model.database.BoardsDatabase
 import rhedox.gesahuvertretungsplan.model.database.SubstitutesDatabase
+import rhedox.gesahuvertretungsplan.security.EncryptionHelper
+import rhedox.gesahuvertretungsplan.security.NoEncryptionHelper
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import javax.inject.Singleton
 
@@ -51,4 +53,8 @@ internal open class TestAppModule {
     @Provides
     @Singleton
     internal fun provideApi() = mock(GesaHu::class.java)
+
+    @Provides
+    @Singleton
+    internal fun provideEncryptionHelper(): EncryptionHelper = NoEncryptionHelper()
 }
