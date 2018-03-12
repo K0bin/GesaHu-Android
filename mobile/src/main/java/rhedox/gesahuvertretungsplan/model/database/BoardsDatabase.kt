@@ -60,6 +60,7 @@ abstract class BoardsDatabase: RoomDatabase() {
                         "homework TEXT," +
                         "homeworkDue INTEGER," +
                         "FOREIGN KEY(boardName) REFERENCES ${Board.tableName}(name) ON DELETE CASCADE ON UPDATE CASCADE);");
+                db.execSQL("CREATE INDEX lessonBoardName ON ${Lesson.tableName} (boardName)");
 
                 db.execSQL("INSERT INTO ${Lesson.tableName} (id, date, boardName, topic, duration, status, homework, homeworkDue) " +
                         "SELECT rowid, date, (SELECT name FROM ${Board.tableName} WHERE rowid = boardId), topic, duration, status, homework, homeworkDue " +
@@ -81,6 +82,7 @@ abstract class BoardsDatabase: RoomDatabase() {
                         "logo TEXT NOT NULL," +
                         "weighting REAL," +
                         "FOREIGN KEY(boardName) REFERENCES ${Board.tableName}(name) ON DELETE CASCADE ON UPDATE CASCADE);");
+                db.execSQL("CREATE INDEX markBoardName ON ${Mark.tableName} (boardName)");
 
                 db.execSQL("INSERT INTO ${Mark.tableName} (id, date, boardName, description, kind, mark, average, markKind, logo, weighting) " +
                         "SELECT rowid, date, (SELECT name FROM ${Board.tableName} WHERE rowid = boardId), description, kind, mark, average, markKind, logo, weighting " +
