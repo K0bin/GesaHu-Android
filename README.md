@@ -23,8 +23,8 @@ Verwendete Libraries:
 * [Android Support Libraries](http://developer.android.com/tools/support-library/index.html)
 * [Joda-Time](http://www.joda.org/joda-time/) für immutable Datums- und Zeitklassen in Java 7
 * [LeakCanary](https://github.com/square/leakcanary) um Memory Leaks zu erkennen
-* [ErrorView](https://github.com/xiprox/ErrorView)
-* [AboutLibraries](https://github.com/mikepenz/AboutLibraries)
+* [ErrorView](https://github.com/xiprox/ErrorView) falls eine Liste leer ist
+* [AboutLibraries](https://github.com/mikepenz/AboutLibraries) für eine Übersicht der verwendeten Libraries und derer Lizensen
 * [AppIntro](https://github.com/apl-devs/AppIntro) für die Einleitung beim ersten Start
 
 ## Playstore
