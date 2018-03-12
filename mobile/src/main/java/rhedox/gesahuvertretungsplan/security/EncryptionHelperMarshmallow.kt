@@ -21,6 +21,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         private const val keyAlias = "key"
         private const val androidKeyStore = "AndroidKeyStore"
         private const val transformationAlgorithm = "AES/CBC/PKCS7Padding"
+        private const val prefix = "/|\\ENCRYPTED/|\\"
     }
 
     private val key = retrieveKey()
@@ -48,11 +49,14 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val encryptedBytes = cipher.doFinal(text.toByteArray(StandardCharsets.UTF_8))
         val ivString = Base64.encodeToString(cipher.iv, Base64.DEFAULT)
-        return ivString + "|" + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+        return prefix + ivString + "|" + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
     override fun decrypt(text: String): String {
-        val textParts = text.split("|")
+        if (!text.startsWith(prefix)) return text; //password is unencrypted
+        if (text.length - prefix.length < 1) return ""; //only prefix
+
+        val textParts = text.substring(prefix.length).split("|")
         if (textParts.size != 2) return "";
 
         val iv = Base64.decode(textParts[0], Base64.DEFAULT)

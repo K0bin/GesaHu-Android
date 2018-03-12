@@ -28,6 +28,7 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
         private const val keyX500Principal = "CN=GesaHu, O=K0bin, C=Germany";
         private const val transformationAlgorithm = "RSA/ECB/PKCS1Padding"
         private val provider = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) "AndroidKeyStoreBCWorkaround" else "AndroidOpenSSL"
+        private const val prefix = "/|\\ENCRYPTED/|\\"
     }
 
     private val key = retrieveKey(context)
@@ -59,11 +60,14 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
         val cipher = Cipher.getInstance(transformationAlgorithm, provider)
         cipher.init(Cipher.ENCRYPT_MODE, key.public)
         val encryptedBytes = cipher.doFinal(text.toByteArray(Charset.forName("UTF-8")))
-        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+        return prefix + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
     override fun decrypt(text: String): String {
-        val passwordBytes = Base64.decode(text, Base64.DEFAULT)
+        if (!text.startsWith(prefix)) return text; //password is unencrypted
+        if (text.length - prefix.length < 1) return ""; //only prefix
+
+        val passwordBytes = Base64.decode(text.substring(prefix.length), Base64.DEFAULT)
 
         val cipher =  Cipher.getInstance(transformationAlgorithm, provider)
         cipher.init(Cipher.DECRYPT_MODE, key.private)
