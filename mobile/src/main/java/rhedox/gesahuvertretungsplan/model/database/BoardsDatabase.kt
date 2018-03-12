@@ -29,7 +29,7 @@ abstract class BoardsDatabase: RoomDatabase() {
         const val version = 7
 
         fun build(context: Context): BoardsDatabase = Room.databaseBuilder(context, BoardsDatabase::class.java, BoardsDatabase.name)
-                /*.fallbackToDestructiveMigration()*/
+                .fallbackToDestructiveMigration()
                 .addMigrations(BoardsDatabase.migration6_7)
                 .build()
 

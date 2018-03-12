@@ -30,7 +30,7 @@ abstract class SubstitutesDatabase: RoomDatabase() {
         const val version = 8
 
         fun build(context: Context): SubstitutesDatabase = Room.databaseBuilder(context, SubstitutesDatabase::class.java, SubstitutesDatabase.name)
-                    /*.fallbackToDestructiveMigration()*/
+                    .fallbackToDestructiveMigration()
                     .addMigrations(SubstitutesDatabase.migration7_8)
                     .build()
 
