@@ -22,9 +22,10 @@ class SubstitutesListDeserializer(context: Context) : JsonDeserializer<Substitut
 
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): SubstitutesList {
         val jsonObject = json.asJsonObject;
-
-        val announcement = jsonObject.get("Hinweise").asString
         val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
+
+        val announcementStr = jsonObject.get("Hinweise").asString
+        val announcement = Announcement(date, if(announcementStr.trim() != "keine") announcementStr else "")
 
         val substitutes = mutableListOf<Substitute>()
         val jsonSubstitutes = jsonObject.getAsJsonArray("Stunden")
@@ -38,7 +39,7 @@ class SubstitutesListDeserializer(context: Context) : JsonDeserializer<Substitut
             supervisions.add(deserializeSupervision(date, jsonSupervision.asJsonObject))
         }
 
-        return SubstitutesList(Announcement(date, announcement), substitutes, date, supervisions)
+        return SubstitutesList(announcement, substitutes, date, supervisions)
     }
 
     private fun deserializeSubstitute(date: LocalDate, jsonObject: JsonObject): Substitute {

@@ -154,7 +154,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     override fun onSaveInstanceState(outState: Bundle) {
         //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
         if (activity?.isChangingConfigurations == true) {
-            childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commit();
+            childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commitNow();
         }
 
         super.onSaveInstanceState(outState)

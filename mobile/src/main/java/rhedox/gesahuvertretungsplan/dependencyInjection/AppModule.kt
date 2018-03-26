@@ -57,7 +57,7 @@ internal open class AppModule {
     @Singleton
     internal fun provideEncryption(context: Context): EncryptionHelper = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> EncryptionHelperMarshmallow()
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> EncryptionHelperJellyBean(context)
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && Build.MANUFACTURER.toUpperCase() != "SAMSUNG" -> EncryptionHelperJellyBean(context)
         else -> NoEncryptionHelper()
     }
 }
