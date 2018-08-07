@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.activity
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
@@ -10,15 +9,16 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import androidx.net.toUri
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_auth.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -59,7 +59,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     @Inject internal lateinit var encryptionHelper: EncryptionHelper
     private var call: Call<List<BoardName>>? = null;
 
-    private lateinit var snackbar: Snackbar;
+    private lateinit var snackbar: Snackbar
     private lateinit var client: CredentialsClient
 
     private var autoSignInSuccessful = false;
@@ -86,7 +86,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             if (it.isSuccessful) {
                 usernameEdit.setText(it.result.credential.id)
                 passwordEdit.setText(it.result.credential.password)
-                if (passwordEdit.text.isNotEmpty()) {
+                if (passwordEdit.text.isNullOrBlank()) {
                     autoSignInSuccessful = true;
                     login()
                 }
@@ -141,7 +141,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY);
                 passwordEdit.setText(credential.password)
                 usernameEdit.setText(credential.id)
-                if (passwordEdit.text.isNotEmpty()) {
+                if (passwordEdit.text.isNullOrBlank()) {
                     autoSignInSuccessful = true;
                     login()
                 }
@@ -268,7 +268,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, GesaHuAccountService.GesaHuAuthenticator.accountType);
 
         setAccountAuthenticatorResult(res.extras)
-        setResult(Activity.RESULT_OK, res)
+        setResult(AppCompatActivity.RESULT_OK, res)
 
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

@@ -1,8 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolder
 
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.widget.NumberCircle
 

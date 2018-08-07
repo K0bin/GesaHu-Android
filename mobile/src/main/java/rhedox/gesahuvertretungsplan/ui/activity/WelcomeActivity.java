@@ -7,15 +7,15 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.preference.PreferenceManager;
 import android.view.WindowManager;
 
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import com.github.paolorotolo.appintro.model.SliderPage;
 
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 

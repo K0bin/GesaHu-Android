@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
@@ -7,7 +7,7 @@
 	android:orientation="vertical"
 	android:fitsSystemWindows="true"
 	android:id="@+id/coordinator">
-	<android.support.design.widget.AppBarLayout
+	<com.google.android.material.appbar.AppBarLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/appbarLayout"
@@ -20,7 +20,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			app:layout_scrollFlags="scroll|enterAlways|snap">
-			<android.support.v7.widget.Toolbar
+			<androidx.appcompat.widget.Toolbar
 				android:layout_width="match_parent"
 				android:layout_height="?attr/actionBarSize"
 				android:id="@+id/toolbar"
@@ -40,7 +40,7 @@
 				android:visibility="gone">
 			</rhedox.gesahuvertretungsplan.ui.widget.ContextualActionBar>
 		</FrameLayout>
-		<android.support.design.widget.TabLayout
+		<com.google.android.material.tabs.TabLayout
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -51,13 +51,13 @@
 			app:tabContentStart="72dp"
 			app:tabIndicatorColor="@android:color/white"
 			android:transitionName="tabbar"/>
-	</android.support.design.widget.AppBarLayout>
+	</com.google.android.material.appbar.AppBarLayout>
 
-	<android.support.v4.view.ViewPager
+	<androidx.viewpager.widget.ViewPager
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		app:layout_behavior="@string/appbar_scrolling_view_behavior"
 		android:id="@+id/viewPager"/>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

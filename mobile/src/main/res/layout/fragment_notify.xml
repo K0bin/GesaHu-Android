@@ -1,4 +1,4 @@
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 				xmlns:tools="http://schemas.android.com/tools"
 				xmlns:app="http://schemas.android.com/apk/res-auto"
 				android:layout_width="match_parent"
@@ -8,7 +8,7 @@
 				android:paddingTop="@dimen/activity_vertical_margin"
 				android:paddingBottom="@dimen/activity_vertical_margin"
 				tools:context="rhedox.gesahuvertretungsplan.ui.activity.WelcomeActivity$PlaceholderFragment">
-	<android.support.v7.widget.LinearLayoutCompat
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
@@ -25,43 +25,43 @@
 			android:layout_height="wrap_content"
 			android:text="@string/feature_notify"/>
 
-		<android.support.v7.widget.LinearLayoutCompat
+		<LinearLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal"
 			android:orientation="horizontal">
-		<android.support.v7.widget.CardView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="16dp"
-			android:layout_marginLeft="8dp"
-			android:layout_marginRight="8dp"
-			android:layout_marginTop="32dp"
-			android:layout_marginBottom="1dp"
-			app:cardElevation="2dp" >
-			<ImageView
-				android:layout_width="48dp"
-				android:layout_height="48dp"
-				android:scaleType="centerInside"
-				app:srcCompat="@drawable/ic_bell"/>
-		</android.support.v7.widget.CardView>
+			<androidx.cardview.widget.CardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="16dp"
+				android:layout_marginLeft="8dp"
+				android:layout_marginRight="8dp"
+				android:layout_marginTop="32dp"
+				android:layout_marginBottom="1dp"
+				app:cardElevation="2dp" >
+				<ImageView
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:scaleType="centerInside"
+					app:srcCompat="@drawable/ic_bell"/>
+			</androidx.cardview.widget.CardView>
 
-		<android.support.v7.widget.CardView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="16dp"
-			android:layout_marginLeft="8dp"
-			android:layout_marginRight="8dp"
-			android:layout_marginTop="32dp"
-			android:layout_marginBottom="1dp"
-			app:cardElevation="2dp">
-			<ImageView
-				android:layout_width="48dp"
-				android:layout_height="48dp"
-				android:scaleType="centerInside"
-				app:srcCompat="@drawable/ic_time"/>
-		</android.support.v7.widget.CardView>
-		</android.support.v7.widget.LinearLayoutCompat>
+			<androidx.cardview.widget.CardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="16dp"
+				android:layout_marginLeft="8dp"
+				android:layout_marginRight="8dp"
+				android:layout_marginTop="32dp"
+				android:layout_marginBottom="1dp"
+				app:cardElevation="2dp">
+				<ImageView
+					android:layout_width="48dp"
+					android:layout_height="48dp"
+					android:scaleType="centerInside"
+					app:srcCompat="@drawable/ic_time"/>
+			</androidx.cardview.widget.CardView>
+		</LinearLayout>
 
 
 		<TextView
@@ -69,6 +69,6 @@
 			android:layout_height="wrap_content"
 
 			android:layout_marginTop="32dp"/>
-	</android.support.v7.widget.LinearLayoutCompat>
+	</LinearLayout>
 
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>

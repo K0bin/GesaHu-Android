@@ -1,8 +1,8 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.support.v4.app.Fragment
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.Fragment
 import rhedox.gesahuvertretungsplan.R
 
 /**

@@ -1,12 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui.behavior;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ScrollAwareFabBehavior extends FloatingActionButton.Behavior {
     public ScrollAwareFabBehavior(Context context, AttributeSet attrs) {
@@ -22,18 +21,18 @@ public class ScrollAwareFabBehavior extends FloatingActionButton.Behavior {
         @Override
         public void onHidden(FloatingActionButton fab) {
             super.onHidden(fab);
-            fab.setVisibility(View.INVISIBLE);
+            fab.hide();
         }
     };
 
     @Override
-    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+    public boolean onStartNestedScroll(@androidx.annotation.NonNull androidx.coordinatorlayout.widget.CoordinatorLayout coordinatorLayout, @androidx.annotation.NonNull FloatingActionButton child, @androidx.annotation.NonNull View directTargetChild, @androidx.annotation.NonNull View target, int axes, int type) {
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL
                 || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type);
     }
 
     @Override
-    public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+    public void onNestedScroll(@androidx.annotation.NonNull androidx.coordinatorlayout.widget.CoordinatorLayout coordinatorLayout, @androidx.annotation.NonNull FloatingActionButton child, @androidx.annotation.NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
         if (dyConsumed > 0) {
             // User scrolled down and the FAB is currently visible -> hide the FAB

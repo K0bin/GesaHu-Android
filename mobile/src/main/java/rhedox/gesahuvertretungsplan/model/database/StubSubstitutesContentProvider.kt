@@ -9,7 +9,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.service.SubstitutesSyncService
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp

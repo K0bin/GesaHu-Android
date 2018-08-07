@@ -4,35 +4,24 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.ListPreferenceDialogFragmentCompat;
-import android.support.v7.preference.Preference;
 
 import com.squareup.leakcanary.RefWatcher;
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
+import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 import org.joda.time.LocalTime;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver;
-import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiverLegacy;
-import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.broadcastReceiver.BootReceiver;
-import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
+import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver;
+import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 
 /**
  * Created by Robin on 18.10.2014.
  */
-public class PreferenceFragment extends PreferenceFragmentCompatDividers {
-    private static final String DIALOG_FRAGMENT_TAG =
-            "android.support.v7.preference.PreferenceFragment.DIALOG";
-
+public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_DARK_TYPE ="pref_dark_type";
     public static final String PREF_WIDGET_DARK ="pref_widget_dark";
     public static final String PREF_NOTIFICATION_TIME = "pref_notification_time_long";
@@ -59,20 +48,24 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
     public void onDestroyView() {
         super.onDestroyView();
 
+        if (getContext() == null) {
+            return;
+        }
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         LocalTime time = LocalTime.fromMillisOfDay(prefs.getInt(PreferenceFragment.PREF_NOTIFICATION_TIME, 0));
         String mode = prefs.getString(PREF_NOTIFICATION_MODE, null);
 
-        if(!"NONE".equals(mode)) {
+        if (!"NONE".equals(mode)) {
             @SubstitutesAlarmReceiver.NotificationFrequency int notificationFrequency;
-            if("per_lesson".equals(mode)) {
+            if ("per_lesson".equals(mode)) {
                 SubstitutesAlarmReceiver.cancelDaily(getContext());
-	            notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;
-            } else if("both".equals(mode))
+                notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;
+            } else if ("both".equals(mode))
                 notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.both;
             else {
                 SubstitutesAlarmReceiver.cancelLesson(getContext());
-	            notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.daily;
+                notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.daily;
             }
 
             SubstitutesAlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
@@ -80,7 +73,7 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
         } else {
             SubstitutesAlarmReceiver.cancelDaily(getContext());
             SubstitutesAlarmReceiver.cancelLesson(getContext());
-	        BootReceiver.cancel(getContext());
+            BootReceiver.cancel(getContext());
         }
 
         PreferenceFragment.applyDarkTheme(prefs);
@@ -91,7 +84,7 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
         super.onDestroy();
 
         //LeakCanary
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        RefWatcher refWatcher = getActivity() != null ? App.getRefWatcher(getActivity()) : null;
         if(refWatcher != null)
             refWatcher.watch(this);
     }
@@ -113,42 +106,5 @@ public class PreferenceFragment extends PreferenceFragmentCompatDividers {
 
     public static PreferenceFragment newInstance() {
         return new PreferenceFragment();
-    }
-
-    @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
-
-        boolean handled = false;
-        if (getCallbackFragment() instanceof OnPreferenceDisplayDialogCallback) {
-            handled = ((OnPreferenceDisplayDialogCallback) getCallbackFragment())
-                    .onPreferenceDisplayDialog(this, preference);
-        }
-        if (!handled && getActivity() instanceof OnPreferenceDisplayDialogCallback) {
-            handled = ((OnPreferenceDisplayDialogCallback) getActivity())
-                    .onPreferenceDisplayDialog(this, preference);
-        }
-
-        if (handled) {
-            return;
-        }
-
-        // check if dialog is already showing
-        if (getFragmentManager().findFragmentByTag(DIALOG_FRAGMENT_TAG) != null) {
-            return;
-        }
-
-        final DialogFragment f;
-        if (preference instanceof EditTextPreference) {
-            f = EditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
-        } else if (preference instanceof ListPreference) {
-            f = ListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
-        } else if(preference instanceof TimePreference) {
-            f = TimePreferenceDialogFragment.newInstance(preference.getKey());
-        } else {
-            throw new IllegalArgumentException("Tried to display dialog for unknown " +
-                    "preference type. Did you forget to override onDisplayPreferenceDialog()?");
-        }
-        f.setTargetFragment(this, 0);
-        f.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
     }
 }

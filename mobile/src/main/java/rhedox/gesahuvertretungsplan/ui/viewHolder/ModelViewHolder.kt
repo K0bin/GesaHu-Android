@@ -1,7 +1,7 @@
 package rhedox.gesahuvertretungsplan.ui.viewHolder
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by robin on 23.01.2017.

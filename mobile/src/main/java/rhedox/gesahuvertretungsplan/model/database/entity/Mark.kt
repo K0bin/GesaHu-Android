@@ -1,11 +1,11 @@
 package rhedox.gesahuvertretungsplan.model.database.entity
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Index
-import android.arch.persistence.room.PrimaryKey
-import android.support.annotation.IntDef
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
+import androidx.annotation.IntDef
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import org.joda.time.LocalDate
 
 /**

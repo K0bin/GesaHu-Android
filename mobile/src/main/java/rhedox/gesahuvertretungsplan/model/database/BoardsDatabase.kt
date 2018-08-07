@@ -1,12 +1,12 @@
 package rhedox.gesahuvertretungsplan.model.database
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
-import android.arch.persistence.room.migration.Migration
 import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import rhedox.gesahuvertretungsplan.model.database.dao.BoardsDao
 import rhedox.gesahuvertretungsplan.model.database.dao.LessonsDao
 import rhedox.gesahuvertretungsplan.model.database.dao.MarksDao

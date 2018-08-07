@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.model.database
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp

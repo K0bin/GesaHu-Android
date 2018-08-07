@@ -21,9 +21,9 @@
 		android:fontFamily="sans-serif-medium" />
 
 	<ImageView
-		android:layout_width="match_parent"
-		android:layout_height="4dp"
-		android:src="@drawable/toolbar_shadow"/>
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        app:srcCompat="@drawable/toolbar_shadow"/>
 
 	<ListView
 		android:layout_width="match_parent"

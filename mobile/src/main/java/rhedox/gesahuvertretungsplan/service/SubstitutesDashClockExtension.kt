@@ -1,7 +1,7 @@
 package rhedox.gesahuvertretungsplan.service
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import android.content.Intent
 import com.google.android.apps.dashclock.api.DashClockExtension
 import com.google.android.apps.dashclock.api.ExtensionData

@@ -12,9 +12,6 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.widget.CardView
 import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
@@ -22,6 +19,9 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.Window
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.fragment.app.DialogFragment
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import io.codetail.animation.arcanimator.ArcAnimator
 import io.codetail.animation.arcanimator.Side
 import rhedox.gesahuvertretungsplan.R
@@ -103,7 +103,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
             dialog.setOnDismissListener(this)
             dialog.setOnKeyListener(this)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                dialog.window.statusBarColor = 0
+                dialog.window?.statusBarColor = 0
             }
             val dialogBackground = dialog.findViewById<View>(R.id.dialogBackground)
             val dialogBody = dialog.findViewById<TextView>(R.id.dialogBody)

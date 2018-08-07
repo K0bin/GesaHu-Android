@@ -5,12 +5,12 @@ import android.animation.ObjectAnimator
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.annotation.ColorInt
-import android.support.annotation.Dimension
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
+import androidx.annotation.ColorInt
+import androidx.annotation.Dimension
+import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.TextView
+import androidx.core.graphics.drawable.DrawableCompat
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract

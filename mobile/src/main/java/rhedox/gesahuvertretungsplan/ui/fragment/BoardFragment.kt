@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics

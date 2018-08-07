@@ -1,7 +1,7 @@
 package rhedox.gesahuvertretungsplan.model.database
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.dependencyInjection.PresenterScope
 import rhedox.gesahuvertretungsplan.model.SubstitutesRepository

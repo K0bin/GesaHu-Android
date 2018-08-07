@@ -1,9 +1,10 @@
 package rhedox.gesahuvertretungsplan.ui.widget;
 
 import android.content.Context;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by Robin on 18.09.2015.

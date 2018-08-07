@@ -2,14 +2,14 @@ package rhedox.gesahuvertretungsplan.ui.fragment
 
 import android.graphics.Point
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.perf.metrics.AddTrace
 import org.jetbrains.anko.displayMetrics
 import rhedox.gesahuvertretungsplan.App
@@ -90,7 +90,7 @@ class LessonsFragment : Fragment(), LessonsContract.View {
 
         val cardHeight = context!!.resources.getDimension(R.dimen.topCardHeight);
         recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val totalScroll = recycler.computeVerticalScrollOffset();
                 (parentFragment as? AppBarFragment)?.hasAppBarElevation = !adapter.hasTopHeader || totalScroll >= cardHeight

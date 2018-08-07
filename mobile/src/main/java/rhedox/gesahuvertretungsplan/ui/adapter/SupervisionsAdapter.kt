@@ -1,11 +1,11 @@
 package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.content.Context
-import android.support.annotation.ColorInt
-import android.support.annotation.Dimension
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.ColorInt
+import androidx.annotation.Dimension
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract

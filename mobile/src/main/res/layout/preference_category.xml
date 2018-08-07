@@ -6,5 +6,5 @@
 		  android:textAppearance="@style/Preference_TextAppearanceMaterialBody2"
 		  android:textColor="@color/preference_fallback_accent_color"
 		  android:paddingLeft="8dp"
-		  android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+		  android:paddingRight="?attr/listPreferredItemPaddingRight"
 		  android:paddingTop="16dip" />

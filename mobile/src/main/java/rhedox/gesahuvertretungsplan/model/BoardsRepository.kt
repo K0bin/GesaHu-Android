@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.model
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark

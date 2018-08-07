@@ -1,8 +1,8 @@
 package rhedox.gesahuvertretungsplan.ui.activity;
 
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 /**
  * Created by robin on 07.02.2017.

@@ -8,11 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresPermission;
+import androidx.annotation.NonNull;
 
 import org.joda.time.LocalTime;
 
+import androidx.annotation.RequiresPermission;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
 
 /**

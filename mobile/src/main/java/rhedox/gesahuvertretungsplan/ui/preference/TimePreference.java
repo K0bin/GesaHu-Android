@@ -5,7 +5,9 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import org.joda.time.LocalTime;
 
-public class TimePreference extends android.support.v7.preference.DialogPreference {
+import androidx.preference.DialogPreference;
+
+public class TimePreference extends DialogPreference {
     private LocalTime time = new LocalTime();
 
     public TimePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {

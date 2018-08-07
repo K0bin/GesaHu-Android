@@ -1,8 +1,8 @@
 package rhedox.gesahuvertretungsplan.model;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;

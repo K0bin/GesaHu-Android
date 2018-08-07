@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.repository
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.SubstitutesRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Announcement

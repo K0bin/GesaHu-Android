@@ -9,10 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
+import androidx.annotation.ColorInt;
+import androidx.core.content.ContextCompat;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.model.SchoolWeek;
 import rhedox.gesahuvertretungsplan.service.SubstitutesWidgetService;

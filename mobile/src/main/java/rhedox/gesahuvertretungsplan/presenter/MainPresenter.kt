@@ -2,11 +2,11 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import androidx.content.edit
+import androidx.core.content.edit
 import rhedox.gesahuvertretungsplan.BuildConfig
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.AvatarLoader

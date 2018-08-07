@@ -3,8 +3,8 @@ package rhedox.gesahuvertretungsplan.util;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.joda.time.LocalDate;
 

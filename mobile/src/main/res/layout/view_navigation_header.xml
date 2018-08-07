@@ -33,7 +33,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/logo_content_description"
         android:scaleType="centerInside"
-        android:src="@drawable/logogesahu"
+        app:srcCompat="@drawable/logogesahu"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintHorizontal_bias="0.519"
         app:layout_constraintLeft_toLeftOf="@+id/view"

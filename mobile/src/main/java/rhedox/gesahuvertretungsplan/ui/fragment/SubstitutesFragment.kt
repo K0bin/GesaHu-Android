@@ -6,9 +6,9 @@ import android.graphics.PointF
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
 import android.view.*
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.android.synthetic.main.fragment_substitutes.*
 import org.jetbrains.anko.displayMetrics
@@ -237,13 +237,13 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
     override fun onDismiss(dialog: DialogInterface?) {
         if (isFabVisible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab?.visibility = View.VISIBLE
+            fab?.show()
         }
     }
 
     override fun onShow(dialog: DialogInterface?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fab.visibility = View.INVISIBLE
+            fab.hide()
         }
     }
 

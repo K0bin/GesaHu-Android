@@ -8,16 +8,17 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.*
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.CalendarContract
-import android.support.annotation.ColorInt
-import android.support.annotation.RequiresPermission
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat
 import android.util.Log
+import androidx.annotation.ColorInt
+import androidx.annotation.RequiresPermission
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.crashlytics.android.Crashlytics
 import org.jetbrains.anko.intentFor
 import org.joda.time.DateTime
@@ -150,8 +151,12 @@ class CalendarSyncService : Service() {
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             Log.d("sync", "performcalendarsync")
 
-            if(Thread.interrupted()) {
-                return;
+            if (Thread.interrupted()) {
+                return
+            }
+
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                return
             }
 
             val existingCalendars = getCalendarIds(account)
@@ -279,6 +284,7 @@ class CalendarSyncService : Service() {
                     null, null);
 
             val calendars = mutableMapOf<String, Long>()
+            cursor ?: return calendars
 
             if(cursor.count > 0 && !cursor.isClosed) {
                 cursor.moveToFirst()
@@ -336,7 +342,7 @@ class CalendarSyncService : Service() {
             val uri = buildUri(CalendarContract.Calendars.CONTENT_URI, account)
             val calendarUri = context.contentResolver.insert(uri, values)
             Log.d("CalendarSync", "$calendarUri")
-            return calendarUri.lastPathSegment.toLong();
+            return calendarUri?.lastPathSegment?.toLong() ?: 0L
         }
 
         @Suppress("ReplaceArrayOfWithLiteral")
@@ -356,10 +362,10 @@ class CalendarSyncService : Service() {
             values.put(CalendarContract.Events.TITLE, event.description)
             var description = context.getString(R.string.calendar_event_description, event.category);
             if(event.location.isNotBlank()) {
-                description += System.getProperty("line.separator") + context.getString(R.string.calendar_location, event.location)
+                description += System.getProperty("line.separator")!! + context.getString(R.string.calendar_location, event.location)
             }
             if(event.author.isNotBlank()) {
-                description += System.getProperty("line.separator") + context.getString(R.string.calendar_author, event.author)
+                description += System.getProperty("line.separator")!! + context.getString(R.string.calendar_author, event.author)
             }
             values.put(CalendarContract.Events.DESCRIPTION, description)
             values.put(CalendarContract.Events.CALENDAR_ID, calendarId);

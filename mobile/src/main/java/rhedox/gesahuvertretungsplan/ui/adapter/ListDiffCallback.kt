@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.ui.adapter
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 
 /**
  * Created by robin on 09.03.2018.

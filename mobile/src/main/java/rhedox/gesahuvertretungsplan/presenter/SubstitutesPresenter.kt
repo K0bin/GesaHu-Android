@@ -2,13 +2,13 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import android.content.ContentResolver
 import android.net.ConnectivityManager
 import android.os.Build
-import android.support.v4.app.Fragment
 import android.util.Log
+import androidx.fragment.app.Fragment
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
@@ -48,7 +48,7 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
     private var account: Account? = null
         get() {
             if (field == null) {
-                field = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)?.firstOrNull()
+                field = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType).firstOrNull()
             }
             return field;
         }

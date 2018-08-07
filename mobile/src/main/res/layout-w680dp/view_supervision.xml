@@ -1,6 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -8,8 +9,9 @@
     android:background="@drawable/substitutes_background"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
+    android:focusable="true"
     android:padding="16dp">
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:layout_width="@dimen/tileAvatarSize"
         android:layout_height="@dimen/tileAvatarSize"
         android:layout_gravity="center_vertical"
@@ -18,13 +20,14 @@
         android:padding="8dp"
         android:gravity="center"
         android:background="?attr/circleColor"
-        android:layout_marginRight="8dp"/>
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:text="Deutsch Förderu. 13abcde"
+        tools:text="Deutsch Förderu. 13abcde"
         android:id="@+id/time"
         android:textColor="?android:attr/textColorPrimary"
         android:padding="0dp"
@@ -37,12 +40,12 @@
     />
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.5"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="Lindenberg xxxxxxxxx Lawl"
+        tools:text="Lindenberg xxxxxxxxx Lawl"
         android:id="@+id/teacher"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
@@ -51,12 +54,12 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:minWidth="64dp"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.5"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="Körschner"
+        tools:text="Körschner"
         android:id="@+id/substituteTeacher"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
@@ -66,14 +69,14 @@
         android:minWidth="64dp"/>
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
-        android:text="Klausur findet statt"
+        tools:text="Klausur findet statt"
         android:id="@+id/location"
         android:textColor="?android:attr/textColorHint"
         android:fontFamily="sans-serif-condensed"

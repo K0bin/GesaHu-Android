@@ -14,7 +14,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import org.jetbrains.anko.intentFor
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.AuthActivity
@@ -36,7 +36,7 @@ class GesaHuAccountService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return authenticator.iBinder;
+        return authenticator.iBinder
     }
 
     //Authenticator

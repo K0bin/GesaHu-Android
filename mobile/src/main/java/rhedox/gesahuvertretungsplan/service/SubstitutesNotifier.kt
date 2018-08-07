@@ -9,9 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.LocalDate
@@ -41,7 +41,7 @@ class SubstitutesNotifier(private val context: Context) {
 
     //Color is used for the notifications
     private val color: Int = ContextCompat.getColor(context, R.color.colorDefaultAccent);
-    private var lesson: Int = -1;
+    private var lesson: Int = -1
 
     @Inject internal lateinit var formatter: SubstituteFormatter
     @Inject internal lateinit var repository: SubstitutesDatabaseRepository

@@ -1,6 +1,6 @@
 package rhedox.gesahuvertretungsplan.test.localUnitTest.repository
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson

@@ -8,7 +8,7 @@
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:padding="16dp">
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="@dimen/tileAvatarSize"
         android:layout_height="@dimen/tileAvatarSize"
         android:layout_gravity="center_vertical"
@@ -23,7 +23,7 @@
         android:layout_marginRight="8dp"
         android:shadowRadius="0"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.7"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
     />
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.35"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:minWidth="64dp"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.45"
         android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:minWidth="64dp"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.25"
         android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_weight="0.65"
         android:layout_height="wrap_content"

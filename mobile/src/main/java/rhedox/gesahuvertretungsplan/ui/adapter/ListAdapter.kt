@@ -1,8 +1,8 @@
 package rhedox.gesahuvertretungsplan.ui.adapter
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.util.ListUpdateCallback
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import rhedox.gesahuvertretungsplan.ui.viewHolder.ModelViewHolder
@@ -15,7 +15,7 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
     open var list = listOf<T>()
     set(value) {
         doAsync {
-            isDiffing = true;
+            isDiffing = true
             //val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value, hasEmptyView, hadTopHeader, hasTopHeader), false)
             val diffResult = DiffUtil.calculateDiff(ListDiffCallback(field, value), false)
             uiThread {

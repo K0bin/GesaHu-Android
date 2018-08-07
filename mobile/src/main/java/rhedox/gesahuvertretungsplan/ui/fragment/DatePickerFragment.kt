@@ -3,8 +3,8 @@ package rhedox.gesahuvertretungsplan.ui.fragment
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.widget.DatePicker
+import androidx.fragment.app.DialogFragment
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 
@@ -26,7 +26,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
             date = LocalDate.now()
 
         isPickerDone = false
-        return DatePickerDialog(activity, this, date.year, date.monthOfYear - 1, date.dayOfMonth)
+        return DatePickerDialog(requireActivity(), this, date.year, date.monthOfYear - 1, date.dayOfMonth)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

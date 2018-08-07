@@ -11,9 +11,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.support.annotation.IntDef
-import android.support.annotation.RequiresPermission
 import android.util.Log
+import androidx.annotation.IntDef
+import androidx.annotation.RequiresPermission
 import org.joda.time.DateTime
 import org.joda.time.DurationFieldType
 import rhedox.gesahuvertretungsplan.service.SubstitutesNotifierJobService

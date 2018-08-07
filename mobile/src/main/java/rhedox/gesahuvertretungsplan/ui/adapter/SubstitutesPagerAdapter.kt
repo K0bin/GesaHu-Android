@@ -2,12 +2,12 @@ package rhedox.gesahuvertretungsplan.ui.adapter
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.v4.view.PagerAdapter
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.PagerAdapter
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 
@@ -46,7 +46,7 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
             recyclerView.layoutManager = layoutManager
             val adapter = SubstitutesAdapter(presenter, container.context)
             recyclerView.adapter = adapter;
-            recyclerView.recycledViewPool = pool;
+            recyclerView.setRecycledViewPool(pool);
             recyclerView.setHasFixedSize(true)
 
             container.addView(recyclerView);
@@ -62,7 +62,7 @@ class SubstitutesPagerAdapter(private val presenter: SubstitutesContract.Present
 
     override fun destroyItem(container: ViewGroup, position: Int, page: Any) {
         val recyclerView = page as RecyclerView
-        layoutManagerStates[position] = recyclerView.layoutManager.onSaveInstanceState()
+        layoutManagerStates[position] = recyclerView.layoutManager?.onSaveInstanceState()
 
         container.removeView(recyclerView);
     }

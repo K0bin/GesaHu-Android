@@ -1,7 +1,7 @@
 package rhedox.gesahuvertretungsplan.presenter
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board

@@ -3,15 +3,12 @@ package rhedox.gesahuvertretungsplan.ui.fragment;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.widget.TimePicker;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceDialogFragmentCompat;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 
 /**
