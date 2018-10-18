@@ -9,6 +9,7 @@ import org.joda.time.LocalTime;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceDialogFragmentCompat;
+import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 
 /**
@@ -30,7 +31,7 @@ public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
 	    else
             time = getTimePreference().getTime();
 
-        return new TimePickerDialog(getContext(), this, time.getHourOfDay(), time.getMinuteOfHour(), true);
+        return new TimePickerDialog(getContext(), R.style.DatePickerFix, this, time.getHourOfDay(), time.getMinuteOfHour(), true);
     }
 
 	@Override

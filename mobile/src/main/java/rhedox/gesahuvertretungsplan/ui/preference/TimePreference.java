@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import org.joda.time.LocalTime;
 
+import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 
 public class TimePreference extends DialogPreference {
@@ -48,13 +49,11 @@ public class TimePreference extends DialogPreference {
     }
 
     @Override
-    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+    protected void onSetInitialValue(@Nullable Object defaultValue) {
         LocalTime localTime = null;
-        if(defaultValue != null && defaultValue instanceof LocalTime)
+        if(defaultValue instanceof LocalTime)
             localTime = (LocalTime)defaultValue;
 
-        setTime(restorePersistedValue ? LocalTime.fromMillisOfDay(getPersistedInt(localTime != null ? localTime.getMillisOfDay() : 0)) : localTime);
+        setTime(LocalTime.fromMillisOfDay(getPersistedInt(localTime != null ? localTime.getMillisOfDay() : 0)));
     }
-
-
 }
