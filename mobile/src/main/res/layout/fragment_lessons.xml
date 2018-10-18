@@ -9,6 +9,6 @@
     android:paddingBottom="@dimen/listMargin"
     android:clipToPadding="false"
     android:orientation="vertical"
-    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     xmlns:tools="http://schemas.android.com/tools"
     tools:listitem="@layout/view_lesson"/>

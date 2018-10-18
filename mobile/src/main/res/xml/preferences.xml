@@ -1,7 +1,7 @@
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.preference.PreferenceCategory
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
         android:title="Benachrichtigungen">
-        <android.support.v7.preference.ListPreference
+        <ListPreference
             android:key="pref_notification_mode"
             android:title="Benachrichtigen"
             android:dialogTitle="Wie möchtest du benachrichtigt werden?"
@@ -16,12 +16,12 @@
             android:summary="Zeit der Benachrichtigung"
             android:defaultValue="25200000" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <PreferenceCategory
         android:title="Aussehen">
 
-        <android.support.v7.preference.ListPreference
+        <ListPreference
             android:key="pref_dark_type"
             android:title="Nachtmodus"
             android:dialogTitle="Wann möchtest du dunkle Farben verwenden?"
@@ -30,23 +30,23 @@
             android:entryValues="@array/dark_theme_values"
             android:defaultValue="default" />
 
-        <android.support.v7.preference.CheckBoxPreference
+        <CheckBoxPreference
             android:key="pref_amoled"
             android:title="AMOLED Schwarz"
             android:summary="Schwarz statt grau verwenden, um Energie zu sparen"
             android:defaultValue="false" />
 
-        <android.support.v7.preference.CheckBoxPreference
+        <CheckBoxPreference
             android:key="pref_widget_dark"
             android:title="Widget Dark Theme"
             android:summary="Dunkle Farben in den Widgets verwenden"
             android:defaultValue="false" />
 
-        <android.support.v7.preference.CheckBoxPreference
+        <CheckBoxPreference
             android:key="pref_white_tab_indicator"
             android:title="Weißer Tab Indikator"
             android:summary="Linie unter dem aktiven Tab weiß färben"
             android:defaultValue="true" />
 
-    </android.support.v7.preference.PreferenceCategory>
-</android.support.v7.preference.PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

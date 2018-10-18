@@ -12,11 +12,13 @@ import org.joda.time.LocalTime;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.Preference;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.broadcastReceiver.BootReceiver;
 import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
+import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 
 /**
  * Created by Robin on 18.10.2014.
@@ -29,6 +31,8 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
     public static final String PREF_VERSION = "pref_version";
     public static final String PREF_AMOLED = "pref_amoled";
+
+    private static final String FRAGMENT_DIALOG_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -102,6 +106,22 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    }
+
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if (this.getFragmentManager() == null) {
+            return;
+        }
+
+        if (this.getFragmentManager().findFragmentByTag(FRAGMENT_DIALOG_TAG) == null) {
+            if (preference instanceof TimePreference) {
+                displayPreferenceDialog(new TimePreferenceDialogFragment(), preference.getKey());
+            } else {
+                super.onDisplayPreferenceDialog(preference);
+            }
+        }
     }
 
     public static PreferenceFragment newInstance() {

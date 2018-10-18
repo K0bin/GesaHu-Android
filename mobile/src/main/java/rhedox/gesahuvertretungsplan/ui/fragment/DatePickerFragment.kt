@@ -26,7 +26,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
             date = LocalDate.now()
 
         isPickerDone = false
-        return DatePickerDialog(requireActivity(), this, date.year, date.monthOfYear - 1, date.dayOfMonth)
+        return DatePickerDialog(requireContext(), this, date.year, date.monthOfYear - 1, date.dayOfMonth)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -43,11 +43,13 @@
 		<com.google.android.material.tabs.TabLayout
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+			style="@style/Widget.MaterialComponents.TabLayout.Colored"
+			android:background="?attr/colorPrimary"
+			app:tabTextColor="@android:color/white"
+			app:tabIndicatorFullWidth="false"
 			android:id="@+id/tabLayout"
 			app:tabMode="fixed"
 			app:tabGravity="fill"
-			android:background="?attr/colorPrimary"
 			app:tabContentStart="72dp"
 			app:tabIndicatorColor="@android:color/white"
 			android:transitionName="tabbar"/>
