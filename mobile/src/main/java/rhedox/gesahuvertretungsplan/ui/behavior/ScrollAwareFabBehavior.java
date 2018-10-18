@@ -1,11 +1,12 @@
 package rhedox.gesahuvertretungsplan.ui.behavior;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.core.view.ViewCompat;
 
 public class ScrollAwareFabBehavior extends FloatingActionButton.Behavior {
     public ScrollAwareFabBehavior(Context context, AttributeSet attrs) {

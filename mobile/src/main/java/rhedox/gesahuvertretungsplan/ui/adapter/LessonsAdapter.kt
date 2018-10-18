@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
 import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
@@ -52,22 +53,14 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
             }
         }
 
-    private val config: ErrorView.Config;
+    @ColorInt private val errorTitleColor: Int
+    @ColorInt private val errorMessageColor: Int
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(intArrayOf(R.attr.textPrimary, R.attr.textSecondary))
-        val errorTitleColor = typedArray.getColor(0, 0)
-        val errorMessageColor = typedArray.getColor(1, 0)
+        errorTitleColor = typedArray.getColor(0, 0)
+        errorMessageColor = typedArray.getColor(1, 0)
         typedArray.recycle()
-
-        config = ErrorView.Config.create()
-                .title(context.getString(R.string.no_lessons))
-                .titleColor(errorTitleColor)
-                .image(R.drawable.ic_rip)
-                .subtitle(context.getString(R.string.no_lessons_hint))
-                .subtitleColor(errorMessageColor)
-                .retryVisible(false)
-                .build()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -89,6 +82,6 @@ class LessonsAdapter(context: Context, private val isTablet: Boolean = false) : 
     }
 
     override fun bindEmptyView(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as? ErrorViewHolder)?.bind(config)
+        (holder as? ErrorViewHolder)?.bind(R.string.no_lessons, errorTitleColor, R.drawable.ic_rip, R.string.no_lessons_hint, errorMessageColor, false)
     }
 }

@@ -83,9 +83,9 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 .build()
 
         client.request(request).addOnCompleteListener {
-            if (it.isSuccessful) {
-                usernameEdit.setText(it.result.credential.id)
-                passwordEdit.setText(it.result.credential.password)
+            if (it.isSuccessful && it.result != null) {
+                usernameEdit.setText(it.result!!.credential.id)
+                passwordEdit.setText(it.result!!.credential.password)
                 if (passwordEdit.text.isNullOrBlank()) {
                     autoSignInSuccessful = true;
                     login()

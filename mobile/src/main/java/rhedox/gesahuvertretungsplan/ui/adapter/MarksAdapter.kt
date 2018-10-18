@@ -3,6 +3,7 @@ package rhedox.gesahuvertretungsplan.ui.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
@@ -16,7 +17,6 @@ import tr.xip.errorview.ErrorView
  */
 class MarksAdapter(context: Context, private val isTablet: Boolean = false) : ListAdapter<Mark>(hasEmptyView = true, hasTopHeader = !isTablet) {
     var mark = ""
-        get() = field
         set(value) {
             if (field != value) {
                 field = value
@@ -29,22 +29,14 @@ class MarksAdapter(context: Context, private val isTablet: Boolean = false) : Li
             }
         }
 
-    private val config: ErrorView.Config;
+    @ColorInt private val errorTitleColor: Int
+    @ColorInt private val errorMessageColor: Int
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(intArrayOf(R.attr.textPrimary, R.attr.textSecondary))
-        val errorTitleColor = typedArray.getColor(0, 0)
-        val errorMessageColor = typedArray.getColor(1, 0)
+        errorTitleColor = typedArray.getColor(0, 0)
+        errorMessageColor = typedArray.getColor(1, 0)
         typedArray.recycle()
-
-        config = ErrorView.Config.create()
-                .title(context.getString(R.string.no_marks))
-                .titleColor(errorTitleColor)
-                .image(R.drawable.ic_rip)
-                .subtitle(context.getString(R.string.no_marks_hint))
-                .subtitleColor(errorMessageColor)
-                .retryVisible(false)
-                .build()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -66,6 +58,6 @@ class MarksAdapter(context: Context, private val isTablet: Boolean = false) : Li
     }
 
     override fun bindEmptyView(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as? ErrorViewHolder)?.bind(config)
+        (holder as? ErrorViewHolder)?.bind(R.string.no_marks, errorTitleColor, R.drawable.ic_rip, R.string.no_marks_hint, errorMessageColor, false)
     }
 }

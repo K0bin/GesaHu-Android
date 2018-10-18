@@ -25,11 +25,10 @@ class SupervisionsAdapter(private val presenter: SupervisionsContract.Presenter,
     @ColorInt private val textColorRelevant: Int
     @ColorInt private val circleColor: Int
     @ColorInt private val circleColorRelevant: Int
+    @ColorInt private val errorTitleColor: Int
+    @ColorInt private val errorMessageColor: Int
 
     @Dimension private val selectedElevation: Float = context.resources.getDimension(R.dimen.touch_raise)
-
-    //EmptyView
-    val config: ErrorView.Config;
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(intArrayOf(R.attr.circleColor, R.attr.circleImportantColor, R.attr.circleTextColor, R.attr.circleImportantTextColor, R.attr.textPrimary, R.attr.textSecondary))
@@ -37,33 +36,24 @@ class SupervisionsAdapter(private val presenter: SupervisionsContract.Presenter,
         textColorRelevant = typedArray.getColor(3, 0)
         circleColorRelevant = typedArray.getColor(1, 0)
         circleColor = typedArray.getColor(0, 0)
-        val errorTitleColor = typedArray.getColor(4, 0)
-        val errorMessageColor = typedArray.getColor(5, 0)
+        errorTitleColor = typedArray.getColor(4, 0)
+        errorMessageColor = typedArray.getColor(5, 0)
         typedArray.recycle()
-
-        config = ErrorView.Config.create()
-                .title(context.getString(R.string.no_supervisions))
-                .titleColor(errorTitleColor)
-                .image(R.drawable.no_substitutes)
-                .subtitle(context.getString(R.string.no_substitutes_hint))
-                .subtitleColor(errorMessageColor)
-                .retryVisible(false)
-                .build()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+        return when (viewType) {
             ItemTypeValues.view -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.view_supervision, parent, false)
-                return SupervisionViewHolder(view, presenter, circleColor, circleColorRelevant, selectedElevation)
+                SupervisionViewHolder(view, presenter, circleColor, circleColorRelevant, selectedElevation)
             }
 
-            else -> return ErrorViewHolder(ErrorView(parent.context));
+            else -> ErrorViewHolder(ErrorView(parent.context));
         }
     }
 
     override fun bindEmptyView(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as? ErrorViewHolder)?.bind(config)
+        (holder as? ErrorViewHolder)?.bind(R.string.no_supervisions, errorTitleColor, R.drawable.no_substitutes, R.string.no_substitutes_hint, errorMessageColor, false)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
