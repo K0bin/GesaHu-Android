@@ -5,6 +5,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import com.crashlytics.android.Crashlytics
 import java.nio.charset.StandardCharsets
 import java.security.Key
 import java.security.KeyStore
@@ -24,6 +25,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         private const val prefix = "/|\\ENCRYPTED/|\\"
     }
 
+    private var isNewKey = false
     private val key = retrieveKey()
 
     private fun retrieveKey(): Key {
@@ -31,6 +33,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         keyStore.load(null)
 
         if (!keyStore.containsAlias(keyAlias)) {
+            isNewKey = true
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeyStore)
             val keySpec = KeyGenParameterSpec.Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                     .setKeySize(256)
@@ -52,9 +55,10 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         return prefix + ivString + "|" + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
-    override fun decrypt(text: String): String {
-        if (!text.startsWith(prefix)) return text; //password is unencrypted
-        if (text.length - prefix.length < 1) return ""; //only prefix
+    override fun decrypt(text: String): String? {
+        if (isNewKey) return null //the original key somehow got lost so its impossible to decrypt
+        if (!text.startsWith(prefix)) return text //password is unencrypted
+        if (text.length - prefix.length < 1) return null //only prefix
 
         val textParts = text.substring(prefix.length).split("|")
         if (textParts.size != 2) return "";
@@ -62,9 +66,14 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         val iv = Base64.decode(textParts[0], Base64.DEFAULT)
         val passwordBytes = Base64.decode(textParts[1], Base64.DEFAULT)
 
-        val cipher =  Cipher.getInstance(transformationAlgorithm)
-        cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
-        val decodedBytes = cipher.doFinal(passwordBytes)
-        return String(decodedBytes, charset = StandardCharsets.UTF_8)
+        return try {
+            val cipher = Cipher.getInstance(transformationAlgorithm)
+            cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
+            val decodedBytes = cipher.doFinal(passwordBytes)
+            String(decodedBytes, charset = StandardCharsets.UTF_8)
+        } catch (e: SecurityException) {
+            Crashlytics.logException(e)
+            null
+        }
     }
 }

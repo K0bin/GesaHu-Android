@@ -6,5 +6,5 @@ package rhedox.gesahuvertretungsplan.security
 
 interface EncryptionHelper {
     fun encrypt(text: String): String
-    fun decrypt(text: String): String
+    fun decrypt(text: String): String?
 }

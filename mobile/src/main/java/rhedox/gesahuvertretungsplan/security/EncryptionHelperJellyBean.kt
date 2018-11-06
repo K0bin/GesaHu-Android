@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import android.security.KeyPairGeneratorSpec
 import android.util.Base64
+import com.crashlytics.android.Crashlytics
 import org.joda.time.DateTime
 import org.joda.time.Period
 import java.nio.charset.Charset
@@ -31,6 +32,7 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
         private const val prefix = "/|\\ENCRYPTED/|\\"
     }
 
+    private var isNewKey = false
     private val key = retrieveKey(context)
 
     private fun retrieveKey(context: Context): KeyPair {
@@ -38,6 +40,7 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
         keyStore.load(null)
 
         if (!keyStore.containsAlias(keyAlias)) {
+            isNewKey = true
             val start = DateTime.now().toDate()
             val end = DateTime.now().withPeriodAdded(Period.years(99), 1).toDate()
 
@@ -63,15 +66,21 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
         return prefix + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
-    override fun decrypt(text: String): String {
-        if (!text.startsWith(prefix)) return text; //password is unencrypted
-        if (text.length - prefix.length < 1) return ""; //only prefix
+    override fun decrypt(text: String): String? {
+        if (isNewKey) return null //the original key somehow got lost so its impossible to decrypt
+        if (!text.startsWith(prefix)) return text //password is unencrypted
+        if (text.length - prefix.length < 1) return null //only prefix
 
         val passwordBytes = Base64.decode(text.substring(prefix.length), Base64.DEFAULT)
 
-        val cipher =  Cipher.getInstance(transformationAlgorithm, provider)
-        cipher.init(Cipher.DECRYPT_MODE, key.private)
-        val decodedBytes = cipher.doFinal(passwordBytes)
-        return String(decodedBytes, charset = Charset.forName("UTF-8"))
+        return try {
+            val cipher = Cipher.getInstance(transformationAlgorithm, provider)
+            cipher.init(Cipher.DECRYPT_MODE, key.private)
+            val decodedBytes = cipher.doFinal(passwordBytes)
+            String(decodedBytes, charset = Charset.forName("UTF-8"))
+        } catch (e: SecurityException) {
+            Crashlytics.logException(e)
+            null
+        }
     }
 }
