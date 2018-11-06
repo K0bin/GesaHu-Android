@@ -31,7 +31,9 @@ public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
 	    else
             time = getTimePreference().getTime();
 
-        return new TimePickerDialog(getContext(), R.style.DatePickerFix, this, time.getHourOfDay(), time.getMinuteOfHour(), true);
+        TimePickerDialog dialog = new TimePickerDialog(getContext(), this, time.getHourOfDay(), time.getMinuteOfHour(), true);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.cardBackground); //Workaround for broken/ugly picker look with new theme
+        return dialog;
     }
 
 	@Override

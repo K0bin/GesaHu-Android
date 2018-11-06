@@ -13,7 +13,7 @@ import rhedox.gesahuvertretungsplan.R
  * Created by robin on 20.10.2016.
  */
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
-    private lateinit var date: LocalDate;
+    private lateinit var date: LocalDate
     private var isPickerDone = false
 
     var callback: ((date: LocalDate) -> Unit)? = null
@@ -27,7 +27,10 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
             date = LocalDate.now()
 
         isPickerDone = false
-        return DatePickerDialog(requireContext(), R.style.DatePickerFix, this, date.year, date.monthOfYear - 1, date.dayOfMonth)
+
+        val dialog = DatePickerDialog(requireContext(), this, date.year, date.monthOfYear - 1, date.dayOfMonth)
+        dialog.window!!.setBackgroundDrawableResource(R.color.cardBackground) //Workaround for broken/ugly picker look with new theme
+        return dialog
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
