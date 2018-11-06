@@ -133,7 +133,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
     override fun onShow(dialog: DialogInterface) {
         showListener?.onShow(dialog)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) animate(this.dialog.findViewById(R.id.dialog), true)
+        if (this.dialog != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) animate(this.dialog.findViewById(R.id.dialog), true)
     }
 
     override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
