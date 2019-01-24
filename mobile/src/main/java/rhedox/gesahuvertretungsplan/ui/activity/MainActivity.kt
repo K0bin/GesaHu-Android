@@ -51,21 +51,21 @@ import javax.inject.Inject
  */
 class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, NavigationActivity {
     private var toggle: ActionBarDrawerToggle? = null
-    private lateinit var listener: Listener;
-    private var drawerSelected: Int? = null;
-    private lateinit var analytics: FirebaseAnalytics;
+    private lateinit var listener: Listener
+    private var drawerSelected: Int? = null
+    private lateinit var analytics: FirebaseAnalytics
     private var isAmoledBlackEnabled = false
 
-    private lateinit var headerUsername: TextView;
+    private lateinit var headerUsername: TextView
 
-    private lateinit var currentFragment: Fragment;
+    private lateinit var currentFragment: Fragment
 
     private lateinit var presenter: MainContract.Presenter
 
     @Inject internal lateinit var prefs: SharedPreferences
 
     override var userName: String
-        get() = headerUsername.text.toString();
+        get() = headerUsername.text.toString()
         set(value) {
             headerUsername.text = value
         }
@@ -74,18 +74,18 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         set(value) {
             field = value
             val menuItem: MenuItem? = when (value) {
-                MainContract.DrawerIds.settings -> navigationView.menu.findItem(R.id.settings);
-                MainContract.DrawerIds.about -> navigationView.menu.findItem(R.id.about);
-                MainContract.DrawerIds.substitutes -> navigationView.menu.findItem(R.id.substitutes);
-                else -> navigationView.menu.findItem(value);
+                MainContract.DrawerIds.settings -> navigationView.menu.findItem(R.id.settings)
+                MainContract.DrawerIds.about -> navigationView.menu.findItem(R.id.about)
+                MainContract.DrawerIds.substitutes -> navigationView.menu.findItem(R.id.substitutes)
+                else -> navigationView.menu.findItem(value)
             }
             if(menuItem != null) {
-                menuItem.isChecked = true;
+                menuItem.isChecked = true
             }
         }
 
     override fun getIsPermanentDrawer(): Boolean {
-        return drawer == null;
+        return drawer == null
     }
 
     companion object {
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         setContentView(R.layout.activity_main)
         setupDrawerLayout()
 
-        headerUsername = navigationView.getHeaderView(0).findViewById<TextView>(R.id.headerUsername)
+        headerUsername = navigationView.getHeaderView(0).findViewById(R.id.headerUsername)
         navigationView.setNavigationItemSelectedListener {
             drawerSelected = it.itemId
             if (drawer != null) {
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
 
         //Show initial fragment
         val fragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
-        val timestamp: Int? = intent?.getIntExtra(Extra.date, 0);
+        val timestamp: Int? = intent?.getIntExtra(Extra.date, 0)
         val date = localDateFromUnix(timestamp)
         if (fragment != null && date == null) {
             currentFragment = fragment
@@ -181,16 +181,20 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         val primaryColor = a.getColor(0, 0)
         a.recycle()
 
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_task)
-        val description = ActivityManager.TaskDescription(getString(R.string.app_name), bitmap, primaryColor)
+        val description = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ActivityManager.TaskDescription(getString(R.string.app_name), R.drawable.ic_task, primaryColor)
+        } else {
+            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_task)
+            ActivityManager.TaskDescription(getString(R.string.app_name), bitmap, primaryColor)
+        }
         this.setTaskDescription(description)
     }
 
     override fun onResume() {
         super.onResume()
-        val menuItem = navigationView.menu.findItem(currentDrawerId);
+        val menuItem = navigationView.menu.findItem(currentDrawerId)
         if(menuItem != null) {
-            menuItem.isChecked = true;
+            menuItem.isChecked = true
         }
     }
 
@@ -215,17 +219,17 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
             window.statusBarColor = 0
 
             if (drawer == null) {
-                rootLayout?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                rootLayout?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             }
         }
     }
 
     private fun onDrawerItemSelected(id: Int) {
         when (id) {
-            R.id.about -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.about);
-            R.id.settings -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.settings);
-            R.id.substitutes -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.substitutes);
-            R.id.supervisions -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.supervisions);
+            R.id.about -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.about)
+            R.id.settings -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.settings)
+            R.id.substitutes -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.substitutes)
+            R.id.supervisions -> presenter.onNavigationDrawerItemClicked(MainContract.DrawerIds.supervisions)
             else -> presenter.onNavigationDrawerItemClicked(drawerSelected!!)
         }
     }
@@ -285,7 +289,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         set(value) {
             field = value
 
-            val imageView = navigationView.getHeaderView(0).findViewById<CircleImageView>(R.id.avatarView);
+            val imageView = navigationView.getHeaderView(0).findViewById<CircleImageView>(R.id.avatarView)
             if(field != null) {
                 imageView.setPadding(0, 0, 0, 0)
                 imageView.setImageBitmap(avatar)
@@ -309,11 +313,11 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
     override fun navigateToAbout() {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = AboutContainerFragment.newInstance()
-        fragment.useSlideAnimation = true;
+        fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
-        this.currentFragment = fragment;
+        this.currentFragment = fragment
         title = getString(R.string.action_about)
     }
 
@@ -324,16 +328,16 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
     override fun navigateToBoard(boardName: String) {
         (currentFragment as? AnimationFragment)?.useSlideAnimation = true
         val fragment = BoardFragment.newInstance(boardName)
-        fragment.useSlideAnimation = true;
+        fragment.useSlideAnimation = true
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
-        this.currentFragment = fragment;
+        this.currentFragment = fragment
     }
 
     override fun navigateToAuth() {
         accountManager.addAccount(GesaHuAccountService.GesaHuAuthenticator.accountType,
-                null, null, null, this, null, null);
+                null, null, null, this, null, null)
     }
 
     override fun navigateToSubstitutes(date: LocalDate?) {
@@ -343,7 +347,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
-        this.currentFragment = fragment;
+        this.currentFragment = fragment
     }
 
     override fun navigateToSupervisions(date: LocalDate?) {
@@ -353,7 +357,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, currentFragmentTag)
                 .commit()
-        this.currentFragment = fragment;
+        this.currentFragment = fragment
     }
 
     private fun askForCalendarPermission() {
@@ -362,7 +366,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode != calendarPermissionRequestCode) return;
+        if (requestCode != calendarPermissionRequestCode) return
         presenter.onCalendarPermissionResult(permissions.firstOrNull() == Manifest.permission.WRITE_CALENDAR && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
     }
 

@@ -20,7 +20,7 @@ import rhedox.gesahuvertretungsplan.util.registerTypeAdapter
  * Created by robin on 01.10.2016.
  */
 class GesaHu(context: Context) {
-    private val api: GesaHuApi;
+    private val api: GesaHuApi
 
     init {
         //Init Retrofit

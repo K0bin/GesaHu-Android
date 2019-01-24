@@ -19,12 +19,12 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     var callback: ((date: LocalDate) -> Unit)? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        if (savedInstanceState != null && savedInstanceState.containsKey(keyDate))
-            date = DateTime(savedInstanceState.getLong(keyDate)).toLocalDate()
+        date = if (savedInstanceState != null && savedInstanceState.containsKey(keyDate))
+            DateTime(savedInstanceState.getLong(keyDate)).toLocalDate()
         else if (arguments != null && arguments!!.containsKey(argumentDate))
-            date = DateTime(arguments!!.getLong(argumentDate)).toLocalDate()
+            DateTime(arguments!!.getLong(argumentDate)).toLocalDate()
         else
-            date = LocalDate.now()
+            LocalDate.now()
 
         isPickerDone = false
 
@@ -49,9 +49,9 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     companion object {
-        val tag = "DatePickerFragment1"
-        val keyDate = "date"
-        val argumentDate = "ArgumentDate"
+        const val tag = "DatePickerFragment1"
+        const val keyDate = "date"
+        const val argumentDate = "ArgumentDate"
 
         @JvmStatic
         fun newInstance(date: LocalDate): DatePickerFragment {

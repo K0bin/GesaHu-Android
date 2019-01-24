@@ -17,7 +17,7 @@ import java.lang.reflect.Type
 class BoardDeserializer: JsonDeserializer<BoardInfo> {
 
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): BoardInfo? {
-        val jsonObject = json.asJsonObject;
+        val jsonObject = json.asJsonObject
 
         val name = jsonObject.get("Board").asString
         val markStr = jsonObject.get("Endnote").asString
@@ -70,7 +70,7 @@ class BoardDeserializer: JsonDeserializer<BoardInfo> {
         val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
         val description = jsonObject.get("Bezeichnung").asString
         val markStr = jsonObject.get("Note").asString
-        val mark = if (markStr.isNotBlank() && markStr != "-") markStr else null;
+        val mark = if (markStr.isNotBlank() && markStr != "-") markStr else null
         val kind = jsonObject.get("Art").asString
         val markKindStr = jsonObject.get("Notenart").asString
         @Mark.MarkKind val markKind = when (markKindStr) {

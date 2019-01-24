@@ -31,7 +31,7 @@ import rhedox.gesahuvertretungsplan.util.windowManager
  * Created by robin on 24.01.2017.
  */
 class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
-    private lateinit var presenter: SubstitutesContract.Presenter;
+    private lateinit var presenter: SubstitutesContract.Presenter
     private var pagerAdapter: SubstitutesPagerAdapter? = null
 
     private val fabPosition = PointF()
@@ -39,7 +39,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     private var fabElevation = 0f
 
     internal var date = LocalDate.now()
-        private set;
+        private set
 
     private object State {
         const val presenterState = "substitutesPresenterState"
@@ -50,7 +50,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     companion object {
         @JvmStatic
         fun newInstance(date: LocalDate? = null): SubstitutesFragment {
-            val fragment = SubstitutesFragment();
+            val fragment = SubstitutesFragment()
             val arguments = Bundle()
             if (date != null) {
                 arguments.putInt(Argument.date, date.unixTimeStamp)
@@ -67,7 +67,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
 
     override fun showDatePicker(defaultDate: LocalDate) {
         if (isResumed) {
-            val picker = DatePickerFragment.newInstance(defaultDate);
+            val picker = DatePickerFragment.newInstance(defaultDate)
             picker.callback = {
                 presenter.onDatePicked(it)
             }
@@ -76,7 +76,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         }
     }
 
-    private var isFabMeasured = false;
+    private var isFabMeasured = false
     override var isFabVisible: Boolean = false
         set(value) {
             if (isFabMeasured) {
@@ -105,7 +105,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
     override var tabTitles: Array<String> = arrayOf("", "", "", "", "")
         set(value) {
             field = value
-            pagerAdapter?.tabTitles = value;
+            pagerAdapter?.tabTitles = value
             pagerAdapter?.notifyDataSetChanged()
         }
 
@@ -114,7 +114,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         set(value) {
             swipeRefreshLayout.isRefreshing = value
             if(!value)
-                swipeRefreshLayout.clearAnimation();
+                swipeRefreshLayout.clearAnimation()
         }
 
     override var isCabVisible: Boolean = false
@@ -125,7 +125,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
                 } else {
                     cab.hide()
                 }
-                field = value;
+                field = value
             }
         }
 
@@ -149,7 +149,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             savedInstanceState.getParcelable(State.presenterState)
         } else {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
-            val date: LocalDate?;
+            val date: LocalDate?
             date = if(seconds != 0) {
                 localDateFromUnix(seconds)
             } else {
@@ -207,7 +207,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             drawerActivity.syncDrawer()
         }
 
-        val size = Point();
+        val size = Point()
         context!!.windowManager.defaultDisplay.getSize(size)
         if (size.x / context!!.displayMetrics.density >= 1024) {
             tabLayout.tabMode = TabLayout.MODE_FIXED
@@ -303,7 +303,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         announcementFragment.fabSize.x = fabSize.x.toFloat()
         announcementFragment.fabSize.y = fabSize.y.toFloat()
         announcementFragment.fabElevation = fabElevation
-        announcementFragment.text = text;
+        announcementFragment.text = text
         announcementFragment.show(fragmentManager, AnnouncementFragment.tag)
     }
 

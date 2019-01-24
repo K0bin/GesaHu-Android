@@ -9,7 +9,7 @@ import rhedox.gesahuvertretungsplan.presenter.state.SupervisionsState
  */
 interface SupervisionsContract {
     interface Presenter {
-        fun onDatePickerIconClicked();
+        fun onDatePickerIconClicked()
         fun onDatePicked(date: LocalDate)
         fun onActivePageChanged(position: Int)
         fun onPageAttached(position: Int)

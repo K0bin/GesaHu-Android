@@ -45,7 +45,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
             keyGenerator.init(keySpec)
             return keyGenerator.generateKey()
         }
-        return keyStore.getKey(keyAlias, null);
+        return keyStore.getKey(keyAlias, null)
     }
 
     override fun encrypt(text: String): String {
@@ -62,7 +62,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         if (text.length - prefix.length < 1) return null //only prefix
 
         val textParts = text.substring(prefix.length).split("|")
-        if (textParts.size != 2) return "";
+        if (textParts.size != 2) return ""
 
         val iv = Base64.decode(textParts[0], Base64.DEFAULT)
         val passwordBytes = Base64.decode(textParts[1], Base64.DEFAULT)

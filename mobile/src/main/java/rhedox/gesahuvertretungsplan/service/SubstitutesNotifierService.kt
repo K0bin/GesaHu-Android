@@ -11,10 +11,10 @@ import androidx.legacy.content.WakefulBroadcastReceiver
  */
 class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     companion object {
-        const val extraLesson = "lesson";
+        const val extraLesson = "lesson"
     }
 
-    private lateinit var notifier: SubstitutesNotifier;
+    private lateinit var notifier: SubstitutesNotifier
     private var lastIntent: Intent? = null
 
     override fun onCreate() {
@@ -24,11 +24,11 @@ class SubstitutesNotifierService : IntentService("SubstitutesNotifier") {
     }
 
     override fun onHandleIntent(intent: Intent) {
-        lastIntent = intent;
+        lastIntent = intent
         val lesson = intent.getIntExtra(extraLesson, -1)
         notifier.load(lesson)
         WakefulBroadcastReceiver.completeWakefulIntent(lastIntent)
-        lastIntent = null;
+        lastIntent = null
     }
 
     override fun onDestroy() {

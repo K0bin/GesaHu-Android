@@ -16,8 +16,8 @@ import com.google.firebase.FirebaseApp
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import net.danlew.android.joda.JodaTimeAndroid
-import rhedox.gesahuvertretungsplan.dependencyInjection.AppComponent
-import rhedox.gesahuvertretungsplan.dependencyInjection.DaggerAppComponent
+import rhedox.gesahuvertretungsplan.dependency_injection.AppComponent
+import rhedox.gesahuvertretungsplan.dependency_injection.DaggerAppComponent
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment
 import javax.inject.Inject
 
@@ -28,11 +28,11 @@ import javax.inject.Inject
  */
 class App : Application() {
 
-    public var refWatcher: RefWatcher? = null
-        private set;
+    var refWatcher: RefWatcher? = null
+        private set
 
-    public lateinit var appComponent: AppComponent
-        private set;
+    lateinit var appComponent: AppComponent
+        private set
 
     @Inject lateinit var prefs: SharedPreferences
 
@@ -45,7 +45,7 @@ class App : Application() {
         appComponent.inject(this)
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
+            return
         }
         FirebaseApp.initializeApp(this)
 
@@ -94,7 +94,7 @@ class App : Application() {
             StrictMode.setThreadPolicy(threadPolicy)
         }
 
-        initWithDependencies();
+        initWithDependencies()
     }
 
     private fun initWithDependencies() {

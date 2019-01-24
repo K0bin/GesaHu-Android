@@ -1,6 +1,5 @@
 package rhedox.gesahuvertretungsplan.model.api
 
-import com.google.gson.annotations.SerializedName
 import org.joda.time.Duration
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime

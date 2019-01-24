@@ -16,10 +16,10 @@ import rhedox.gesahuvertretungsplan.R
  * Created by robin on 26.01.2017.
  */
 class ContextualActionBar : Toolbar {
-    private lateinit var cabFadeIn: Animation;
-    private lateinit var cabFadeOut: Animation;
-    private lateinit var cabDrawerAnimator: ValueAnimator;
-    private lateinit var cabDrawerIcon: DrawerArrowDrawable;
+    private lateinit var cabFadeIn: Animation
+    private lateinit var cabFadeOut: Animation
+    private lateinit var cabDrawerAnimator: ValueAnimator
+    private lateinit var cabDrawerIcon: DrawerArrowDrawable
 
     constructor(context: Context) : super(context) { init() }
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) { init() }
@@ -29,23 +29,23 @@ class ContextualActionBar : Toolbar {
         cabDrawerIcon = DrawerArrowDrawable(context)
         cabDrawerIcon.color = Color.WHITE
         navigationIcon = cabDrawerIcon
-        cabFadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        cabFadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in)
         cabFadeIn.setAnimationListener(object: Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {visibility = View.VISIBLE}
             override fun onAnimationStart(animation: Animation) {visibility = View.VISIBLE}
         })
-        cabFadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+        cabFadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
         cabFadeOut.setAnimationListener(object: Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {visibility = View.GONE}
             override fun onAnimationStart(animation: Animation) {visibility = View.VISIBLE}
         })
         cabDrawerAnimator = ValueAnimator.ofFloat(0f, 1f)
-        cabDrawerAnimator.addUpdateListener(ValueAnimator.AnimatorUpdateListener { valueAnimator ->
+        cabDrawerAnimator.addUpdateListener { valueAnimator ->
             val slideOffset = valueAnimator.animatedValue as Float
             cabDrawerIcon.progress = slideOffset
-        })
+        }
         cabDrawerAnimator.interpolator = DecelerateInterpolator()
         //cabDrawerAnimator.duration = 250
     }

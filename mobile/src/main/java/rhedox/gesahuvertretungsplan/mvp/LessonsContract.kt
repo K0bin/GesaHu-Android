@@ -17,8 +17,8 @@ interface LessonsContract {
 
     interface View {
         fun showList(list: List<Lesson>)
-        var lessonsTotal: Int;
-        var lessonsMissed: Int;
-        var lessonsMissedWithSickNote: Int;
+        var lessonsTotal: Int
+        var lessonsMissed: Int
+        var lessonsMissedWithSickNote: Int
     }
 }

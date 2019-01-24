@@ -27,7 +27,7 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
     companion object {
         private const val keyAlias = "key"
         private const val androidKeyStore = "AndroidKeyStore"
-        private const val keyX500Principal = "CN=GesaHu, O=K0bin, C=Germany";
+        private const val keyX500Principal = "CN=GesaHu, O=K0bin, C=Germany"
         private const val transformationAlgorithm = "RSA/ECB/PKCS1Padding"
         private val provider = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) "AndroidKeyStoreBCWorkaround" else "AndroidOpenSSL"
         private const val prefix = "/|\\ENCRYPTED/|\\"
@@ -57,7 +57,7 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
             return keyGenerator.generateKeyPair()
         }
         val entry = keyStore.getEntry(keyAlias, null) as KeyStore.PrivateKeyEntry
-        return KeyPair(entry.certificate.publicKey, entry.privateKey);
+        return KeyPair(entry.certificate.publicKey, entry.privateKey)
     }
 
     override fun encrypt(text: String): String {

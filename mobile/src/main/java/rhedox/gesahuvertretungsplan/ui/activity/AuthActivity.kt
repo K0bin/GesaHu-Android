@@ -44,30 +44,30 @@ import javax.inject.Inject
  */
 class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListener, Callback<List<BoardName>> {
     companion object {
-        const val stateAccount = "account";
+        const val stateAccount = "account"
         const val argIsNewAccount ="isNewAccount"
         const val launchedByApp ="wasLaunchedByApp"
     }
 
-    private var account: Account? = null;
-    private var username: String = "";
-    private var passwordMd5: String = "";
-    private var password: String = "";
+    private var account: Account? = null
+    private var username: String = ""
+    private var passwordMd5: String = ""
+    private var password: String = ""
 
     @Inject internal lateinit var prefs: SharedPreferences
     @Inject internal lateinit var gesaHu: GesaHu
     @Inject internal lateinit var encryptionHelper: EncryptionHelper
-    private var call: Call<List<BoardName>>? = null;
+    private var call: Call<List<BoardName>>? = null
 
     private lateinit var snackbar: Snackbar
     private lateinit var client: CredentialsClient
 
-    private var autoSignInSuccessful = false;
+    private var autoSignInSuccessful = false
 
     object SignInRequestCodes {
-        const val save = 1;
-        const val read = 2;
-        const val hint = 3;
+        const val save = 1
+        const val read = 2
+        const val hint = 3
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +87,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                 usernameEdit.setText(it.result!!.credential.id)
                 passwordEdit.setText(it.result!!.credential.password)
                 if (passwordEdit.text.isNullOrBlank()) {
-                    autoSignInSuccessful = true;
+                    autoSignInSuccessful = true
                     login()
                 }
                 return@addOnCompleteListener
@@ -95,34 +95,34 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
             val exception = it.exception
             if (exception is ResolvableApiException) {
                 try {
-                    exception.startResolutionForResult(this, SignInRequestCodes.read);
+                    exception.startResolutionForResult(this, SignInRequestCodes.read)
                 } catch (e: IntentSender.SendIntentException ) {}
             }
         }
 
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.statusBarColor = Color.parseColor("#ffe0e0e0");
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            window.statusBarColor = Color.parseColor("#ffe0e0e0")
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = Color.BLACK;
+            window.statusBarColor = Color.BLACK
         }
 
         if(savedInstanceState != null) {
-            account = savedInstanceState.getParcelable(stateAccount);
+            account = savedInstanceState.getParcelable(stateAccount)
         }
 
         if(account == null && !intent.getBooleanExtra(argIsNewAccount, true)) {
             val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
             if (accounts.isNotEmpty()) {
                 account = accounts[0]
-                username = account!!.name;
+                username = account!!.name
                 usernameEdit.setText(username)
             }
         }
 
         passwordEdit.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE) {
-                login();
+                login()
                 return@setOnEditorActionListener true
             }
             false
@@ -134,15 +134,15 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        data ?: return;
+        data ?: return
 
         if (requestCode == SignInRequestCodes.read) {
             if (resultCode == RESULT_OK) {
-                val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY);
+                val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY)
                 passwordEdit.setText(credential.password)
                 usernameEdit.setText(credential.id)
                 if (passwordEdit.text.isNullOrBlank()) {
-                    autoSignInSuccessful = true;
+                    autoSignInSuccessful = true
                     login()
                 }
             }
@@ -156,7 +156,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         if (passwordEdit.text?.toString().isNullOrBlank()) {
             passwordLayout.error = getString(R.string.login_password_empty)
             passwordLayout.isErrorEnabled = true
-            areFieldsEmpty = true;
+            areFieldsEmpty = true
         } else {
             passwordLayout.isErrorEnabled = false
             password = passwordEdit.text.toString()
@@ -166,7 +166,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         if (usernameEdit.text?.toString().isNullOrBlank()) {
             usernameLayout.error = getString(R.string.login_username_empty)
             usernameLayout.isErrorEnabled = true
-            areFieldsEmpty = true;
+            areFieldsEmpty = true
         } else {
             usernameLayout.isErrorEnabled = false
             username = usernameEdit.text.toString()
@@ -176,12 +176,12 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
 
         if (!areFieldsEmpty && call == null) {
-            usernameEdit.isFocusable = false;
-            usernameEdit.isFocusableInTouchMode = false;
-            usernameEdit.isEnabled = false;
-            passwordEdit.isFocusable = false;
-            passwordEdit.isFocusableInTouchMode = false;
-            passwordEdit.isEnabled = false;
+            usernameEdit.isFocusable = false
+            usernameEdit.isFocusableInTouchMode = false
+            usernameEdit.isEnabled = false
+            passwordEdit.isFocusable = false
+            passwordEdit.isFocusableInTouchMode = false
+            passwordEdit.isEnabled = false
 
             call = gesaHu.boardNames(username, passwordMd5)
             call?.enqueue(this)
@@ -197,33 +197,33 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
     }
 
     override fun onClick(v: View?) {
-        login();
+        login()
     }
 
     override fun onResponse(call: Call<List<BoardName>>, response: Response<List<BoardName>>) {
-        this.call = null;
+        this.call = null
         if(response.isSuccessful) {
             finishLogin()
         } else {
-            usernameLayout.error = getString(R.string.login_403);
-            usernameLayout.isErrorEnabled = true;
-            usernameLayout.isFocusable = true;
-            usernameLayout.isFocusableInTouchMode = true;
-            usernameLayout.isEnabled = true;
-            passwordLayout.error = getString(R.string.login_403);
-            passwordLayout.isErrorEnabled = true;
-            passwordEdit.isFocusable = true;
-            passwordEdit.isFocusableInTouchMode = true;
-            passwordEdit.isEnabled = true;
+            usernameLayout.error = getString(R.string.login_403)
+            usernameLayout.isErrorEnabled = true
+            usernameLayout.isFocusable = true
+            usernameLayout.isFocusableInTouchMode = true
+            usernameLayout.isEnabled = true
+            passwordLayout.error = getString(R.string.login_403)
+            passwordLayout.isErrorEnabled = true
+            passwordEdit.isFocusable = true
+            passwordEdit.isFocusableInTouchMode = true
+            passwordEdit.isEnabled = true
         }
     }
 
     private fun finishLogin() {
         if(account == null) {
-            account = Account(username, GesaHuAccountService.GesaHuAuthenticator.accountType);
-            accountManager.addAccountSecurely(account!!, passwordMd5, encryptionHelper);
+            account = Account(username, GesaHuAccountService.GesaHuAuthenticator.accountType)
+            accountManager.addAccountSecurely(account!!, passwordMd5, encryptionHelper)
         } else {
-            accountManager.setPasswordSecurely(account!!, passwordMd5, encryptionHelper);
+            accountManager.setPasswordSecurely(account!!, passwordMd5, encryptionHelper)
         }
 
         notificationManager.cancel(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode())
@@ -244,7 +244,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
                         // Try to resolve the save request. This will prompt the user if
                         // the credential is new.
                         try {
-                            exception.startResolutionForResult(this, SignInRequestCodes.save);
+                            exception.startResolutionForResult(this, SignInRequestCodes.save)
                         } catch (e: IntentSender.SendIntentException) {
                             finishActivity()
                         }
@@ -265,7 +265,7 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         val res = Intent()
         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username)
-        res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, GesaHuAccountService.GesaHuAuthenticator.accountType);
+        res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, GesaHuAccountService.GesaHuAuthenticator.accountType)
 
         setAccountAuthenticatorResult(res.extras)
         setResult(AppCompatActivity.RESULT_OK, res)
@@ -273,18 +273,18 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
-        finish();
+        finish()
     }
 
     override fun onFailure(call: Call<List<BoardName>>?, t: Throwable?) {
-        this.call = null;
-        snackbar.show();
-        autoSignInSuccessful = false;
-        usernameEdit.isFocusable = true;
-        usernameEdit.isFocusableInTouchMode = true;
-        usernameEdit.isEnabled = true;
-        passwordEdit.isFocusable = true;
-        passwordEdit.isFocusableInTouchMode = true;
-        passwordEdit.isEnabled = true;
+        this.call = null
+        snackbar.show()
+        autoSignInSuccessful = false
+        usernameEdit.isFocusable = true
+        usernameEdit.isFocusableInTouchMode = true
+        usernameEdit.isEnabled = true
+        passwordEdit.isFocusable = true
+        passwordEdit.isFocusableInTouchMode = true
+        passwordEdit.isEnabled = true
     }
 }

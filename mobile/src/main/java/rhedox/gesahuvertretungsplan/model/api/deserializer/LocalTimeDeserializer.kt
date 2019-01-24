@@ -3,7 +3,6 @@ package rhedox.gesahuvertretungsplan.model.api.deserializer
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import org.joda.time.LocalDate
 import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormatterBuilder
 import java.lang.reflect.Type
@@ -28,6 +27,6 @@ class LocalTimeDeserializer : JsonDeserializer<LocalTime> {
         if(json == null || json.asString.isNullOrBlank())
             return null
 
-        return LocalTime.parse(json.asString.replace('.', ':'), formatter);
+        return LocalTime.parse(json.asString.replace('.', ':'), formatter)
     }
 }

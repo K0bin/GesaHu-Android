@@ -37,12 +37,12 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         }
     }
 
-    private lateinit var presenter: BoardContract.Presenter;
-    private var boardName: String = "";
+    private lateinit var presenter: BoardContract.Presenter
+    private var boardName: String = ""
     private var elevationAnimator: ObjectAnimator? = null
 
-    private lateinit var marksFragment: MarksFragment;
-    private lateinit var lessonsFragment: LessonsFragment;
+    private lateinit var marksFragment: MarksFragment
+    private lateinit var lessonsFragment: LessonsFragment
 
     override var title: String = ""
         set(value) {
@@ -59,7 +59,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
                     elevationAnimator?.reverse()
                 }
             }
-            field = value;
+            field = value
         }
 
     @AddTrace(name = "BoardFragCreate", enabled = true)
@@ -69,12 +69,12 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state: BoardState;
+        val state: BoardState
         if (savedInstanceState != null) {
             state = savedInstanceState.getParcelable(State.presenterState)
             boardName = state.boardName
         } else {
-            boardName = arguments?.getString(Arguments.boardName) ?: "";
+            boardName = arguments?.getString(Arguments.boardName) ?: ""
             state = BoardState(boardName)
         }
 
@@ -89,7 +89,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
 
     @AddTrace(name = "BoardFragCreateView", enabled = true)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_board, container, false);
+        return inflater.inflate(R.layout.fragment_board, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,21 +97,21 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
         Log.d("Board", "ViewCreated")
 
         elevationAnimator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewPager != null) {
-            val elevation = context!!.displayMetrics.density * 4f;
+            val elevation = context!!.displayMetrics.density * 4f
             ObjectAnimator.ofFloat(appbarLayout, "elevation", 0f, elevation)
         } else {
-            null;
+            null
         }
 
-        val _lessonsFragment = childFragmentManager.findFragmentByTag("lessons");
-        lessonsFragment = if (_lessonsFragment != null) {
-            _lessonsFragment as LessonsFragment
+        val lessonsFrag = childFragmentManager.findFragmentByTag("lessons")
+        lessonsFragment = if (lessonsFrag != null) {
+            lessonsFrag as LessonsFragment
         } else {
             LessonsFragment.newInstance(boardName)
         }
-        val _marksFragment = childFragmentManager.findFragmentByTag("marks");
-        marksFragment = if (_marksFragment != null) {
-            _marksFragment as MarksFragment
+        val marksFrag = childFragmentManager.findFragmentByTag("marks")
+        marksFragment = if (marksFrag != null) {
+            marksFrag as MarksFragment
         } else {
             MarksFragment.newInstance(boardName)
         }
@@ -123,7 +123,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
             childFragmentManager.beginTransaction()
                     .replace(R.id.marksContainer, marksFragment, "marks")
                     .replace(R.id.lessonsContainer, lessonsFragment, "lessons")
-                    .commit();
+                    .commit()
         }
 
         val drawerActivity = activity as? DrawerActivity
@@ -140,7 +140,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     override fun onDestroyView() {
         super.onDestroyView()
 
-        elevationAnimator = null;
+        elevationAnimator = null
         (activity as? DrawerActivity)?.setSupportActionBar(null)
         presenter.detachView()
     }
@@ -154,7 +154,7 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
     override fun onSaveInstanceState(outState: Bundle) {
         //Remove retained fragments from the layout so it doesn't crash (has to happen before onSaveInstanceState)
         if (activity?.isChangingConfigurations == true) {
-            childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commitNow();
+            childFragmentManager.beginTransaction().remove(marksFragment).remove(lessonsFragment).commitNow()
         }
 
         super.onSaveInstanceState(outState)

@@ -16,6 +16,6 @@ data class Board(@PrimaryKey(autoGenerate = false) val name: String,
 
     companion object {
         const val tableName = "boards"
-        const val avatarFileName = "avatar.jpg";
+        const val avatarFileName = "avatar.jpg"
     }
 }

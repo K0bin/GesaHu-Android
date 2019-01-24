@@ -51,7 +51,7 @@ class CalendarSyncService : Service() {
         const val alreadyAskedForCalendarPreference = "alreadyAskedCalendar"
 
         private val syncPrimitive = object {
-            var syncAdapter: SyncAdapter? = null;
+            var syncAdapter: SyncAdapter? = null
         }
 
         fun updateIsSyncable(account: Account, context: Context, prefs: SharedPreferences) {
@@ -71,10 +71,10 @@ class CalendarSyncService : Service() {
 
         fun setIsPeriodicSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true);
+                ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, true)
                 ContentResolver.addPeriodicSync(account, CalendarContract.AUTHORITY, Bundle.EMPTY, 2 * 24 * 60 * 60)
             } else {
-                ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, false);
+                ContentResolver.setSyncAutomatically(account, CalendarContract.AUTHORITY, false)
                 ContentResolver.removePeriodicSync(account,  CalendarContract.AUTHORITY, Bundle.EMPTY)
             }
         }
@@ -126,14 +126,14 @@ class CalendarSyncService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return syncPrimitive.syncAdapter!!.syncAdapterBinder;
+        return syncPrimitive.syncAdapter!!.syncAdapterBinder
     }
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
         companion object {
-            const val examCalendarName = "gesaHuExams";
-            const val testCalendarName = "gesaHuTests";
-            const val eventCalendarName = "gesaHuEvents";
+            const val examCalendarName = "gesaHuExams"
+            const val testCalendarName = "gesaHuTests"
+            const val eventCalendarName = "gesaHuEvents"
         }
 
         @Inject internal lateinit var gesaHu: GesaHu
@@ -194,7 +194,7 @@ class CalendarSyncService : Service() {
                 }
             }
             if(Thread.interrupted()) {
-                return;
+                return
             }
             if(testResponse != null && testResponse.isSuccessful) {
                 if(calendars[testCalendarName] != null) {
@@ -207,7 +207,7 @@ class CalendarSyncService : Service() {
                 }
             } else if (testResponse != null && testResponse.code() == 403) {
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
-                return;
+                return
             }
 
             val eventCall = gesaHu.events(account.name, password, start, end)
@@ -222,7 +222,7 @@ class CalendarSyncService : Service() {
                 }
             }
             if(Thread.interrupted()) {
-                return;
+                return
             }
             if(eventResponse != null && eventResponse.isSuccessful) {
                 if(calendars[eventCalendarName] != null) {
@@ -239,7 +239,7 @@ class CalendarSyncService : Service() {
                 SubstitutesSyncService.setIsSyncEnabled(account, false)
 
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
-                return;
+                return
             }
 
             val examCall = gesaHu.exams(account.name, start)
@@ -254,7 +254,7 @@ class CalendarSyncService : Service() {
                 }
             }
             if(Thread.interrupted()) {
-                return;
+                return
             }
             if(examResponse != null && examResponse.isSuccessful) {
                 if(calendars[examCalendarName] != null) {
@@ -271,7 +271,7 @@ class CalendarSyncService : Service() {
                 SubstitutesSyncService.setIsSyncEnabled(account, false)
 
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
-                return;
+                return
             }
         }
 
@@ -281,7 +281,7 @@ class CalendarSyncService : Service() {
             val cursor = context.contentResolver.query(CalendarContract.Calendars.CONTENT_URI,
                     arrayOf(CalendarContract.Calendars.NAME, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, CalendarContract.Calendars._ID),
                     "${CalendarContract.Calendars.ACCOUNT_TYPE} = '${account.type}' AND ${CalendarContract.Calendars.ACCOUNT_NAME} = '${account.name}'",
-                    null, null);
+                    null, null)
 
             val calendars = mutableMapOf<String, Long>()
             cursor ?: return calendars
@@ -289,14 +289,14 @@ class CalendarSyncService : Service() {
             if(cursor.count > 0 && !cursor.isClosed) {
                 cursor.moveToFirst()
                 while (!cursor.isAfterLast && !cursor.isClosed) {
-                    calendars.put(cursor.getString(0), cursor.getLong(2))
+                    calendars[cursor.getString(0)] = cursor.getLong(2)
                     cursor.moveToNext()
                 }
             }
 
             cursor.close()
 
-            return calendars;
+            return calendars
         }
 
         @SuppressLint("MissingPermission")
@@ -316,8 +316,8 @@ class CalendarSyncService : Service() {
             values.put(CalendarContract.Calendars.OWNER_ACCOUNT, "GesaHu")
             values.put(CalendarContract.Calendars.CALENDAR_TIME_ZONE, "Europe/Berlin")
 
-            @ColorInt val color: Int;
-            val displayName: String;
+            @ColorInt val color: Int
+            val displayName: String
             when(name) {
                 examCalendarName -> {
                     color = ContextCompat.getColor(context, R.color.calendar_exam_color)
@@ -332,7 +332,7 @@ class CalendarSyncService : Service() {
                     displayName = context.getString(R.string.calendar_event_name)
                 }
                 else -> {
-                    color = 0;
+                    color = 0
                     displayName = "GesaHu"
                 }
             }
@@ -360,7 +360,7 @@ class CalendarSyncService : Service() {
             values.put(CalendarContract.Events.ALL_DAY, if (event.isWholeDay) 1 else 0)
 
             values.put(CalendarContract.Events.TITLE, event.description)
-            var description = context.getString(R.string.calendar_event_description, event.category);
+            var description = context.getString(R.string.calendar_event_description, event.category)
             if(event.location.isNotBlank()) {
                 description += System.getProperty("line.separator")!! + context.getString(R.string.calendar_location, event.location)
             }
@@ -368,9 +368,9 @@ class CalendarSyncService : Service() {
                 description += System.getProperty("line.separator")!! + context.getString(R.string.calendar_author, event.author)
             }
             values.put(CalendarContract.Events.DESCRIPTION, description)
-            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
-            values.put(CalendarContract.Events.EVENT_LOCATION, address);
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin")
+            values.put(CalendarContract.Events.EVENT_LOCATION, address)
 
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
@@ -383,14 +383,14 @@ class CalendarSyncService : Service() {
             if (test.lessonStart != null && test.duration != null) {
                 values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(SchoolWeek.lessonStart(test.lessonStart)).millis)
                 values.put(CalendarContract.Events.DTEND, test.date.toDateTime(SchoolWeek.lessonEnd(if (test.duration >= 1) test.lessonStart + test.duration - 1 else test.lessonStart)).millis)
-                values.put(CalendarContract.Events.ALL_DAY, 0);
+                values.put(CalendarContract.Events.ALL_DAY, 0)
             } else {
-                values.put(CalendarContract.Events.ALL_DAY, 1);
+                values.put(CalendarContract.Events.ALL_DAY, 1)
             }
             values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_test_title, test.subject, test.course, test.year.toString(), test.teacher))
             values.put(CalendarContract.Events.DESCRIPTION, test.remark)
-            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin")
             values.put(CalendarContract.Events.EVENT_LOCATION, address)
 
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
@@ -405,9 +405,9 @@ class CalendarSyncService : Service() {
             values.put(CalendarContract.Events.DTEND, exam.date.toDateTime(exam.time).millis + (exam.duration?.millis ?: 90L * 60L * 1000L))
             values.put(CalendarContract.Events.TITLE, context.getString(R.string.calendar_exam_title, exam.subject, exam.course, exam.examiner))
             values.put(CalendarContract.Events.DESCRIPTION, context.getString(R.string.calendar_exam_description, exam.examinee, exam.examiner, exam.chair, exam.recorder, exam.room, if(exam.allowAudience) context.getString(R.string.bool_true_lower) else context.getString(R.string.bool_false_lower)))
-            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
-            values.put(CalendarContract.Events.EVENT_LOCATION, address);
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin")
+            values.put(CalendarContract.Events.EVENT_LOCATION, address)
 
             context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
         }
@@ -417,7 +417,7 @@ class CalendarSyncService : Service() {
                     .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER,"true")
                     .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
                     .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
-                    .build();
+                    .build()
         }
     }
 }

@@ -8,7 +8,7 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import androidx.core.content.edit
 import rhedox.gesahuvertretungsplan.BuildConfig
-import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
+import rhedox.gesahuvertretungsplan.dependency_injection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.AvatarLoader
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
@@ -25,11 +25,11 @@ import javax.inject.Inject
  * Created by robin on 20.10.2016.
  */
 class MainPresenter(component: BoardsComponent, state: MainState) : MainContract.Presenter {
-    private var view: MainContract.View? = null;
+    private var view: MainContract.View? = null
     private var account: Account? = null
-    private var avatar: Bitmap? = null;
+    private var avatar: Bitmap? = null
 
-    private var drawerId: Int? = null;
+    private var drawerId: Int? = null
 
     @Inject internal lateinit var accountManager: AccountManager
     @Inject internal lateinit var prefs: SharedPreferences
@@ -61,7 +61,7 @@ class MainPresenter(component: BoardsComponent, state: MainState) : MainContract
     override fun attachView(view: MainContract.View) {
         boards.observeForever(observer)
 
-        this.view = view;
+        this.view = view
         view.userName = account?.name ?: ""
         view.showBoards(this.boards.value ?: listOf())
         view.avatar = this.avatar
@@ -111,7 +111,7 @@ class MainPresenter(component: BoardsComponent, state: MainState) : MainContract
     }
 
     override fun detachView() {
-        this.view = null;
+        this.view = null
     }
 
     override fun destroy() {
@@ -124,7 +124,7 @@ class MainPresenter(component: BoardsComponent, state: MainState) : MainContract
 
     override fun onNavigationDrawerItemClicked(drawerId: Int) {
         when (drawerId) {
-            this.drawerId -> return;
+            this.drawerId -> return
 
             MainContract.DrawerIds.substitutes -> view?.navigateToSubstitutes(null)
             MainContract.DrawerIds.about -> view?.navigateToAbout()
@@ -153,7 +153,7 @@ class MainPresenter(component: BoardsComponent, state: MainState) : MainContract
      */
     private fun loadAccount() {
         if(account != null)
-            return;
+            return
 
         val accounts = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType) ?: arrayOf<Account>()
         if (accounts.isNotEmpty()) {
@@ -163,7 +163,7 @@ class MainPresenter(component: BoardsComponent, state: MainState) : MainContract
 
         if(account != null) {
             //load avatar
-            avatarLoader.loadAvatar();
+            avatarLoader.loadAvatar()
 
             CalendarSyncService.setIsPeriodicSyncEnabled(account!!, true)
         } else if (view != null) {

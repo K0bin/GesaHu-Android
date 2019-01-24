@@ -29,20 +29,20 @@ data class Mark(val date: LocalDate,
     @StringDef(KindValues.test, KindValues.monthlyOral, KindValues.testOrComplexTask, KindValues.oral, KindValues.empty)
     annotation class Kind
     object KindValues {
-        const val test = "Klausur";
+        const val test = "Klausur"
         const val monthlyOral = "mündliche monatliche Kursnote"
         const val testOrComplexTask = "Klausur/komplexe HA"
         const val oral = "Mündlich"
-        const val empty = "";
+        const val empty = ""
     }
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(MarkKindValues.unknown, MarkKindValues.groupMark, MarkKindValues.mark)
     annotation class MarkKind
     object MarkKindValues {
-        const val unknown = 0;
-        const val mark = 1;
-        const val groupMark = 2;
+        const val unknown = 0
+        const val mark = 1
+        const val groupMark = 2
     }
 
     companion object {

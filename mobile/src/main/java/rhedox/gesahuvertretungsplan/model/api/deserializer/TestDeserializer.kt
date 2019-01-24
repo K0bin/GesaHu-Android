@@ -14,10 +14,10 @@ import java.lang.reflect.Type
  * Created by robin on 19.10.2016.
  */
 class TestDeserializer(context: Context) : JsonDeserializer<Test> {
-    private val resolver = AbbreviationResolver(context.applicationContext);
+    private val resolver = AbbreviationResolver(context.applicationContext)
 
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Test {
-        val jsonObject = json.asJsonObject;
+        val jsonObject = json.asJsonObject
 
         val remark = Html.decode(jsonObject.get("Bemerkung").asString.trim())
         val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
@@ -27,8 +27,8 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
         val teacher = resolver.resolveTeacher(Html.decode(jsonObject.get("Lehrer").asString.trim()))
         val lessons = Html.decode(jsonObject.get("Stunden").asString.trim()).replace("build/intermediates/exploded-aar/com.mikepenz/fastadapter/2.1.5/res", "")
 
-        val begin: Int?;
-        val duration: Int?;
+        val begin: Int?
+        val duration: Int?
 
         val lessonParts = lessons.replace(".", "")
                 .replace(":", "")
@@ -46,8 +46,8 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
                 1
             }
         } else {
-            begin = null;
-            duration = null;
+            begin = null
+            duration = null
         }
 
         return Test(remark, date, subject, course, year, teacher, begin, duration)

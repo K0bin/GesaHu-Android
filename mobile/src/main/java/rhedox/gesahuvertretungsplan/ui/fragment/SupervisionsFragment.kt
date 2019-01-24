@@ -28,7 +28,7 @@ import rhedox.gesahuvertretungsplan.util.windowManager
  * Created by robin on 24.01.2017.
  */
 class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
-    private lateinit var presenter: SupervisionsContract.Presenter;
+    private lateinit var presenter: SupervisionsContract.Presenter
     private var pagerAdapter: SupervisionsPagerAdapter? = null
 
     private object State {
@@ -40,7 +40,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
     companion object {
         @JvmStatic
         fun newInstance(date: LocalDate? = null): SupervisionsFragment {
-            val fragment = SupervisionsFragment();
+            val fragment = SupervisionsFragment()
             val arguments = Bundle()
             if (date != null) {
                 arguments.putInt(Argument.date, date.unixTimeStamp)
@@ -56,7 +56,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
     }
 
     override fun showDatePicker(defaultDate: LocalDate) {
-        val picker = DatePickerFragment.newInstance(defaultDate);
+        val picker = DatePickerFragment.newInstance(defaultDate)
         picker.callback = {
             presenter.onDatePicked(it)
         }
@@ -79,7 +79,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
     override var tabTitles: Array<String> = arrayOf("", "", "", "", "")
         set(value) {
             field = value
-            pagerAdapter?.tabTitles = value;
+            pagerAdapter?.tabTitles = value
             pagerAdapter?.notifyDataSetChanged()
         }
 
@@ -88,7 +88,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
         set(value) {
             swipeRefreshLayout.isRefreshing = value
             if(!value)
-                swipeRefreshLayout.clearAnimation();
+                swipeRefreshLayout.clearAnimation()
         }
 
     override var isCabVisible: Boolean = false
@@ -99,7 +99,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
                 } else {
                     cab.hide()
                 }
-                field = value;
+                field = value
             }
         }
 
@@ -117,12 +117,12 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state: SupervisionsState;
+        val state: SupervisionsState
         if (savedInstanceState != null) {
             state = savedInstanceState.getParcelable(State.presenterState)
         } else {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
-            val date: LocalDate?;
+            val date: LocalDate?
             date = if(seconds != 0) {
                 localDateFromUnix(seconds)
             } else {
@@ -175,7 +175,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
             drawerActivity.syncDrawer()
         }
 
-        val size = Point();
+        val size = Point()
         context!!.windowManager.defaultDisplay.getSize(size)
         if (size.x / context!!.displayMetrics.density >= 1024) {
             tabLayout.tabMode = TabLayout.MODE_FIXED

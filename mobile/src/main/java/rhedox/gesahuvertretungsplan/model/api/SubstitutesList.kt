@@ -12,11 +12,11 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 data class SubstitutesList(val announcement: Announcement, val substitutes: List<Substitute>, val date: LocalDate, val supervisions: List<Supervision>) {
     val hasSubstitutes: Boolean
         @JvmName("hasSubstitutes")
-        get() = substitutes.isNotEmpty();
+        get() = substitutes.isNotEmpty()
 
     val hasAnnouncement: Boolean
         @JvmName("hasAnnouncement")
-        get() = announcement.text.isNotEmpty() && announcement.text.trim() != "keine";
+        get() = announcement.text.isNotEmpty() && announcement.text.trim() != "keine"
 
     val hasSupervisions: Boolean
         @JvmName("hasSupervisions")

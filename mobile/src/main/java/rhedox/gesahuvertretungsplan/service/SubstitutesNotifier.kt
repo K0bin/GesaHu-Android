@@ -33,14 +33,14 @@ import javax.inject.Inject
  */
 class SubstitutesNotifier(private val context: Context) {
     companion object {
-        const val extraLesson = "lesson";
+        const val extraLesson = "lesson"
         const val requestCodeBase = 64
         const val groupKey = "gesahuvpsubstitutes"
         const val substitutesChannel = "substitutes"
     }
 
     //Color is used for the notifications
-    private val color: Int = ContextCompat.getColor(context, R.color.colorDefaultAccent);
+    private val color: Int = ContextCompat.getColor(context, R.color.colorDefaultAccent)
     private var lesson: Int = -1
 
     @Inject internal lateinit var formatter: SubstituteFormatter
@@ -54,14 +54,14 @@ class SubstitutesNotifier(private val context: Context) {
     }
 
     fun load(lesson: Int? = null) {
-        var _lesson = lesson ?: -1
+        var selectedLesson = lesson ?: -1
         if (lesson != -1 && (DateTime.now().dayOfWeek == DateTimeConstants.SATURDAY || DateTime.now().dayOfWeek == DateTimeConstants.SUNDAY)) {
             if (lesson == 1)
-                _lesson = -1
+                selectedLesson  = -1
             else
                 return
         }
-        this.lesson = _lesson;
+        this.lesson = selectedLesson
         val date: LocalDate = SchoolWeek.nextFromNow()
         val substitutes = repository.loadSubstitutesForDaySync(date, true)
         onSubstitutesLoaded(date, substitutes)
@@ -182,7 +182,7 @@ class SubstitutesNotifier(private val context: Context) {
 
         //Inbox style expanded notification
         val inboxStyle = NotificationCompat.InboxStyle()
-        for (i in 0..Math.min(5, notificationLines.size) - 1)
+        for (i in 0 until Math.min(5, notificationLines.size))
             inboxStyle.addLine(notificationLines[i])
 
         if (notificationLines.size > 5)

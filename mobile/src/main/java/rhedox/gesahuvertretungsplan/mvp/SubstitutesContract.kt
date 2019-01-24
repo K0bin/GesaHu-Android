@@ -9,7 +9,7 @@ import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
  */
 interface SubstitutesContract {
     interface Presenter {
-        fun onDatePickerIconClicked();
+        fun onDatePickerIconClicked()
         fun onDatePicked(date: LocalDate)
         fun onActivePageChanged(position: Int)
         fun onFabClicked()

@@ -21,9 +21,9 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 @Database(entities = [(Substitute::class), (Supervision::class), (Announcement::class)], version = SubstitutesDatabase.version)
 @TypeConverters(LocalDateConverter::class)
 abstract class SubstitutesDatabase: RoomDatabase() {
-    public abstract val substitutes: SubstitutesDao
-    public abstract val supervisions: SupervisionsDao
-    public abstract val announcements: AnnouncementsDao
+    abstract val substitutes: SubstitutesDao
+    abstract val supervisions: SupervisionsDao
+    abstract val announcements: AnnouncementsDao
 
     companion object {
         const val name = "gesahui_substitutes.db"
@@ -49,7 +49,7 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                         "substitute TEXT NOT NULL," +
                         "room TEXT NOT NULL," +
                         "hint TEXT NOT NULL," +
-                        "isRelevant INTEGER NOT NULL);");
+                        "isRelevant INTEGER NOT NULL);")
 
                 db.execSQL("INSERT INTO ${Substitute.tableName} (id, date, lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant) " +
                         "SELECT rowid, date, lessonBegin, duration, subject, course, teacher, substitute, room, hint, isRelevant " +
@@ -61,7 +61,7 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                 db.execSQL("CREATE TABLE ${Announcement.tableName} " +
                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "date INTEGER NOT NULL," +
-                        "text Text NOT NULL);");
+                        "text Text NOT NULL);")
 
                 db.execSQL("INSERT INTO ${Announcement.tableName} (id, date, text) " +
                         "SELECT rowid, date, text " +
@@ -77,7 +77,7 @@ abstract class SubstitutesDatabase: RoomDatabase() {
                         "teacher TEXT NOT NULL," +
                         "substitute TEXT NOT NULL," +
                         "location TEXT NOT NULL," +
-                        "isRelevant INTEGER NOT NULL);");
+                        "isRelevant INTEGER NOT NULL);")
 
                 db.execSQL("INSERT INTO ${Supervision.tableName} (id, date, time, teacher, substitute, location, isRelevant) " +
                         "SELECT rowid, date, time, teacher, substitute, location, isRelevant " +

@@ -27,24 +27,24 @@ data class Substitute(val date: LocalDate,
 
     @Ignore
     @Kind
-    val kind: Int;
+    val kind: Int
 
     @Ignore
-    val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString();
+    val lessonText: String = if(duration > 1) lessonBegin.toString() + "-" + (lessonBegin + duration - 1).toString() else lessonBegin.toString()
 
     @Ignore
-    val title: String;
+    val title: String
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(KindValues.substitute, KindValues.dropped, KindValues.roomChange, KindValues.test, KindValues.regular, flag = false)
     annotation class Kind
 
     object KindValues {
-        const val substitute = 0;
-        const val dropped = 1;
-        const val roomChange = 2;
-        const val test = 3;
-        const val regular = 4;
+        const val substitute = 0
+        const val dropped = 1
+        const val roomChange = 2
+        const val test = 3
+        const val regular = 4
     }
 
     init {
@@ -63,10 +63,10 @@ data class Substitute(val date: LocalDate,
 
         var titleStr = course
         if (course.isNotBlank() && subject.isNotBlank()) {
-            titleStr += " ";
+            titleStr += " "
         }
-        titleStr += subject;
-        title = titleStr;
+        titleStr += subject
+        title = titleStr
     }
 
     override fun compareTo(other: Substitute): Int {
@@ -75,24 +75,24 @@ data class Substitute(val date: LocalDate,
                 return -1
             else {
                 if (lessonBegin == other.lessonBegin) {
-                    if (duration == other.duration) {
-                        return if (course == other.course) subject.compareTo(other.subject) else course.compareTo(other.course);
+                    return if (duration == other.duration) {
+                        if (course == other.course) subject.compareTo(other.subject) else course.compareTo(other.course)
                     } else {
-                        return duration - other.duration;
+                        duration - other.duration
                     }
                 }
 
-                return lessonBegin - other.lessonBegin;
+                return lessonBegin - other.lessonBegin
             }
         } else {
             if (other.isRelevant)
                 return 1
             else {
                 if (lessonBegin == other.lessonBegin) {
-                    if (duration == other.duration) {
-                        return if (course == other.course) subject.compareTo(other.subject) else course.compareTo(other.course);
+                    return if (duration == other.duration) {
+                        if (course == other.course) subject.compareTo(other.subject) else course.compareTo(other.course)
                     } else {
-                        return duration - other.duration;
+                        duration - other.duration
                     }
                 }
 

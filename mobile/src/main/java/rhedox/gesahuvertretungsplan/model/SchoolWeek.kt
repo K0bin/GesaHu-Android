@@ -37,10 +37,10 @@ object SchoolWeek {
     @JvmStatic
     fun nextFrom(dateTime: DateTime = DateTime.now()): LocalDate {
         val date = dateTime.toLocalDate()
-        if (dateTime.hourOfDay > 18)
-            return SchoolWeek.nextDate(date.withFieldAdded(DurationFieldType.days(), 1))
+        return if (dateTime.hourOfDay > 18)
+            SchoolWeek.nextDate(date.withFieldAdded(DurationFieldType.days(), 1))
         else
-            return SchoolWeek.nextDate(date)
+            SchoolWeek.nextDate(date)
     }
 
     /**
@@ -57,9 +57,11 @@ object SchoolWeek {
     fun lessonStart(lessonIndex: Int): LocalTime {
         var lesson = lessonIndex
         if (lesson > startHours.size) {
-            if (lesson % 11 == 0) lesson /= 11; //teacher accidentally hit the key twice (55 for 5th period)
-            else if (lesson % 10 == 0) lesson /= 10; //dunno, why not?
-            else return LocalTime(lesson, 0) //teacher might've thought it's an hour
+            lesson /= when {
+                lesson % 11 == 0 -> 11 //teacher accidentally hit the key twice (55 for 5th period)
+                lesson % 10 == 0 -> 10 //dunno, why not?
+                else -> return LocalTime(lesson, 0) //teacher might've thought it's an hour
+            }
         }
         return LocalTime(startHours[lesson - 1], startMinutes[lesson - 1])
     }
@@ -67,13 +69,15 @@ object SchoolWeek {
     fun lessonEnd(lessonIndex: Int): LocalTime {
         var lesson = lessonIndex
         if (lesson > startHours.size) {
-            if (lesson % 11 == 0) lesson /= 11; //teacher accidentally hit the key twice (55 for 5th period)
-            else if (lesson % 10 == 0) lesson /= 10; //dunno, why not?
-            else return LocalTime(lesson, 0) //teacher might've thought it's an hour
+            lesson /= when {
+                lesson % 11 == 0 -> 11 //teacher accidentally hit the key twice (55 for 5th period)
+                lesson % 10 == 0 -> 10 //dunno, why not?
+                else -> return LocalTime(lesson, 0) //teacher might've thought it's an hour
+            }
         }
         return LocalTime(endHours[lesson - 1], endMinutes[lesson - 1])
     }
 }
 
 val LocalDate.dayOfWeekIndex: Int
-    get() = this.dayOfWeek - DateTimeConstants.MONDAY;
+    get() = this.dayOfWeek - DateTimeConstants.MONDAY

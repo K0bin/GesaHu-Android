@@ -18,7 +18,7 @@ import javax.inject.Inject
  */
 class SubstitutesWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
-        return ViewsFactory(applicationContext);
+        return ViewsFactory(applicationContext)
     }
 
     class ViewsFactory(private val context: Context) : RemoteViewsFactory {

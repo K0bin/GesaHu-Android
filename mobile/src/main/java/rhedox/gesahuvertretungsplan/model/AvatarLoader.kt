@@ -13,7 +13,7 @@ import rhedox.gesahuvertretungsplan.util.Open
  */
 @Open
 class AvatarLoader(context: Context) {
-    private val context = context.applicationContext;
+    private val context = context.applicationContext
     var callback: ((bitmap: Bitmap?) -> Unit)? = null
 
     fun loadAvatar() {
@@ -24,7 +24,7 @@ class AvatarLoader(context: Context) {
                     callback?.invoke(null)
                 }
             } else {
-                val stream = file.inputStream();
+                val stream = file.inputStream()
                 val bitmap = BitmapFactory.decodeStream(stream)
                 stream.close()
                 uiThread {

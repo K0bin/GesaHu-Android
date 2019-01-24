@@ -35,15 +35,15 @@ class SubstitutesSyncService : Service() {
 
     companion object {
         private val syncPrimitive = object {
-            var syncAdapter: SyncAdapter? = null;
+            var syncAdapter: SyncAdapter? = null
         }
 
         fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setSyncAutomatically(account, StubSubstitutesContentProvider.authority, true);
+                ContentResolver.setSyncAutomatically(account, StubSubstitutesContentProvider.authority, true)
                 ContentResolver.addPeriodicSync(account, StubSubstitutesContentProvider.authority, Bundle.EMPTY, 2 * 60 * 60)
             } else {
-                ContentResolver.setSyncAutomatically(account, StubSubstitutesContentProvider.authority, false);
+                ContentResolver.setSyncAutomatically(account, StubSubstitutesContentProvider.authority, false)
                 ContentResolver.removePeriodicSync(account,  StubSubstitutesContentProvider.authority, Bundle.EMPTY)
             }
         }
@@ -59,7 +59,7 @@ class SubstitutesSyncService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return syncPrimitive.syncAdapter!!.syncAdapterBinder;
+        return syncPrimitive.syncAdapter!!.syncAdapterBinder
     }
 
     class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedSyncAdapter(context, autoInitialize, false) {
@@ -70,8 +70,8 @@ class SubstitutesSyncService : Service() {
         @Inject internal lateinit var announcementsDao: AnnouncementsDao
 
         companion object {
-            const val extraSingleDay = "day";
-            const val extraDate = "date";
+            const val extraSingleDay = "day"
+            const val extraDate = "date"
         }
 
         init {
@@ -80,7 +80,7 @@ class SubstitutesSyncService : Service() {
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             if(Thread.interrupted()) {
-                return;
+                return
             }
             val hasDate = extras?.containsKey(extraDate) ?: false
             val singleDay = extras?.getBoolean(extraSingleDay, false) ?: false
@@ -103,10 +103,10 @@ class SubstitutesSyncService : Service() {
             } else {
                 Log.d("SubstitutesSync", "Sync triggered for week starting with $date")
 
-                val days = if (hasDate) 7 else 14;
+                val days = if (hasDate) 7 else 14
                 for (i in 0 until days) {
                     if(Thread.interrupted()) {
-                        return;
+                        return
                     }
 
                     val day = date.withFieldAdded(DurationFieldType.days(), i)
@@ -125,9 +125,9 @@ class SubstitutesSyncService : Service() {
             }
 
             if(Thread.interrupted()) {
-                return;
+                return
             }
-            val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -6);
+            val oldest = LocalDate.now().withFieldAdded(DurationFieldType.months(), -6)
             substitutesDao.insertAndClear(substitutes, oldest, dates)
             supervisionsDao.insertAndClear(supervisions, oldest, dates)
             announcementsDao.insertAndClear(announcements, oldest, dates)
@@ -150,9 +150,9 @@ class SubstitutesSyncService : Service() {
             }
             if (response != null && response.code() == 403) {
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
-                return null;
+                return null
             }
-            return response?.body();
+            return response?.body()
         }
     }
 }

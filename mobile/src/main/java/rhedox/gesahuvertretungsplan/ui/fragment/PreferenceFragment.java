@@ -15,8 +15,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
 import rhedox.gesahuvertretungsplan.App;
 import rhedox.gesahuvertretungsplan.R;
-import rhedox.gesahuvertretungsplan.broadcastReceiver.BootReceiver;
-import rhedox.gesahuvertretungsplan.broadcastReceiver.SubstitutesAlarmReceiver;
+import rhedox.gesahuvertretungsplan.broadcast_receiver.BootReceiver;
+import rhedox.gesahuvertretungsplan.broadcast_receiver.SubstitutesAlarmReceiver;
 import rhedox.gesahuvertretungsplan.ui.activity.MainActivity;
 import rhedox.gesahuvertretungsplan.ui.preference.TimePreference;
 

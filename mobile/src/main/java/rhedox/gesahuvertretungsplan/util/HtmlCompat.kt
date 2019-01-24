@@ -1,7 +1,6 @@
 package rhedox.gesahuvertretungsplan.util
 
 import android.os.Build
-import android.text.Html
 import android.text.Spanned
 
 /**
@@ -12,11 +11,11 @@ import android.text.Spanned
 class Html {
     companion object {
         fun fromHtml(text: String): Spanned {
-            return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) android.text.Html.fromHtml(text, 0) else android.text.Html.fromHtml(text);
+            return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) android.text.Html.fromHtml(text, 0) else android.text.Html.fromHtml(text)
         }
 
         fun decode(text: String): String {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) android.text.Html.fromHtml(text, 0).toString() else android.text.Html.fromHtml(text).toString();
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) android.text.Html.fromHtml(text, 0).toString() else android.text.Html.fromHtml(text).toString()
 
         }
     }

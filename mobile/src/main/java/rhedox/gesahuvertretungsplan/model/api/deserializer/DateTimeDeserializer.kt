@@ -4,10 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.format.DateTimePrinter
 import java.lang.reflect.Type
 
 /**
@@ -31,8 +28,8 @@ class DateTimeDeserializer : JsonDeserializer<DateTime?> {
 
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): DateTime? {
         if(json == null || json.asString.isNullOrBlank())
-            return null;
+            return null
 
-        return DateTime.parse(json.asString, formatter);
+        return DateTime.parse(json.asString, formatter)
     }
 }

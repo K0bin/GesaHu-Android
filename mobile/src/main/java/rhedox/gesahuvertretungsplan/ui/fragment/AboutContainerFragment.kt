@@ -35,7 +35,7 @@ class AboutContainerFragment : AnimationFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_about_container, container, false)
         childFragmentManager.beginTransaction().replace(R.id.about_fragment_container, createFragment(context!!.applicationContext), fragmentTag).commit()
-        return view;
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

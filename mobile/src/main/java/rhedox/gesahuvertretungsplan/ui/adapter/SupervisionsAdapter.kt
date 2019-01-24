@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.mvp.SupervisionsContract
-import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.SupervisionViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.SupervisionViewHolder
 import tr.xip.errorview.ErrorView
 
 /**
@@ -48,7 +48,7 @@ class SupervisionsAdapter(private val presenter: SupervisionsContract.Presenter,
                 SupervisionViewHolder(view, presenter, circleColor, circleColorRelevant, selectedElevation)
             }
 
-            else -> ErrorViewHolder(ErrorView(parent.context));
+            else -> ErrorViewHolder(ErrorView(parent.context))
         }
     }
 

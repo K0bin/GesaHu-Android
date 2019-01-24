@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Lesson
-import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.LessonViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.LessonsCardViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.LessonViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.LessonsCardViewHolder
 import tr.xip.errorview.ErrorView
 
 /**

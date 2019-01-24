@@ -2,10 +2,8 @@ package rhedox.gesahuvertretungsplan.ui.widget
 
 import android.content.Context
 import android.graphics.*
-import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import android.widget.Switch
 import org.jetbrains.anko.displayMetrics
 import rhedox.gesahuvertretungsplan.R
 
@@ -15,23 +13,21 @@ import rhedox.gesahuvertretungsplan.R
 class NumberCircle: View {
     //no allocations in draw method
     private val rect: RectF = RectF()
-    private val outlinePaint: Paint = Paint();
-    private val ovalPaint: Paint = Paint();
-    private val ovalTextPaint: Paint = Paint();
-    private val circleTextPaint: Paint = Paint();
+    private val outlinePaint: Paint = Paint()
+    private val ovalPaint: Paint = Paint()
+    private val ovalTextPaint: Paint = Paint()
+    private val circleTextPaint: Paint = Paint()
     private val ovalRect: RectF = RectF()
-    private var textRect: Rect = Rect();
+    private var textRect: Rect = Rect()
 
     var ovalColor: Int = Color.argb(1,1,0,0)
-        get() = field
         set(value) {
             field = value
 
             ovalPaint.color = value
         }
-    var ovalText: String = "";
+    var ovalText: String = ""
     var ovalTextColor: Int = Color.argb(1,0,0,0)
-        get() = field
         set(value) {
             field = value
 
@@ -39,22 +35,19 @@ class NumberCircle: View {
         }
 
     var outlineColor: Int = Color.argb(1,1,0,0)
-        get() = field
         set(value) {
             field = value
 
             outlinePaint.color = value
         }
-    var outlineText: String = "";
+    var outlineText: String = ""
     var outlineThickness: Float = 1 * context.displayMetrics.density
-        get() = field
         set(value) {
             field = value
 
             outlinePaint.strokeWidth = value
         }
     var outlineTextColor: Int = Color.argb(1,0,0,0)
-        get() = field
         set(value) {
             field = value
 
@@ -93,9 +86,9 @@ class NumberCircle: View {
         circleTextPaint.isAntiAlias = true
 
         try {
-            outlineColor = typedArray.getColor(R.styleable.NumberCircle_outlineColor, 0);
-            outlineThickness = typedArray.getDimension(R.styleable.NumberCircle_outlineThickness, 1f);
-            ovalColor = typedArray.getColor(R.styleable.NumberCircle_ovalColor, 0);
+            outlineColor = typedArray.getColor(R.styleable.NumberCircle_outlineColor, 0)
+            outlineThickness = typedArray.getDimension(R.styleable.NumberCircle_outlineThickness, 1f)
+            ovalColor = typedArray.getColor(R.styleable.NumberCircle_ovalColor, 0)
             ovalText = (typedArray.getString(R.styleable.NumberCircle_ovalText) ?: "").toUpperCase()
             ovalTextColor = typedArray.getColor(R.styleable.NumberCircle_ovalTextColor, 0)
             outlineTextColor = typedArray.getColor(R.styleable.NumberCircle_outlineTextColor, 0)

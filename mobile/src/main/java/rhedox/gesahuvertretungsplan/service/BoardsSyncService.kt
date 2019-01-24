@@ -35,15 +35,15 @@ class BoardsSyncService : Service() {
 
     companion object {
         private val syncPrimitive = object {
-            var syncAdapter: SyncAdapter? = null;
+            var syncAdapter: SyncAdapter? = null
         }
 
         fun setIsSyncEnabled(account: Account, isEnabled: Boolean) {
             if(isEnabled) {
-                ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, true);
+                ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, true)
                 ContentResolver.addPeriodicSync(account, StubBoardsContentProvider.authority, Bundle.EMPTY, 24 * 60 * 60)
             } else {
-                ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, false);
+                ContentResolver.setSyncAutomatically(account, StubBoardsContentProvider.authority, false)
                 ContentResolver.removePeriodicSync(account, StubBoardsContentProvider.authority, Bundle.EMPTY)
             }
         }
@@ -61,7 +61,7 @@ class BoardsSyncService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        return syncPrimitive.syncAdapter!!.syncAdapterBinder;
+        return syncPrimitive.syncAdapter!!.syncAdapterBinder
     }
 
     class SyncAdapter(context: Context, autoInitialize: Boolean): AbstractThreadedSyncAdapter(context, autoInitialize, false) {
@@ -82,7 +82,7 @@ class BoardsSyncService : Service() {
 
         override fun onPerformSync(account: Account, extras: Bundle?, authority: String, provider: ContentProviderClient, syncResult: SyncResult?) {
             if(Thread.interrupted()) {
-                return;
+                return
             }
 
             CalendarSyncService.updateIsSyncable(account, context, prefs)
@@ -107,7 +107,7 @@ class BoardsSyncService : Service() {
                 }
             }
             if(Thread.interrupted()) {
-                return;
+                return
             }
             if(response != null && response.isSuccessful) {
                 val boards = mutableListOf<Board>()
@@ -128,20 +128,20 @@ class BoardsSyncService : Service() {
 
             } else if (response != null && response.code() == 403) {
                 GesaHuAccountService.GesaHuAuthenticator.askForLogin(context)
-                return;
+                return
             }
 
             if(Thread.interrupted()) {
-                return;
+                return
             }
-            val okHttp = OkHttpClient();
+            val okHttp = OkHttpClient()
             val wasAvatarSuccessful = loadImage(okHttp, BoardsSyncService.getPhotoUrl(account.name))
             if (!wasAvatarSuccessful && !Thread.interrupted()) {
-                val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpicture), null, null);
+                val future = context.accountManager.hasFeatures(account, arrayOf(GesaHuAccountService.GesaHuAuthenticator.Feature.originalUserpicture), null, null)
                 while (!future.isDone) {
                     //Block thread
                     if (Thread.interrupted())
-                        return;
+                        return
                 }
                 if (future.result) {
                     loadImage(okHttp, "https://www.gesahui.de/home/schoolboard/userbilder_original/${account.name.toUpperCase()}.jpg")
@@ -150,16 +150,16 @@ class BoardsSyncService : Service() {
         }
 
         private fun loadImage(okHttp: OkHttpClient, url: String): Boolean {
-            d("BoardsSyncService", "Downloading image: $url");
+            d("BoardsSyncService", "Downloading image: $url")
             val avatarRequest = Request.Builder()
                     .url(url)
                     .build()
             val avatarCall = okHttp.newCall(avatarRequest)
-            var avatarResponse: okhttp3.Response? = null;
+            var avatarResponse: okhttp3.Response? = null
             var bytes: ByteArray? = null
             try {
                 avatarResponse = avatarCall.execute()
-                bytes = avatarResponse.body()?.bytes();
+                bytes = avatarResponse.body()?.bytes()
             } catch (e: IOException) {}
             if(avatarResponse != null && avatarResponse.isSuccessful && bytes != null) {
                 val fos = context.openFileOutput(Board.avatarFileName, Context.MODE_PRIVATE)
@@ -167,10 +167,10 @@ class BoardsSyncService : Service() {
                 fos.close()
 
                 avatarResponse.close()
-                return true;
+                return true
             }
             avatarResponse?.close()
-            return false;
+            return false
         }
 
     }

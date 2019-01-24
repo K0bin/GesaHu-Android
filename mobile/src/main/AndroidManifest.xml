@@ -73,9 +73,9 @@
                 android:value="Zeigt die Anzahl der Vertretungsstunden in DashClock an."/>
         </service>
 
-        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiverLegacy"/>
-        <receiver android:name=".broadcastReceiver.SubstitutesAlarmReceiver"/>
-        <receiver android:name=".broadcastReceiver.BootReceiver">
+        <receiver android:name=".broadcast_receiver.SubstitutesAlarmReceiverLegacy"/>
+        <receiver android:name=".broadcast_receiver.SubstitutesAlarmReceiver"/>
+        <receiver android:name=".broadcast_receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
@@ -83,7 +83,7 @@
 
         <!-- List Widget -->
         <receiver
-            android:name=".broadcastReceiver.SubstitutesWidgetProvider"
+            android:name=".broadcast_receiver.SubstitutesWidgetProvider"
             android:label="@string/widget_list_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

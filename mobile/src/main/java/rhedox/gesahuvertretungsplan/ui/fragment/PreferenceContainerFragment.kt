@@ -1,14 +1,12 @@
 package rhedox.gesahuvertretungsplan.ui.fragment
 
-import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_preference_container.*
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.ui.activity.DrawerActivity
-import kotlinx.android.synthetic.main.fragment_preference_container.toolbar;
 
 /**
  * Created by robin on 07.02.2017.

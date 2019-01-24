@@ -20,9 +20,9 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Mark
 @Database(entities = [(Lesson::class), (Mark::class), (Board::class)], version = BoardsDatabase.version)
 @TypeConverters(LocalDateConverter::class)
 abstract class BoardsDatabase: RoomDatabase() {
-    public abstract val boards: BoardsDao
-    public abstract val lessons: LessonsDao
-    public abstract val marks: MarksDao
+    abstract val boards: BoardsDao
+    abstract val lessons: LessonsDao
+    abstract val marks: MarksDao
 
     companion object {
         const val name = "gesahui_boards.db"
@@ -42,7 +42,7 @@ abstract class BoardsDatabase: RoomDatabase() {
                         "markRemark TEXT NOT NULL," +
                         "lessonsTotal INTEGER NOT NULL," +
                         "missedLessons INTEGER NOT NULL," +
-                        "missedLessonsWithSickNotes INTEGER NOT NULL);");
+                        "missedLessonsWithSickNotes INTEGER NOT NULL);")
 
                 db.execSQL("INSERT INTO ${Board.tableName}_new (name, mark, markRemark, lessonsTotal, missedLessons, missedLessonsWithSickNotes) " +
                         "SELECT name, mark, markRemark, lessonsTotal, missedLessons, missedLessonsWithSickNotes " +
@@ -59,8 +59,8 @@ abstract class BoardsDatabase: RoomDatabase() {
                         "status INTEGER NOT NULL," +
                         "homework TEXT," +
                         "homeworkDue INTEGER," +
-                        "FOREIGN KEY(boardName) REFERENCES ${Board.tableName}(name) ON DELETE CASCADE ON UPDATE CASCADE);");
-                db.execSQL("CREATE INDEX lessonBoardName ON ${Lesson.tableName} (boardName)");
+                        "FOREIGN KEY(boardName) REFERENCES ${Board.tableName}(name) ON DELETE CASCADE ON UPDATE CASCADE);")
+                db.execSQL("CREATE INDEX lessonBoardName ON ${Lesson.tableName} (boardName)")
 
                 db.execSQL("INSERT INTO ${Lesson.tableName} (id, date, boardName, topic, duration, status, homework, homeworkDue) " +
                         "SELECT rowid, date, (SELECT name FROM ${Board.tableName} WHERE rowid = boardId), topic, duration, status, homework, homeworkDue " +
@@ -81,8 +81,8 @@ abstract class BoardsDatabase: RoomDatabase() {
                         "markKind INTEGER NOT NULL," +
                         "logo TEXT NOT NULL," +
                         "weighting REAL," +
-                        "FOREIGN KEY(boardName) REFERENCES ${Board.tableName}(name) ON DELETE CASCADE ON UPDATE CASCADE);");
-                db.execSQL("CREATE INDEX markBoardName ON ${Mark.tableName} (boardName)");
+                        "FOREIGN KEY(boardName) REFERENCES ${Board.tableName}(name) ON DELETE CASCADE ON UPDATE CASCADE);")
+                db.execSQL("CREATE INDEX markBoardName ON ${Mark.tableName} (boardName)")
 
                 db.execSQL("INSERT INTO ${Mark.tableName} (id, date, boardName, description, kind, mark, average, markKind, logo, weighting) " +
                         "SELECT rowid, date, (SELECT name FROM ${Board.tableName} WHERE rowid = boardId), description, kind, mark, average, markKind, logo, weighting " +

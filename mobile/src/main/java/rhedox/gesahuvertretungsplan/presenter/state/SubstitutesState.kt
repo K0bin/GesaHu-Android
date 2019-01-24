@@ -3,8 +3,6 @@ package rhedox.gesahuvertretungsplan.presenter.state
 import android.os.Parcel
 import android.os.Parcelable
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.model.SchoolWeek
-import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
 import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 
@@ -14,11 +12,11 @@ import rhedox.gesahuvertretungsplan.util.unixTimeStamp
 data class SubstitutesState(val date: LocalDate?, val selected: Int? = null) : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(date?.unixTimeStamp ?: 0)
-        parcel.writeInt(selected?.toInt() ?: -1)
+        parcel.writeInt(selected ?: -1)
     }
 
     override fun describeContents(): Int {
-        return 0;
+        return 0
     }
 
     companion object {
@@ -26,7 +24,7 @@ data class SubstitutesState(val date: LocalDate?, val selected: Int? = null) : P
         val CREATOR: Parcelable.Creator<SubstitutesState> = object : Parcelable.Creator<SubstitutesState> {
             override fun createFromParcel(parcel: Parcel): SubstitutesState {
                 val seconds = parcel.readInt()
-                val date: LocalDate?;
+                val date: LocalDate?
                 if(seconds > 0) {
                     date = localDateFromUnix(seconds)
                 } else {

@@ -35,24 +35,24 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
     val fabSize = PointF()
     var fabElevation = 0f
 
-    var _showListener: WeakReference<DialogInterface.OnShowListener>? = null
+    var weakShowListener: WeakReference<DialogInterface.OnShowListener>? = null
     var showListener: DialogInterface.OnShowListener?
-        get() = _showListener?.get()
+        get() = weakShowListener?.get()
         set(value) {
             if (value == null) {
-                _showListener = null;
+                weakShowListener = null
             } else {
-                _showListener = WeakReference(value)
+                weakShowListener = WeakReference(value)
             }
         }
-    var _dismissListener: WeakReference<DialogInterface.OnDismissListener>? = null
+    var weakDismissListener: WeakReference<DialogInterface.OnDismissListener>? = null
     var dismissListener: DialogInterface.OnDismissListener?
-        get() = _dismissListener?.get()
+        get() = weakDismissListener?.get()
         set(value) {
             if (value == null) {
-                _dismissListener = null;
+                weakDismissListener = null
             } else {
-                _dismissListener = WeakReference(value)
+                weakDismissListener = WeakReference(value)
             }
         }
 
@@ -68,9 +68,9 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
     private var longDuration = 0L
     private var shortDuration = 0L
 
-    private val revealPositionFraction = 0.6f;
+    private val revealPositionFraction = 0.6f
 
-    private var isAnimating = false;
+    private var isAnimating = false
 
     var text: String = ""
 
@@ -97,7 +97,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         val announcement = arguments?.getString(argumentAnnouncement)
         if (announcement != null) {
             val dialog = Dialog(context, R.style.AnnouncementDialog)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.dialog)
             dialog.setOnShowListener(this)
             dialog.setOnDismissListener(this)

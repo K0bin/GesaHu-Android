@@ -16,7 +16,7 @@ import java.lang.reflect.Type
  * Created by robin on 08.01.2017.
  */
 class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
-    private val resolver = AbbreviationResolver(context.applicationContext);
+    private val resolver = AbbreviationResolver(context.applicationContext)
     private val secondsParser = DateTimeFormatterBuilder()
             .appendLiteral(':')
             .appendSecondOfMinute(2)
@@ -31,7 +31,7 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
             .toFormatter()
 
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Exam {
-        val jsonObject = json.asJsonObject;
+        val jsonObject = json.asJsonObject
 
         val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
         val subject = resolver.resolveSubject(jsonObject.get("Fach").asString)
@@ -40,7 +40,7 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
         val recorder =  resolver.resolveTeacher(jsonObject.get("Protokoll").asString)
         val examiner =  resolver.resolveTeacher(jsonObject.get("Prüfer").asString)
         val chair =  resolver.resolveTeacher(jsonObject.get("Vorsitz").asString)
-        val timeString = jsonObject.get("Zeit").asString;
+        val timeString = jsonObject.get("Zeit").asString
         val timeParts = timeString.split('-')
         val begin: LocalTime
         val duration: Duration?
@@ -48,14 +48,14 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
             begin = LocalTime.parse(timeParts[0].replace('.', ':'), formatter)
             duration = if (timeParts.size > 1 && timeParts[1].isNotBlank()) {
                 val end = LocalTime.parse(timeParts[1].replace('.', ':'), formatter)
-                val durationMillis = end.millisOfDay - begin.millisOfDay;
+                val durationMillis = end.millisOfDay - begin.millisOfDay
                 Duration(durationMillis.toLong())
             } else {
                 null
             }
         } else {
             begin = LocalTime()
-            duration = null;
+            duration = null
         }
 
         val allowAudience = jsonObject.get("Zuschauer erlaubt").asBoolean

@@ -5,13 +5,13 @@ import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import rhedox.gesahuvertretungsplan.ui.viewHolder.ModelViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.ModelViewHolder
 
 /**
  * Created by robin on 23.01.2017.
  */
 abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopHeader: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var isDiffing = false;
+    private var isDiffing = false
     open var list = listOf<T>()
     set(value) {
         doAsync {
@@ -45,7 +45,7 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
 
                 })
                 field = value
-                isDiffing = false;
+                isDiffing = false
             }
         }
     }
@@ -57,20 +57,20 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
         } else if (!field && value) {
             notifyItemInserted(0)
         }
-        field = value;
+        field = value
     }
 
     object ItemTypeValues {
-        const val view = 0;
-        const val emptyView = 1;
-        const val topHeader = 2;
+        const val view = 0
+        const val emptyView = 1
+        const val topHeader = 2
     }
 
     override fun getItemCount(): Int {
         return if (list.isNotEmpty() || !hasEmptyView) {
             if (!hasTopHeader) list.size else list.size + 1
         } else {
-            if (!hasTopHeader) 1 else 2;
+            if (!hasTopHeader) 1 else 2
         }
     }
 

@@ -17,7 +17,7 @@ import rhedox.gesahuvertretungsplan.util.filterRelevant
  * Created by robin on 11.12.2016.
  */
 class SubstitutesDashClockExtension : DashClockExtension() {
-    lateinit var repo: SubstitutesDatabaseRepository;
+    lateinit var repo: SubstitutesDatabaseRepository
     var date = LocalDate()
     private var liveData: LiveData<List<Substitute>>? = null
 
@@ -25,12 +25,6 @@ class SubstitutesDashClockExtension : DashClockExtension() {
         if (it?.isNotEmpty() == true) {
             onSubstitutesLoaded(it.first().date, it)
         }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        //repo = SubstitutesDatabaseRepository(applicationContext)
     }
 
     override fun onDestroy() {
@@ -46,7 +40,7 @@ class SubstitutesDashClockExtension : DashClockExtension() {
 
     private fun onSubstitutesLoaded(date: LocalDate, list: List<Substitute>) {
         if(date != this.date)
-            return;
+            return
 
         val important = list.filterRelevant(true)
         val count = important.size
@@ -55,14 +49,14 @@ class SubstitutesDashClockExtension : DashClockExtension() {
         for (substitute in important) {
             var title = ""
 
-            when (substitute.kind.toInt()) {
-                Substitute.KindValues.substitute.toInt() -> title = getString(R.string.substitute)
+            when (substitute.kind) {
+                Substitute.KindValues.substitute -> title = getString(R.string.substitute)
 
-                Substitute.KindValues.roomChange.toInt() -> title = getString(R.string.roomchange)
+                Substitute.KindValues.roomChange -> title = getString(R.string.roomchange)
 
-                Substitute.KindValues.dropped.toInt() -> title = getString(R.string.dropped)
+                Substitute.KindValues.dropped -> title = getString(R.string.dropped)
 
-                Substitute.KindValues.test.toInt() -> title = getString(R.string.test)
+                Substitute.KindValues.test -> title = getString(R.string.test)
             }
 
             if ("" != body)

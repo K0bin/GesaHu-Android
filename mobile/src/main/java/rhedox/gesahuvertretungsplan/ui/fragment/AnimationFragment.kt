@@ -17,7 +17,7 @@ abstract class AnimationFragment: Fragment() {
         } else {
             if (enter) AnimationUtils.loadAnimation(context, R.anim.fade_in) else AnimationUtils.loadAnimation(context, R.anim.fade_out)
         }
-        useSlideAnimation = false;
+        useSlideAnimation = false
         return animation
     }
 }

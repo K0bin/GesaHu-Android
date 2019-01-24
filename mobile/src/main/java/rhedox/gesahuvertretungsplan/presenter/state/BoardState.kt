@@ -12,7 +12,7 @@ data class BoardState(val boardName: String): Parcelable {
     }
 
     override fun describeContents(): Int {
-        return 0;
+        return 0
     }
 
     companion object {
@@ -21,7 +21,7 @@ data class BoardState(val boardName: String): Parcelable {
             override fun createFromParcel(parcel: Parcel): BoardState {
                 val name = parcel.readString()
 
-                return BoardState(name)
+                return BoardState(name ?: "")
             }
 
             override fun newArray(size: Int): Array<BoardState?> {

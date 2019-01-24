@@ -43,10 +43,10 @@ class GesaHuAccountService : Service() {
     class GesaHuAuthenticator(private val context: Context) : AbstractAccountAuthenticator(context) {
 
         companion object {
-            const val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount";
+            const val accountType = "rhedox.gesahuvertretungsplan.gesaHuAccount"
 
-            internal const val notificationChannel = "otherChannel";
-            private const val requestCode = 10;
+            internal const val notificationChannel = "otherChannel"
+            private const val requestCode = 10
 
             @SuppressLint("NewApi")
             fun askForLogin(context: Context) {
@@ -72,12 +72,9 @@ class GesaHuAccountService : Service() {
         }
 
         object Feature {
-            @JvmField
-            val supervisionSubstitutes = "aufsichtsvertretung";
-            @JvmField
-            val syncTimetable = "stundenplan";
-            @JvmField
-            val originalUserpicture = "originalbild";
+            const val supervisionSubstitutes = "aufsichtsvertretung"
+            const val syncTimetable = "stundenplan"
+            const val originalUserpicture = "originalbild"
         }
 
         override fun getAuthTokenLabel(authTokenType: String?): String {
@@ -97,21 +94,21 @@ class GesaHuAccountService : Service() {
         }
 
         override fun hasFeatures(response: AccountAuthenticatorResponse, account: Account, features: Array<String>): Bundle {
-            val isTeacher = account.name.startsWith("l", true);
-            val isStudent = account.name.startsWith("s", true);
+            val isTeacher = account.name.startsWith("l", true)
+            val isStudent = account.name.startsWith("s", true)
 
-            var allSupported = true;
+            var allSupported = true
             for(feature in features) {
                 if(feature == Feature.supervisionSubstitutes && !isTeacher)
-                    allSupported = false;
+                    allSupported = false
 
                 if(feature == Feature.originalUserpicture && !isStudent)
-                    allSupported = false;
+                    allSupported = false
             }
 
-            val bundle = Bundle();
+            val bundle = Bundle()
             bundle.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allSupported)
-            return bundle;
+            return bundle
         }
 
         override fun editProperties(response: AccountAuthenticatorResponse?, accountType: String?): Bundle {
@@ -123,16 +120,16 @@ class GesaHuAccountService : Service() {
 
             val accounts = context.accountManager.getAccountsByType(accountType)
             if (accounts != null && accounts.isNotEmpty()) {
-                bundle.putInt(AccountManager.KEY_ERROR_CODE, 1);
-                bundle.putString(AccountManager.KEY_ERROR_MESSAGE, context.getString(R.string.login_account_exists));
-                return bundle;
+                bundle.putInt(AccountManager.KEY_ERROR_CODE, 1)
+                bundle.putString(AccountManager.KEY_ERROR_MESSAGE, context.getString(R.string.login_account_exists))
+                return bundle
             }
             val intent = Intent(context, AuthActivity::class.java)
             intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response)
             intent.putExtra(AuthActivity.argIsNewAccount, true)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             bundle.putParcelable(AccountManager.KEY_INTENT, intent)
-            return bundle;
+            return bundle
         }
 
     }

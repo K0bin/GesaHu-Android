@@ -26,8 +26,8 @@ data class Lesson(val date: LocalDate,
     @IntDef(StatusValues.present, StatusValues.absent, StatusValues.absentWithSickNote)
     annotation class Status
     object StatusValues {
-        const val present = 0 //"anwesend";
-        const val absent = 1 //"abwesend";
+        const val present = 0 //"anwesend"
+        const val absent = 1 //"abwesend"
         const val absentWithSickNote = 2 //"abwesend und entschuldigt"
     }
 

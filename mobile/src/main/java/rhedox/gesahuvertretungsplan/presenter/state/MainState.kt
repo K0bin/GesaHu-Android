@@ -12,7 +12,7 @@ data class MainState(val selectedDrawerId: Int? = null): Parcelable {
     }
 
     override fun describeContents(): Int {
-        return 0;
+        return 0
     }
 
     companion object {

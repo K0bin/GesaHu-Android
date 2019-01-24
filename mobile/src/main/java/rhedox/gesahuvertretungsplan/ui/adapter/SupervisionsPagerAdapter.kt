@@ -40,8 +40,8 @@ class SupervisionsPagerAdapter(private val presenter: SupervisionsContract.Prese
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         if (recyclerViews[position] == null) {
             val inflater = LayoutInflater.from(container.context)
-            val recyclerView = inflater.inflate(R.layout.fragment_main, container, false) as RecyclerView;
-            val layoutManager = LinearLayoutManager(container.context, LinearLayoutManager.VERTICAL, false)
+            val recyclerView = inflater.inflate(R.layout.fragment_main, container, false) as RecyclerView
+            val layoutManager = LinearLayoutManager(container.context, RecyclerView.VERTICAL, false)
             if (layoutManagerStates[position] != null) layoutManager.onRestoreInstanceState(layoutManagerStates[position])
             layoutManager.recycleChildrenOnDetach = true
             recyclerView.layoutManager = layoutManager
@@ -50,14 +50,14 @@ class SupervisionsPagerAdapter(private val presenter: SupervisionsContract.Prese
             recyclerView.setRecycledViewPool(pool)
             recyclerView.setHasFixedSize(true)
 
-            container.addView(recyclerView, 0);
-            adapters[position] = adapter;
+            container.addView(recyclerView, 0)
+            adapters[position] = adapter
             recyclerViews[position] = recyclerView
             presenter.onPageAttached(position)
             return recyclerView
         } else {
             val recyclerView = recyclerViews[position]!!
-            container.addView(recyclerView);
+            container.addView(recyclerView)
             return recyclerView
         }
     }
@@ -66,15 +66,15 @@ class SupervisionsPagerAdapter(private val presenter: SupervisionsContract.Prese
         val recyclerView = page as RecyclerView
         layoutManagerStates[position] = recyclerView.layoutManager?.onSaveInstanceState()
 
-        container.removeView(recyclerView);
+        container.removeView(recyclerView)
     }
 
     override fun isViewFromObject(view: View, page: Any): Boolean {
-        return view == page;
+        return view == page
     }
 
     override fun getCount(): Int {
-        return 5;
+        return 5
     }
 
     override fun getPageTitle(position: Int): CharSequence {

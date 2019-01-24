@@ -25,10 +25,10 @@ import rhedox.gesahuvertretungsplan.util.windowManager
  * Created by robin on 19.01.2017.
  */
 class MarksFragment : Fragment(), MarksContract.View {
-    lateinit var presenter: MarksContract.Presenter;
+    lateinit var presenter: MarksContract.Presenter
 
-    private lateinit var layoutManager: LinearLayoutManager;
-    private lateinit var adapter: MarksAdapter;
+    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var adapter: MarksAdapter
 
     object Arguments {
         const val boardName = "boardName"
@@ -68,7 +68,7 @@ class MarksFragment : Fragment(), MarksContract.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_lessons, container, false)
         val recycler = view.findViewById<RecyclerView>(R.id.recycler)
-        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         if (savedInstanceState != null) {
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LessonsFragment.layoutManagerBundleName))
         }
@@ -77,16 +77,16 @@ class MarksFragment : Fragment(), MarksContract.View {
 
         val size = Point()
         context!!.windowManager.defaultDisplay.getSize(size)
-        val isTablet = size.x >= (680 / context!!.displayMetrics.density);
+        val isTablet = size.x >= (680 / context!!.displayMetrics.density)
 
-        adapter = MarksAdapter(context!!, isTablet);
-        recycler.adapter = adapter;
+        adapter = MarksAdapter(context!!, isTablet)
+        recycler.adapter = adapter
 
-        val cardHeight = context!!.resources.getDimension(R.dimen.topCardHeight);
+        val cardHeight = context!!.resources.getDimension(R.dimen.topCardHeight)
         recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val totalScroll = recycler.computeVerticalScrollOffset();
+                val totalScroll = recycler.computeVerticalScrollOffset()
                 (parentFragment as? AppBarFragment)?.hasAppBarElevation = !adapter.hasTopHeader || totalScroll >= cardHeight
             }
         })
@@ -115,6 +115,6 @@ class MarksFragment : Fragment(), MarksContract.View {
     }
 
     override fun showList(list: List<Mark>) {
-        adapter.list = list;
+        adapter.list = list
     }
 }

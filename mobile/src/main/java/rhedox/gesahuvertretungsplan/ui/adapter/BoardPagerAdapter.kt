@@ -2,7 +2,6 @@ package rhedox.gesahuvertretungsplan.ui.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import rhedox.gesahuvertretungsplan.ui.fragment.LessonsFragment
 import rhedox.gesahuvertretungsplan.ui.fragment.MarksFragment
 
@@ -17,22 +16,22 @@ class BoardPagerAdapter(private val lessonsFragment: LessonsFragment, private va
     }
 
     override fun getItem(position: Int): Fragment {
-        when (position) {
-            0 -> return lessonsFragment
-            1 -> return marksFragment
-            else -> return Fragment()
+        return when (position) {
+            0 -> lessonsFragment
+            1 -> marksFragment
+            else -> Fragment()
         }
     }
 
     override fun getCount(): Int {
-        return 2;
+        return 2
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
             0 -> "Stunden"
             1 -> "Noten"
-            else -> "";
+            else -> ""
         }
     }
 

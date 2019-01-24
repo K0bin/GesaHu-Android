@@ -2,7 +2,7 @@ package rhedox.gesahuvertretungsplan.presenter
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import rhedox.gesahuvertretungsplan.dependencyInjection.BoardsComponent
+import rhedox.gesahuvertretungsplan.dependency_injection.BoardsComponent
 import rhedox.gesahuvertretungsplan.model.BoardsRepository
 import rhedox.gesahuvertretungsplan.model.database.entity.Board
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class MarksPresenter(component: BoardsComponent, state: MarksState): MarksContract.Presenter {
     private var view: MarksContract.View? = null
     @Inject internal lateinit var repository: BoardsRepository
-    private val boardName = state.boardName;
+    private val boardName = state.boardName
     private val board: LiveData<Board>
     private var marks: LiveData<List<Mark>>
 
@@ -47,14 +47,14 @@ class MarksPresenter(component: BoardsComponent, state: MarksState): MarksContra
     }
 
     override fun attachView(view: MarksContract.View) {
-        this.view = view;
+        this.view = view
 
         view.mark = board.value?.mark ?: ""
         view.showList(marks.value ?: listOf())
     }
 
     override fun detachView() {
-        this.view = null;
+        this.view = null
     }
 
     override fun destroy() {

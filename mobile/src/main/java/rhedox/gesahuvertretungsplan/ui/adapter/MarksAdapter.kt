@@ -7,9 +7,9 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Mark
-import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.MarkViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.MarksCardViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.MarkViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.MarksCardViewHolder
 import tr.xip.errorview.ErrorView
 
 /**
@@ -45,11 +45,11 @@ class MarksAdapter(context: Context, private val isTablet: Boolean = false) : Li
             return MarksCardViewHolder(view)
         }
 
-        if(viewType == ListAdapter.ItemTypeValues.view) {
+        return if (viewType == ListAdapter.ItemTypeValues.view) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.view_mark, parent, false)
-            return MarkViewHolder(view)
+            MarkViewHolder(view)
         } else {
-            return ErrorViewHolder(ErrorView(parent.context))
+            ErrorViewHolder(ErrorView(parent.context))
         }
     }
 

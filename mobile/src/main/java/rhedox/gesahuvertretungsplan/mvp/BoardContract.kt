@@ -10,10 +10,10 @@ interface BoardContract {
         fun attachView(view: View)
         fun detachView()
         fun saveState(): BoardState
-        fun destroy();
+        fun destroy()
     }
 
     interface View {
-        var title: String;
+        var title: String
     }
 }

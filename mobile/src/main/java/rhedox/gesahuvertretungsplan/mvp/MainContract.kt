@@ -20,11 +20,11 @@ interface MainContract {
     }
 
     object DrawerIds {
-        const val substitutes = 0;
-        const val supervisions = 1;
-        const val settings = 2;
-        const val about = 3;
-        const val board = 13;
+        const val substitutes = 0
+        const val supervisions = 1
+        const val settings = 2
+        const val about = 3
+        const val board = 13
     }
 
     interface View {
@@ -37,8 +37,8 @@ interface MainContract {
         fun navigateToSupervisions(date: LocalDate? = null)
         fun navigateToBoard(boardName: String)
         fun updateCalendarSync(account: Account)
-        var userName: String;
-        var currentDrawerId: Int;
+        var userName: String
+        var currentDrawerId: Int
         var avatar: Bitmap?
     }
 }

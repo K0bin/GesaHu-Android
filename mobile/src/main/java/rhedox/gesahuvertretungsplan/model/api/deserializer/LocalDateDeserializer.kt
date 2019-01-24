@@ -24,6 +24,6 @@ class LocalDateDeserializer : JsonDeserializer<LocalDate?> {
         if(json == null || json.asString.isNullOrBlank())
             return null
 
-        return LocalDate.parse(json.asString, formatter);
+        return LocalDate.parse(json.asString, formatter)
     }
 }

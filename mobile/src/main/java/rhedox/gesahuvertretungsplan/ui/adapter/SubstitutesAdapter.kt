@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import rhedox.gesahuvertretungsplan.R
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.mvp.SubstitutesContract
-import rhedox.gesahuvertretungsplan.ui.viewHolder.ErrorViewHolder
-import rhedox.gesahuvertretungsplan.ui.viewHolder.SubstituteViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.ErrorViewHolder
+import rhedox.gesahuvertretungsplan.ui.view_holder.SubstituteViewHolder
 import tr.xip.errorview.ErrorView
 
 /**
@@ -48,7 +48,7 @@ class SubstitutesAdapter(private val presenter: SubstitutesContract.Presenter, c
                 SubstituteViewHolder(view, presenter, textColor, textColorRelevant, circleColor, circleColorRelevant, selectedElevation)
             }
 
-            else -> ErrorViewHolder(ErrorView(parent.context));
+            else -> ErrorViewHolder(ErrorView(parent.context))
         }
     }
 

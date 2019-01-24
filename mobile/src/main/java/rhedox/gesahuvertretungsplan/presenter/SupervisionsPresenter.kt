@@ -12,7 +12,7 @@ import android.util.Log
 import org.joda.time.DateTimeConstants
 import org.joda.time.DurationFieldType
 import org.joda.time.LocalDate
-import rhedox.gesahuvertretungsplan.dependencyInjection.SubstitutesComponent
+import rhedox.gesahuvertretungsplan.dependency_injection.SubstitutesComponent
 import rhedox.gesahuvertretungsplan.model.*
 import rhedox.gesahuvertretungsplan.model.database.StubSubstitutesContentProvider
 import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
@@ -26,7 +26,7 @@ import javax.inject.Inject
  * Created by robin on 20.10.2016.
  */
 class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: SupervisionsState?) : SupervisionsContract.Presenter {
-    private val date: LocalDate;
+    private val date: LocalDate
     private var view: SupervisionsContract.View? = null
     /**
      * The selected substitute (of the current page); null for none
@@ -36,7 +36,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
     /**
      * The page (day of week) which is currently visible to the user
      */
-    private var currentPage: Int;
+    private var currentPage: Int
     @Inject internal lateinit var repository: SubstitutesRepository
 
     @Inject internal lateinit var connectivityManager: ConnectivityManager
@@ -46,9 +46,9 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
     private var account: Account? = null
         get() {
             if (field == null) {
-                field = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)?.firstOrNull()
+                field = accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType).firstOrNull()
             }
-            return field;
+            return field
         }
 
     private val supervisions = arrayOfNulls<LiveData<List<Supervision>>>(5)
@@ -61,12 +61,12 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
     init {
         substitutesComponent.inject(this)
 
-        val _date: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
+        val dayDate: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
 
-        Log.d("SupervisionsPresenter", "Date: $_date")
+        Log.d("SupervisionsPresenter", "Date: $dayDate")
 
-        currentPage = Math.max(0, Math.min(_date.dayOfWeek - DateTimeConstants.MONDAY, 4))
-        this.date = getFirstDayOfWeek(_date)
+        currentPage = Math.max(0, Math.min(dayDate.dayOfWeek - DateTimeConstants.MONDAY, 4))
+        this.date = getFirstDayOfWeek(dayDate)
 
         for(i in 0 until 5) {
             supervisions[i] = repository.loadSupervisionsForDay(this.date.withFieldAdded(DurationFieldType.days(), i))
@@ -101,13 +101,13 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
                 date.withFieldAdded(DurationFieldType.days(), 3).toString("EEE. dd.MM.yy", Locale.GERMANY),
                 date.withFieldAdded(DurationFieldType.days(), 4).toString("EEE. dd.MM.yy", Locale.GERMANY)
         )
-        view.isSwipeRefreshEnabled = account != null;
+        view.isSwipeRefreshEnabled = account != null
 
         Log.d("SupervisionsPresenter", "viewattached selected $selected")
     }
 
     override fun detachView() {
-        this.view = null;
+        this.view = null
         Log.d("SupervisionsPresenter", "view detached")
     }
 
@@ -121,7 +121,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
     private fun onSupervisionsLoaded(date:LocalDate, supervisions: List<Supervision>) {
         Log.d("SubstitutePresenter", "SupervisionContract loaded: $date, ${supervisions.size} items")
         if(date.dayOfWeekIndex > 4) {
-            return;
+            return
         }
 
         if (date.weekOfWeekyear == this.date.weekOfWeekyear) {
@@ -138,8 +138,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
     }
 
     private fun getFirstDayOfWeek(date: LocalDate): LocalDate {
-        val monday = date.minusDays(date.dayOfWeekIndex)
-        return monday
+        return date.minusDays(date.dayOfWeekIndex)
     }
 
     override fun onDatePicked(date: LocalDate) {
@@ -155,7 +154,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
 
     override fun onListItemClicked(listEntry: Int) {
         if (currentPage < 0 || listEntry < 0 || listEntry >= supervisions[currentPage]?.value?.size ?: 0) {
-            return;
+            return
         }
 
         selected = if(selected == listEntry) null else listEntry
@@ -163,13 +162,13 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
             view!!.setSelected(currentPage, selected)
             view!!.isCabVisible = selected != null
             if(selected != null)
-                view!!.isAppBarExpanded = true;
+                view!!.isAppBarExpanded = true
         }
     }
 
     override fun onRefresh() {
         if (account != null) {
-            val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
+            val singleDay = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && connectivityManager.isActiveNetworkMetered && connectivityManager.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
 
             StubSubstitutesContentProvider.requestUpdate(account!!, date.withFieldAdded(DurationFieldType.days(), currentPage), singleDay)
         } else
@@ -207,7 +206,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
 
     override fun onCabClosed() {
         view!!.setSelected(currentPage, null)
-        selected = null;
+        selected = null
         view!!.isCabVisible = false
     }
 
