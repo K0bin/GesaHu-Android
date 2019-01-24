@@ -133,13 +133,21 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
     override fun onShow(dialog: DialogInterface) {
         showListener?.onShow(dialog)
-        if (this.dialog != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) animate(this.dialog.findViewById(R.id.dialog), true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val dialogView: CardView? = this.dialog?.findViewById(R.id.dialog)
+            if (dialogView != null) {
+                animate(dialogView, true)
+            }
+        }
     }
 
     override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!isAnimating) {
-                animate(this.dialog.findViewById(R.id.dialog), false)
+                val dialogView: CardView? = this.dialog?.findViewById(R.id.dialog)
+                if (dialogView != null) {
+                    animate(dialogView, false)
+                }
             }
             return true
         }
@@ -167,7 +175,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun animate(view: View, isVisible: Boolean) {
+    private fun animate(view: CardView, isVisible: Boolean) {
         if (dialogPosition == null || dialogSize == null || dialogCenter == null) {
             measureDialog(view)
         }
@@ -189,7 +197,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         animation.interpolator = FastOutSlowInInterpolator()
         animation.duration = longDuration
 
-        val colorFade = ObjectAnimator.ofObject(view as CardView, "cardBackgroundColor", ArgbEvaluator(),  if (isVisible) accentColor else cardColor,  if (isVisible) cardColor else accentColor)
+        val colorFade = ObjectAnimator.ofObject(view, "cardBackgroundColor", ArgbEvaluator(),  if (isVisible) accentColor else cardColor,  if (isVisible) cardColor else accentColor)
         colorFade.interpolator = FastOutSlowInInterpolator()
         colorFade.duration = longDuration
 
@@ -239,14 +247,14 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
                     if (isResumed) {
                         dismiss()
                     } else {
-                        toDismiss = true;
+                        toDismiss = true
                     }
                 }
-                isAnimating = false;
+                isAnimating = false
             }
             override fun onAnimationCancel(anim: com.nineoldandroids.animation.Animator?) {}
             override fun onAnimationStart(anim: com.nineoldandroids.animation.Animator?) {
-                isAnimating = true;
+                isAnimating = true
             }
         })
         animation.addListener(object: Animator.AnimatorListener {

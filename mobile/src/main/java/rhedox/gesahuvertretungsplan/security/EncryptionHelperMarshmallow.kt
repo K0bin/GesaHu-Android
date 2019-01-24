@@ -7,6 +7,7 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.crashlytics.android.Crashlytics
 import java.nio.charset.StandardCharsets
+import java.security.GeneralSecurityException
 import java.security.Key
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -71,6 +72,9 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
             cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(iv))
             val decodedBytes = cipher.doFinal(passwordBytes)
             String(decodedBytes, charset = StandardCharsets.UTF_8)
+        } catch (e: GeneralSecurityException) {
+            Crashlytics.logException(e)
+            null
         } catch (e: SecurityException) {
             Crashlytics.logException(e)
             null

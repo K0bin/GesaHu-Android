@@ -27,7 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintWidth_max="386dp"
-            />
+            android:contentDescription="@string/logo_description" />
 
         <TextView
             android:id="@+id/title"
@@ -74,6 +74,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:id="@+id/usernameLayout"
+            android:hint="@string/login_username_hint"
+            android:autofillHints="username"
+            android:importantForAutofill="yes"
             app:layout_constraintTop_toBottomOf="@id/infoText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -90,15 +93,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/usernameEdit"
-                android:hint="@string/login_username_hint"
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:nextFocusDown="@+id/passwordEdit"
                 android:nextFocusRight="@+id/passwordEdit"
-                android:nextFocusForward="@+id/passwordEdit"
-                android:autofillHints="username"
-                android:importantForAutofill="yes"/>
+                android:nextFocusForward="@+id/passwordEdit"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -108,6 +108,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:id="@+id/passwordLayout"
+            android:hint="@string/login_password_hint"
+            android:autofillHints="password"
+            android:importantForAutofill="yes"
             app:layout_constraintTop_toBottomOf="@id/usernameLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -125,7 +128,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:id="@+id/passwordEdit"
-                android:hint="@string/login_password_hint"
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -134,9 +136,7 @@
                 android:nextFocusRight="@+id/login"
                 android:nextFocusForward="@+id/login"
                 android:nextFocusUp="@id/usernameEdit"
-                android:nextFocusLeft="@id/usernameEdit"
-                android:autofillHints="password"
-                android:importantForAutofill="yes"/>
+                android:nextFocusLeft="@id/usernameEdit"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

@@ -11,6 +11,7 @@ import com.crashlytics.android.Crashlytics
 import org.joda.time.DateTime
 import org.joda.time.Period
 import java.nio.charset.Charset
+import java.security.GeneralSecurityException
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
@@ -78,6 +79,9 @@ class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
             cipher.init(Cipher.DECRYPT_MODE, key.private)
             val decodedBytes = cipher.doFinal(passwordBytes)
             String(decodedBytes, charset = Charset.forName("UTF-8"))
+        } catch (e: GeneralSecurityException) {
+            Crashlytics.logException(e)
+            null
         } catch (e: SecurityException) {
             Crashlytics.logException(e)
             null
