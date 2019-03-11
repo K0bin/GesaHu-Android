@@ -1,4 +1,6 @@
 # GesaHu-Android
+[![](https://tokei.rs/b1/github/K0bin/GesaHu-Android)](https://github.com/K0bin/GesaHu-Android)
+
 Erlaubt einen einfachen Zugriff auf viele Features der GesaHu Webseite.
 
 ## Vertretungsplan
