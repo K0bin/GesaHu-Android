@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="circle">#4C4C4C</color>
+    <color name="windowBackground">#FFFAFAFA</color>
+    <color name="cardBackground">#FFFeFeFe</color>
+    <color name="selected">#ffBCBCBC</color>
+    <color name="activated">#ffEBEBEB</color>
+</resources>
