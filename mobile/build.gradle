@@ -52,7 +52,7 @@ android {
                     'proguard/proguard-dagger2.pro'
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg',
