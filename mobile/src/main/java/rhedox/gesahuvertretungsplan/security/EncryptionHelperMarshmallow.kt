@@ -20,10 +20,11 @@ import javax.crypto.spec.IvParameterSpec
 @TargetApi(Build.VERSION_CODES.M)
 class EncryptionHelperMarshmallow: EncryptionHelper {
     companion object {
-        private const val keyAlias = "key"
+        private const val keyAlias = "gesahu_key_mm"
         private const val androidKeyStore = "AndroidKeyStore"
         private const val transformationAlgorithm = "AES/CBC/PKCS7Padding"
-        private const val prefix = "/|\\ENCRYPTED/|\\"
+        private const val prefix = "/|\\ENCRYPTEDMM1/|\\"
+        private const val iv_separator = "/|\\IV/|\\"
     }
 
     private var isNewKey = false
@@ -38,7 +39,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeyStore)
             val keySpec = KeyGenParameterSpec.Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                     .setKeySize(256)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                     .setRandomizedEncryptionRequired(true)
                     .build()
@@ -53,7 +54,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val encryptedBytes = cipher.doFinal(text.toByteArray(StandardCharsets.UTF_8))
         val ivString = Base64.encodeToString(cipher.iv, Base64.DEFAULT)
-        return prefix + ivString + "|" + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+        return prefix + ivString + iv_separator + Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
     override fun decrypt(text: String): String? {
@@ -61,7 +62,7 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
         if (!text.startsWith(prefix)) return text //password is unencrypted
         if (text.length - prefix.length < 1) return null //only prefix
 
-        val textParts = text.substring(prefix.length).split("|")
+        val textParts = text.substring(prefix.length).split(iv_separator)
         if (textParts.size != 2) return ""
 
         val iv = Base64.decode(textParts[0], Base64.DEFAULT)

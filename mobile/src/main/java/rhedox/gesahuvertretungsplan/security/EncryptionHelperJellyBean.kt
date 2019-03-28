@@ -25,12 +25,12 @@ import javax.security.auth.x500.X500Principal
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class EncryptionHelperJellyBean(context: Context): EncryptionHelper {
     companion object {
-        private const val keyAlias = "key"
+        private const val keyAlias = "gesahu_key_jb"
         private const val androidKeyStore = "AndroidKeyStore"
         private const val keyX500Principal = "CN=GesaHu, O=K0bin, C=Germany"
         private const val transformationAlgorithm = "RSA/ECB/PKCS1Padding"
         private val provider = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) "AndroidKeyStoreBCWorkaround" else "AndroidOpenSSL"
-        private const val prefix = "/|\\ENCRYPTED/|\\"
+        private const val prefix = "/|\\ENCRYPTEDJB1/|\\"
     }
 
     private var isNewKey = false
