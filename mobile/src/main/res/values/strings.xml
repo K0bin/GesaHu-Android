@@ -194,6 +194,13 @@
     </string>
     <string name="logo_description">Logo</string>
 
+    <!-- Privacy screen -->
+    <string name="privacy_title">Datenschutz</string>
+    <string name="title_analytics">Anonyme Nutzungsdaten übertragen</string>
+    <string name="text_analytics">Es werden anonyme Nutzungsdaten mittels Firebase (ein Google Service) gesammelt.</string>
+    <string name="title_crash_reports">Absturzberichte senden</string>
+    <string name="text_crash_reports">Absturzberichte helfen beim Beheben von Fehlern. Sie werden an Firebase (ein Google Service) übertragen und dort gespeichert.</string>
+
     <!-- Preferences -->
     <string name="settings_category_privacy">Datenschutz</string>
     <string name="pref_cat_notifications">Benachrichtigungen</string>
@@ -214,8 +221,5 @@
     <string name="pref_summary_analytics">Anonyme Nutzungsdaten mittels Firebase (ein Google Service) sammeln</string>
     <string name="pref_title_crash_reports">Anonyme Absturzberichte übertragen</string>
     <string name="pref_summary_crash_reports">Anonyme Absturzberichte mittels Firebase (ein Google Service) sammeln</string>
-    <string name="privacy_title">Datenschutz</string>
-    <string name="title_analytics">Anonyme Nutzungsdaten übertragen</string>
-    <string name="text_analytics">Es werden anonyme Nutzungsdaten mittels Firebase (ein Google Service) gesammelt</string>
 
 </resources>
