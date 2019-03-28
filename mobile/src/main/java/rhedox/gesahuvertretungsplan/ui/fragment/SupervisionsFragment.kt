@@ -117,7 +117,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state: SupervisionsState
+        val state: SupervisionsState?
         if (savedInstanceState != null) {
             state = savedInstanceState.getParcelable(State.presenterState)
         } else {

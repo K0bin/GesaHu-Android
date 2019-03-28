@@ -20,10 +20,10 @@ class MarkViewHolder(view: View): ModelViewHolder<Mark>(view) {
 
     val formatter: DateTimeFormatter = DateTimeFormatterBuilder().appendDayOfMonth(2).appendLiteral('.').appendMonthOfYear(2).appendLiteral('.').appendYear(4,4).toFormatter()
 
-    val markKindTest: String = view.context.getString(R.string.mark_kind_test)
-    val markKindMonthlyOral: String = view.context.getString(R.string.mark_kind_monthlyOral)
-    val markKindTestOrComplexTask: String = view.context.getString(R.string.mark_kind_testOrComplexTask)
-    val markKindOral: String = view.context.getString(R.string.mark_kind_oral)
+    private val markKindTest: String = view.context.getString(R.string.mark_kind_test)
+    private val markKindMonthlyOral: String = view.context.getString(R.string.mark_kind_monthlyOral)
+    private val markKindTestOrComplexTask: String = view.context.getString(R.string.mark_kind_testOrComplexTask)
+    private val markKindOral: String = view.context.getString(R.string.mark_kind_oral)
 
     @SuppressLint("SetTextI18n")
     override fun bind(model: Mark) {
