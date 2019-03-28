@@ -380,9 +380,15 @@ class CalendarSyncService : Service() {
         @RequiresPermission(allOf = [Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR])
         private fun insert(test: Test, calendarId: Long) {
             val values = ContentValues()
-            if (test.lessonStart != null && test.duration != null) {
-                values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(SchoolWeek.lessonStart(test.lessonStart)).millis)
-                values.put(CalendarContract.Events.DTEND, test.date.toDateTime(SchoolWeek.lessonEnd(if (test.duration >= 1) test.lessonStart + test.duration - 1 else test.lessonStart)).millis)
+            val testLessonStart = if (test.lessonStart != null) SchoolWeek.lessonStart(test.lessonStart) else null
+            val testLessonEnd = if (testLessonStart != null && test.lessonStart != null && test.duration != null && test.duration >= 1) {
+                SchoolWeek.lessonEnd(test.lessonStart + test.duration - 1) ?: testLessonStart
+                } else {
+                    testLessonStart
+                }
+            if (testLessonStart != null && testLessonEnd != null) {
+                values.put(CalendarContract.Events.DTSTART, test.date.toDateTime(testLessonStart).millis)
+                values.put(CalendarContract.Events.DTEND, test.date.toDateTime(testLessonEnd).millis)
                 values.put(CalendarContract.Events.ALL_DAY, 0)
             } else {
                 values.put(CalendarContract.Events.ALL_DAY, 1)

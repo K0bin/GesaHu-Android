@@ -54,25 +54,27 @@ object SchoolWeek {
     }
 
     @JvmStatic
-    fun lessonStart(lessonIndex: Int): LocalTime {
+    fun lessonStart(lessonIndex: Int): LocalTime? {
         var lesson = lessonIndex
         if (lesson > startHours.size) {
             lesson /= when {
                 lesson % 11 == 0 -> 11 //teacher accidentally hit the key twice (55 for 5th period)
                 lesson % 10 == 0 -> 10 //dunno, why not?
-                else -> return LocalTime(lesson, 0) //teacher might've thought it's an hour
+                lesson in 0 until 24 -> return LocalTime(lesson, 0) //teacher might've thought it's an hour
+                else -> return null //ok I give up
             }
         }
         return LocalTime(startHours[lesson - 1], startMinutes[lesson - 1])
     }
     @JvmStatic
-    fun lessonEnd(lessonIndex: Int): LocalTime {
+    fun lessonEnd(lessonIndex: Int): LocalTime? {
         var lesson = lessonIndex
         if (lesson > startHours.size) {
             lesson /= when {
                 lesson % 11 == 0 -> 11 //teacher accidentally hit the key twice (55 for 5th period)
                 lesson % 10 == 0 -> 10 //dunno, why not?
-                else -> return LocalTime(lesson, 0) //teacher might've thought it's an hour
+                lesson in 0 until 24 -> return LocalTime(lesson, 0) //teacher might've thought it's an hour
+                else -> return null //ok I give up
             }
         }
         return LocalTime(endHours[lesson - 1], endMinutes[lesson - 1])
