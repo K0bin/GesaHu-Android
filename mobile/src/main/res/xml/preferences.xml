@@ -1,52 +1,62 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Benachrichtigungen">
+        android:title="@string/pref_cat_notifications">
         <ListPreference
             android:key="pref_notification_mode"
-            android:title="Benachrichtigen"
-            android:dialogTitle="Wie möchtest du benachrichtigt werden?"
-            android:summary="Bei Vertretungsstunden benachrichtigen"
+            android:title="@string/pref_title_notifications"
+            android:dialogTitle="@string/pref_dialog_notifications"
+            android:summary="@string/pref_summary_notifications"
             android:entries="@array/notification_types_array"
             android:entryValues="@array/notification_types_values"
             android:defaultValue="both" />
 
         <rhedox.gesahuvertretungsplan.ui.preference.TimePreference
             android:key="pref_notification_time_long"
-            android:title="Benachrichtigungszeit"
-            android:summary="Zeit der Benachrichtigung"
+            android:title="@string/pref_title_notification_time"
+            android:summary="@string/pref_summary_notification_time"
             android:defaultValue="25200000" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Aussehen">
+        android:title="@string/pref_cat_apparence">
 
         <ListPreference
             android:key="pref_dark_type"
-            android:title="Nachtmodus"
-            android:dialogTitle="Wann möchtest du dunkle Farben verwenden?"
-            android:summary="Dunkle Farben verwenden"
+            android:title="@string/pref_title_dark_mode"
+            android:dialogTitle="@string/pref_dialog_dark_mode"
+            android:summary="@string/pref_summary_dark_mode"
             android:entries="@array/dark_theme_array"
             android:entryValues="@array/dark_theme_values"
             android:defaultValue="default" />
 
         <CheckBoxPreference
             android:key="pref_amoled"
-            android:title="AMOLED Schwarz"
-            android:summary="Schwarz statt grau verwenden, um Energie zu sparen"
+            android:title="@string/pref_title_amoled"
+            android:summary="@string/pref_summary_amoled"
             android:defaultValue="false" />
 
         <CheckBoxPreference
             android:key="pref_widget_dark"
-            android:title="Widget Dark Theme"
-            android:summary="Dunkle Farben in den Widgets verwenden"
+            android:title="@string/pref_title_widget_dark_mode"
+            android:summary="@string/pref_summary_widget_dark_mode"
             android:defaultValue="false" />
 
-        <CheckBoxPreference
-            android:key="pref_white_tab_indicator"
-            android:title="Weißer Tab Indikator"
-            android:summary="Linie unter dem aktiven Tab weiß färben"
-            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_category_privacy">
+
+        <SwitchPreference
+            android:key="pref_analytics"
+            android:title="@string/pref_title_analytics"
+            android:summary="@string/pref_summary_analytics" />
+
+        <SwitchPreference
+            android:key="pref_crash_reports"
+            android:title="@string/pref_title_crash_reports"
+            android:summary="@string/pref_summary_crash_reports" />
 
     </PreferenceCategory>
+
 </PreferenceScreen>

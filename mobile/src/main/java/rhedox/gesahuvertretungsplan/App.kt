@@ -49,13 +49,8 @@ class App : Application() {
         }
         FirebaseApp.initializeApp(this)
 
-        //Disable Firebase crash reporting
-        if (BuildConfig.DEBUG) {
-            Thread.setDefaultUncaughtExceptionHandler { _, paramThrowable ->
-                Log.wtf("Alert", paramThrowable.message, paramThrowable)
-                System.exit(2) //Prevents the service/app from freezing
-            }
-        }
+        //Disable analytics and crash reporting for now
+        PreferenceFragment.applyPrivacy(this, null)
 
         JodaTimeAndroid.init(this)
 
@@ -99,6 +94,7 @@ class App : Application() {
 
     private fun initWithDependencies() {
         PreferenceFragment.applyDarkTheme(prefs)
+        PreferenceFragment.applyPrivacy(this, prefs)
     }
 
     companion object {

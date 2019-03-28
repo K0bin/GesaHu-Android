@@ -194,4 +194,28 @@
     </string>
     <string name="logo_description">Logo</string>
 
+    <!-- Preferences -->
+    <string name="settings_category_privacy">Datenschutz</string>
+    <string name="pref_cat_notifications">Benachrichtigungen</string>
+    <string name="pref_title_notifications">Benachrichtigen</string>
+    <string name="pref_dialog_notifications">Wie möchtest du benachrichtigt werden?</string>
+    <string name="pref_summary_notifications">Bei Vertretungsstunden benachrichtigen</string>
+    <string name="pref_title_notification_time">Benachrichtigungszeit</string>
+    <string name="pref_summary_notification_time">Zeit der Benachrichtigung</string>
+    <string name="pref_cat_apparence">Aussehen</string>
+    <string name="pref_title_dark_mode">Nachtmodus</string>
+    <string name="pref_dialog_dark_mode">Wann möchtest du dunkle Farben verwenden?</string>
+    <string name="pref_summary_dark_mode">Dunkle Farben verwenden</string>
+    <string name="pref_title_amoled">AMOLED Schwarz</string>
+    <string name="pref_summary_amoled">Schwarz statt grau verwenden, um Energie zu sparen</string>
+    <string name="pref_summary_widget_dark_mode">Dunkle Farben in den Widgets verwenden</string>
+    <string name="pref_title_widget_dark_mode">Widget Dark Theme</string>
+    <string name="pref_title_analytics">Anonyme Nutzungsdaten übertragen</string>
+    <string name="pref_summary_analytics">Anonyme Nutzungsdaten mittels Firebase (ein Google Service) sammeln</string>
+    <string name="pref_title_crash_reports">Anonyme Absturzberichte übertragen</string>
+    <string name="pref_summary_crash_reports">Anonyme Absturzberichte mittels Firebase (ein Google Service) sammeln</string>
+    <string name="privacy_title">Datenschutz</string>
+    <string name="title_analytics">Anonyme Nutzungsdaten übertragen</string>
+    <string name="text_analytics">Es werden anonyme Nutzungsdaten mittels Firebase (ein Google Service) gesammelt</string>
+
 </resources>

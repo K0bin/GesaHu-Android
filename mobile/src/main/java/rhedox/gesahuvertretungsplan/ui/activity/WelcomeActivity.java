@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.ui.fragment.PreferenceFragment;
+import rhedox.gesahuvertretungsplan.ui.fragment.PrivacyFragment;
 
 public class WelcomeActivity extends AppIntro {
 
@@ -47,11 +48,15 @@ public class WelcomeActivity extends AppIntro {
 		page3.setBgColor(ContextCompat.getColor(this, R.color.intro_slide_3));
 		addSlide(AppIntroFragment.newInstance(page3));
 
+		PrivacyFragment privacyFragment = PrivacyFragment.newInstance();
+		privacyFragment.setBackgroundColor(ContextCompat.getColor(this, R.color.intro_slide_4));
+        addSlide(privacyFragment);
+
 		SliderPage page4 = new SliderPage();
 		page4.setTitle(getString(R.string.feature_boards));
 		page4.setDescription(getString(R.string.feature_boards_description));
 		page4.setImageDrawable(R.drawable.ic_board);
-		page4.setBgColor(ContextCompat.getColor(this, R.color.intro_slide_4));
+		page4.setBgColor(ContextCompat.getColor(this, R.color.intro_slide_5));
 		addSlide(AppIntroFragment.newInstance(page4));
 
 		askForPermissions(new String[] { Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR }, 3);

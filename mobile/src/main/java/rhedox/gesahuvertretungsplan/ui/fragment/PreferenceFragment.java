@@ -5,15 +5,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.leakcanary.RefWatcher;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 import org.joda.time.LocalTime;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
+import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.services.common.Crash;
 import rhedox.gesahuvertretungsplan.App;
+import rhedox.gesahuvertretungsplan.BuildConfig;
 import rhedox.gesahuvertretungsplan.R;
 import rhedox.gesahuvertretungsplan.broadcast_receiver.BootReceiver;
 import rhedox.gesahuvertretungsplan.broadcast_receiver.SubstitutesAlarmReceiver;
@@ -31,6 +37,8 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public static final String PREF_PREVIOUSLY_STARTED = "pref_previously_started";
     public static final String PREF_VERSION = "pref_version";
     public static final String PREF_AMOLED = "pref_amoled";
+    public static final String PREF_ANALYTICS = "pref_analytics";
+    public static final String PREF_CRASH_REPORTS = "pref_crash_reports";
 
     private static final String FRAGMENT_DIALOG_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
@@ -63,24 +71,26 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         if (!"NONE".equals(mode)) {
             @SubstitutesAlarmReceiver.NotificationFrequency int notificationFrequency;
             if ("per_lesson".equals(mode)) {
-                SubstitutesAlarmReceiver.cancelDaily(getContext());
+                SubstitutesAlarmReceiver.cancelDaily(requireContext());
                 notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.perLesson;
             } else if ("both".equals(mode))
                 notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.both;
             else {
-                SubstitutesAlarmReceiver.cancelLesson(getContext());
+                SubstitutesAlarmReceiver.cancelLesson(requireContext());
                 notificationFrequency = SubstitutesAlarmReceiver.NotificationFrequencyValues.daily;
             }
 
-            SubstitutesAlarmReceiver.create(getContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
-            BootReceiver.create(getContext());
+            SubstitutesAlarmReceiver.create(requireContext(), time.getHourOfDay(), time.getMinuteOfHour(), notificationFrequency);
+            BootReceiver.create(requireContext());
         } else {
-            SubstitutesAlarmReceiver.cancelDaily(getContext());
-            SubstitutesAlarmReceiver.cancelLesson(getContext());
-            BootReceiver.cancel(getContext());
+            SubstitutesAlarmReceiver.cancelDaily(requireContext());
+            SubstitutesAlarmReceiver.cancelLesson(requireContext());
+            BootReceiver.cancel(requireContext());
         }
 
         PreferenceFragment.applyDarkTheme(prefs);
+
+        PreferenceFragment.applyPrivacy(requireContext(), prefs);
     }
 
     @Override
@@ -106,6 +116,29 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    }
+
+    public static void applyPrivacy(@NonNull Context context, @Nullable SharedPreferences prefs) {
+        boolean areAnalyticsEnabled = false;
+        boolean isCrashReportingEnabled = false;
+        if (prefs != null) {
+            areAnalyticsEnabled = prefs.getBoolean(PREF_ANALYTICS, false);
+            isCrashReportingEnabled = prefs.getBoolean(PREF_CRASH_REPORTS, false);
+        }
+
+        final FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(context);
+        analytics.setAnalyticsCollectionEnabled(areAnalyticsEnabled);
+        if (!areAnalyticsEnabled && prefs != null) {
+            analytics.resetAnalyticsData();
+        }
+
+        final Fabric.Builder fabricBuilder = new Fabric.Builder(context)
+                .debuggable(BuildConfig.DEBUG);
+        if (isCrashReportingEnabled) {
+            fabricBuilder.kits(new Crashlytics());
+        }
+        Fabric.with(fabricBuilder.build());
+
     }
 
 
