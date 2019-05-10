@@ -1,14 +1,18 @@
 package rhedox.gesahuvertretungsplan.test.local_unit_test.presenter
 
+import android.accounts.Account
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.joda.time.LocalDate
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.presenter.SubstitutesPresenter
 import rhedox.gesahuvertretungsplan.presenter.state.SubstitutesState
+import rhedox.gesahuvertretungsplan.service.GesaHuAccountService
 import rhedox.gesahuvertretungsplan.test.local_unit_test.dependency_injection.TestAppComponent
 import rhedox.gesahuvertretungsplan.test.local_unit_test.repository.SubstitutesTestRepository
 
@@ -38,6 +42,9 @@ class SubstitutesPresenterTest {
     @Test
     fun testFab() {
         val appComponent = TestAppComponent.create()
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        Mockito.`when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
         val presenter = SubstitutesPresenter(appComponent.substitutesComponent(), SubstitutesState(date))
         val repository = presenter.repository as SubstitutesTestRepository
         var view = StubSubstitutesView()
@@ -78,6 +85,9 @@ class SubstitutesPresenterTest {
     @Test
     fun testCab() {
         val appComponent = TestAppComponent.create()
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        Mockito.`when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
         val presenter = SubstitutesPresenter(appComponent.substitutesComponent(), SubstitutesState(date))
         val repository = presenter.repository as SubstitutesTestRepository
         var view = StubSubstitutesView()
@@ -107,6 +117,9 @@ class SubstitutesPresenterTest {
     @Test
     fun testTabs() {
         val appComponent = TestAppComponent.create()
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        Mockito.`when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
         val presenter = SubstitutesPresenter(appComponent.substitutesComponent(), SubstitutesState(date))
         val view = StubSubstitutesView()
         presenter.attachView(view)
@@ -117,6 +130,9 @@ class SubstitutesPresenterTest {
     @Test
     fun testList() {
         val appComponent = TestAppComponent.create()
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        Mockito.`when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
         val presenter = SubstitutesPresenter(appComponent.substitutesComponent(), SubstitutesState(date))
         val repository = presenter.repository as SubstitutesTestRepository
         var view = StubSubstitutesView()
@@ -130,6 +146,9 @@ class SubstitutesPresenterTest {
     @Test
     fun testSelection() {
         val appComponent = TestAppComponent.create()
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        Mockito.`when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
         val presenter = SubstitutesPresenter(appComponent.substitutesComponent(), SubstitutesState(date))
         val repository = presenter.repository as SubstitutesTestRepository
         var view = StubSubstitutesView()
@@ -146,6 +165,9 @@ class SubstitutesPresenterTest {
     @Test
     fun testStateRestoring() {
         val appComponent = TestAppComponent.create()
+        val account = mock(Account::class.java)
+        val accountManager = appComponent.accountManager()
+        Mockito.`when`(accountManager.getAccountsByType(GesaHuAccountService.GesaHuAuthenticator.accountType)).thenReturn(arrayOf(account))
         val presenter = SubstitutesPresenter(appComponent.substitutesComponent(), SubstitutesState(date, 2))
         val view = StubSubstitutesView()
         presenter.attachView(view)
