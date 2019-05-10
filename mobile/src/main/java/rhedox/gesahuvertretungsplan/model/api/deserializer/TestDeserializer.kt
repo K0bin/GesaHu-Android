@@ -25,7 +25,7 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
         val course = Html.decode(jsonObject.get("Klasse").asString.trim())
         val year = Html.decode(jsonObject.get("Klassenstufe").asString.trim()).toInt()
         val teacher = resolver.resolveTeacher(Html.decode(jsonObject.get("Lehrer").asString.trim()))
-        val lessons = Html.decode(jsonObject.get("Stunden").asString.trim()).replace("build/intermediates/exploded-aar/com.mikepenz/fastadapter/2.1.5/res", "")
+        val lessons = Html.decode(jsonObject.get("Stunden").asString.trim())
 
         val begin: Int?
         val duration: Int?
