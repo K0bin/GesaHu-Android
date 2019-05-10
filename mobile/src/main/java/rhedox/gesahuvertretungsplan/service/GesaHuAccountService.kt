@@ -119,7 +119,7 @@ class GesaHuAccountService : Service() {
             val bundle = Bundle()
 
             val accounts = context.accountManager.getAccountsByType(accountType)
-            if (accounts != null && accounts.isNotEmpty()) {
+            if (accounts.isNotEmpty()) {
                 bundle.putInt(AccountManager.KEY_ERROR_CODE, 1)
                 bundle.putString(AccountManager.KEY_ERROR_MESSAGE, context.getString(R.string.login_account_exists))
                 return bundle
