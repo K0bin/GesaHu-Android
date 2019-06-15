@@ -45,7 +45,8 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
             isPickerDone = true
         }
 
-        dismiss()
+        if (isVisible && !isStateSaved)
+            dismiss()
     }
 
     companion object {
