@@ -26,7 +26,7 @@ abstract class ListAdapter<T>(private val hasEmptyView: Boolean = false, hasTopH
                     }
 
                     override fun onMoved(fromPosition: Int, toPosition: Int) {
-                        notifyItemMoved(fromPosition, toPosition + if (hasTopHeader) 1 else 0)
+                        notifyItemMoved(fromPosition + if (hasTopHeader) 1 else 0, toPosition + if (hasTopHeader) 1 else 0)
                     }
 
                     override fun onInserted(position: Int, count: Int) {
