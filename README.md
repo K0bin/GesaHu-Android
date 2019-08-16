@@ -3,6 +3,9 @@
 
 Erlaubt einen einfachen Zugriff auf viele Features der GesaHu Webseite.
 
+## Inaktiv
+Leider funktioniert die REST API, auf der die App aufbaut, nicht mehr.
+
 ## Vertretungsplan
 Zeigt den Vertretungsplan in einer übersichtlichen Liste und hebt relevante Stunden hervor.
 
