@@ -3,8 +3,12 @@
 
 Erlaubt einen einfachen Zugriff auf viele Features der GesaHu Webseite.
 
-## Inaktiv
-Leider funktioniert die REST API, auf der die App aufbaut, nicht mehr.
+## Maintenance Modus
+Da mein Schulabschluss mittlerweile einige Jahre her ist, beschränkt sich meine Arbeit an der App weitesgehend auf Bugfixes.
+Zusätzlich dazu gibt es auch noch immer (trotz zahlreicher Sanitizer) Probleme mit malformatted JSON von der REST API,
+die allerdings außerhalb meiner Kontrolle sind.
+Testen der App ist ebenfalls schwierig geworden, da ich kein Schülerkonto mehr habe und die REST API nicht mit Absolventenkonten funktioniert
+(liefert einen PHP Fehler).
 
 ## Vertretungsplan
 Zeigt den Vertretungsplan in einer übersichtlichen Liste und hebt relevante Stunden hervor.
