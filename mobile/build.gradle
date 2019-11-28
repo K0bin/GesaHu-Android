@@ -30,7 +30,6 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg',
                     'proguard/proguard-androidannotations.pro',
                     'proguard/proguard-facebook-stetho.pro',
@@ -54,7 +53,6 @@ android {
         debug {
             minifyEnabled true
             shrinkResources false
-            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg',
                     'proguard/proguard-androidannotations.pro',
                     'proguard/proguard-facebook-stetho.pro',
@@ -87,9 +85,6 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         androidTest.assets.srcDirs +=
                 files("$projectDir/schemas".toString())
-    }
-    lintOptions {
-        checkReleaseBuilds false
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'

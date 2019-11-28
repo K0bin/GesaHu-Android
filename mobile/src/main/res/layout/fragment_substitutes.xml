@@ -76,5 +76,7 @@
         android:id="@+id/fab"
         app:layout_behavior="rhedox.gesahuvertretungsplan.ui.behavior.ScrollAwareFabBehavior"
         android:visibility="invisible"
+        app:backgroundTint="?attr/colorAccent"
+        app:tint="@android:color/white"
         />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

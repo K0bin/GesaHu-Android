@@ -17,6 +17,8 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -77,26 +79,29 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         setContentView(R.layout.activity_auth)
 
-        client = Credentials.getClient(this)
-        val request = CredentialRequest.Builder()
-                .setPasswordLoginSupported(true)
-                .build()
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS) {
+            client = Credentials.getClient(this)
+            val request = CredentialRequest.Builder()
+                    .setPasswordLoginSupported(true)
+                    .build()
 
-        client.request(request).addOnCompleteListener {
-            if (it.isSuccessful && it.result != null) {
-                usernameEdit.setText(it.result!!.credential.id)
-                passwordEdit.setText(it.result!!.credential.password)
-                if (passwordEdit.text.isNullOrBlank()) {
-                    autoSignInSuccessful = true
-                    login()
+            client.request(request).addOnCompleteListener {
+                if (it.isSuccessful && it.result != null) {
+                    usernameEdit.setText(it.result!!.credential.id)
+                    passwordEdit.setText(it.result!!.credential.password)
+                    if (passwordEdit.text.isNullOrBlank()) {
+                        autoSignInSuccessful = true
+                        login()
+                    }
+                    return@addOnCompleteListener
                 }
-                return@addOnCompleteListener
-            }
-            val exception = it.exception
-            if (exception is ResolvableApiException) {
-                try {
-                    exception.startResolutionForResult(this, SignInRequestCodes.read)
-                } catch (e: IntentSender.SendIntentException ) {}
+                val exception = it.exception
+                if (exception is ResolvableApiException) {
+                    try {
+                        exception.startResolutionForResult(this, SignInRequestCodes.read)
+                    } catch (e: IntentSender.SendIntentException) {
+                    }
+                }
             }
         }
 
@@ -228,30 +233,38 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
 
         notificationManager.cancel(GesaHuAccountService.GesaHuAuthenticator.accountType.hashCode())
 
-        val credential = Credential.Builder(username)
-                .setPassword(passwordEdit.text.toString())
-                .setProfilePictureUri(BoardsSyncService.getPhotoUrl(username).toUri())
-                .build()
-
         if (!autoSignInSuccessful) {
-            client.save(credential).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    // Credentials were saved
-                    finishActivity()
-                } else {
-                    val exception = it.exception
-                    if (exception is ResolvableApiException) {
-                        // Try to resolve the save request. This will prompt the user if
-                        // the credential is new.
-                        try {
-                            exception.startResolutionForResult(this, SignInRequestCodes.save)
-                        } catch (e: IntentSender.SendIntentException) {
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS) {
+                val credential = Credential.Builder(username)
+                        .setPassword(passwordEdit.text.toString())
+                        .setProfilePictureUri(BoardsSyncService.getPhotoUrl(username).toUri())
+                        .build()
+
+                client.save(credential)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            // Credentials were saved
                             finishActivity()
+                        } else {
+                            val exception = it.exception
+                            if (exception is ResolvableApiException) {
+                                // Try to resolve the save request. This will prompt the user if
+                                // the credential is new.
+                                try {
+                                    exception.startResolutionForResult(this, SignInRequestCodes.save)
+                                } catch (e: IntentSender.SendIntentException) {
+                                    finishActivity()
+                                }
+                            } else {
+                                finishActivity()
+                            }
                         }
-                    } else {
+                    }
+                    .addOnFailureListener {
                         finishActivity()
                     }
-                }
+            } else {
+                finishActivity()
             }
         } else {
             finishActivity()

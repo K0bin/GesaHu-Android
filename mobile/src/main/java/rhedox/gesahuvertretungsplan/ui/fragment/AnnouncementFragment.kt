@@ -26,6 +26,8 @@ import io.codetail.animation.arcanimator.ArcAnimator
 import io.codetail.animation.arcanimator.Side
 import rhedox.gesahuvertretungsplan.R
 import java.lang.ref.WeakReference
+import kotlin.math.hypot
+import kotlin.math.max
 
 /**
  * Created by Robin on 10.07.2015.
@@ -39,20 +41,20 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
     var showListener: DialogInterface.OnShowListener?
         get() = weakShowListener?.get()
         set(value) {
-            if (value == null) {
-                weakShowListener = null
+            weakShowListener = if (value == null) {
+                null
             } else {
-                weakShowListener = WeakReference(value)
+                WeakReference(value)
             }
         }
     var weakDismissListener: WeakReference<DialogInterface.OnDismissListener>? = null
     var dismissListener: DialogInterface.OnDismissListener?
         get() = weakDismissListener?.get()
         set(value) {
-            if (value == null) {
-                weakDismissListener = null
+            weakDismissListener = if (value == null) {
+                null
             } else {
-                weakDismissListener = WeakReference(value)
+                WeakReference(value)
             }
         }
 
@@ -191,9 +193,9 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
             view.visibility = View.INVISIBLE
         }
 
-        val biggerRadiusFraction = Math.max(revealPositionFraction, 1 - revealPositionFraction)
-        val cardRevealRadius = Math.hypot(dialogSize!!.x.toDouble() * biggerRadiusFraction, dialogSize!!.y.toDouble() * biggerRadiusFraction).toFloat()
-        val fabRevealRadius = Math.max(fabSize.x, fabSize.y) / 2
+        val biggerRadiusFraction = max(revealPositionFraction, 1 - revealPositionFraction)
+        val cardRevealRadius = hypot(dialogSize!!.x.toDouble() * biggerRadiusFraction, dialogSize!!.y.toDouble() * biggerRadiusFraction).toFloat()
+        val fabRevealRadius = max(fabSize.x, fabSize.y) / 2
         val animation = ViewAnimationUtils.createCircularReveal(view, (dialogSize!!.x * revealPositionFraction).toInt(), (dialogSize!!.y * revealPositionFraction).toInt(), if (isVisible) fabRevealRadius else cardRevealRadius, if (isVisible) cardRevealRadius else fabRevealRadius)
         animation.interpolator = FastOutSlowInInterpolator()
         animation.duration = longDuration
@@ -299,7 +301,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
         fun newInstance(announcement: String): AnnouncementFragment {
             val args = Bundle()
-            args.putString(AnnouncementFragment.argumentAnnouncement, announcement)
+            args.putString(argumentAnnouncement, announcement)
 
             val fragment = AnnouncementFragment()
             fragment.arguments = args
