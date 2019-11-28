@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.model.api.deserializer
 
 import android.content.Context
+import com.crashlytics.android.Crashlytics
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -10,6 +11,8 @@ import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormatterBuilder
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.api.Exam
+import java.lang.Exception
+import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 
 /**
@@ -33,7 +36,18 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Exam {
         val jsonObject = json.asJsonObject
 
-        val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
+        var date: LocalDate? = try {
+            context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
+        } catch (e: IllegalArgumentException) {
+            Crashlytics.logException(e)
+            null
+        }
+
+        if (date == null) {
+            Crashlytics.logException(Exception("Malformatted date: ${jsonObject.get("Datum")}"))
+            date = LocalDate.now()
+        }
+
         val subject = resolver.resolveSubject(jsonObject.get("Fach").asString)
         val course = jsonObject.get("Kurs").asString
         val examinee = jsonObject.get("Prüfling").asString
@@ -61,6 +75,6 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
         val allowAudience = jsonObject.get("Zuschauer erlaubt").asBoolean
         val room = jsonObject.get("Raum").asString
 
-        return Exam(date, subject, course, recorder, examiner, examinee, room, chair, begin, duration, allowAudience)
+        return Exam(date!!, subject, course, recorder, examiner, examinee, room, chair, begin, duration, allowAudience)
     }
 }

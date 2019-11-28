@@ -1,6 +1,7 @@
 package rhedox.gesahuvertretungsplan.model.api.deserializer
 
 import android.content.Context
+import com.crashlytics.android.Crashlytics
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -8,6 +9,8 @@ import org.joda.time.LocalDate
 import rhedox.gesahuvertretungsplan.model.AbbreviationResolver
 import rhedox.gesahuvertretungsplan.model.api.Test
 import rhedox.gesahuvertretungsplan.util.Html
+import java.lang.Exception
+import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 
 /**
@@ -19,8 +22,19 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
     override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext): Test {
         val jsonObject = json.asJsonObject
 
+        var date: LocalDate? = try {
+            context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
+        } catch (e: IllegalArgumentException) {
+            Crashlytics.logException(e)
+            null
+        }
+
+        if (date == null) {
+            Crashlytics.logException(Exception("Malformatted date: ${jsonObject.get("Datum")}"))
+            date = LocalDate.now()
+        }
+
         val remark = Html.decode(jsonObject.get("Bemerkung").asString.trim())
-        val date = context.deserialize<LocalDate>(jsonObject.get("Datum"), LocalDate::class.java)
         val subject = resolver.resolveSubject(Html.decode(jsonObject.get("Fach").asString.trim()))
         val course = Html.decode(jsonObject.get("Klasse").asString.trim())
         val year = Html.decode(jsonObject.get("Klassenstufe").asString.trim()).toInt()
@@ -36,6 +50,7 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
                 .replace(',', '-')
                 .replace('/', '-')
                 .replace('&', '-')
+                .replace('+', '-')
                 .split('-')
         if(lessonParts.isNotEmpty() && lessonParts[0].isNotBlank()) {
             begin = lessonParts[0].toInt()
@@ -50,6 +65,6 @@ class TestDeserializer(context: Context) : JsonDeserializer<Test> {
             duration = null
         }
 
-        return Test(remark, date, subject, course, year, teacher, begin, duration)
+        return Test(remark, date!!, subject, course, year, teacher, begin, duration)
     }
 }
