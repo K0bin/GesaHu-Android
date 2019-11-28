@@ -188,10 +188,10 @@ class AuthActivity : AccountAuthenticatorAppCompatActivity(), View.OnClickListen
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        if(account != null && outState != null) {
+        if(account != null) {
             outState.putParcelable(stateAccount, account)
         }
     }

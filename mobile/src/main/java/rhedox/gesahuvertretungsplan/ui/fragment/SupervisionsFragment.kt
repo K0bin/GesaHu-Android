@@ -61,7 +61,7 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
             presenter.onDatePicked(it)
         }
 
-        picker.show(fragmentManager, "Datepicker")
+        picker.show(requireFragmentManager(), "Datepicker")
     }
 
     override var currentTab: Int
@@ -117,10 +117,8 @@ class SupervisionsFragment : AnimationFragment(), SupervisionsContract.View {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state: SupervisionsState?
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable(State.presenterState)
-        } else {
+        var state: SupervisionsState? = savedInstanceState?.getParcelable(State.presenterState)
+        if (state == null) {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
             val date: LocalDate?
             date = if(seconds != 0) {

@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         presenter.detachView()
     }
 
+    @Suppress("DEPRECATION")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setupTaskDescription() {
         val a = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary))
@@ -251,7 +252,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, DrawerActivity, Nav
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         toggle?.onConfigurationChanged(newConfig)
     }

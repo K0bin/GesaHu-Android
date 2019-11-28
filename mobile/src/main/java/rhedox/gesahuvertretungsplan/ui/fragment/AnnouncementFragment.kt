@@ -95,8 +95,8 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val announcement = arguments?.getString(argumentAnnouncement)
-        if (announcement != null) {
-            val dialog = Dialog(context, R.style.AnnouncementDialog)
+        if (announcement != null && context != null) {
+            val dialog = Dialog(requireContext(), R.style.AnnouncementDialog)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.dialog)
             dialog.setOnShowListener(this)
@@ -155,15 +155,16 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.dialogBackground) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (!isAnimating) {
-                    animate(this.dialog.findViewById(R.id.dialog), false)
-                }
-            } else {
-                dismiss()
-            }
+        if (v.id != R.id.dialogBackground || this.dialog == null) {
             return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (!isAnimating) {
+                animate(this.dialog!!.findViewById(R.id.dialog), false)
+            }
+        } else {
+            dismiss()
         }
     }
 
@@ -279,7 +280,7 @@ class AnnouncementFragment : DialogFragment(), DialogInterface.OnShowListener, D
         titleOpacityAnimator.start()
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         toDismiss = false
         dismissListener?.onDismiss(dialog)

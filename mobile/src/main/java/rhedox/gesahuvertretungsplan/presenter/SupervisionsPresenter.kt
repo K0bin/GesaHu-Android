@@ -25,7 +25,7 @@ import javax.inject.Inject
 /**
  * Created by robin on 20.10.2016.
  */
-class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: SupervisionsState?) : SupervisionsContract.Presenter {
+class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: SupervisionsState) : SupervisionsContract.Presenter {
     private val date: LocalDate
     private var view: SupervisionsContract.View? = null
     /**
@@ -61,7 +61,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
     init {
         substitutesComponent.inject(this)
 
-        val dayDate: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
+        val dayDate: LocalDate = state.date ?: SchoolWeek.nextFromNow()
 
         Log.d("SupervisionsPresenter", "Date: $dayDate")
 
@@ -81,7 +81,7 @@ class SupervisionsPresenter(substitutesComponent: SubstitutesComponent, state: S
             }
         }
 
-        selected = state?.selected
+        selected = state.selected
     }
 
     override fun attachView(view: SupervisionsContract.View) {

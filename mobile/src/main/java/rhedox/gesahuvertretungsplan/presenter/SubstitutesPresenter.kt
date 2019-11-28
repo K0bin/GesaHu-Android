@@ -26,7 +26,7 @@ import javax.inject.Inject
 /**
  * Created by robin on 20.10.2016.
  */
-class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesState?) : SubstitutesContract.Presenter {
+class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesState) : SubstitutesContract.Presenter {
     private val date: LocalDate
     private var view: SubstitutesContract.View? = null
     /**
@@ -69,11 +69,11 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
     init {
         component.inject(this)
 
-        val dayDate: LocalDate = state?.date ?: SchoolWeek.nextFromNow()
+        val dayDate: LocalDate = state.date ?: SchoolWeek.nextFromNow()
 
         Log.d("SubstitutesPresenter", "Date: $dayDate")
 
-        currentPage = Math.max(0, Math.min(dayDate.dayOfWeek - DateTimeConstants.MONDAY, 4))
+        currentPage = (dayDate.dayOfWeek - DateTimeConstants.MONDAY).coerceIn(0, 4)
         this.date = getFirstDayOfWeek(dayDate)
 
         for(i in 0 until 5) {
@@ -91,7 +91,7 @@ class SubstitutesPresenter(component: SubstitutesComponent, state: SubstitutesSt
             }
         }
 
-        selected = state?.selected
+        selected = state.selected
     }
 
     override fun attachView(view: SubstitutesContract.View) {

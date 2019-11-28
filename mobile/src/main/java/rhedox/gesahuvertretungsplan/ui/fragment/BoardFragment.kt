@@ -69,14 +69,9 @@ class BoardFragment : AnimationFragment(), BoardContract.View, AppBarFragment {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state: BoardState
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getParcelable(State.presenterState)
-            boardName = state.boardName
-        } else {
-            boardName = arguments?.getString(Arguments.boardName) ?: ""
-            state = BoardState(boardName)
-        }
+        val argName = arguments?.getString(Arguments.boardName) ?: ""
+        val state: BoardState = savedInstanceState?.getParcelable(State.presenterState) ?: BoardState(argName)
+        boardName = state.boardName
 
         presenter = BoardPresenter(appComponent.plusBoards(), state)
     }

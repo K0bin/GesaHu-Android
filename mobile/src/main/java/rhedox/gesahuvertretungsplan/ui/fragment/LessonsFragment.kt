@@ -61,12 +61,8 @@ class LessonsFragment : Fragment(), LessonsContract.View {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state = if (savedInstanceState != null) {
-            savedInstanceState.getParcelable(stateBundleName)
-        } else {
-            val name = arguments?.getString(Arguments.boardName) ?: ""
-            LessonsState(name)
-        }
+        val argName = arguments?.getString(Arguments.boardName) ?: ""
+        val state = savedInstanceState?.getParcelable(stateBundleName) ?: LessonsState(argName)
         presenter = LessonsPresenter(appComponent.plusBoards(), state)
     }
 

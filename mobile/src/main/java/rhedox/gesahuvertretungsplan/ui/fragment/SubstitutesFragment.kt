@@ -72,7 +72,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
                 presenter.onDatePicked(it)
             }
 
-            picker.show(fragmentManager, "Datepicker")
+            picker.show(requireFragmentManager(), "Datepicker")
         }
     }
 
@@ -145,9 +145,8 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         retainInstance = true
         setHasOptionsMenu(true)
 
-        val state = if (savedInstanceState != null) {
-            savedInstanceState.getParcelable(State.presenterState)
-        } else {
+        var state: SubstitutesState? = savedInstanceState?.getParcelable(State.presenterState)
+        if (state == null) {
             val seconds = arguments?.getInt(Argument.date, 0) ?: 0
             val date: LocalDate?
             date = if(seconds != 0) {
@@ -155,7 +154,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
             } else {
                 null
             }
-            SubstitutesState(date)
+            state = SubstitutesState(date)
         }
         presenter = SubstitutesPresenter(appComponent.plusSubstitutes(), state)
     }
@@ -304,7 +303,7 @@ class SubstitutesFragment : AnimationFragment(), SubstitutesContract.View, Dialo
         announcementFragment.fabSize.y = fabSize.y.toFloat()
         announcementFragment.fabElevation = fabElevation
         announcementFragment.text = text
-        announcementFragment.show(fragmentManager, AnnouncementFragment.tag)
+        announcementFragment.show(requireFragmentManager(), AnnouncementFragment.tag)
     }
 
     override fun openSubstitutesForDate(date: LocalDate) {

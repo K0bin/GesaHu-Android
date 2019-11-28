@@ -55,12 +55,8 @@ class MarksFragment : Fragment(), MarksContract.View {
 
         val appComponent = (context?.applicationContext as App).appComponent
 
-        val state = if (savedInstanceState != null) {
-            savedInstanceState.getParcelable(stateBundleName)
-        } else {
-            val name = arguments?.getString(Arguments.boardName) ?: ""
-            MarksState(name)
-        }
+        val argName = arguments?.getString(Arguments.boardName) ?: ""
+        val state = savedInstanceState?.getParcelable(stateBundleName) ?: MarksState(argName)
         presenter = MarksPresenter(appComponent.plusBoards(), state)
     }
 

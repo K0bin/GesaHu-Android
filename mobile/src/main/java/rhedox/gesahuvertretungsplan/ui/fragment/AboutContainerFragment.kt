@@ -78,7 +78,7 @@ class AboutContainerFragment : AnimationFragment() {
                 .withAboutSpecial1(context.getString(R.string.special1))
                 .withAboutSpecial3(context.getString(R.string.special3))
                 .withListener(object: LibsConfiguration.LibsListener {
-                    override fun onExtraClicked(v: View?, specialButton: Libs.SpecialButton?): Boolean {
+                    override fun onExtraClicked(v: View, specialButton: Libs.SpecialButton): Boolean {
                         if (specialButton == Libs.SpecialButton.SPECIAL1) {
                             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://gesahui.de")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                             return true
@@ -89,14 +89,14 @@ class AboutContainerFragment : AnimationFragment() {
                         return false
                     }
 
-                    override fun onIconClicked(v: View?) {}
-                    override fun onLibraryAuthorClicked(v: View?, library: Library?): Boolean { return false }
-                    override fun onIconLongClicked(v: View?): Boolean { return false }
-                    override fun onLibraryBottomLongClicked(v: View?, library: Library?): Boolean { return false }
-                    override fun onLibraryBottomClicked(v: View?, library: Library?): Boolean { return false }
-                    override fun onLibraryContentClicked(v: View?, library: Library?): Boolean { return false }
-                    override fun onLibraryAuthorLongClicked(v: View?, library: Library?): Boolean { return false }
-                    override fun onLibraryContentLongClicked(v: View?, library: Library?): Boolean { return false }
+                    override fun onIconClicked(v: View) {}
+                    override fun onLibraryAuthorClicked(v: View, library: Library): Boolean { return false }
+                    override fun onIconLongClicked(v: View): Boolean { return false }
+                    override fun onLibraryBottomLongClicked(v: View, library: Library): Boolean { return false }
+                    override fun onLibraryBottomClicked(v: View, library: Library): Boolean { return false }
+                    override fun onLibraryContentClicked(v: View, library: Library): Boolean { return false }
+                    override fun onLibraryAuthorLongClicked(v: View, library: Library): Boolean { return false }
+                    override fun onLibraryContentLongClicked(v: View, library: Library): Boolean { return false }
 
                 })
                 .supportFragment()
