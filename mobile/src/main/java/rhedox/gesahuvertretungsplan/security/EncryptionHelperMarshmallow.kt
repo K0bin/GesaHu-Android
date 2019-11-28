@@ -7,9 +7,7 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.crashlytics.android.Crashlytics
 import java.nio.charset.StandardCharsets
-import java.security.GeneralSecurityException
-import java.security.Key
-import java.security.KeyStore
+import java.security.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.IvParameterSpec
@@ -36,17 +34,30 @@ class EncryptionHelperMarshmallow: EncryptionHelper {
 
         if (!keyStore.containsAlias(keyAlias)) {
             isNewKey = true
-            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeyStore)
-            val keySpec = KeyGenParameterSpec.Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                    .setKeySize(256)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                    .setRandomizedEncryptionRequired(true)
-                    .build()
-            keyGenerator.init(keySpec)
-            return keyGenerator.generateKey()
+            return generateKey()
         }
-        return keyStore.getKey(keyAlias, null)
+
+        return try {
+            keyStore.getKey(keyAlias, null)
+        } catch (e: UnrecoverableKeyException) {
+            Crashlytics.logException(e)
+            return generateKey()
+        } catch (e: KeyStoreException) {
+            Crashlytics.logException(e)
+            return generateKey()
+        }
+    }
+
+    private fun generateKey(): Key {
+        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeyStore)
+        val keySpec = KeyGenParameterSpec.Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setKeySize(256)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setRandomizedEncryptionRequired(true)
+                .build()
+        keyGenerator.init(keySpec)
+        return keyGenerator.generateKey()
     }
 
     override fun encrypt(text: String): String {
