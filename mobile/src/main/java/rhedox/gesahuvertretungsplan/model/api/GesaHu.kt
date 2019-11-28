@@ -41,7 +41,7 @@ class GesaHu(context: Context) {
 
         val client = builder.build()
 
-        val retrofit = Retrofit.Builder().baseUrl("https://www.gesahui.de/home/mobil/appscripts/").addConverterFactory(GsonConverterFactory.create(gson)).client(client).build()
+        val retrofit = Retrofit.Builder().baseUrl("https://www.gesahu.de/home/mobil/appscripts/").addConverterFactory(GsonConverterFactory.create(gson)).client(client).build()
 
         api = retrofit.create(GesaHuApi::class.java)
     }
