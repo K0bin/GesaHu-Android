@@ -26,11 +26,11 @@ abstract class BoardsDatabase: RoomDatabase() {
 
     companion object {
         const val name = "gesahui_boards.db"
-        const val version = 7
+        const val version = 8
 
-        fun build(context: Context): BoardsDatabase = Room.databaseBuilder(context, BoardsDatabase::class.java, BoardsDatabase.name)
+        fun build(context: Context): BoardsDatabase = Room.databaseBuilder(context, BoardsDatabase::class.java, name)
                 .fallbackToDestructiveMigration()
-                .addMigrations(BoardsDatabase.migration6_7)
+                .addMigrations(migration6_7, migration7_8)
                 .build()
 
         private val migration6_7 = object: Migration(6, 7) {
@@ -92,6 +92,12 @@ abstract class BoardsDatabase: RoomDatabase() {
                 //Finalize boards migration
                 db.execSQL("DROP TABLE ${Board.tableName};")
                 db.execSQL("ALTER TABLE ${Board.tableName}_new RENAME TO ${Board.tableName};")
+            }
+        }
+
+        private val migration7_8 = object: Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // I dont think anything changed but Room is acting up
             }
         }
     }
