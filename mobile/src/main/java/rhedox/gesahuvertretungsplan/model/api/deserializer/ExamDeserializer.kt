@@ -44,7 +44,9 @@ class ExamDeserializer(context: Context): JsonDeserializer<Exam> {
         }
 
         if (date == null) {
-            Crashlytics.logException(Exception("Malformatted date: ${jsonObject.get("Datum")}"))
+            if (!jsonObject.get("Datum").toString().isBlank()) {
+                Crashlytics.logException(Exception("Malformatted date: ${jsonObject.get("Datum")}"))
+            }
             date = LocalDate.now()
         }
 
