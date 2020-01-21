@@ -21,8 +21,8 @@ data class SupervisionsState(val date: LocalDate?, val selected: Int? = null) : 
 
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<SubstitutesState> = object : Parcelable.Creator<SubstitutesState> {
-            override fun createFromParcel(parcel: Parcel): SubstitutesState {
+        val CREATOR: Parcelable.Creator<SupervisionsState> = object : Parcelable.Creator<SupervisionsState> {
+            override fun createFromParcel(parcel: Parcel): SupervisionsState {
                 val seconds = parcel.readInt()
                 val date: LocalDate?
                 if(seconds > 0) {
@@ -34,11 +34,11 @@ data class SupervisionsState(val date: LocalDate?, val selected: Int? = null) : 
                 val selectedInt = parcel.readInt()
                 val selected = if (selectedInt >= 0) selectedInt else null
 
-                return SubstitutesState(date, selected)
+                return SupervisionsState(date, selected)
             }
 
-            override fun newArray(size: Int): Array<SubstitutesState?> {
-                return arrayOfNulls<SubstitutesState?>(size)
+            override fun newArray(size: Int): Array<SupervisionsState?> {
+                return arrayOfNulls<SupervisionsState?>(size)
             }
         }
     }
