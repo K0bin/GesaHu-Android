@@ -24,6 +24,8 @@ class LocalDateDeserializer : JsonDeserializer<LocalDate?> {
         if(json == null || json.asString.isNullOrBlank())
             return null
 
-        return LocalDate.parse(json.asString, formatter)
+        val dateStr = json.asString.replace("\"", "")
+
+        return LocalDate.parse(dateStr, formatter)
     }
 }
