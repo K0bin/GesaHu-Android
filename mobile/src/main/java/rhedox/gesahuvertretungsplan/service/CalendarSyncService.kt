@@ -39,7 +39,7 @@ import rhedox.gesahuvertretungsplan.util.accountManager
 import rhedox.gesahuvertretungsplan.util.isCalendarReadingPermissionGranted
 import rhedox.gesahuvertretungsplan.util.isCalendarWritingPermissionGranted
 import rhedox.gesahuvertretungsplan.util.notificationManager
-import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
@@ -187,7 +187,7 @@ class CalendarSyncService : Service() {
             try {
                 testResponse = testCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && !BuildConfig.DEBUG) {
+                if (e !is InterruptedIOException && !BuildConfig.DEBUG) {
                     Crashlytics.logException(e)
                 } else {
                     Log.e("CalendarSync", e.message)
@@ -215,7 +215,7 @@ class CalendarSyncService : Service() {
             try {
                 eventResponse = eventCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && !BuildConfig.DEBUG) {
+                if (e !is InterruptedIOException && !BuildConfig.DEBUG) {
                     Crashlytics.logException(e)
                 } else {
                     Log.e("CalendarSync", e.message)
@@ -247,7 +247,7 @@ class CalendarSyncService : Service() {
             try {
                 examResponse = examCall.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
+                if (e !is InterruptedIOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     Crashlytics.logException(e)
                 } else {
                     Log.e("CalendarSync", e.message)

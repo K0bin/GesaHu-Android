@@ -24,7 +24,7 @@ import rhedox.gesahuvertretungsplan.model.database.entity.Announcement
 import rhedox.gesahuvertretungsplan.model.database.entity.Substitute
 import rhedox.gesahuvertretungsplan.model.database.entity.Supervision
 import rhedox.gesahuvertretungsplan.util.localDateFromUnix
-import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
@@ -140,7 +140,7 @@ class SubstitutesSyncService : Service() {
             try {
                 response = call.execute()
             } catch (e: Exception) {
-                if (e !is IOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
+                if (e !is InterruptedIOException && e !is SocketTimeoutException && !BuildConfig.DEBUG) {
                     Crashlytics.logException(e)
                 } else {
                     if (e.message != null) {

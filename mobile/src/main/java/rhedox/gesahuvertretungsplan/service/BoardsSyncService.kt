@@ -26,6 +26,7 @@ import rhedox.gesahuvertretungsplan.security.EncryptionHelper
 import rhedox.gesahuvertretungsplan.security.getPasswordSecurely
 import rhedox.gesahuvertretungsplan.util.accountManager
 import java.io.IOException
+import java.io.InterruptedIOException
 import javax.inject.Inject
 
 /**
@@ -98,7 +99,7 @@ class BoardsSyncService : Service() {
             try {
                 response = call.execute()
             } catch (e: Exception) {
-                if (e !is IOException && !BuildConfig.DEBUG) {
+                if (e !is InterruptedIOException && !BuildConfig.DEBUG) {
                     Crashlytics.logException(e)
                 } else {
                     if (e.message != null) {
